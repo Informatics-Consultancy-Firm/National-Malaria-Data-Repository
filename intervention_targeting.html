@@ -1,0 +1,5307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive District Chiefdom Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+            min-height: 100vh;
+            color: #1e40af;
+        }
+
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(30, 64, 175, 0.15);
+            border-bottom: 3px solid #2563eb;
+        }
+
+        .header h1 {
+            color: #1e40af;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(30, 64, 175, 0.1);
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #475569;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            min-height: 75vh;
+        }
+
+        .map-container {
+            flex: 2;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.15);
+            backdrop-filter: blur(10px);
+            overflow: auto;
+            max-height: 80vh;
+            border: 2px solid #dbeafe;
+        }
+
+        .info-panel {
+            flex: 1.5;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.15);
+            backdrop-filter: blur(10px);
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #dbeafe;
+            min-width: 400px;
+        }
+
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .district-frame {
+            background: #ffffff;
+            border: 3px solid #2563eb;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 280px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+        }
+
+        .district-title {    
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 18px;
+            color: #1e40af;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            background: linear-gradient(90deg, #dbeafe, #bfdbfe);
+            margin: -20px -20px 18px -20px;
+            padding: 15px 20px 10px 20px;
+            border-radius: 9px 9px 0 0;
+        }
+
+        .chiefdoms-subplot {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .chiefdom-item {
+            text-align: center;
+        }
+
+        .chiefdom-dot {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .chiefdom-dot.selected {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.5);
+        }
+
+        .chiefdom-label {
+            font-size: 9px;
+            text-align: center;
+            margin-top: 6px;
+            color: #1e40af;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.1;
+            max-height: 22px;
+            overflow: hidden;
+        }
+
+        .info-content {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 12px;
+            background: #ffffff;
+            margin: -20px -20px 20px -20px;
+            padding: 15px 20px 12px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.05);
+        }
+
+        .info-section h4 {
+            color: #1e40af;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #dbeafe;
+            padding-bottom: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1e40af;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .info-value {
+            flex: 2;
+            text-align: right;
+            color: #475569;
+            word-break: break-word;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .stats-bar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            border: 2px solid #dbeafe;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+        }
+
+        .stat-item {
+            color: #1e40af;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2563eb;
+            text-shadow: 1px 1px 2px rgba(37, 99, 235, 0.1);
+        }
+
+        .stat-label {
+            font-weight: 600;
+            margin-top: 5px;
+            color: #475569;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #475569;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            border: 2px solid #cbd5e1;
+        }
+
+        .welcome-message h3 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, #dbeafe, #bfdbfe);
+            margin: -25px -25px 20px -25px;
+            padding: 20px 25px;
+            border-radius: 13px 13px 0 0;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .panel-header h3 {
+            color: #1e40af;
+            text-align: center;
+            margin: 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        @media (max-width: 1400px) {
+            .districts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .districts-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-content {
+                flex-direction: column;
+            }
+            .info-panel {
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chiefdoms-subplot {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1> Interactive District Chiefdom Malaria Information</h1>
+       
+    </div>
+
+    <div class="container">
+        <div id="statsBar"></div>
+
+        <div class="main-content">
+            <div class="map-container">
+                <div id="mapContent"></div>
+            </div>
+
+            <div class="info-panel">
+                <div class="panel-header">
+                    <h3> Data Panel</h3>
+                </div>
+                <div id="infoContent">
+                    <div class="welcome-message">
+                        <h3>Data Panel</h3>
+                        <p>Click on any blue dot in the district frames to view chiefdom information.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data embedded from Python
+        const districtsData = {
+  "KAILAHUN": [
+    {
+      "name": "DEA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "DEA",
+        "adm3": "Dea Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "JAHN",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "JAHN",
+        "adm3": "Jahn Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "JAWIE",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "JAWIE",
+        "adm3": "Jawei Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KISSI KAMA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "KISSI KAMA",
+        "adm3": "Kissi Kama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KISSI TENG",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "KISSI TENG",
+        "adm3": "Kissi Teng Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KISSI TONGI",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "KISSI TONGI",
+        "adm3": "Kissi Tongi Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KPEJE BONGRE",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "KPEJE BONGRE",
+        "adm3": "Peje Bongre Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KPEJE WEST",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "KPEJE WEST",
+        "adm3": "Peje West Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "LUAWA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "LUAWA",
+        "adm3": "Luawa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "MALEMA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "MALEMA",
+        "adm3": "Malema Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "MANDU",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "MANDU",
+        "adm3": "Mandu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NJALUAHUN",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "NJALUAHUN",
+        "adm3": "Njaluahun Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "PENGUIA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "PENGUIA",
+        "adm3": "Penguia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "UPPER BAMBARA",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "UPPER BAMBARA",
+        "adm3": "Upper Bambara Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "YAWEI",
+      "district": "KAILAHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAILAHUN",
+        "FIRST_CHIE": "YAWEI",
+        "adm3": "Yawei Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "KENEMA": [
+    {
+      "name": "DAMA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "DAMA",
+        "adm3": "Dama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "DODO",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "DODO",
+        "adm3": "Dodo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "GAURA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "GAURA",
+        "adm3": "Gaura Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GORAMA MENDE",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "GORAMA MENDE",
+        "adm3": "Gorama Mende Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KANDU LEPPIAMA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "KANDU LEPPIAMA",
+        "adm3": "Kandu Leppiama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KOYA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "KOYA",
+        "adm3": "Koya (Kenema) Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "LANGRAMA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "LANGRAMA",
+        "adm3": "Langroma Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "LOWER BAMBARA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "LOWER BAMBARA",
+        "adm3": "Lower Bambara Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "MALEGOHUN",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "MALEGOHUN",
+        "adm3": "Malegohun Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NIAWA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "NIAWA",
+        "adm3": "Niawa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NOMO",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "NOMO",
+        "adm3": "Nomo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NONGOWA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "NONGOWA",
+        "adm3": "Nongowa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SIMBARU",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "SIMBARU",
+        "adm3": "Simbaru Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SMALL BO",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "SMALL BO",
+        "adm3": "Small Bo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TUNKIA",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "TUNKIA",
+        "adm3": "Tunkia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "WANDOR",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "WANDOR",
+        "adm3": "Wandor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KENEMA CITY",
+      "district": "KENEMA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KENEMA",
+        "FIRST_CHIE": "KENEMA CITY",
+        "adm3": "Kenema City",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "KONO": [
+    {
+      "name": "FIAMA",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "FIAMA",
+        "adm3": "Fiama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GBANE",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "GBANE",
+        "adm3": "Gbane Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GBANE KANDOR",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "GBANE KANDOR",
+        "adm3": "Gbane Kandor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GBENSE",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "GBENSE",
+        "adm3": "Gbense Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GORAMA KONO",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "GORAMA KONO",
+        "adm3": "Gorama Kono Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KAMARA",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "KAMARA",
+        "adm3": "Kamara Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "LEI",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "LEI",
+        "adm3": "Lei Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAFINDOR",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "MAFINDOR",
+        "adm3": "Mafindor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NIMIKORO",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "NIMIKORO",
+        "adm3": "Nimikoro Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NIMIYAMA",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "NIMIYAMA",
+        "adm3": "Nimiyama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SANDOR",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "SANDOR",
+        "adm3": "Sandor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SOA",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "SOA",
+        "adm3": "Soa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TANKORO",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "TANKORO",
+        "adm3": "Tankoro Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TOLI",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "TOLI",
+        "adm3": "Toli Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KOIDU CITY",
+      "district": "KONO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KONO",
+        "FIRST_CHIE": "KOIDU CITY",
+        "adm3": "Koidu New Sembehun City",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "BOMBALI": [
+    {
+      "name": "BIRIWA",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "BIRIWA",
+        "adm3": "Biriwa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "BOMBALI SEBORA",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "BOMBALI SEBORA",
+        "adm3": "Bombali Sebora Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BOMBALI SIARI",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "BOMBALI SIARI",
+        "adm3": "Bombali Serry Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "GBANTI",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "GBANTI",
+        "adm3": "Gbanti (Bombali) Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "GBENDEMBU",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "GBENDEMBU",
+        "adm3": "Gbendembu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KAMARANKA",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "KAMARANKA",
+        "adm3": "Kamaranka Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAGBAIMBA NDORWAHUN",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "MAGBAIMBA NDORWAHUN",
+        "adm3": "Magbaimba Ndohahun Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAKARI",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "MAKARI",
+        "adm3": "Makarie Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MARA",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "MARA",
+        "adm3": "Mara Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "N'GOWAHUN",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "N'GOWAHUN",
+        "adm3": "Ngowahun Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "PAKI MASABONG",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "PAKI MASABONG",
+        "adm3": "Paki Masabong Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SAFROKO LIMBA",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "SAFROKO LIMBA",
+        "adm3": "Safroko Limba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAKENI CITY",
+      "district": "BOMBALI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BOMBALI",
+        "FIRST_CHIE": "MAKENI CITY",
+        "adm3": "Makeni City",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    }
+  ],
+  "FALABA": [
+    {
+      "name": "DELEMANDUGU",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "DELEMANDUGU",
+        "adm3": "Delmandugu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "DEMBELIA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "DEMBELIA",
+        "adm3": "Folosaba Kamba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "DEMBELIA-SINKUNIA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "DEMBELIA-SINKUNIA",
+        "adm3": "Dembelia-Sinkunia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "FOLOSABA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "FOLOSABA",
+        "adm3": "Folosaba Dembelia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KAMADU YIRAIA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "KAMADU YIRAIA",
+        "adm3": "Kamadugu Yiraia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KEBELIA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "KEBELIA",
+        "adm3": "Kabelia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KULOR SARADU",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "KULOR SARADU",
+        "adm3": "Kulor Saradu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MONGO",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "MONGO",
+        "adm3": "Mongo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MORIFINDUGU",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "MORIFINDUGU",
+        "adm3": "Morifindu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "NEYA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "NEYA",
+        "adm3": "Neya Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "NYEDU",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "NYEDU",
+        "adm3": "Nyedu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "SULIMA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "SULIMA",
+        "adm3": "Sulima Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "WOLLAY BARAWA",
+      "district": "FALABA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "FALABA",
+        "FIRST_CHIE": "WOLLAY BARAWA",
+        "adm3": "Barawa Wollay Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    }
+  ],
+  "KOINADUGU": [
+    {
+      "name": "DIANG",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "DIANG",
+        "adm3": "Diang Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "GBONKOBON KAYAKA",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "GBONKOBON KAYAKA",
+        "adm3": "Gbonkorbor Kayaka Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KALIAN",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "KALIAN",
+        "adm3": "Kallian Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KAMUKEH",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "KAMUKEH",
+        "adm3": "Kamukeh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KASUNKO KAKELLIAN",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "KASUNKO KAKELLIAN",
+        "adm3": "Kasunko Kakellay Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NIENI",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "NIENI",
+        "adm3": "Nieni Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SENGBE",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "SENGBE",
+        "adm3": "Sengbeh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TAMISO",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "TAMISO",
+        "adm3": "Thamiso Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "WARA WARA BAFODIA",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "WARA WARA BAFODIA",
+        "adm3": "Wara Wara Bafodia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "WARA WARA YAGALA",
+      "district": "KOINADUGU",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KOINADUGU",
+        "FIRST_CHIE": "WARA WARA YAGALA",
+        "adm3": "Wara Wara Yagala Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    }
+  ],
+  "TONKOLILI": [
+    {
+      "name": "DANSOGOIA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "DANSOGOIA",
+        "adm3": "Dansogoia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "GBONKOLENKENI/MASANKONG",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "GBONKOLENKENI/MASANKONG",
+        "adm3": "Gbokolenken Masankong Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KAFE",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KAFE",
+        "adm3": "Kafe Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KALANTHUBA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KALANTHUBA",
+        "adm3": "Kalantuba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KHOLIFA MABANG",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KHOLIFA MABANG",
+        "adm3": "Kholifa Mabang Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KHOLIFA MAMUNTHA/MAYOSSO",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KHOLIFA MAMUNTHA/MAYOSSO",
+        "adm3": "Kholifa Mamuntha Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KHOLIFA ROWALA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KHOLIFA ROWALA",
+        "adm3": "Kholifa Rowalla Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KUNIKE BARINA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KUNIKE BARINA",
+        "adm3": "Kunike Barina Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KUNIKE FOLAWUSU",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KUNIKE FOLAWUSU",
+        "adm3": "Kunike Fulawusu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KUNIKE SANDA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "KUNIKE SANDA",
+        "adm3": "Kunike Sanda Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MALAL",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "MALAL",
+        "adm3": "Malal Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MAYEPPOH",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "MAYEPPOH",
+        "adm3": "Gbokolenken Mayeppoh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "POLI",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "POLI",
+        "adm3": "Gbokolenken Polie Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "SAMBAYA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "SAMBAYA",
+        "adm3": "Sambaya Bendugu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SIMIRIA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "SIMIRIA",
+        "adm3": "Simiria Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "TANE",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "TANE",
+        "adm3": "Tane Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "YELE",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "YELE",
+        "adm3": "Gbokolenken Yele Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "YONI MABANTA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "YONI MABANTA",
+        "adm3": "Yoni Mabanta Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "YONI MAMAILA",
+      "district": "TONKOLILI",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "TONKOLILI",
+        "FIRST_CHIE": "YONI MAMAILA",
+        "adm3": "Yoni Mamala Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    }
+  ],
+  "KAMBIA": [
+    {
+      "name": "BRAMAIA",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "BRAMAIA",
+        "adm3": "Bramaia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "DIXON",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "DIXON",
+        "adm3": "Dixon Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "GBINLE",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "GBINLE",
+        "adm3": "Gbinleh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KHONIMAKA",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "KHONIMAKA",
+        "adm3": "Konimaka Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MAGBEMA",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "MAGBEMA",
+        "adm3": "Magbema Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MAMBOLO",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "MAMBOLO",
+        "adm3": "Mambolo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MASUNGBALA",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "MASUNGBALA",
+        "adm3": "Masumgbala Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MUNU THALLAH",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "MUNU THALLAH",
+        "adm3": "Munu Thalla Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "SAMU",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "SAMU",
+        "adm3": "Samu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "TONKO LIMBA",
+      "district": "KAMBIA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KAMBIA",
+        "FIRST_CHIE": "TONKO LIMBA",
+        "adm3": "Tonko Limba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    }
+  ],
+  "KARENE": [
+    {
+      "name": "BUYA",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "BUYA",
+        "adm3": "Buya Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "DIBIA",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "DIBIA",
+        "adm3": "Dibia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "GBANTI_KARENE",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "GBANTI_KARENE",
+        "adm3": "Gbanti (Karene) Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "LIBEISAYGAHUN/GBOMBAHUN",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "LIBEISAYGAHUN/GBOMBAHUN",
+        "adm3": "Gormbahun Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAFONDA MAKEREMBAY",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "MAFONDA MAKEREMBAY",
+        "adm3": "Mafonda Makerembay Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "ROMENDE",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "ROMENDE",
+        "adm3": "Romende Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SAFROKO",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "SAFROKO",
+        "adm3": "Safroko Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SANDA LOKO",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "SANDA LOKO",
+        "adm3": "Sanda Loko Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SANDA MAGBOLONTOR",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "SANDA MAGBOLONTOR",
+        "adm3": "Sanda Magbolonthor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SANDA TENDARAN",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "SANDA TENDARAN",
+        "adm3": "Sanda Tendaren Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SELLA LIMBA",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "SELLA LIMBA",
+        "adm3": "Sella Limba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TAMBAKHA SIMIBUNGIE",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "TAMBAKHA SIMIBUNGIE",
+        "adm3": "Tambaka Simibungie Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TAMBAKHA YOBANGIE",
+      "district": "KARENE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "KARENE",
+        "FIRST_CHIE": "TAMBAKHA YOBANGIE",
+        "adm3": "Tambaka Yobangie Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "PORT LOKO": [
+    {
+      "name": "BAKEH LOKO",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "BAKEH LOKO",
+        "adm3": "Bake-Loko Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "BUREH",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "BUREH",
+        "adm3": "Bureh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KAFFU BULLOM",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "KAFFU BULLOM",
+        "adm3": "Kaffu Bullom Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KAMASONDO",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "KAMASONDO",
+        "adm3": "Kamasondo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KASSEH",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "KASSEH",
+        "adm3": "Kasseh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KOYA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "KOYA",
+        "adm3": "Koya (Port Loko) Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "LOKOMASAMA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "LOKOMASAMA",
+        "adm3": "Lokomasama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MACONTEH",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "MACONTEH",
+        "adm3": "Maconteh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MAFORKI",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "MAFORKI",
+        "adm3": "Maforki Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAKAMA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "MAKAMA",
+        "adm3": "Makama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MARAMPA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "MARAMPA",
+        "adm3": "Marampa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MASIMERA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "MASIMERA",
+        "adm3": "Masimera Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "THAINKATOPA",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "THAINKATOPA",
+        "adm3": "Tainkatopa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "PORT LOKO CITY",
+      "district": "PORT LOKO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PORT LOKO",
+        "FIRST_CHIE": "PORT LOKO CITY",
+        "adm3": "Port Loko City",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    }
+  ],
+  "BO": [
+    {
+      "name": "BADJIA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BADJIA",
+        "adm3": "Badjia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "BAGBO",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BAGBO",
+        "adm3": "Bargbo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BAGBWE(BAGBE)",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BAGBWE(BAGBE)",
+        "adm3": "Bagbwe Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BOAMA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BOAMA",
+        "adm3": "Baoma Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BONGOR",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BONGOR",
+        "adm3": "Bongor Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BUMPE NGAO",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BUMPE NGAO",
+        "adm3": "Bumpe Ngao Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "GBO",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "GBO",
+        "adm3": "Gbo Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "JAIAMA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "JAIAMA",
+        "adm3": "Jaiama Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KAKUA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "KAKUA",
+        "adm3": "Kakua Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "KOMBOYA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "KOMBOYA",
+        "adm3": "Komboya Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "LUGBU",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "LUGBU",
+        "adm3": "Lugbu Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "NIAWA LENGA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "NIAWA LENGA",
+        "adm3": "Niawa Lenga Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SELENGA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "SELENGA",
+        "adm3": "Selenga Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "TIKONKO",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "TIKONKO",
+        "adm3": "Tikonko Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "VALUNIA",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "VALUNIA",
+        "adm3": "Valunia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "WONDE",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "WONDE",
+        "adm3": "Wonde Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+IRS+PMC"
+      }
+    },
+    {
+      "name": "BO TOWN",
+      "district": "BO",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BO",
+        "FIRST_CHIE": "BO TOWN",
+        "adm3": "Bo City",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "BONTHE": [
+    {
+      "name": "BENDU-CHA",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "BENDU-CHA",
+        "adm3": "Bendu-Cha Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "BUM",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "BUM",
+        "adm3": "Bum Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "DEMA",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "DEMA",
+        "adm3": "Dema Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "IMPERRI",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "IMPERRI",
+        "adm3": "Imperi Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "JONG",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "JONG",
+        "adm3": "Jong Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KPANDA KEMO",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "KPANDA KEMO",
+        "adm3": "Kpanda Kemoh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KWAMEBAI KRIM",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "KWAMEBAI KRIM",
+        "adm3": "Kwamebai Krim Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "NONGOBA BULLOM",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "NONGOBA BULLOM",
+        "adm3": "Nongoba Bullom Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "SITTIA",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "SITTIA",
+        "adm3": "Sittia Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SOGBENI",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "SOGBENI",
+        "adm3": "Sogbini Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "YAWBEKO",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "YAWBEKO",
+        "adm3": "Yawbeko Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "BONTHE URBAN",
+      "district": "BONTHE",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "BONTHE",
+        "FIRST_CHIE": "BONTHE URBAN",
+        "adm3": "Bonthe Town",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    }
+  ],
+  "MOYAMBA": [
+    {
+      "name": "BAGRUWA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "BAGRUWA",
+        "adm3": "Bagruwa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "BUMPEH",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "BUMPEH",
+        "adm3": "Bumpeh Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "DASSE",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "DASSE",
+        "adm3": "Dasse Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "FAKUNYA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "FAKUNYA",
+        "adm3": "Fakunya Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KAGBORO",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KAGBORO",
+        "adm3": "Kargboro Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KAIYAMBA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KAIYAMBA",
+        "adm3": "Kaiyamba Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KAMAJEI",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KAMAJEI",
+        "adm3": "Kamajei Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KONGBORA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KONGBORA",
+        "adm3": "Kongbora Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "KORI",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KORI",
+        "adm3": "Kori Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "KOWA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "KOWA",
+        "adm3": "Kowa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "LOWER BANTA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "LOWER BANTA",
+        "adm3": "Lower Banta Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "RIBBI",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "RIBBI",
+        "adm3": "Ribbi Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+PMC"
+      }
+    },
+    {
+      "name": "TIMDALE",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "TIMDALE",
+        "adm3": "Timdale Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "UPPER BANTA",
+      "district": "MOYAMBA",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "MOYAMBA",
+        "FIRST_CHIE": "UPPER BANTA",
+        "adm3": "Upper Banta Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+PMC"
+      }
+    }
+  ],
+  "PUJEHUN": [
+    {
+      "name": "BARRI",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "BARRI",
+        "adm3": "Barri Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "PERRI",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "PERRI",
+        "adm3": "Perri Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KABONDE",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "KABONDE",
+        "adm3": "Kabonde Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "KPAKA",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "KPAKA",
+        "adm3": "Kpaka Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "MAKPELE",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "MAKPELE",
+        "adm3": "Makpele Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MALEN",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "MALEN",
+        "adm3": "Malen Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MONO SAKRIM",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "MONO SAKRIM",
+        "adm3": "Mano Sakrim Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "PANGA",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "PANGA",
+        "adm3": "Kpanga Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "PANGA KRIM",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "PANGA KRIM",
+        "adm3": "Kpanga Krim Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "PEJEH (FUTA PEJE)",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "PEJEH (FUTA PEJE)",
+        "adm3": "Peje Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "GALLINESS",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "GALLINESS",
+        "adm3": "Galliness Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SORO GBEMA",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "SORO GBEMA",
+        "adm3": "Soro Gbeima Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    },
+    {
+      "name": "SOWA",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "SOWA",
+        "adm3": "Sowa Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "YAKEMU KPUKUMU",
+      "district": "PUJEHUN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "PUJEHUN",
+        "FIRST_CHIE": "YAKEMU KPUKUMU",
+        "adm3": "Yakemoh Kpukumu Krim Chiefdom",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "IRS",
+        "mass_itn_irs": "No Mass ITN",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+IRS+PMC"
+      }
+    }
+  ],
+  "WESTERN RURAL": [
+    {
+      "name": "KOYA RURAL",
+      "district": "WESTERN RURAL",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN RURAL",
+        "FIRST_CHIE": "KOYA RURAL",
+        "adm3": "Koya Rural Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "MOUNTAIN RURAL",
+      "district": "WESTERN RURAL",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN RURAL",
+        "FIRST_CHIE": "MOUNTAIN RURAL",
+        "adm3": "Mountain Rural Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "WATERLOO RURAL",
+      "district": "WESTERN RURAL",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN RURAL",
+        "FIRST_CHIE": "WATERLOO RURAL",
+        "adm3": "Waterloo Rural Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    },
+    {
+      "name": "YORK RURAL",
+      "district": "WESTERN RURAL",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN RURAL",
+        "FIRST_CHIE": "YORK RURAL",
+        "adm3": "York Rural Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "Malaria vaccine",
+        "chw": "CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Mass ITN",
+        "sbd_irs": "SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Malaria vaccine+CHW+Mass ITN+SBD+PMC"
+      }
+    }
+  ],
+  "WESTERN URBAN": [
+    {
+      "name": "CENTRAL I",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "CENTRAL I",
+        "adm3": "Central 1 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "CENTRAL II",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "CENTRAL II",
+        "adm3": "Central 2 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "EAST I",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "EAST I",
+        "adm3": "East 1 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "EAST II",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "EAST II",
+        "adm3": "East 2 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "EAST III",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "EAST III",
+        "adm3": "East 3 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "WEST I",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "WEST I",
+        "adm3": "West 1 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "WEST II",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "WEST II",
+        "adm3": "West 2 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    },
+    {
+      "name": "WEST III",
+      "district": "WESTERN URBAN",
+      "coordinates": [
+        0,
+        0
+      ],
+      "excel_data": {
+        "FIRST_DNAM": "WESTERN URBAN",
+        "FIRST_CHIE": "WEST III",
+        "adm3": "West 3 Zone",
+        "CM": "CM",
+        "IPTp": "IPTp",
+        "Routine_ITN": "Routine ITN",
+        "malaria_vaccine": "No malaria vaccine",
+        "chw": "No CHW",
+        "irs": "No IRS",
+        "mass_itn_irs": "Microstratification",
+        "sbd_irs": "No SBD",
+        "pmc_no_smc": "PMC",
+        "mixes_with_irs_no_smc": "CM+IPTp+Routine ITN+Microstratification+PMC"
+      }
+    }
+  ]
+};
+        
+        // Initialize the map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createDistrictFrames(districtsData);
+            createStatsBar(districtsData);
+        });
+
+        function createStatsBar(data) {
+            const totalDistricts = Object.keys(data).length;
+            const totalChiefdoms = Object.values(data).reduce((sum, chiefdoms) => sum + chiefdoms.length, 0);
+            const avgChiefdoms = Math.round(totalChiefdoms / totalDistricts);
+
+            const statsHtml = `
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-number">${totalDistricts}</div>
+                        <div class="stat-label">Districts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${totalChiefdoms}</div>
+                        <div class="stat-label">Chiefdoms</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${avgChiefdoms}</div>
+                        <div class="stat-label">Avg per District</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('statsBar').innerHTML = statsHtml;
+        }
+
+        function createDistrictFrames(data) {
+            let html = '<div class="districts-grid">';
+            
+            Object.keys(data).forEach(districtName => {
+                const chiefdoms = data[districtName];
+                
+                html += `
+                    <div class="district-frame">
+                        <div class="district-title">
+                            ${districtName}<br>
+                            <small style="font-weight: 500; font-size: 12px;">(${chiefdoms.length} chiefdoms)</small>
+                        </div>
+                        <div class="chiefdoms-subplot">
+                `;
+                
+                chiefdoms.forEach((chiefdom, index) => {
+                    const chiefdomId = `${districtName}_${index}`;
+                    const initials = chiefdom.name.split(' ').map(word => word[0] || '').join('').substring(0, 3).toUpperCase();
+                    
+                    html += `
+                        <div class="chiefdom-item">
+                            <div class="chiefdom-dot" 
+                                 onclick="showChiefdomInfo('${chiefdomId}')"
+                                 title="${chiefdom.name}"
+                                 data-chiefdom='${JSON.stringify(chiefdom).replace(/'/g, "&apos;")}'>
+                                ${initials}
+                            </div>
+                            <div class="chiefdom-label">${chiefdom.name}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            document.getElementById('mapContent').innerHTML = html;
+        }
+
+        function showChiefdomInfo(chiefdomId) {
+            // Remove previous selection
+            document.querySelectorAll('.chiefdom-dot').forEach(dot => {
+                dot.classList.remove('selected');
+            });
+            
+            // Find clicked element
+            const clickedElement = event.target;
+            clickedElement.classList.add('selected');
+            
+            // Get chiefdom data
+            const chiefdomData = JSON.parse(clickedElement.getAttribute('data-chiefdom'));
+            
+            // Create info HTML - ONLY EXCEL DATA
+            let infoHtml = `
+                <div class="info-content">
+                    <div class="info-title">${chiefdomData.name}</div>
+                    
+                    <div class="info-section">
+                        <h4>📍 Location Info</h4>
+                        <div class="info-item">
+                            <span class="info-label">District:</span>
+                            <span class="info-value">${chiefdomData.district}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Chiefdom:</span>
+                            <span class="info-value">${chiefdomData.name}</span>
+                        </div>
+                    </div>
+            `;
+            
+            // ONLY Excel data section
+            if (chiefdomData.excel_data && Object.keys(chiefdomData.excel_data).length > 0) {
+                infoHtml += `
+                    <div class="info-section">
+                        <h4>📊 Complete Excel Data</h4>
+                `;
+                
+                Object.keys(chiefdomData.excel_data).forEach(key => {
+                    const value = chiefdomData.excel_data[key];
+                    infoHtml += `
+                        <div class="info-item">
+                            <span class="info-label">${key}:</span>
+                            <span class="info-value">${value}</span>
+                        </div>
+                    `;
+                });
+                
+                infoHtml += '</div>';
+            } else {
+                infoHtml += `
+                    <div class="info-section">
+                        <h4> Excel Data</h4>
+                        <div class="info-item">
+                            <span class="info-value" style="text-align: center; width: 100%; color: #64748b; font-style: italic;">No Excel data available for this chiefdom</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            infoHtml += '</div>';
+            
+            document.getElementById('infoContent').innerHTML = infoHtml;
+        }
+    </script>
+</body>
+</html>

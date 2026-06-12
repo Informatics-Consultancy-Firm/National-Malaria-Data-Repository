@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICF-SL Past Surveys Data</title>
+<meta name="description" content="ICF-SL Past Surveys Data — Sierra Leone MIS &amp; DHS">
+<meta name="theme-color" content="#2c6793">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:        #2c6793;
+  --navy-dark:   #1e4d6e;
+  --navy-light:  #3a7aaa;
+  --gold:        #ffffff;
+  --gold-light:  #e8f0f7;
+  --white:       #ffffff;
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --border:      #d5dde5;
+  --border2:     #e8edf2;
+  --text:        #212934;
+  --muted:       #6c7a89;
+  --chip-bg:     #e8f0f7;
+  --success:     #1a8a4a;
+  --success-bg:  #e8f5ee;
+  --warn:        #b05a00;
+  --warn-bg:     #fff3e5;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid rgba(255,255,255,0.3);
+}
+
+.topbar-logo {
+  width: 38px;
+  height: 38px;
+  background: var(--white);
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topbar-logo span {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 1px;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.2);
+}
+
+.topbar-title {
+  font-family: 'Oswald', sans-serif;
+  color: rgba(255,255,255,0.95);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.topbar-badge {
+  background: rgba(255,255,255,0.15);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.3);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── SUBHEADER ── */
+.subheader {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  padding: 14px 28px 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.subheader-left h1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.meta-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--chip-bg);
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,64,128,0.2);
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.subheader-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.stat-block {
+  text-align: right;
+}
+
+.stat-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  display: block;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  padding: 24px 28px 40px;
+}
+
+.section-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--border), transparent);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  animation: cardIn 0.45s ease both;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+}
+
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0,64,128,0.14);
+  transform: translateY(-2px);
+}
+
+/* Double-border top stripe */
+.card-stripe-outer {
+  height: 5px;
+  background: var(--navy);
+}
+
+.card-stripe-inner {
+  height: 2px;
+  background: rgba(44,103,147,0.3);
+}
+
+.card-body {
+  padding: 18px 20px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--navy);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card-title-wrap { flex: 1; }
+
+.card-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.card-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+.card-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+/* File info row */
+.card-file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--chip-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 6px 10px;
+  margin-bottom: 14px;
+}
+
+.file-icon {
+  flex-shrink: 0;
+}
+
+.file-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--navy);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.file-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.file-size {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.file-format-tag {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.fmt-csv  { background: #e5f5e0; color: #2b7a2b; border: 1px solid #b2d9b2; }
+.fmt-xlsx { background: #e5f5e0; color: #1a6b1a; border: 1px solid #96cc96; }
+.fmt-json { background: #fff4e0; color: #7a4800; border: 1px solid #f5cc80; }
+.fmt-zip  { background: #f0e8fa; color: #5c2d91; border: 1px solid #c9a0e8; }
+.fmt-pdf  { background: #ffe8e8; color: #9b1c1c; border: 1px solid #f5a0a0; }
+.fmt-docx { background: #e8eeff; color: #1a3a9b; border: 1px solid #a0b0f5; }
+.fmt-na   { background: var(--warn-bg); color: var(--warn); border: 1px solid #f5c880; }
+
+/* Card footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border2);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: 'Oswald', sans-serif;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.status-dot.ready { background: var(--success); box-shadow: 0 0 0 2px var(--success-bg); }
+.status-dot.soon  { background: var(--gold);    box-shadow: 0 0 0 2px #fdf3d0; }
+
+.status-pill.ready { color: var(--success); }
+.status-pill.soon  { color: var(--warn); }
+
+/* Download button */
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--white);
+  background: var(--navy);
+  border: none;
+  border-radius: 3px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+.dl-btn:hover:not(:disabled) {
+  background: var(--navy-light);
+}
+
+.dl-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.dl-btn:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.dl-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* Flash animation on success */
+.dl-btn.flashing {
+  background: var(--success) !important;
+  animation: flashBtn 0.4s ease;
+}
+
+@keyframes flashBtn {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy-dark);
+  color: white;
+  border-left: 4px solid rgba(255,255,255,0.4);
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Source Sans 3', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  pointer-events: all;
+  animation: toastIn 0.3s ease;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+.toast.success { border-left-color: #28a745; }
+.toast.error   { border-left-color: #dc3545; }
+
+@keyframes toastIn {
+  from { opacity:0; transform: translateX(40px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity:1; transform: translateX(0); }
+  to   { opacity:0; transform: translateX(40px); }
+}
+
+.toast-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.toast-icon.success svg { stroke: #28a745; }
+.toast-icon.error   svg { stroke: #dc3545; }
+
+.toast-text { flex: 1; line-height: 1.4; }
+.toast-title { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-family: 'Oswald', sans-serif; }
+
+/* ── FOOTER ── */
+.page-footer {
+  background: var(--navy);
+  border-top: 3px solid rgba(255,255,255,0.2);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.page-footer strong {
+  color: var(--white);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+@media(max-width: 768px) {
+  .main { padding: 16px 14px 28px; }
+  .subheader { padding: 12px 16px 14px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .subheader-stats { gap: 16px; }
+  .page-footer { justify-content: center; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo"><span>PS</span></div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-title">Past Surveys Data</div>
+  <div class="topbar-badge">Sierra Leone · MIS &amp; DHS</div>
+</div>
+
+<!-- SUBHEADER -->
+<div class="subheader">
+  <div class="subheader-left">
+    <h1>Past Surveys Data</h1>
+    <div class="meta-chips">
+      <div class="meta-chip">Sierra Leone</div>
+      <div class="meta-chip">MIS &amp; DHS</div>
+      <div class="meta-chip">2013 – 2021</div>
+    </div>
+  </div>
+  <div class="subheader-stats">
+    <div class="stat-block">
+      <span class="stat-value" id="readyCount">—</span>
+      <span class="stat-label">Ready</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-value" id="totalCount">—</span>
+      <span class="stat-label">Total Files</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="section-label">Past Surveys</div>
+  <div class="cards-grid" id="cardsGrid"></div>
+</main>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <div>Past Surveys Data — <strong>Informatics Consultancy Firm (ICF-SL)</strong></div>
+  <div>Designed &amp; Developed by <strong>Informatics Consultancy Firm (ICF-SL)</strong> &nbsp;|&nbsp; &copy; <span id="footerYear"></span></div>
+</footer>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+  // ════════════════════════════════════════════════════════════════
+  //  DATA CONFIGURATION
+  //  Set `url` to a direct download link for each dataset.
+  //  Set `filename` to the name that will be saved on the user's device.
+  //  Set `format` to: csv | xlsx | json | zip | pdf
+  //  Leave `url: ""` for datasets not yet available.
+  // ════════════════════════════════════════════════════════════════
+  var datasets = [
+    {
+      id: 1,
+      name: "Malaria Indicator Survey (MIS) — 2013",
+      desc: "Sierra Leone Malaria Indicator Survey 2013: malaria prevalence, net ownership and usage, treatment-seeking behaviour, and household-level indicators by district.",
+      url:      "",
+      filename: "sl_mis_2013_report.pdf",
+      format:   "pdf"
+    },
+    {
+      id: 2,
+      name: "Malaria Indicator Survey (MIS) — 2016",
+      desc: "Sierra Leone Malaria Indicator Survey 2016: malaria prevalence, ITN ownership and usage, IRS coverage, and key malaria control indicators by district.",
+      url:      "",
+      filename: "sl_mis_2016_report.pdf",
+      format:   "pdf"
+    },
+    {
+      id: 3,
+      name: "Malaria Indicator Survey (MIS) — 2021",
+      desc: "Sierra Leone Malaria Indicator Survey 2021: malaria prevalence by RDT and microscopy, net usage, ANC/IPTp coverage, and case management indicators by district.",
+      url:      "",
+      filename: "sl_mis_2021_report.pdf",
+      format:   "pdf"
+    },
+    {
+      id: 4,
+      name: "Demographic and Health Survey (DHS) — 2019",
+      desc: "Sierra Leone Demographic and Health Survey 2019: household demographics, reproductive health, child health, nutrition, malaria, HIV/AIDS, and domestic violence indicators.",
+      url:      "",
+      filename: "sl_dhs_2019_report.pdf",
+      format:   "pdf"
+    }
+  ];
+
+  // ── Icons ──
+  var icons = {
+    database: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+    sheet:    '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>',
+    zip:      '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    check:    '<svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>',
+    clock:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>',
+    dl:       '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    file:     '<svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13,2 13,9 20,9"/></svg>'
+  };
+
+  function getIcon(fmt) {
+    if (fmt === 'zip') return icons.zip;
+    if (fmt === 'pdf') return icons.file;
+    if (fmt === 'docx') return icons.sheet;
+    if (fmt === 'xlsx' || fmt === 'csv') return icons.sheet;
+    return icons.database;
+  }
+
+  function has(v) { return v && v.trim().length > 0; }
+
+  // Build cards
+  document.getElementById('cardsGrid').innerHTML = datasets.map(function(d, i) {
+    var ready   = has(d.url);
+    var fmtTag  = d.format ? d.format.toUpperCase() : 'N/A';
+    var fmtCls  = ready ? 'fmt-' + d.format : 'fmt-na';
+    var cardIcon = getIcon(d.format);
+
+    var fileInfoHtml = '<div class="card-file-info">' +
+      '<div class="file-icon">' + icons.file + '</div>' +
+      '<div class="file-meta">' +
+        '<div class="file-name">' + d.filename + '</div>' +
+      '</div>' +
+      '<span class="file-format-tag ' + fmtCls + '">' + fmtTag + '</span>' +
+    '</div>';
+
+    var statusHtml = ready
+      ? '<div class="status-pill ready"><div class="status-dot ready"></div>Ready</div>'
+      : '<div class="status-pill soon"><div class="status-dot soon"></div>Coming Soon</div>';
+
+    var btnHtml = ready
+      ? '<button class="dl-btn" id="dlbtn-' + i + '" onclick="downloadFile(' + i + ')">' + icons.dl + ' Download</button>'
+      : '<button class="dl-btn" disabled>' + icons.dl + ' Unavailable</button>';
+
+    return '<div class="card" style="animation-delay:' + (i * 0.07).toFixed(2) + 's">' +
+      '<div class="card-stripe-outer"></div>' +
+      '<div class="card-stripe-inner"></div>' +
+      '<div class="card-body">' +
+        '<div class="card-header-row">' +
+          '<div class="card-icon">' + cardIcon + '</div>' +
+          '<div class="card-title-wrap">' +
+            '<div class="card-num">DATASET ' + String(d.id).padStart(2, '0') + '</div>' +
+            '<div class="card-name">' + d.name + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-desc">' + d.desc + '</div>' +
+        fileInfoHtml +
+        '<div class="card-footer">' +
+          statusHtml +
+          btnHtml +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Update stat counts
+  var ready = datasets.filter(function(d) { return has(d.url); }).length;
+  document.getElementById('readyCount').textContent = ready;
+  document.getElementById('totalCount').textContent = datasets.length;
+
+  // ── Toast ──
+  function showToast(type, title, msg) {
+    var iconSvg = type === 'success'
+      ? '<svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>'
+      : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+
+    var el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML =
+      '<div class="toast-icon ' + type + '">' + iconSvg + '</div>' +
+      '<div class="toast-text"><div class="toast-title">' + title + '</div>' + msg + '</div>';
+
+    var container = document.getElementById('toastContainer');
+    container.appendChild(el);
+
+    setTimeout(function() {
+      el.style.animation = 'toastOut 0.3s ease forwards';
+      setTimeout(function() { el.remove(); }, 320);
+    }, 4000);
+  }
+
+  // ── Download handler ──
+  function downloadFile(idx) {
+    var d   = datasets[idx];
+    var btn = document.getElementById('dlbtn-' + idx);
+    if (!has(d.url)) return;
+
+    // Flash button green briefly
+    btn.classList.add('flashing');
+    btn.innerHTML = icons.check + ' Starting…';
+    btn.disabled = true;
+
+    setTimeout(function() {
+      // Create invisible anchor and click it — browser handles the download
+      var a = document.createElement('a');
+      a.href     = d.url;
+      a.download = d.filename;       // Suggests filename to browser
+      a.target   = '_blank';          // Fallback if CORS prevents download
+      a.rel      = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      showToast('success', 'Download Started', '<strong>' + d.filename + '</strong> — check your downloads folder.');
+
+      // Restore button
+      setTimeout(function() {
+        btn.classList.remove('flashing');
+        btn.innerHTML = icons.dl + ' Download';
+        btn.disabled = false;
+      }, 1800);
+    }, 300);
+  }
+
+  // ── DHIS2 iframe auto-height ──
+  function notifyParentHeight() {
+    var h = document.documentElement.scrollHeight || document.body.scrollHeight;
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'resizePlugin', height: h }, '*');
+      window.parent.postMessage(JSON.stringify({ type: 'resizePlugin', height: h }), '*');
+    }
+  }
+  notifyParentHeight();
+  window.addEventListener('load', notifyParentHeight);
+  window.addEventListener('resize', notifyParentHeight);
+  if (window.ResizeObserver) new ResizeObserver(notifyParentHeight).observe(document.body);
+  setInterval(notifyParentHeight, 1000);
+</script>
+</body>
+</html>
