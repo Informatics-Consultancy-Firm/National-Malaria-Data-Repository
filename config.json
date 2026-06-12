@@ -1,0 +1,68 @@
+{
+  "_comment": "NMCP DQA Dashboard \u2014 paste the DHIS2 UID for each indicator. Leave blank to skip.",
+  "instance": {
+    "name": "NMCP DHIS2",
+    "facilityLevel": 5,
+    "districtLevel": 2,
+    "chiefdomLevel": 4,
+    "periodStart": "202501"
+  },
+  "indicators": {
+    "opd": {
+      "uid": "OgTpigTHKbf",
+      "label": "Malaria OPD Total Attendance"
+    },
+    "susp": {
+      "uid": "oFbmOHnKYaX",
+      "label": "Malaria Suspected Cases"
+    },
+    "micro": {
+      "uid": "SArnVgxwvqc",
+      "label": "Malaria Microscopy Total"
+    },
+    "tested": {
+      "uid": "DH8xIZM1JRc",
+      "label": "Malaria Total Tested (RDT + Microscopy)"
+    },
+    "conf": {
+      "uid": "oV911xCZkwP",
+      "label": "Malaria Confirmed Cases"
+    },
+    "treated": {
+      "uid": "S6OLkTkx9NI",
+      "label": "Malaria Treated with ACT"
+    },
+    "conf_treated": {
+      "uid": "RuVdYXye4JS",
+      "label": "Malaria Confirmed and Treated"
+    },
+    "conf_not_treated": {
+      "uid": "nOy4CqpIqK3",
+      "label": "Malaria Confirmed Not Treated"
+    },
+    "admission": {
+      "uid": "zw9iEU1jjQK",
+      "label": "Malaria Admissions"
+    },
+    "presumptive": {
+      "uid": "yx9G81aSQHq",
+      "label": "Malaria Presumptive Treatment (No Test)"
+    }
+  },
+  "facilityTypes": [
+    "Hospital",
+    "Clinic",
+    "CHC",
+    "CHP",
+    "MCHP"
+  ],
+  "scoring": {
+    "_comment": "HIGH = score < 75  |  MEDIUM = 75-94  |  LOW = 95-100",
+    "highPriorityThreshold": 75,
+    "mediumPriorityThreshold": 95
+  },
+  "_dataSet": {
+    "uid": "PvsjaSS8VFg",
+    "name": "NMCP Monthly Malaria Data"
+  }
+}
