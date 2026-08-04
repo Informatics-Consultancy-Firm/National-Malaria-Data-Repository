@@ -574,6 +574,8 @@
                 </div>
                 <button class="nav-child nav-l2" data-tab="sbd-app">5.0.5 Data Collection Apps</button>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
+                <button class="nav-child nav-l2" data-tab="population-estimate">5.0.7 Population</button>
+                <button class="nav-child nav-l2" data-tab="performance-framework">5.0.8 Performance Framework</button>
             </div>
         </div>
 
@@ -641,6 +643,7 @@
                 <button class="nav-child nav-l2" data-tab="finance-data">8.0.1 Data</button>
                 <button class="nav-child nav-l2" data-tab="finance-report">8.0.2 Report</button>
                 <button class="nav-child nav-l2" data-tab="finance-dashboard">8.0.3 Dashboard</button>
+                <button class="nav-child nav-l2" data-tab="nsp-costing">8.0.4 NSP Costing</button>
             </div>
         </div>
 
@@ -1010,6 +1013,8 @@
     <div id="survey-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-report" src="" data-src="survey_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="sbd-app" class="tab-content"><div class="iframe-pane"><iframe id="frame-sbd-app" src="" data-src="data_collection.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="population-estimate" class="tab-content"><div class="iframe-pane"><iframe id="frame-population-estimate" src="" data-src="https://informatics-consultancy-firm.github.io/population-estimate/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="performance-framework" class="tab-content"><div class="iframe-pane"><iframe id="frame-performance-framework" src="" data-src="https://informatics-consultancy-firm.github.io/nmcp-pf-2027-2030/" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- D-MAT (AUTOMATION) -->
     <div id="dmat-dqa" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-dqa" src="" data-src="dqa.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1036,6 +1041,7 @@
     <div id="finance-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-data" src="" data-src="finance_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="finance-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-report" src="" data-src="finance_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="finance-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-dashboard" src="" data-src="finance_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="nsp-costing" class="tab-content"><div class="iframe-pane"><iframe id="frame-nsp-costing" src="" data-src="https://mohamedsillahkanu.github.io/sbd-costing-tool/" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- ADMIN DASHBOARD -->
     <div id="admin-dashboard" class="tab-content">
@@ -1117,13 +1123,13 @@ var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-extraction
 var TES_TABS         = ['tes-data','tes-report','tes-dashboard'];
 var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles','int-vitamin-a','int-iptp','int-anc','int-mass-itn','int-sbd','int-irs'];
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
-var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard'];
+var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
 
 var roleAccess = {
     national: ['welcome','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','snt','mpr','other-trend-allages','other-trend-u5']
+               'sbd-app','analytics-training','population-estimate','performance-framework','snt','mpr','other-trend-allages','other-trend-u5']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
                .concat(ENTO_TABS).concat(FINANCE_TABS),
@@ -1138,7 +1144,7 @@ var roleAccess = {
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
     admin:    ['welcome','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','snt','mpr','other-trend-allages','other-trend-u5',
+               'sbd-app','analytics-training','population-estimate','performance-framework','snt','mpr','other-trend-allages','other-trend-u5',
                'admin-dashboard']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
@@ -1290,6 +1296,7 @@ var pageLabelMap = {
     'int-mass-itn':'3.0 Interventions · Mass ITN','int-sbd':'3.0 Interventions · SBD','int-irs':'3.0 Interventions · IRS',
     'user-guide':'User Guide','bulletins':'Monthly Bulletin','mpd':'Malaria Programme Docs',
     'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report','sbd-app':'Data Collection Apps','analytics-training':'Analytics Learning',
+    'population-estimate':'Population','performance-framework':'Performance Framework',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
     'dmat-suspected':'D-MAT · Suspected','dmat-tested':'D-MAT · Tested','dmat-confirmed':'D-MAT · Confirmed Cases',
     'dmat-treated':'D-MAT · Confirmed and Treated','dmat-confirmed-not-treated':'D-MAT · Confirmed and Not Treated',
@@ -1302,7 +1309,7 @@ var pageLabelMap = {
     'ento-data':'Vector Control · Entomology · Data','ento-report':'Vector Control · Entomology · Report',
     'ento-dashboard':'Vector Control · Entomology · Dashboard',
     'ir-data':'Vector Control · IR · Data','ir-report':'Vector Control · IR · Report','ir-dashboard':'Vector Control · IR · Dashboard',
-    'finance-data':'Finance · Data','finance-report':'Finance · Report','finance-dashboard':'Finance · Dashboard',
+    'finance-data':'Finance · Data','finance-report':'Finance · Report','finance-dashboard':'Finance · Dashboard','nsp-costing':'Finance · NSP Costing',
     'admin-dashboard':'Admin Dashboard'
 };
 
