@@ -181,9 +181,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th><th>Ages</th></tr>
                 <tr><td>Fever case tested for Malaria (RDT) - Positive</td><td><code>p6zQLDFjSfd</code></td><td>0-59m / 05-14y / 15+y</td></tr>
+                <tr><td>Fever case tested for Malaria (Microscopy) - Positive</td><td><code>Sz13vbo2Qwh</code></td><td>0-59m / 05-14y / 15+y</td></tr>
               </table>
               <div class="m-calc" style="margin-top:6px;">Age COCs: 0-59m <code>m5T8uBNB8aN</code> · 05-14y <code>j7j6iaknOFn</code> · 15+y <code>zK1aiw8zFac</code></div>
-              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Microscopy positives on the old form.</strong> The old form has no age-disaggregated microscopy-positive element, so <strong>facility microscopy positives are available from April 2026 onwards</strong> (new form). RDT positives are complete throughout.</div>
+              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Both methods are age-disaggregated on the old form</strong>, and both use the same three age COCs. RDT and microscopy positives are therefore complete, by age, for every month up to March 2026.</div>
             </div>
 
             <div class="m-egbox">
@@ -193,7 +194,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</td><td><code>AwLklDAVtvq</code></td></tr>
                 <tr><td>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</td><td><code>AMrdoWsiHMa</code></td></tr>
               </table>
-              <div class="m-note" style="margin-top:6px;">Split by <strong>12 age bands × 2 sexes</strong>. Sex is collapsed on summation.</div>
+              <div class="m-note" style="margin-top:6px;"><strong>RDT</strong> is split by <strong>12 age bands × 2 sexes</strong>; sex is collapsed on summation.</div>
+              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Microscopy on the new form is un-aged.</strong> <code>AMrdoWsiHMa</code> carries no age or sex disaggregation, so it is fetched as the <strong>data element total</strong> and kept as its own un-aged series. It is added to the facility and overall <strong>totals</strong> only — never to an age group, because that split does not exist in DHIS2. The age-disaggregated microscopy series therefore runs to March 2026 (old form) and the un-aged one from April 2026.</div>
               <div class="m-egsub">Age bands → 0-59m</div>
               <table class="m-tbl">
                 <tr><th>Band</th><th>Male</th><th>Female</th></tr>
@@ -242,8 +244,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <b>Confirmed overall &lt;age&gt;</b> = at facility + at community<br><br>
                 <b>Confirmed — RDT only</b> = facility RDT+ &nbsp;+&nbsp; community RDT+
               </div>
-              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series — and why.</strong> Facility microscopy positives exist on the <em>new form only</em>, so <b>RDT + Microscopy</b> steps up in April 2026 for reasons of <em>data capture</em>, not transmission. A <b>RDT-only</b> series is therefore also produced: it is defined identically before and after the cutover and is the <strong>safe series for any trend spanning April 2026</strong>. Both are in every export, and the <b>Series Break Check</b> chart plots them together so the size of the step is visible.</div>
-              <div class="m-calc"><b>9 series</b> are cleaned independently: facility RDT+, facility Microscopy+, community RDT+, each across 3 age groups. Outlier detection runs on each series separately.</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series — and why.</strong> Facility microscopy positives are age-disaggregated up to March 2026 and <em>un-aged</em> from April 2026, so the <b>per-age</b> RDT + Microscopy figures lose their microscopy component after the cutover (the un-aged total is still carried in the row and column totals). A <b>RDT-only</b> series is therefore also produced: it is a single method, defined identically before and after the cutover and across facilities with no laboratory. Both are in every export, and the <b>Series Break Check</b> chart plots them together so the size of any step is visible.</div>
+              <div class="m-calc"><b>10 series</b> are cleaned independently: facility RDT+, facility Microscopy+ and community RDT+ across 3 age groups, plus the un-aged new-form facility microscopy total. Outlier detection runs on each series separately.</div>
 
               <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>Microscopy is hospital-only.</strong> Microscopy requires a laboratory, so only <strong>Hospitals</strong> may report it. Any microscopy value reported by an <strong>MCHP, CHP, CHC or Clinic</strong> is <strong>skipped</strong> — it never enters the data, the analyses or any export. Such entries are almost certainly data-entry errors (most often an RDT result recorded in the microscopy column). Every skipped record is listed, with its facility and value, in the <strong>Microscopy Exceptions</strong> report.</div>
               <div class="m-egsub">Form cutover — April 2026</div>
@@ -462,8 +464,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <div style="background:var(--blue-lt);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--blue-dk);line-height:1.7;">
         <strong>What this tool fetches:</strong><br>
         Confirmed malaria cases at Level-5 facility for each month, from the <strong>old facility form</strong>, the <strong>new HF01 facility form</strong>, and <strong>community</strong> — mapped onto three age groups (0-59m, 05-14y, 15+y).<br>
-        <strong>OLD FACILITY:</strong> RDT Positive <code>p6zQLDFjSfd</code><br>
-        <strong>NEW FACILITY:</strong> RDT Positive <code>AwLklDAVtvq</code> · Microscopy Positive <code>AMrdoWsiHMa</code><br>
+        <strong>OLD FACILITY:</strong> RDT Positive <code>p6zQLDFjSfd</code> · Microscopy Positive <code>Sz13vbo2Qwh</code> (both by age)<br>
+        <strong>NEW FACILITY:</strong> RDT Positive <code>AwLklDAVtvq</code> (by age band × sex) · Microscopy Positive <code>AMrdoWsiHMa</code> (element total, un-aged)<br>
         <strong>COMMUNITY:</strong> RDT Positive <code>T7xH8GwWpEM</code> (RDT only, all periods)<br>
         <strong>Cutover:</strong> Old facility form up to <strong>March 2026</strong>; new facility form from <strong>April 2026</strong>. Community is unaffected.<br>
         <strong>Age groups:</strong> 0-59m · 05-14y · 15+y<br>
@@ -656,7 +658,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">4 · Facility Confirmed Cases — RDT vs Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="downloadCmp('test','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method. <strong>Facility microscopy positives exist from April 2026 only</strong> — the old form has no age-disaggregated microscopy-positive element.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method, all periods. Microscopy is age-disaggregated up to March 2026 (old form) and un-aged from April 2026 (new form); both are included in the microscopy total plotted here.</div>
         <div id="cmpTestChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTestHead"></thead><tbody id="cmpTestBody"></tbody></table></div>
       </div>
@@ -665,7 +667,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">5 · Series Break Check — RDT only vs RDT + Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadCmp('tpr','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> Facility microscopy positives only exist on the new form, so <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> steps up in April 2026 for reasons of data capture, not transmission. The <span style="color:#dc2626;font-weight:700;">RDT-only</span> line is consistently defined throughout and is the safe series for comparing before and after the cutover.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> The microscopy component changes shape at the cutover — age-disaggregated on the old form, un-aged on the new one — so any step in <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> should be checked against data capture before it is read as transmission. The <span style="color:#dc2626;font-weight:700;">RDT-only</span> line is a single method throughout and is the cleaner series for comparing before and after the cutover.</div>
         <div id="cmpTprChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTprHead"></thead><tbody id="cmpTprBody"></tbody></table></div>
       </div>
@@ -892,7 +894,6 @@ const BASE_URL = 'https://sl.dhis2.org/hmis23';
 const AUTH     = 'Basic ' + btoa('musa-sillahkanu:Navigator/2024!');
 const L_PHU=5, L_DIST=2, L_CHIEF=4;
 const L_COM=6;   // Level 6 = CHW / ETR community reporting units (children of the PHU)
-const EXCL_MICRO=['CHP','MCHP'];
 const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // ═══════════════════════════════════════════════════════════════
@@ -900,12 +901,16 @@ const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','
 // ═══════════════════════════════════════════════════════════════
 const OLD_FAC_DS='ij1VNJwxKCh', NEW_FAC_DS='fB66asHJITQ', COM_DS='nufVxEfy3Ps';
 
-// OLD facility — only RDT Positive is age-disaggregated.
-// The old form has no age-disaggregated microscopy-positive element, so facility
-// microscopy positives are available from April 2026 onwards (new form) only.
-const OLD_DE = { rdt_pos:'p6zQLDFjSfd' };
-// NEW facility (2025_HF01)
-const NEW_DE = { rdt_pos:'AwLklDAVtvq', mic_pos:'AMrdoWsiHMa' };
+// OLD facility — RDT Positive and Microscopy Positive, both age-disaggregated
+// on the same three age COCs (0-59m / 05-14y / 15+y).
+const OLD_DE = { rdt_pos:'p6zQLDFjSfd', mic_pos:'Sz13vbo2Qwh' };
+// NEW facility (2025_HF01) — RDT Positive only is split by 12 age bands x 2 sexes.
+const NEW_DE = { rdt_pos:'AwLklDAVtvq' };
+// NEW facility microscopy positives carry NO age/sex disaggregation (default category
+// combo), so this element is fetched as the DATA ELEMENT TOTAL and kept as a separate
+// UN-AGED series. It is added to the facility and overall TOTALS only — never to an
+// age group, because the age split does not exist in DHIS2.
+const NEW_MIC_DE = 'AMrdoWsiHMa';
 // COMMUNITY (HF04) — RDT only (CHWs do not perform microscopy)
 const COM_DE = { rdt_pos:'T7xH8GwWpEM' };
 
@@ -954,12 +959,19 @@ const TESTS = [{k:'rdt',label:'RDT'},{k:'mic',label:'Microscopy'}];
 const ALL_VARS = SERIES.flatMap(x=>AGE_KEYS.map(k=>({
   field:`${x.src}_${x.test}_${k}`, age:k, ...x,
   label:`${x.label} ${AGE_LABEL[k]}`})));
+// UN-AGED series — new-form facility microscopy positives (element total, no age split).
+const MIC_UN_FIELD='fac_mic_un';
+ALL_VARS.push({field:MIC_UN_FIELD, age:null, src:'fac', test:'mic',
+  label:'Facility Microscopy Positive (un-aged)'});
 
 // ── FETCH MAP ────────────────────────────────────────────────
 const ALL_DX = [
-  // OLD facility — RDT Positive only
+  // OLD facility — RDT Positive + Microscopy Positive, both on the three age COCs
   ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.rdt_pos}.${OLD_COC[k]}`, field:`fac_rdt_${k}`, src:'old', band:AGE_LABEL[k]})),
-  // NEW facility — RDT Positive + Microscopy Positive, sex collapsed
+  ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.mic_pos}.${OLD_COC[k]}`, field:`fac_mic_${k}`, src:'old', band:AGE_LABEL[k]})),
+  // NEW facility microscopy — element total, un-aged (no COC suffix)
+  {dxStr:NEW_MIC_DE, field:MIC_UN_FIELD, src:'new', band:'un-aged'},
+  // NEW facility — RDT Positive, sex collapsed
   ...Object.entries(NEW_DE).flatMap(([tr,de])=>{
     const t=tr.replace('_pos','');
     return AGE_KEYS.flatMap(k=>Object.entries(NEW_BANDS[k]).flatMap(([band,[m,f]])=>[
@@ -975,8 +987,9 @@ const DX_PARAM=[...new Set(ALL_DX.map(d=>d.dxStr))].join(';');
 
 let DE_NAMES = {
   [OLD_DE.rdt_pos]:'Fever case tested for Malaria (RDT) - Positive',
+  [OLD_DE.mic_pos]:'Fever case tested for Malaria (Microscopy) - Positive',
+  [NEW_MIC_DE]:'HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases',
   [NEW_DE.rdt_pos]:'HF01_Fever cases tested for Malaria (RDT) - Positive_Cases',
-  [NEW_DE.mic_pos]:'HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases',
   [COM_DE.rdt_pos]:'Fever case tested for Malaria (RDT) in HTR - Positive',
 };
 
@@ -1257,7 +1270,7 @@ async function startPipeline(){
 
     // Fetch DE display names from DHIS2 (age-group labels are fixed by the mapping)
     try{
-      const deIds=[OLD_FAC_DE,NEW_FAC_DE,COM_DE].join(',');
+      const deIds=[OLD_DE.rdt_pos,OLD_DE.mic_pos,NEW_DE.rdt_pos,NEW_MIC_DE,COM_DE.rdt_pos].join(',');
       const deResp=await dhis2(`/api/dataElements.json?filter=id:in:[${deIds}]&fields=id,displayName&paging=false`);
       (deResp.dataElements||[]).forEach(d=>{DE_NAMES[d.id]=d.displayName;});
     }catch(e){console.warn('Metadata fetch failed, using defaults',e);}
@@ -1316,7 +1329,6 @@ async function startPipeline(){
         if(isL6 && map.src!=='com')return;
         const effectiveId=childToL5[ouId]||ouId;
         const ou=ST.ouHierarchy[effectiveId];if(!ou)return;
-        if(map.excl&&map.excl.includes(ou.hfType))return;
         if(isL6)ST.comRollup++;
 
         const yr2=parseInt(period.slice(0,4));
@@ -1514,20 +1526,25 @@ async function startPipeline(){
             row[`com_conf_${k}`]=cr;
             row[`all_conf_${k}`]=(row[`fac_conf_${k}`]!==null||cr!==null)
               ?((row[`fac_conf_${k}`]||0)+(cr||0)):null;
-            // Confirmed — RDT ONLY. Comparable across the April-2026 cutover, because
-            // facility microscopy positives only exist on the new form.
+            // Confirmed — RDT ONLY. A single-method series, comparable across the
+            // April-2026 cutover and across facilities that have no laboratory.
             row[`all_rdt_${k}`]=(fr!==null||cr!==null)?((fr||0)+(cr||0)):null;
           });
 
           // ── Totals across age groups ──
           const sumOf=(pre)=>{const v=AGE_KEYS.map(k=>row[`${pre}_${k}`]);
             return v.some(x=>x!==null)?v.reduce((a,b)=>a+(b||0),0):null;};
+          // The un-aged new-form microscopy total enters the TOTALS only — it cannot be
+          // attributed to an age group because DHIS2 does not disaggregate it.
+          const micUn = row[MIC_UN_FIELD];
+          const addUn = (t)=>(t!==null||(micUn!==null&&micUn!==undefined))
+            ? ((t||0)+(micUn||0)) : null;
           row.fac_rdt_total  = sumOf('fac_rdt');
-          row.fac_mic_total  = sumOf('fac_mic');
+          row.fac_mic_total  = addUn(sumOf('fac_mic'));
           row.com_rdt_total  = sumOf('com_rdt');
-          row.fac_conf_total = sumOf('fac_conf');
+          row.fac_conf_total = addUn(sumOf('fac_conf'));
           row.com_conf_total = sumOf('com_conf');
-          row.all_conf_total = sumOf('all_conf');
+          row.all_conf_total = addUn(sumOf('all_conf'));
           row.all_rdt_total  = sumOf('all_rdt');
 
           // Headline
@@ -1596,7 +1613,8 @@ async function startPipeline(){
     const outCell=(src)=>ALL_VARS.filter(v=>v.src===src).map(v=>{
       const vs=(ST.varStats||{})[v.field]||{corrected:0,assessed:0};
       const pc=vs.assessed?(vs.corrected/vs.assessed*100).toFixed(2):'0.00';
-      return `<tr><td>${AGE_LABEL[v.age]}</td><td style="text-align:right;">${vs.corrected.toLocaleString()} / ${vs.assessed.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${vs.corrected?'#dc2626':'#6b7280'};">${pc}%</td></tr>`;
+      const vlab=`${v.test==='mic'?'Microscopy':'RDT'} ${v.age?AGE_LABEL[v.age]:'un-aged'}`;
+      return `<tr><td>${vlab}</td><td style="text-align:right;">${vs.corrected.toLocaleString()} / ${vs.assessed.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${vs.corrected?'#dc2626':'#6b7280'};">${pc}%</td></tr>`;
     }).join('');
 
     const panel=(title,color,bg,total,rows,facil,pre,src,note)=>`
@@ -1671,7 +1689,7 @@ async function startPipeline(){
             `RDT only — CHWs do not perform microscopy.<br>${(ST.comRollup||0).toLocaleString()} Level-6 values rolled up. Community 02-59m treated as 0-59m.`)+
       panel('OVERALL CONFIRMED CASES','#8a6a00','#fff8e6',allTotal,ST.rows.filter(r=>r.reported==='Yes').length,
             [...new Set(ST.rows.filter(r=>r.reported==='Yes').map(r=>r.ou_id))].length,'all',null,
-            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Use the RDT-only series to compare across April 2026 — facility microscopy positives exist on the new form only.</span>`);
+            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Facility microscopy is age-disaggregated up to March 2026 (old form) and un-aged from April 2026 (new form). The un-aged part is in the totals only, never in an age group.</span>`);
 
     buildPreview();
     renderExcluded();
@@ -1690,7 +1708,7 @@ async function startPipeline(){
     const gr=ST.rows.reduce((a,r)=>a+(r.all_rdt_total||0),0);
     const gm=ST.rows.reduce((a,r)=>a+(r.fac_mic_total||0),0);
     log(`Confirmed — at facility ${gf.toLocaleString()} + at community ${gc.toLocaleString()} = ${gt.toLocaleString()}`,'hl');
-    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (Apr-2026 onwards)`,'hl');
+    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (old form by age to Mar-2026 · new form un-aged from Apr-2026)`,'hl');
     log('Analyses rendered. Done.','ok');
     logStop();
 
@@ -2070,11 +2088,11 @@ function methodologyRows(){
     ['DATA ELEMENTS EXTRACTED — CONFIRMED CASES (POSITIVES ONLY)'],
     ['OLD FACILITY FORM','HF01 Outpatient morbidity  ·  ij1VNJwxKCh'],
     ['  RDT Positive','p6zQLDFjSfd  ·  ages 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
-    ['  Microscopy Positive','NOT AVAILABLE — the old form has no age-disaggregated microscopy-positive element.'],
+    ['  Microscopy Positive','Sz13vbo2Qwh  ·  same age COCs: 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
     [],
-    ['NEW FACILITY FORM','2025_HF01  ·  fB66asHJITQ  ·  12 age bands x 2 sexes (sex collapsed on summation)'],
+    ['NEW FACILITY FORM','2025_HF01  ·  fB66asHJITQ  ·  RDT split by 12 age bands x 2 sexes (sex collapsed on summation)'],
     ['  RDT Positive','AwLklDAVtvq'],
-    ['  Microscopy Positive','AMrdoWsiHMa'],
+    ['  Microscopy Positive','AMrdoWsiHMa  ·  NO age/sex disaggregation. Fetched as the DATA ELEMENT TOTAL and kept as an un-aged series (Facility Microscopy Positive (un-aged)). Added to facility and overall TOTALS only, never to an age group.'],
     ['  -> 0-59m','0-7d (M X1fJr7y51lU / F ajwU95HMY2p); 08-28d (M QVABDpl0H4k / F wOsJkGpglpx); 1-5m (M EBG5ZbRgj46 / F z0s3iTdlbsd); 06-11m (M KIJHMZSahcW / F aCwYAbE3GHL); 12-59m (M CcMrNXzzVHL / F YHJ1j33ZMs5)'],
     ['  -> 05-14y','05-09y (M eGhQxrBx3sy / F i4MRLwVtIGa); 10-14y (M oZ7YgBgNGRd / F UI2y7qIOkvz)'],
     ['  -> 15+y','15-19y (M OzqClEP84wm / F vshWQEGCCTp); 20-44y (M ztWgelWML6b / F fLgy2fpBWrb); 45-59y (M zqNF6erLupJ / F eaWE8YjN4j0); 60+y (M hGJdT29m3P6 / F g2NiIyG3PLj)'],
@@ -2084,12 +2102,13 @@ function methodologyRows(){
     ['  02-59m treated as 0-59m','The community under-5 band is 2-59 months (CHWs do not treat neonates). It is TREATED AS 0-59m so facility and community align.'],
     ['  LEVEL-6 ROLLUP','Community cases are reported by CHW/ETR posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level-6 value is rolled up to its Level-5 PHU parent.'],
     [],
-    ['COMPUTATION — Confirmed at facility','RDT Positive + Microscopy Positive'],
+    ['COMPUTATION — Confirmed at facility <age>','RDT Positive <age> + Microscopy Positive <age>  (age-disaggregated microscopy exists up to March 2026)'],
+    ['COMPUTATION — Confirmed at facility TOTAL','sum of the three age groups + the un-aged new-form microscopy total'],
     ['COMPUTATION — Confirmed at community','RDT Positive (CHW / ETR)'],
     ['COMPUTATION — Confirmed overall','at facility + at community'],
     ['COMPUTATION — Confirmed RDT only','facility RDT Positive + community RDT Positive'],
-    ['** SERIES BREAK **','Facility microscopy positives exist on the NEW FORM ONLY. The RDT + Microscopy series therefore STEPS UP in April 2026 for reasons of data capture, not transmission. The RDT-only series is defined identically before and after the cutover and is the SAFE SERIES for any trend spanning April 2026. Both are included in every export.'],
-    ['Series cleaned','9 series independently: facility RDT+, facility Microscopy+, community RDT+, each across 3 age groups.'],
+    ['** SERIES BREAK **','The microscopy component changes shape at the cutover: age-disaggregated up to March 2026 (old form Sz13vbo2Qwh) and un-aged from April 2026 (new form AMrdoWsiHMa). Per-age RDT + Microscopy therefore loses its microscopy component after March 2026, while the row and column TOTALS retain it. The RDT-only series is a single method throughout and is the cleaner series for any trend spanning April 2026. Both are included in every export.'],
+    ['Series cleaned','10 series independently: facility RDT+, facility Microscopy+ and community RDT+ across 3 age groups, plus the un-aged new-form facility microscopy total.'],
     [],
     ['MICROSCOPY IS HOSPITAL-ONLY','Microscopy requires a laboratory. Only Hospitals may report it. Any microscopy value reported by an MCHP, CHP, CHC or Clinic is SKIPPED - it never enters the data, the analyses or any export. Every skipped record is listed in the Microscopy Exceptions report (facility, type, month, series, value).'],
     [],
@@ -2132,9 +2151,9 @@ function methodologyRows(){
     ['Corrected','Value after correction. Equals Original when not an outlier; equals the facility-year MEDIAN (whole number) when an outlier was replaced.'],
     ['Reported','Yes if the facility reported confirmed cases that month; No if the month is a reporting gap.'],
     ['Source Form','Which facility form the month came from: Old form (up to March 2026) or New form / 2025_HF01 (from April 2026).'],
-    ['Facility Total / Community Total','Sum across the three age groups for that source.'],
+    ['Facility Total / Community Total','Sum across the three age groups for that source. The Facility Total also includes the un-aged new-form microscopy total, so it can exceed the sum of the three facility age groups from April 2026.'],
     ['Overall <age>','Facility <age> + Community <age> (corrected values).'],
-    ['Confirmed series','Confirmed = positives only. Two series are produced: RDT + Microscopy (all methods) and RDT only (comparable across April 2026).'],[],
+    ['Confirmed series','Confirmed = positives only. Two series are produced: RDT + Microscopy (all methods) and RDT only (single method, comparable across April 2026).'],[],
     ['7. PERIOD GRID'],
     ['Completeness','A row is emitted for every month of the selected range for each active facility, so non-reporting months appear explicitly (Reported = No) rather than being dropped.'],
   ];
@@ -2848,7 +2867,7 @@ function renderComparative(){
   const srcSel=(document.getElementById('cmpLocSrc')||{}).value||'total';
   const srcLab={all_conf_total:'(Overall)',fac_conf_total:'at Facility',com_conf_total:'at Community',all_rdt_total:'(RDT only)'}[srcSel]||'(Overall)';
   paintCmp('cmpFac', CMP.periods, CMP.facAge,
-    {title:'Confirmed Malaria Cases at Facility — by Age Group', subtitle:'RDT + Microscopy positives · Old form to Mar 2026 · New HF01 form from Apr 2026',
+    {title:'Confirmed Malaria Cases at Facility — by Age Group', subtitle:'RDT + Microscopy positives by age · Old form to Mar 2026 · New HF01 form from Apr 2026 (new-form microscopy is un-aged, so it sits in the totals only)',
      xlab:'Month', ylab:'Confirmed cases at facility'});
   paintCmp('cmpCom', CMP.periods, CMP.comAge,
     {title:'Confirmed Malaria Cases at Community — by Age Group', subtitle:'RDT positives only · CHW / ETR, rolled up from Level-6 posts',
@@ -2857,13 +2876,13 @@ function renderComparative(){
     {title:'All Ages — Confirmed Cases at Facility vs at Community', subtitle:'Age groups summed, both sources on the same scale',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpTest', CMP.periods, CMP.byTest,
-    {title:'Facility Confirmed Cases — RDT vs Microscopy', subtitle:'Positives by diagnostic method · facility microscopy positives exist from Apr 2026 only',
+    {title:'Facility Confirmed Cases — RDT vs Microscopy', subtitle:'Positives by diagnostic method · microscopy by age to Mar 2026, un-aged element total from Apr 2026',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpOv',  CMP.periods, CMP.ovAge,
     {title:'Overall Confirmed Malaria Cases — by Age Group', subtitle:'Facility + community',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   document.getElementById('cmpTprChart').innerHTML=renderAbsChart(CMP.periods,CMP.byMethod,
-    {title:'Series Break Check — RDT only vs RDT + Microscopy', subtitle:'Facility microscopy positives exist from April 2026 only. Use the RDT-only line for trends spanning the cutover.',
+    {title:'Series Break Check — RDT only vs RDT + Microscopy', subtitle:'The microscopy component is age-disaggregated to Mar 2026 and un-aged from Apr 2026. Use the RDT-only line for trends spanning the cutover.',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   {
     const {hdr,rows}=cmpTable(CMP.periods,CMP.byMethod);
@@ -3060,7 +3079,7 @@ function getOutlierSummary(){
   return ALL_VARS.map(dx=>{
     const vs=(ST.varStats||{})[dx.field]||{corrected:0,assessed:0};
     const pct=vs.assessed>0?(vs.corrected/vs.assessed*100).toFixed(2):'0.00';
-    return [dx.src==='fac'?'Facility':'Community', AGE_LABEL[dx.age], vs.corrected, vs.assessed, pct];
+    return [dx.label, dx.age?AGE_LABEL[dx.age]:'un-aged', vs.corrected, vs.assessed, pct];
   });
 }
 
