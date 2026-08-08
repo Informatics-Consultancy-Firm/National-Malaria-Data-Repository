@@ -135,13 +135,13 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div style="font-size:12px;color:#2c4b62;line-height:1.75;">
 
           <div style="background:var(--blue-lt);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
-            <strong style="color:var(--blue);">Purpose.</strong> This tool extracts monthly <strong>confirmed malaria cases</strong> — test-positive results only (RDT and Microscopy) — from DHIS2 for every health facility in Sierra Leone, from the old facility form, the new HF01 facility form and community reporting. It cleans the data, attaches Public/Private ownership, and produces analysis-ready tables. Every step below is applied automatically on each run.
+            <strong style="color:var(--blue);">Purpose.</strong> This tool extracts monthly <strong>confirmed malaria cases</strong> — test-positive results only (RDT and Microscopy) — from DHIS2 for every health facility in Sierra Leone, from the old form, the new HF01 facility form and community reporting. It cleans the data, attaches Public/Private ownership, and produces analysis-ready tables. Every step below is applied automatically on each run.
           </div>
 
           <div class="m-step"><div class="m-num">1</div><div>
             <div class="m-title">Fetch the facility registry</div>
             All <strong>Level-5 (PHU)</strong> org units are pulled from DHIS2 with their full hierarchy — District (Level 2) and Chiefdom (Level 4).<br><br>
-            <strong>Level-6 units (CHW / ETR posts) are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level-6 unit is mapped to its <strong>Level-5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level-6 units never appear as facilities in their own right — they only contribute community cases to their parent PHU.
+            <strong>Level-6 iCCM units are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level-6 unit is mapped to its <strong>Level-5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level-6 units never appear as facilities in their own right — they only contribute community cases to their parent PHU.
           </div></div>
 
           <div class="m-step"><div class="m-num">2</div><div>
@@ -177,48 +177,73 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <div class="m-note" style="border-left:3px solid var(--gold);"><strong>Confirmed cases = positives only.</strong> This tool extracts <strong>confirmed malaria cases</strong> — test-positive results only. Facility records positives by <strong>RDT</strong> and <strong>Microscopy</strong>; community records <strong>RDT positives only</strong> (CHWs do not perform microscopy). Everything maps onto <strong>three age groups</strong>: 0-59m, 05-14y, 15+y.</div>
 
             <div class="m-egbox">
-              <div class="m-eghead">OLD FACILITY FORM — HF01 Outpatient morbidity <code>ij1VNJwxKCh</code></div>
+              <div class="m-eghead">OLD FORM — HF01 Outpatient morbidity <code>ij1VNJwxKCh</code></div>
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th><th>Ages</th></tr>
                 <tr><td>Fever case tested for Malaria (RDT) - Positive</td><td><code>p6zQLDFjSfd</code></td><td>0-59m / 05-14y / 15+y</td></tr>
                 <tr><td>Fever case tested for Malaria (Microscopy) - Positive</td><td><code>Sz13vbo2Qwh</code></td><td>0-59m / 05-14y / 15+y</td></tr>
               </table>
-              <div class="m-calc" style="margin-top:6px;">Age COCs: 0-59m <code>m5T8uBNB8aN</code> · 05-14y <code>j7j6iaknOFn</code> · 15+y <code>zK1aiw8zFac</code></div>
+              <table class="m-tbl" style="margin-top:6px;">
+                <tr><th>Age group</th><th>COC UID</th><th>RDT variable</th><th>Microscopy variable</th></tr>
+                <tr><td>0-59m</td><td><code>m5T8uBNB8aN</code></td><td><code>p6zQLDFjSfd.m5T8uBNB8aN</code></td><td><code>Sz13vbo2Qwh.m5T8uBNB8aN</code></td></tr>
+                <tr><td>05-14y</td><td><code>j7j6iaknOFn</code></td><td><code>p6zQLDFjSfd.j7j6iaknOFn</code></td><td><code>Sz13vbo2Qwh.j7j6iaknOFn</code></td></tr>
+                <tr><td>15+y</td><td><code>zK1aiw8zFac</code></td><td><code>p6zQLDFjSfd.zK1aiw8zFac</code></td><td><code>Sz13vbo2Qwh.zK1aiw8zFac</code></td></tr>
+              </table>
               <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Both methods are age-disaggregated on the old form</strong>, and both use the same three age COCs. RDT and microscopy positives are therefore complete, by age, for every month up to March 2026.</div>
             </div>
 
             <div class="m-egbox">
-              <div class="m-eghead">NEW FACILITY FORM — 2025_HF01 <code>fB66asHJITQ</code></div>
+              <div class="m-eghead">NEW FORM — 2025_HF01 <code>fB66asHJITQ</code></div>
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th></tr>
                 <tr><td>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</td><td><code>AwLklDAVtvq</code></td></tr>
                 <tr><td>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</td><td><code>AMrdoWsiHMa</code></td></tr>
               </table>
-              <div class="m-note" style="margin-top:6px;"><strong>RDT</strong> is split by <strong>12 age bands × 2 sexes</strong>; sex is collapsed on summation.</div>
-              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Microscopy on the new form is un-aged.</strong> <code>AMrdoWsiHMa</code> carries no age or sex disaggregation, so it is fetched as the <strong>data element total</strong> and kept as its own un-aged series. It is added to the facility and overall <strong>totals</strong> only — never to an age group, because that split does not exist in DHIS2. The age-disaggregated microscopy series therefore runs to March 2026 (old form) and the un-aged one from April 2026.</div>
-              <div class="m-egsub">Age bands → 0-59m</div>
+              <div class="m-note" style="margin-top:6px;"><strong>RDT and Microscopy are each split by 12 age bands × 2 sexes</strong>; sex is collapsed on summation. Full variable list below.</div>
+              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Both new-form elements are age-disaggregated, and identically so.</strong> Verified against the DHIS2 metadata export: <code>AwLklDAVtvq</code> and <code>AMrdoWsiHMa</code> both use category combo <code>Gender_Age_0-7d_11m_12-59m_05-09y_15y_20-49y_cohorts_65+y</code> and share the <strong>same 24 category option combos</strong> (12 age bands × 2 sexes). Microscopy is therefore fetched band by band exactly like RDT, the Male and Female pair for each band is summed, and the bands are folded into the three reporting age groups. There is <strong>no un-aged microscopy series</strong> and no change in the shape of the microscopy component at the cutover.</div>
+              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>RDT and Microscopy are both disaggregated by age band and sex, on the same 24 category option combos.</strong> Each band is fetched separately for <b>RDT</b> <code>AwLklDAVtvq</code> and for <b>Microscopy</b> <code>AMrdoWsiHMa</code>, the Male and Female pair is summed, and the bands are folded into the three reporting age groups. The last two columns are the exact dx strings sent to the analytics API, so nothing here is inferred.</div>
+              <div class="m-calc" style="margin-top:6px;"><b>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</b> = <code>AwLklDAVtvq</code><br><b>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</b> = <code>AMrdoWsiHMa</code></div>
+              <div class="m-egsub">Bands folded into <b>0-59m</b></div>
               <table class="m-tbl">
-                <tr><th>Band</th><th>Male</th><th>Female</th></tr>
-                <tr><td>0-7d</td><td><code>X1fJr7y51lU</code></td><td><code>ajwU95HMY2p</code></td></tr>
-                <tr><td>08-28d</td><td><code>QVABDpl0H4k</code></td><td><code>wOsJkGpglpx</code></td></tr>
-                <tr><td>1-5m</td><td><code>EBG5ZbRgj46</code></td><td><code>z0s3iTdlbsd</code></td></tr>
-                <tr><td>06-11m</td><td><code>KIJHMZSahcW</code></td><td><code>aCwYAbE3GHL</code></td></tr>
-                <tr><td>12-59m</td><td><code>CcMrNXzzVHL</code></td><td><code>YHJ1j33ZMs5</code></td></tr>
+                <tr><th>Band</th><th>Sex</th><th>Category option combo</th><th>COC UID</th><th>RDT variable</th><th>Microscopy variable</th></tr>
+                <tr><td>0-7d</td><td>Male</td><td>Male, 0-7d_X</td><td><code>X1fJr7y51lU</code></td><td><code>AwLklDAVtvq.X1fJr7y51lU</code></td><td><code>AMrdoWsiHMa.X1fJr7y51lU</code></td></tr>
+                <tr><td>0-7d</td><td>Female</td><td>Female, 0-7d_X</td><td><code>ajwU95HMY2p</code></td><td><code>AwLklDAVtvq.ajwU95HMY2p</code></td><td><code>AMrdoWsiHMa.ajwU95HMY2p</code></td></tr>
+                <tr><td>08-28d</td><td>Male</td><td>Male, 08-28d_X</td><td><code>QVABDpl0H4k</code></td><td><code>AwLklDAVtvq.QVABDpl0H4k</code></td><td><code>AMrdoWsiHMa.QVABDpl0H4k</code></td></tr>
+                <tr><td>08-28d</td><td>Female</td><td>Female, 08-28d_X</td><td><code>wOsJkGpglpx</code></td><td><code>AwLklDAVtvq.wOsJkGpglpx</code></td><td><code>AMrdoWsiHMa.wOsJkGpglpx</code></td></tr>
+                <tr><td>1-5m</td><td>Male</td><td>Male, 1-5m_X</td><td><code>EBG5ZbRgj46</code></td><td><code>AwLklDAVtvq.EBG5ZbRgj46</code></td><td><code>AMrdoWsiHMa.EBG5ZbRgj46</code></td></tr>
+                <tr><td>1-5m</td><td>Female</td><td>Female, 1-5m_X</td><td><code>z0s3iTdlbsd</code></td><td><code>AwLklDAVtvq.z0s3iTdlbsd</code></td><td><code>AMrdoWsiHMa.z0s3iTdlbsd</code></td></tr>
+                <tr><td>06-11m</td><td>Male</td><td>Male, 06-11m_X</td><td><code>KIJHMZSahcW</code></td><td><code>AwLklDAVtvq.KIJHMZSahcW</code></td><td><code>AMrdoWsiHMa.KIJHMZSahcW</code></td></tr>
+                <tr><td>06-11m</td><td>Female</td><td>Female, 06-11m_X</td><td><code>aCwYAbE3GHL</code></td><td><code>AwLklDAVtvq.aCwYAbE3GHL</code></td><td><code>AMrdoWsiHMa.aCwYAbE3GHL</code></td></tr>
+                <tr><td>12-59m</td><td>Male</td><td>Male, 12-59m_X</td><td><code>CcMrNXzzVHL</code></td><td><code>AwLklDAVtvq.CcMrNXzzVHL</code></td><td><code>AMrdoWsiHMa.CcMrNXzzVHL</code></td></tr>
+                <tr><td>12-59m</td><td>Female</td><td>Female, 12-59m_X</td><td><code>YHJ1j33ZMs5</code></td><td><code>AwLklDAVtvq.YHJ1j33ZMs5</code></td><td><code>AMrdoWsiHMa.YHJ1j33ZMs5</code></td></tr>
               </table>
-              <div class="m-egsub">Age bands → 05-14y</div>
+              <div class="m-egsub">Bands folded into <b>05-14y</b></div>
               <table class="m-tbl">
-                <tr><th>Band</th><th>Male</th><th>Female</th></tr>
-                <tr><td>05-09y</td><td><code>eGhQxrBx3sy</code></td><td><code>i4MRLwVtIGa</code></td></tr>
-                <tr><td>10-14y</td><td><code>oZ7YgBgNGRd</code></td><td><code>UI2y7qIOkvz</code></td></tr>
+                <tr><th>Band</th><th>Sex</th><th>Category option combo</th><th>COC UID</th><th>RDT variable</th><th>Microscopy variable</th></tr>
+                <tr><td>05-09y</td><td>Male</td><td>Male, 05-09y_X</td><td><code>eGhQxrBx3sy</code></td><td><code>AwLklDAVtvq.eGhQxrBx3sy</code></td><td><code>AMrdoWsiHMa.eGhQxrBx3sy</code></td></tr>
+                <tr><td>05-09y</td><td>Female</td><td>Female, 05-09y_X</td><td><code>i4MRLwVtIGa</code></td><td><code>AwLklDAVtvq.i4MRLwVtIGa</code></td><td><code>AMrdoWsiHMa.i4MRLwVtIGa</code></td></tr>
+                <tr><td>10-14y</td><td>Male</td><td>Male, 10-14y_X</td><td><code>oZ7YgBgNGRd</code></td><td><code>AwLklDAVtvq.oZ7YgBgNGRd</code></td><td><code>AMrdoWsiHMa.oZ7YgBgNGRd</code></td></tr>
+                <tr><td>10-14y</td><td>Female</td><td>Female, 10-14y_X</td><td><code>UI2y7qIOkvz</code></td><td><code>AwLklDAVtvq.UI2y7qIOkvz</code></td><td><code>AMrdoWsiHMa.UI2y7qIOkvz</code></td></tr>
               </table>
-              <div class="m-egsub">Age bands → 15+y</div>
+              <div class="m-egsub">Bands folded into <b>15+y</b></div>
               <table class="m-tbl">
-                <tr><th>Band</th><th>Male</th><th>Female</th></tr>
-                <tr><td>15-19y</td><td><code>OzqClEP84wm</code></td><td><code>vshWQEGCCTp</code></td></tr>
-                <tr><td>20-44y</td><td><code>ztWgelWML6b</code></td><td><code>fLgy2fpBWrb</code></td></tr>
-                <tr><td>45-59y</td><td><code>zqNF6erLupJ</code></td><td><code>eaWE8YjN4j0</code></td></tr>
-                <tr><td>60+y</td><td><code>hGJdT29m3P6</code></td><td><code>g2NiIyG3PLj</code></td></tr>
+                <tr><th>Band</th><th>Sex</th><th>Category option combo</th><th>COC UID</th><th>RDT variable</th><th>Microscopy variable</th></tr>
+                <tr><td>15-19y</td><td>Male</td><td>Male, 15-19y_X</td><td><code>OzqClEP84wm</code></td><td><code>AwLklDAVtvq.OzqClEP84wm</code></td><td><code>AMrdoWsiHMa.OzqClEP84wm</code></td></tr>
+                <tr><td>15-19y</td><td>Female</td><td>Female, 15-19y_X</td><td><code>vshWQEGCCTp</code></td><td><code>AwLklDAVtvq.vshWQEGCCTp</code></td><td><code>AMrdoWsiHMa.vshWQEGCCTp</code></td></tr>
+                <tr><td>20-44y</td><td>Male</td><td>Male, 20-44y</td><td><code>ztWgelWML6b</code></td><td><code>AwLklDAVtvq.ztWgelWML6b</code></td><td><code>AMrdoWsiHMa.ztWgelWML6b</code></td></tr>
+                <tr><td>20-44y</td><td>Female</td><td>Female, 20-44y</td><td><code>fLgy2fpBWrb</code></td><td><code>AwLklDAVtvq.fLgy2fpBWrb</code></td><td><code>AMrdoWsiHMa.fLgy2fpBWrb</code></td></tr>
+                <tr><td>45-59y</td><td>Male</td><td>Male, 45-59y</td><td><code>zqNF6erLupJ</code></td><td><code>AwLklDAVtvq.zqNF6erLupJ</code></td><td><code>AMrdoWsiHMa.zqNF6erLupJ</code></td></tr>
+                <tr><td>45-59y</td><td>Female</td><td>Female, 45-59y</td><td><code>eaWE8YjN4j0</code></td><td><code>AwLklDAVtvq.eaWE8YjN4j0</code></td><td><code>AMrdoWsiHMa.eaWE8YjN4j0</code></td></tr>
+                <tr><td>60+y</td><td>Male</td><td>Male, 60+y_X</td><td><code>hGJdT29m3P6</code></td><td><code>AwLklDAVtvq.hGJdT29m3P6</code></td><td><code>AMrdoWsiHMa.hGJdT29m3P6</code></td></tr>
+                <tr><td>60+y</td><td>Female</td><td>Female, 60+y_X</td><td><code>g2NiIyG3PLj</code></td><td><code>AwLklDAVtvq.g2NiIyG3PLj</code></td><td><code>AMrdoWsiHMa.g2NiIyG3PLj</code></td></tr>
               </table>
+              <div class="m-egsub">Band deliberately excluded</div>
+              <table class="m-tbl">
+                <tr><th>Band</th><th>Sex</th><th>Category option combo</th><th>COC UID</th><th>RDT variable</th><th>Microscopy variable</th></tr>
+                <tr style="opacity:.5;"><td>1-11m</td><td>Male</td><td>Male, 1-11m_X</td><td><code>QFTvC3ZBlaE</code> <span style="color:#dc2626;font-weight:700;">not fetched</span></td><td><code>AwLklDAVtvq.QFTvC3ZBlaE</code></td><td><code>AMrdoWsiHMa.QFTvC3ZBlaE</code></td></tr>
+                <tr style="opacity:.5;"><td>1-11m</td><td>Female</td><td>Female, 1-11m_X</td><td><code>NonO0cPD8ZS</code> <span style="color:#dc2626;font-weight:700;">not fetched</span></td><td><code>AwLklDAVtvq.NonO0cPD8ZS</code></td><td><code>AMrdoWsiHMa.NonO0cPD8ZS</code></td></tr>
+              </table>
+              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>1-11m is not fetched, for RDT or for microscopy.</strong> It covers the same infants as <b>1-5m</b> plus <b>06-11m</b>, which are both fetched, so including it would count them twice. Its two COCs are listed above only so the omission is on the record.</div>
             </div>
 
             <div class="m-egbox">
@@ -228,31 +253,32 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>Fever case tested for Malaria (RDT) in HTR - Positive</td><td><code>T7xH8GwWpEM</code></td></tr>
               </table>
               <table class="m-tbl" style="margin-top:6px;">
-                <tr><th>Age group</th><th>COC UID</th></tr>
-                <tr><td><b>02-59m</b> → treated as <b>0-59m</b></td><td><code>NtjMVmRfvHH</code></td></tr>
-                <tr><td>05-14y</td><td><code>qDXW7WMLT99</code></td></tr>
-                <tr><td>15+y</td><td><code>mdjRPpvLKdu</code></td></tr>
+                <tr><th>Age group</th><th>COC UID</th><th>RDT variable</th></tr>
+                <tr><td>02-59m <span class="m-mut">→ treated as 0-59m</span></td><td><code>NtjMVmRfvHH</code></td><td><code>T7xH8GwWpEM.NtjMVmRfvHH</code></td></tr>
+                <tr><td>05-14y</td><td><code>qDXW7WMLT99</code></td><td><code>T7xH8GwWpEM.qDXW7WMLT99</code></td></tr>
+                <tr><td>15+y</td><td><code>mdjRPpvLKdu</code></td><td><code>T7xH8GwWpEM.mdjRPpvLKdu</code></td></tr>
               </table>
-              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level-6 rollup.</strong> Community cases are reported by <strong>CHW / ETR posts at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level-6 value is <strong>rolled up to its Level-5 PHU parent</strong>. Facility forms are never reported at Level 6, so any Level-6 value for a facility data element is ignored.</div>
+              <div class="m-note" style="margin-top:6px;">Community has <strong>no microscopy variable</strong>. CHW and ETR posts test by RDT only, so community confirmed cases are RDT positives alone. The element is <code>T7xH8GwWpEM</code> — Fever case tested for Malaria (RDT) in HTR - Positive.</div>
+              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level-6 rollup.</strong> Community cases are reported by <strong>iCCM posts at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level-6 value is <strong>rolled up to its Level-5 PHU parent</strong>. Facility forms are never reported at Level 6, so any Level-6 value for a facility data element is ignored.</div>
             </div>
 
             <div class="m-egbox">
               <div class="m-eghead">The computation</div>
               <div class="m-formula">
                 <b>Confirmed at facility &lt;age&gt;</b> = RDT Positive + Microscopy Positive<br>
-                <b>Confirmed at community &lt;age&gt;</b> = RDT Positive (CHW / ETR)<br>
+                <b>Confirmed at community &lt;age&gt;</b> = RDT Positive, iCCM<br>
                 <b>Confirmed overall &lt;age&gt;</b> = at facility + at community<br><br>
                 <b>Confirmed — RDT only</b> = facility RDT+ &nbsp;+&nbsp; community RDT+
               </div>
-              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series — and why.</strong> Facility microscopy positives are age-disaggregated up to March 2026 and <em>un-aged</em> from April 2026, so the <b>per-age</b> RDT + Microscopy figures lose their microscopy component after the cutover (the un-aged total is still carried in the row and column totals). A <b>RDT-only</b> series is therefore also produced: it is a single method, defined identically before and after the cutover and across facilities with no laboratory. Both are in every export, and the <b>Series Break Check</b> chart plots them together so the size of any step is visible.</div>
-              <div class="m-calc"><b>10 series</b> are cleaned independently: facility RDT+, facility Microscopy+ and community RDT+ across 3 age groups, plus the un-aged new-form facility microscopy total. Outlier detection runs on each series separately.</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series — and why.</strong> Facility microscopy positives are age-disaggregated on <em>both</em> forms, so the per-age RDT + Microscopy figures are complete and consistently defined throughout, before and after the cutover. A <b>RDT-only</b> series is still produced alongside them, because it is a single method available at every facility including those with no laboratory, which makes it the better series for comparing places rather than periods. Both are in every export, and the <b>Series Break Check</b> chart plots them together so any step can be inspected.</div>
+              <div class="m-calc"><b>9 series</b> are cleaned independently: facility RDT+, facility Microscopy+ and community RDT+, each across the 3 age groups. Outlier detection runs on each series separately.</div>
 
-              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>Microscopy is hospital-only.</strong> Microscopy requires a laboratory, so only <strong>Hospitals</strong> may report it. Any microscopy value reported by an <strong>MCHP, CHP, CHC or Clinic</strong> is <strong>skipped</strong> — it never enters the data, the analyses or any export. Such entries are almost certainly data-entry errors (most often an RDT result recorded in the microscopy column). Every skipped record is listed, with its facility and value, in the <strong>Microscopy Exceptions</strong> report.</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>Microscopy is excluded for MCHP and CHP.</strong> Microscopy needs a microscope and a laboratory, and neither an <strong>MCHP</strong> nor a <strong>CHP</strong> has one, so any microscopy value they report is <strong>skipped</strong> — it never enters the data, the analyses or any export. Such entries are almost certainly data-entry errors, most often an RDT result recorded in the microscopy column. <strong>Hospital, CHC and Clinic may report microscopy</strong> and their values are kept in full. Every skipped record is listed, with its facility and value, in the <strong>Wrong Reporting</strong> tab.</div>
               <div class="m-egsub">Form cutover — April 2026</div>
               <table class="m-tbl">
                 <tr><th>Source</th><th>Period used</th><th>Ignored</th></tr>
-                <tr><td style="color:#dc2626;font-weight:700;">OLD FACILITY FORM</td><td>Up to and including <b>March 2026</b></td><td class="m-bad">Any value <b>after March 2026</b></td></tr>
-                <tr><td style="color:#15803d;font-weight:700;">NEW FACILITY FORM</td><td>From <b>April 2026</b> onwards</td><td class="m-bad">Any value <b>before April 2026</b></td></tr>
+                <tr><td style="color:#dc2626;font-weight:700;">OLD FORM</td><td>Up to and including <b>March 2026</b></td><td class="m-bad">Any value <b>after March 2026</b></td></tr>
+                <tr><td style="color:#15803d;font-weight:700;">NEW FORM</td><td>From <b>April 2026</b> onwards</td><td class="m-bad">Any value <b>before April 2026</b></td></tr>
                 <tr><td style="color:#2c6793;font-weight:700;">COMMUNITY (HF04)</td><td><b>All periods</b></td><td class="m-mut">None — separate dataset</td></tr>
               </table>
             </div>
@@ -261,7 +287,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <table class="m-tbl">
               <tr><th>Level</th><th>Meaning</th></tr>
               <tr><td>Level 5</td><td>PHU — health facility (the unit of extraction)</td></tr>
-              <tr><td><b>Level 6</b></td><td><b>CHW / ETR posts</b> — community reporting units, <b>rolled up to their Level-5 PHU</b></td></tr>
+              <tr><td><b>Level 6</b></td><td><b>iCCM posts</b> — community reporting units, <b>rolled up to their Level-5 PHU</b></td></tr>
               <tr><td>Level 4</td><td>Chiefdom</td></tr>
               <tr><td>Level 2</td><td>District</td></tr>
             </table>
@@ -270,13 +296,15 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           </div></div>
 
           <div class="m-step"><div class="m-num">4</div><div>
-            <div class="m-title">Attach ownership (Public / Private)</div>
+            <div class="m-title">Attach ownership (Public / Private / In DHIS2 not in master)</div>
             Each facility is matched to the NMCP PHU ownership master list, in this order:
             <ol class="m-list">
               <li><strong>DHIS2 OU ID</strong> — exact, and immune to renames or spelling changes</li>
               <li>Chiefdom (Level 4) + Facility name (Level 5)</li>
               <li>Facility name alone</li>
             </ol>
+            <div class="m-note" style="border-left:3px solid var(--blue);"><strong>In the master list but not in DHIS2 is a reference list only.</strong> There is no DHIS2 org unit, so there is no data to extract and <strong>no calculation is performed for these facilities</strong>. They appear in no total, no denominator, no reporting rate and no case export. They are listed by name in the <strong>Ownership Reconciliation</strong> report so the master list can be corrected at source, and nothing else.</div>
+            <div class="m-note" style="border-left:3px solid var(--gold);"><strong>In DHIS2 but not in the master list means ownership is Unknown, and nothing more.</strong> The facility is still fetched, its data still extracted, and its cases still counted in every district, facility type, age group and national total. Only the ownership label is affected. <strong>Unknown is a classification, not an exclusion</strong>, and it is shown as a third class beside Public and Private wherever ownership is reported, so Public plus Private plus Unknown always reconciles to the total. The facilities concerned are listed in the <strong>Ownership Reconciliation</strong> report as Unmatched, so the master list can be corrected at source.</div>
             <div class="m-egbox">
               <div class="m-eghead">Example — why the OU ID must come first</div>
               <div style="font-size:11.5px;margin-bottom:6px;">Two <em>different</em> facilities in DHIS2 share the exact same name:</div>
@@ -463,11 +491,11 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <div class="tabpane" id="cfgExtract">
       <div style="background:var(--blue-lt);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--blue-dk);line-height:1.7;">
         <strong>What this tool fetches:</strong><br>
-        Confirmed malaria cases at Level-5 facility for each month, from the <strong>old facility form</strong>, the <strong>new HF01 facility form</strong>, and <strong>community</strong> — mapped onto three age groups (0-59m, 05-14y, 15+y).<br>
-        <strong>OLD FACILITY:</strong> RDT Positive <code>p6zQLDFjSfd</code> · Microscopy Positive <code>Sz13vbo2Qwh</code> (both by age)<br>
-        <strong>NEW FACILITY:</strong> RDT Positive <code>AwLklDAVtvq</code> (by age band × sex) · Microscopy Positive <code>AMrdoWsiHMa</code> (element total, un-aged)<br>
+        Confirmed malaria cases at Level-5 facility for each month, from the <strong>old form</strong>, the <strong>new HF01 facility form</strong>, and <strong>community</strong> — mapped onto three age groups (0-59m, 05-14y, 15+y).<br>
+        <strong>OLD FORM:</strong> RDT Positive <code>p6zQLDFjSfd</code> · Microscopy Positive <code>Sz13vbo2Qwh</code> (both by age)<br>
+        <strong>NEW FORM:</strong> RDT Positive <code>AwLklDAVtvq</code> · Microscopy Positive <code>AMrdoWsiHMa</code> — both by age band × sex, on the same 24 COCs<br>
         <strong>COMMUNITY:</strong> RDT Positive <code>T7xH8GwWpEM</code> (RDT only, all periods)<br>
-        <strong>Cutover:</strong> Old facility form up to <strong>March 2026</strong>; new facility form from <strong>April 2026</strong>. Community is unaffected.<br>
+        <strong>Cutover:</strong> Old form up to <strong>March 2026</strong>; new form from <strong>April 2026</strong>. Community is unaffected.<br>
         <strong>Age groups:</strong> 0-59m · 05-14y · 15+y<br>
         <strong>Note:</strong> Facility and community are kept as separate series, then combined into an Overall per age group.<br>
         <strong>Ownership:</strong> Matched on the DHIS2 <strong>OU ID</strong> first (exact), falling back to Level 4 (chiefdom) + Level 5 (facility) name. Adds a Public / Private column to every view and export.<br>
@@ -532,12 +560,30 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <button class="tabbtn active" id="tabBtnSummary" onclick="showTab('summary')">Summary Statistics</button>
         <button class="tabbtn" id="tabBtnAnalysis" onclick="showTab('analysis')">Analysis</button>
         <button class="tabbtn" id="tabBtnComparative" onclick="showTab('comparative')">Comparative Analysis</button>
+        <button class="tabbtn" id="tabBtnWrong" onclick="showTab('wrong')">Wrong Reporting</button>
         <button class="tabbtn" id="tabBtnDownload" onclick="showTab('download')">Download</button>
       </div>
 
       <div class="tabpane active" id="tabSummary">
         <div id="summaryPanels" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
         <div id="summaryDetail"></div>
+      </div>
+
+      <div class="tabpane" id="tabWrong">
+
+      <!-- Wrong Reporting — microscopy at an MCHP or CHP -->
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Wrong Reporting — microscopy reported by an MCHP or CHP <span style="font-weight:400;color:var(--muted);">(skipped · display only)</span></span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-gold btn-sm" onclick="downloadMicViol('csv')">↓ CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadMicViol('xlsx')">↓ Excel</button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Microscopy needs a microscope and a laboratory. An <strong>MCHP</strong> or a <strong>CHP</strong> has neither, so any microscopy value they report is skipped and never enters the data, the analyses, or any export. <strong>Hospital, CHC and Clinic</strong> may report microscopy and are not listed here. The facilities below are shown so that the entries can be followed up and corrected at source.</div>
+        <div id="micBox"></div>
+      </div>
+
       </div>
 
       <div class="tabpane" id="tabDownload">
@@ -556,7 +602,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#15803d;">Community Monthly Data</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong> (CHW / ETR, rolled up from Level-6 to the PHU). One row per facility per month, each age group — 0-59m, 05-14y, 15+y — with its <strong>Original, Upper Bound, Outlier and Corrected</strong> value, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong> — iCCM, rolled up from Level-6 to the PHU. One row per facility per month, each age group — 0-59m, 05-14y, 15+y — with its <strong>Original, Upper Bound, Outlier and Corrected</strong> value, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
             <button class="btn btn-green" onclick="downloadCSV('community')">↓ Community CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('community')">↓ Community Excel</button>
           </div>
@@ -610,6 +656,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <option value="">All ownership</option>
           <option value="Public">Public only</option>
           <option value="Private">Private only</option>
+          <option value="Unknown">In DHIS2, not in master only</option>
         </select>
         <input type="text" class="form-control" id="previewSearch" placeholder="Search…" style="max-width:200px;" oninput="buildPreview()">
         <span id="previewCount" style="font-size:11px;color:var(--muted);"></span>
@@ -637,10 +684,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">2 · Confirmed Cases at Community (CHW / ETR) — by age group</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">2 · Confirmed Cases at Community iCCM — by age group</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-green btn-sm" onclick="downloadCmp('com','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at community (RDT positives only), same three age groups, rolled up from Level-6 CHW/ETR posts. The community 02-59m band is treated as 0-59m.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at community (RDT positives only), same three age groups, rolled up from Level-6 iCCM posts. The community 02-59m band is treated as 0-59m.</div>
         <div id="cmpComChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpComHead"></thead><tbody id="cmpComBody"></tbody></table></div>
       </div>
@@ -658,7 +705,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">4 · Facility Confirmed Cases — RDT vs Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="downloadCmp('test','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method, all periods. Microscopy is age-disaggregated up to March 2026 (old form) and un-aged from April 2026 (new form); both are included in the microscopy total plotted here.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method, all periods. Microscopy is age-disaggregated on both forms, so the series plotted here is defined the same way throughout.</div>
         <div id="cmpTestChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTestHead"></thead><tbody id="cmpTestBody"></tbody></table></div>
       </div>
@@ -667,7 +714,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">5 · Series Break Check — RDT only vs RDT + Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadCmp('tpr','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> The microscopy component changes shape at the cutover — age-disaggregated on the old form, un-aged on the new one — so any step in <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> should be checked against data capture before it is read as transmission. The <span style="color:#dc2626;font-weight:700;">RDT-only</span> line is a single method throughout and is the cleaner series for comparing before and after the cutover.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> The microscopy component keeps the same shape across the cutover, but the two forms use different age bands and are filled in by different people, so a step in <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> at April 2026 should still be checked against data capture before it is read as transmission. The <span style="color:#dc2626;font-weight:700;">RDT-only</span> line is a single method throughout and is the more conservative comparison.</div>
         <div id="cmpTprChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTprHead"></thead><tbody id="cmpTprBody"></tbody></table></div>
       </div>
@@ -719,19 +766,6 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div id="vioBox"></div>
       </div>
 
-      <!-- Microscopy exceptions -->
-      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Microscopy Exceptions — non-hospital facilities <span style="font-weight:400;color:var(--muted);">(skipped · display only)</span></span>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-gold btn-sm" onclick="downloadMicViol('csv')">↓ CSV</button>
-            <button class="btn btn-outline btn-sm" onclick="downloadMicViol('xlsx')">↓ Excel</button>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Microscopy requires a laboratory, so only <strong>Hospitals</strong> may report it. Any microscopy value reported by an <strong>MCHP, CHP, CHC or Clinic</strong> is skipped — it never enters the data, the analyses, or any export. The affected records are listed here for follow-up.</div>
-        <div id="micBox"></div>
-      </div>
-
       <!-- Excluded facilities -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
@@ -767,7 +801,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate — at Facility vs at Community</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="downloadRate('source','csv')">↓ CSV</button><button class="btn btn-outline btn-sm" onclick="downloadRateAll()">↓ Excel (all sheets)</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Of the <strong>active</strong> facilities for each source, what % reported that month. <span style="color:#2c6793;font-weight:700;">Facility</span> = either facility form. <span style="color:#15803d;font-weight:700;">Community</span> = CHW/ETR (rolled up to the PHU). Each has <strong>its own denominator</strong>, since far fewer facilities have CHW posts than have a facility form.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Of the <strong>active</strong> facilities for each source, what % reported that month. <span style="color:#2c6793;font-weight:700;">Facility</span> = either facility form. <span style="color:#15803d;font-weight:700;">Community</span> = iCCM, rolled up to the PHU. Each has <strong>its own denominator</strong>, since far fewer facilities have CHW posts than have a facility form.</div>
         <div id="repSrcChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repSrcHead"></thead><tbody id="repSrcBody"></tbody></table></div>
       </div>
@@ -784,7 +818,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group — Confirmed at Community (CHW / ETR)</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group — Confirmed at Community iCCM</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadRate('com','csv')">↓ CSV</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active community reporters submitting each age group. Note CHWs do not treat neonates — the community 02-59m band is treated as 0-59m.</div>
@@ -806,7 +840,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month — Public vs Private</span>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of <strong>active</strong> facilities reporting confirmed cases each month, by ownership. Inactive facilities are excluded from the denominator.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of <strong>active</strong> facilities reporting confirmed cases each month, by ownership. Facilities absent from the ownership master list are charted as <strong>Unknown</strong>. Inactive facilities are excluded from the denominator.</div>
         <div id="repOwnChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repOwnHead"></thead><tbody id="repOwnBody"></tbody></table></div>
       </div>
@@ -862,9 +896,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
         <div style="margin-top:16px;">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-            <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">In Master, Not in DHIS2</span>
+            <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">In Master, Not in DHIS2 <span style="font-weight:400;color:var(--muted);">(facility list only — no data, no calculation)</span></span>
             <button class="btn btn-outline btn-sm" onclick="downloadReconCsv('masterOnly')">↓ CSV</button>
           </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.6;">These facilities exist in the ownership master list but have <strong>no matching org unit in DHIS2</strong>, so there is no data to fetch for them. They are a <strong>reference list only</strong>: they enter no total, no denominator, no reporting rate and no export of case data. Shown so the master list can be corrected at source.</div>
           <div id="masterOnlyBox"></div>
         </div>
 
@@ -893,7 +928,7 @@ const PROXY    = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8G
 const BASE_URL = 'https://sl.dhis2.org/hmis23';
 const AUTH     = 'Basic ' + btoa('musa-sillahkanu:Navigator/2024!');
 const L_PHU=5, L_DIST=2, L_CHIEF=4;
-const L_COM=6;   // Level 6 = CHW / ETR community reporting units (children of the PHU)
+const L_COM=6;   // Level 6 = iCCM community reporting units (children of the PHU)
 const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // ═══════════════════════════════════════════════════════════════
@@ -901,16 +936,16 @@ const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','
 // ═══════════════════════════════════════════════════════════════
 const OLD_FAC_DS='ij1VNJwxKCh', NEW_FAC_DS='fB66asHJITQ', COM_DS='nufVxEfy3Ps';
 
-// OLD facility — RDT Positive and Microscopy Positive, both age-disaggregated
+// OLD form — RDT Positive and Microscopy Positive, both age-disaggregated
 // on the same three age COCs (0-59m / 05-14y / 15+y).
 const OLD_DE = { rdt_pos:'p6zQLDFjSfd', mic_pos:'Sz13vbo2Qwh' };
-// NEW facility (2025_HF01) — RDT Positive only is split by 12 age bands x 2 sexes.
-const NEW_DE = { rdt_pos:'AwLklDAVtvq' };
-// NEW facility microscopy positives carry NO age/sex disaggregation (default category
-// combo), so this element is fetched as the DATA ELEMENT TOTAL and kept as a separate
-// UN-AGED series. It is added to the facility and overall TOTALS only — never to an
-// age group, because the age split does not exist in DHIS2.
-const NEW_MIC_DE = 'AMrdoWsiHMa';
+// NEW form (2025_HF01) — RDT Positive AND Microscopy Positive. Verified against the
+// DHIS2 metadata export: BOTH elements use category combo
+// Gender_Age_0-7d_11m_12-59m_05-09y_15y_20-49y_cohorts_65+y and share the SAME 24
+// category option combos (12 age bands x 2 sexes), so both are age-disaggregated and
+// both are fetched band by band.
+const NEW_DE = { rdt_pos:'AwLklDAVtvq', mic_pos:'AMrdoWsiHMa' };
+const NEW_MIC_DE = NEW_DE.mic_pos;   // kept for the metadata-name lookup below
 // COMMUNITY (HF04) — RDT only (CHWs do not perform microscopy)
 const COM_DE = { rdt_pos:'T7xH8GwWpEM' };
 
@@ -937,14 +972,15 @@ const NEW_BANDS = {
 // DELIBERATELY OMITTED: 1-11m — overlaps 1-5m + 06-11m.
 const NEW_OMIT = {'1-11m':['QFTvC3ZBlaE','NonO0cPD8ZS']};
 
-// ── MICROSCOPY IS HOSPITAL-ONLY ──────────────────────────────
-// Microscopy requires a laboratory. MCHP / CHP / CHC / Clinic do not have one,
-// so any microscopy value reported by them is implausible: it is SKIPPED
-// (never enters the data) and recorded in the Microscopy Exceptions report.
-const MICROSCOPY_TYPES = ['Hospital'];
+// ── MICROSCOPY IS EXCLUDED FOR MCHP AND CHP ──────────────────
+// MCHP and CHP have no laboratory and no microscope, so any microscopy value
+// they report is implausible: it is SKIPPED (never enters the data) and
+// recorded in the Wrong Reporting report. Hospital, CHC and Clinic MAY report
+// microscopy and their values are kept in full.
+const MIC_EXCL_TYPES = ['MCHP','CHP'];
 const isMicroscopy = (field)=>/(^|_)mic(_|$)/.test(field||'');
 
-// ── FORM CUTOVER — new facility form starts April 2026 ────────
+// ── FORM CUTOVER — new form starts April 2026 ────────
 const OLD_FORM_END   = 202603;
 const NEW_FORM_START = 202604;
 
@@ -959,19 +995,15 @@ const TESTS = [{k:'rdt',label:'RDT'},{k:'mic',label:'Microscopy'}];
 const ALL_VARS = SERIES.flatMap(x=>AGE_KEYS.map(k=>({
   field:`${x.src}_${x.test}_${k}`, age:k, ...x,
   label:`${x.label} ${AGE_LABEL[k]}`})));
-// UN-AGED series — new-form facility microscopy positives (element total, no age split).
-const MIC_UN_FIELD='fac_mic_un';
-ALL_VARS.push({field:MIC_UN_FIELD, age:null, src:'fac', test:'mic',
-  label:'Facility Microscopy Positive (un-aged)'});
-
 // ── FETCH MAP ────────────────────────────────────────────────
 const ALL_DX = [
-  // OLD facility — RDT Positive + Microscopy Positive, both on the three age COCs
+  // OLD form — RDT Positive + Microscopy Positive, both on the three age COCs
   ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.rdt_pos}.${OLD_COC[k]}`, field:`fac_rdt_${k}`, src:'old', band:AGE_LABEL[k]})),
   ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.mic_pos}.${OLD_COC[k]}`, field:`fac_mic_${k}`, src:'old', band:AGE_LABEL[k]})),
-  // NEW facility microscopy — element total, un-aged (no COC suffix)
-  {dxStr:NEW_MIC_DE, field:MIC_UN_FIELD, src:'new', band:'un-aged'},
-  // NEW facility — RDT Positive, sex collapsed
+  // NEW form — RDT Positive AND Microscopy Positive, sex collapsed.
+  // Both elements carry the SAME 24 category option combos (12 age bands x 2 sexes),
+  // confirmed against the DHIS2 metadata export, so both are fetched band by band and
+  // the Male/Female pair is summed into one age group.
   ...Object.entries(NEW_DE).flatMap(([tr,de])=>{
     const t=tr.replace('_pos','');
     return AGE_KEYS.flatMap(k=>Object.entries(NEW_BANDS[k]).flatMap(([band,[m,f]])=>[
@@ -1206,7 +1238,7 @@ async function startPipeline(){
   _sn=0;setProgress(2);setPill('Running…','rgba(255,193,7,.5)');
 
   addStep('s_ou',   'Fetch Level-5 facility registry with hierarchy');
-  addStep('s_fetch',`Fetch confirmed cases — old + new facility forms + community — ${cfgS} → ${cfgE} · ${years.length} year(s)`);
+  addStep('s_fetch',`Fetch confirmed cases — old + new form + community — ${cfgS} → ${cfgE} · ${years.length} year(s)`);
   addStep('s_wins', 'Detect outliers (Q3 + 3.0×IQR) — replace with facility-year median');
   addStep('s_build','Build output rows — facility, community, overall');
 
@@ -1219,14 +1251,14 @@ async function startPipeline(){
     log(`Org units — ${(ouL5.organisationUnits||[]).length.toLocaleString()} Level-5 PHUs`,'info');
     await tick();
 
-    // Level 6 = CHW / ETR posts. There are many thousands of them, so ONLY the parent
+    // Level 6 = iCCM posts. There are many thousands of them, so ONLY the parent
     // id is requested — pulling full ancestors here makes the response so large that
     // the request times out. All we need is the Level-5 parent to roll community up to.
     let ouL6={organisationUnits:[]};
     try{
       ouL6=await dhis2(`/api/organisationUnits.json?level=${L_COM}`
         +`&fields=id,parent[id]&paging=false&pageSize=100000`);
-      log(`Org units — ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level-6 CHW/ETR posts`,'info');
+      log(`Org units — ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level-6 iCCM posts`,'info');
     }catch(e){
       log(`Level-6 fetch failed (${e.message||e}) — continuing without community rollup`,'err');
     }
@@ -1253,18 +1285,18 @@ async function startPipeline(){
           districtName:rec.district,chiefdomName:rec.chiefdom};
       }
     });
-    // Level-6 CHW/ETR post -> its Level-5 PHU parent (for community rollup)
+    // Level-6 iCCM post -> its Level-5 PHU parent (for community rollup)
     (ouL6.organisationUnits||[]).forEach(ou=>{
       const pid=ou.parent&&ou.parent.id;
       if(pid)childToL5[ou.id]=pid;
     });
-    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level-6 CHW/ETR units rolled up to their PHU`);
+    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level-6 iCCM units rolled up to their PHU`);
     log(`Registry built — ${Object.keys(ST.ouHierarchy).length.toLocaleString()} facilities included`,'ok');
     if(ST.excluded.length){
       const byR={}; ST.excluded.forEach(e=>byR[e.reason]=(byR[e.reason]||0)+1);
       Object.entries(byR).forEach(([r,n])=>log(`  excluded ${n} — ${r}`,'warn'));
     }
-    log(`${Object.keys(childToL5).length.toLocaleString()} Level-6 CHW/ETR posts mapped to their PHU parent`,'info');
+    log(`${Object.keys(childToL5).length.toLocaleString()} Level-6 iCCM posts mapped to their PHU parent`,'info');
     await tick();
     setProgress(12);await sleep(30);
 
@@ -1284,7 +1316,7 @@ async function startPipeline(){
     ST.cutIgnoredVal={oldAfter:0,newBefore:0};
     ST.cutViol={};   // facilities breaking the form-window rule (recorded, not used)
     ST.comRollup=0;  // Level-6 community values rolled up to a Level-5 PHU
-    ST.micViol={};   // microscopy reported by a non-Hospital (skipped, recorded)
+    ST.micViol={};   // microscopy reported by an MCHP or CHP (skipped, recorded)
     ST.micSkipped=0; ST.micSkippedVal=0;
     let totalRows=0;
     for(let ci=0;ci<ST.years.length;ci++){
@@ -1322,7 +1354,7 @@ async function startPipeline(){
         const val=parseFloat(rawVal)||0;if(!val)return;
         const map=DX_MAP[dxStr];if(!map)return;
         // ── LEVEL-6 ROLLUP ────────────────────────────────────
-        // Community (HF04) is reported by CHW/ETR posts at Level 6. Those values are
+        // Community (HF04) is reported by iCCM posts at Level 6. Those values are
         // rolled up to their Level-5 PHU parent. Facility forms are never reported at
         // Level 6, so any Level-6 row for a facility DE is ignored.
         const isL6=!!childToL5[ouId];
@@ -1334,8 +1366,8 @@ async function startPipeline(){
         const yr2=parseInt(period.slice(0,4));
         const mo=parseInt(period.slice(4,6))-1; // 0-indexed
 
-        // ── MICROSCOPY AT A NON-HOSPITAL: skip and record ──
-        if(isMicroscopy(map.field) && !MICROSCOPY_TYPES.includes(ou.hfType)){
+        // ── MICROSCOPY AT AN MCHP OR CHP: skip and record ──
+        if(isMicroscopy(map.field) && MIC_EXCL_TYPES.includes(ou.hfType)){
           const mk=`${effectiveId}|${period}|${map.field}`;
           if(!ST.micViol[mk])ST.micViol[mk]={
             ou_id:effectiveId, facility:ou.name, hfType:ou.hfType,
@@ -1343,7 +1375,7 @@ async function startPipeline(){
             ownership:getOwnership(ou.chiefdomName,ou.name,effectiveId),
             period, year:yr2, month:mo+1, month_name:MONTH_NAMES[mo],
             series:(ALL_VARS.find(v=>v.field===map.field)||{}).label||map.field,
-            form: map.src==='old'?'Old facility form':'New facility form (2025_HF01)',
+            form: map.src==='old'?'Old form':'New form (2025_HF01)',
             value:0 };
           ST.micViol[mk].value+=val;
           ST.micSkipped++; ST.micSkippedVal+=val;
@@ -1370,7 +1402,7 @@ async function startPipeline(){
             chiefdom:ou.chiefdomName, district:ou.districtName,
             ownership:getOwnership(ou.chiefdomName,ou.name,effectiveId),
             period, year:yr2, month:mo+1, month_name:MONTH_NAMES[mo],
-            form: map.src==='old' ? 'Old facility form' : 'New facility form (2025_HF01)',
+            form: map.src==='old' ? 'Old form' : 'New form (2025_HF01)',
             rule: kind, u5:0, c514:0, a15:0, total:0 };
           const v=ST.cutViol[vk];
           const ak=(DX_MAP[dxStr]||{}).field.replace(/^fac_|^com_/,'');
@@ -1402,11 +1434,11 @@ async function startPipeline(){
     }
     setStep('s_fetch','done',`${totalRows.toLocaleString()} data points fetched`);
     log(`Fetch complete — ${totalRows.toLocaleString()} values accepted`,'ok');
-    log(`Community rollup — ${(ST.comRollup||0).toLocaleString()} Level-6 CHW/ETR values summed into their PHU`,'hl');
+    log(`Community rollup — ${(ST.comRollup||0).toLocaleString()} Level-6 iCCM values summed into their PHU`,'hl');
     if(ST.micSkipped)
-      log(`Microscopy at non-hospital — SKIPPED ${ST.micSkipped.toLocaleString()} record(s) from CHC/CHP/MCHP/Clinic (${ST.micSkippedVal.toLocaleString()} cases). See Microscopy Exceptions.`,'warn');
+      log(`Microscopy at MCHP/CHP — SKIPPED ${ST.micSkipped.toLocaleString()} record(s) (${ST.micSkippedVal.toLocaleString()} cases). See Wrong Reporting.`,'warn');
     else
-      log('Microscopy — no CHC/CHP/MCHP/Clinic reported it','ok');
+      log('Microscopy — no MCHP or CHP reported it','ok');
     const _nv=Object.keys(ST.cutViol||{}).length;
     if(_nv)log(`Form cutover — ${_nv.toLocaleString()} facility-month(s) reported on the wrong form (ignored)`,'warn');
     await tick();
@@ -1534,17 +1566,14 @@ async function startPipeline(){
           // ── Totals across age groups ──
           const sumOf=(pre)=>{const v=AGE_KEYS.map(k=>row[`${pre}_${k}`]);
             return v.some(x=>x!==null)?v.reduce((a,b)=>a+(b||0),0):null;};
-          // The un-aged new-form microscopy total enters the TOTALS only — it cannot be
-          // attributed to an age group because DHIS2 does not disaggregate it.
-          const micUn = row[MIC_UN_FIELD];
-          const addUn = (t)=>(t!==null||(micUn!==null&&micUn!==undefined))
-            ? ((t||0)+(micUn||0)) : null;
+          // Microscopy is age-disaggregated on BOTH forms, so every total is simply the
+          // sum of its three age groups. There is no un-aged residual to carry.
           row.fac_rdt_total  = sumOf('fac_rdt');
-          row.fac_mic_total  = addUn(sumOf('fac_mic'));
+          row.fac_mic_total  = sumOf('fac_mic');
           row.com_rdt_total  = sumOf('com_rdt');
-          row.fac_conf_total = addUn(sumOf('fac_conf'));
+          row.fac_conf_total = sumOf('fac_conf');
           row.com_conf_total = sumOf('com_conf');
-          row.all_conf_total = addUn(sumOf('all_conf'));
+          row.all_conf_total = sumOf('all_conf');
           row.all_rdt_total  = sumOf('all_rdt');
 
           // Headline
@@ -1562,7 +1591,7 @@ async function startPipeline(){
     const nCom=ST.rows.filter(r=>(r.com_total||0)>0).length;
     log(`Rows built — ${ST.rows.length.toLocaleString()} facility-months across ${nAct.toLocaleString()} active facilities`,'ok');
     log(`  ${nRep.toLocaleString()} reported · ${(ST.rows.length-nRep).toLocaleString()} reporting gaps (Reported = No)`,'dim');
-    log(`  ${nCom.toLocaleString()} facility-month(s) have community (CHW/ETR) cases`,'hl');
+    log(`  ${nCom.toLocaleString()} facility-month(s) have community iCCM cases`,'hl');
     await tick();
     setProgress(95);await sleep(30);
 
@@ -1635,25 +1664,46 @@ async function startPipeline(){
       const m={};
       ST.rows.forEach(r=>{
         const g=keyFn(r); if(!g)return;
-        if(!m[g])m[g]={fac:0,com:0,all:0,pos:0,facs:new Set()};
+        if(!m[g])m[g]={fac:0,com:0,all:0,pos:0,mic:0,facs:new Set()};
         m[g].fac+=r.fac_conf_total||0; m[g].com+=r.com_conf_total||0;
-        m[g].all+=r.all_conf_total||0; m[g].pos+=r.all_rdt_total||0;
+        m[g].all+=r.all_conf_total||0;
+        m[g].pos+=r.all_rdt_total||0;   // RDT positives, facility + community
+        m[g].mic+=r.fac_mic_total||0;   // Microscopy positives, facility only
         if(r.reported==='Yes')m[g].facs.add(r.ou_id);
       });
       return m;
     };
-    const detTable=(title,m,firstCol)=>{
-      const rows=Object.entries(m).sort((a,b)=>b[1].all-a[1].all).map(([g,v])=>{
-        const pf=v.all?(v.fac/v.all*100).toFixed(1):'0.0';
-        const pc=v.all?(v.com/v.all*100).toFixed(1):'0.0';
-        return `<tr><td>${g}</td><td style="text-align:right;">${v.facs.size.toLocaleString()}</td>`+
-          `<td style="text-align:right;color:#2c6793;font-weight:700;">${v.fac.toLocaleString()}</td>`+
-          `<td style="text-align:right;color:#2c6793;">${pf}%</td>`+
-          `<td style="text-align:right;color:#15803d;font-weight:700;">${v.com.toLocaleString()}</td>`+
-          `<td style="text-align:right;color:#15803d;">${pc}%</td>`+
-          `<td style="text-align:right;font-weight:800;">${v.all.toLocaleString()}</td>`+
-          `<td style="text-align:right;color:#dc2626;">${v.pos.toLocaleString()}</td></tr>`;
-      }).join('');
+    // One row of the detail table. `tot` styles it as the National / grand-total row.
+    const detRow=(g,v,tot)=>{
+      const pf=v.all?(v.fac/v.all*100).toFixed(1):'0.0';
+      const pc=v.all?(v.com/v.all*100).toFixed(1):'0.0';
+      const pm=v.all?(v.mic/v.all*100).toFixed(1):'0.0';
+      const bg=tot?'background:#fff8e6;border-top:2px solid #8a6a00;':'';
+      const w =tot?'font-weight:800;':'';
+      return `<tr style="${bg}"><td style="${w}">${g}</td>`+
+        `<td style="text-align:right;${w}">${v.facs.size.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#2c6793;font-weight:700;">${v.fac.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#2c6793;">${pf}%</td>`+
+        `<td style="text-align:right;color:#15803d;font-weight:700;">${v.com.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#15803d;">${pc}%</td>`+
+        `<td style="text-align:right;font-weight:800;">${v.all.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#dc2626;">${v.pos.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#8b5cf6;font-weight:700;">${v.mic.toLocaleString()}</td>`+
+        `<td style="text-align:right;color:#8b5cf6;">${pm}%</td></tr>`;
+    };
+    // Grand total across every group in the table (facilities de-duplicated).
+    const detTotal=(m)=>{
+      const t={fac:0,com:0,all:0,pos:0,mic:0,facs:new Set()};
+      Object.values(m).forEach(v=>{
+        t.fac+=v.fac; t.com+=v.com; t.all+=v.all; t.pos+=v.pos; t.mic+=v.mic;
+        v.facs.forEach(id=>t.facs.add(id));
+      });
+      return t;
+    };
+    const detTable=(title,m,firstCol,totalLabel)=>{
+      let rows=Object.entries(m).sort((a,b)=>b[1].all-a[1].all)
+        .map(([g,v])=>detRow(g,v,false)).join('');
+      if(totalLabel)rows+=detRow(totalLabel,detTotal(m),true);
       return `<div style="margin-bottom:18px;">
         <div style="font-size:13px;font-weight:700;color:var(--blue-dk);margin-bottom:6px;">${title}</div>
         <div class="data-table-wrap"><table class="data-table">
@@ -1663,7 +1713,9 @@ async function startPipeline(){
             <th style="text-align:right;color:#15803d;">At community</th>
             <th style="text-align:right;color:#15803d;">% at community</th>
             <th style="text-align:right;">Confirmed</th>
-            <th style="text-align:right;color:#dc2626;">RDT only</th></tr></thead>
+            <th style="text-align:right;color:#dc2626;">RDT</th>
+            <th style="text-align:right;color:#8b5cf6;">Microscopy</th>
+            <th style="text-align:right;color:#8b5cf6;">% microscopy</th></tr></thead>
           <tbody>${rows}</tbody></table></div></div>`;
     };
     // Activity + form transition summary
@@ -1673,13 +1725,13 @@ async function startPipeline(){
       `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;">
          <div class="stat-pill ok">Active: ${actv.active.length.toLocaleString()}</div>
          <div class="stat-pill warn">Inactive: ${actv.inactive.length.toLocaleString()}</div>
-         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level-6 CHW/ETR values rolled up</div>
+         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level-6 iCCM values rolled up</div>
          ${nViol?`<div class="stat-pill warn" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">${nViol.toLocaleString()} form-rule violation(s) ignored</div>`
                 :`<div class="stat-pill ok">No form-rule violations</div>`}
        </div>`+
       detTable('Confirmed Cases by Ownership', byGroup(r=>r.ownership), 'Ownership')+
       detTable('Confirmed Cases by Facility Type', byGroup(r=>r.hfType), 'Facility Type')+
-      detTable('Confirmed Cases by District', byGroup(r=>r.district), 'District')+
+      detTable('Confirmed Cases by District', byGroup(r=>r.district), 'District', 'NATIONAL')+
       detTable('Confirmed Cases by Year', byGroup(r=>r.year), 'Year');
 
     document.getElementById('summaryPanels').innerHTML=
@@ -1689,12 +1741,13 @@ async function startPipeline(){
             `RDT only — CHWs do not perform microscopy.<br>${(ST.comRollup||0).toLocaleString()} Level-6 values rolled up. Community 02-59m treated as 0-59m.`)+
       panel('OVERALL CONFIRMED CASES','#8a6a00','#fff8e6',allTotal,ST.rows.filter(r=>r.reported==='Yes').length,
             [...new Set(ST.rows.filter(r=>r.reported==='Yes').map(r=>r.ou_id))].length,'all',null,
-            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Facility microscopy is age-disaggregated up to March 2026 (old form) and un-aged from April 2026 (new form). The un-aged part is in the totals only, never in an age group.</span>`);
+            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Facility microscopy is age-disaggregated on both forms, so every age group and every total carries its full RDT plus microscopy component.</span>`);
 
     buildPreview();
     renderExcluded();
     renderFormCoverage();
     renderActivity();
+    renderMicViol();   // Wrong Reporting tab
     renderComparative();
     renderReporting();
     renderBiannual();
@@ -1708,7 +1761,7 @@ async function startPipeline(){
     const gr=ST.rows.reduce((a,r)=>a+(r.all_rdt_total||0),0);
     const gm=ST.rows.reduce((a,r)=>a+(r.fac_mic_total||0),0);
     log(`Confirmed — at facility ${gf.toLocaleString()} + at community ${gc.toLocaleString()} = ${gt.toLocaleString()}`,'hl');
-    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (old form by age to Mar-2026 · new form un-aged from Apr-2026)`,'hl');
+    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (age-disaggregated on both forms)`,'hl');
     log('Analyses rendered. Done.','ok');
     logStop();
 
@@ -2028,7 +2081,7 @@ function showCfgTab(t){
   });
 }
 function showTab(t){
-  ['summary','comparative','download','analysis'].forEach(n=>{
+  ['summary','comparative','download','analysis','wrong'].forEach(n=>{
     document.getElementById('tab'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
     document.getElementById('tabBtn'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
   });
@@ -2086,13 +2139,13 @@ function methodologyRows(){
     ['Source','DHIS2 HMIS — analytics API, Level-5 (PHU) facilities'],
     [],
     ['DATA ELEMENTS EXTRACTED — CONFIRMED CASES (POSITIVES ONLY)'],
-    ['OLD FACILITY FORM','HF01 Outpatient morbidity  ·  ij1VNJwxKCh'],
+    ['OLD FORM','HF01 Outpatient morbidity  ·  ij1VNJwxKCh'],
     ['  RDT Positive','p6zQLDFjSfd  ·  ages 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
     ['  Microscopy Positive','Sz13vbo2Qwh  ·  same age COCs: 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
     [],
-    ['NEW FACILITY FORM','2025_HF01  ·  fB66asHJITQ  ·  RDT split by 12 age bands x 2 sexes (sex collapsed on summation)'],
+    ['NEW FORM','2025_HF01  ·  fB66asHJITQ  ·  RDT split by 12 age bands x 2 sexes (sex collapsed on summation)'],
     ['  RDT Positive','AwLklDAVtvq'],
-    ['  Microscopy Positive','AMrdoWsiHMa  ·  NO age/sex disaggregation. Fetched as the DATA ELEMENT TOTAL and kept as an un-aged series (Facility Microscopy Positive (un-aged)). Added to facility and overall TOTALS only, never to an age group.'],
+    ['  Microscopy Positive','AMrdoWsiHMa  ·  SAME 24 category option combos as the RDT element (12 age bands x 2 sexes), verified against the DHIS2 metadata export. Fetched band by band; the Male/Female pair per band is summed and the bands are folded into the three reporting age groups.'],
     ['  -> 0-59m','0-7d (M X1fJr7y51lU / F ajwU95HMY2p); 08-28d (M QVABDpl0H4k / F wOsJkGpglpx); 1-5m (M EBG5ZbRgj46 / F z0s3iTdlbsd); 06-11m (M KIJHMZSahcW / F aCwYAbE3GHL); 12-59m (M CcMrNXzzVHL / F YHJ1j33ZMs5)'],
     ['  -> 05-14y','05-09y (M eGhQxrBx3sy / F i4MRLwVtIGa); 10-14y (M oZ7YgBgNGRd / F UI2y7qIOkvz)'],
     ['  -> 15+y','15-19y (M OzqClEP84wm / F vshWQEGCCTp); 20-44y (M ztWgelWML6b / F fLgy2fpBWrb); 45-59y (M zqNF6erLupJ / F eaWE8YjN4j0); 60+y (M hGJdT29m3P6 / F g2NiIyG3PLj)'],
@@ -2100,23 +2153,23 @@ function methodologyRows(){
     ['COMMUNITY','HF04 Community Based Services  ·  nufVxEfy3Ps  ·  RDT ONLY (CHWs do not perform microscopy)'],
     ['  RDT Positive','T7xH8GwWpEM  ·  ages 02-59m NtjMVmRfvHH / 05-14y qDXW7WMLT99 / 15+y mdjRPpvLKdu'],
     ['  02-59m treated as 0-59m','The community under-5 band is 2-59 months (CHWs do not treat neonates). It is TREATED AS 0-59m so facility and community align.'],
-    ['  LEVEL-6 ROLLUP','Community cases are reported by CHW/ETR posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level-6 value is rolled up to its Level-5 PHU parent.'],
+    ['  LEVEL-6 ROLLUP','Community cases are reported by iCCM posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level-6 value is rolled up to its Level-5 PHU parent.'],
     [],
     ['COMPUTATION — Confirmed at facility <age>','RDT Positive <age> + Microscopy Positive <age>  (age-disaggregated microscopy exists up to March 2026)'],
-    ['COMPUTATION — Confirmed at facility TOTAL','sum of the three age groups + the un-aged new-form microscopy total'],
-    ['COMPUTATION — Confirmed at community','RDT Positive (CHW / ETR)'],
+    ['COMPUTATION — Confirmed at facility TOTAL','sum of the three age groups'],
+    ['COMPUTATION — Confirmed at community','RDT Positive, iCCM'],
     ['COMPUTATION — Confirmed overall','at facility + at community'],
     ['COMPUTATION — Confirmed RDT only','facility RDT Positive + community RDT Positive'],
-    ['** SERIES BREAK **','The microscopy component changes shape at the cutover: age-disaggregated up to March 2026 (old form Sz13vbo2Qwh) and un-aged from April 2026 (new form AMrdoWsiHMa). Per-age RDT + Microscopy therefore loses its microscopy component after March 2026, while the row and column TOTALS retain it. The RDT-only series is a single method throughout and is the cleaner series for any trend spanning April 2026. Both are included in every export.'],
-    ['Series cleaned','10 series independently: facility RDT+, facility Microscopy+ and community RDT+ across 3 age groups, plus the un-aged new-form facility microscopy total.'],
+    ['** CUTOVER NOTE **','Microscopy is age-disaggregated on BOTH forms (old Sz13vbo2Qwh on three age COCs; new AMrdoWsiHMa on the same 24 age/sex COCs as RDT), so the microscopy component does not change shape at the cutover. The two forms do use different age bands and different data capture, so a step at April 2026 should still be checked against reporting before it is read as transmission. A RDT-only series is exported alongside for that comparison.'],
+    ['Series cleaned','9 series independently: facility RDT+, facility Microscopy+ and community RDT+, each across the 3 age groups.'],
     [],
-    ['MICROSCOPY IS HOSPITAL-ONLY','Microscopy requires a laboratory. Only Hospitals may report it. Any microscopy value reported by an MCHP, CHP, CHC or Clinic is SKIPPED - it never enters the data, the analyses or any export. Every skipped record is listed in the Microscopy Exceptions report (facility, type, month, series, value).'],
+    ['MICROSCOPY EXCLUDED FOR MCHP AND CHP','Microscopy needs a microscope and a laboratory. MCHP and CHP have neither, so any microscopy value they report is SKIPPED - it never enters the data, the analyses or any export. Hospital, CHC and Clinic may report microscopy and their values are kept in full. Every skipped record is listed in the Wrong Reporting tab.'],
     [],
     ['FORM CUTOVER — APRIL 2026'],
-    ['OLD FACILITY FORM','Used up to and including March 2026. Any value AFTER March 2026 is IGNORED.'],
-    ['NEW FACILITY FORM','Used from April 2026 onwards. Any value BEFORE April 2026 is IGNORED.'],
+    ['OLD FORM','Used up to and including March 2026. Any value AFTER March 2026 is IGNORED.'],
+    ['NEW FORM','Used from April 2026 onwards. Any value BEFORE April 2026 is IGNORED.'],
     ['COMMUNITY','ALL periods. HF04 is a separate dataset, unaffected by the HF01 form change.'],
-    ['Org unit levels','Level 5 = PHU (facility, unit of extraction)  ·  Level 6 = CHW/ETR community posts (rolled up to Level 5)  ·  Level 4 = Chiefdom  ·  Level 2 = District'],
+    ['Org unit levels','Level 5 = PHU (facility, unit of extraction)  ·  Level 6 = iCCM community posts (rolled up to Level 5)  ·  Level 4 = Chiefdom  ·  Level 2 = District'],
     ['Note','Each age group is a separate variable throughout: each gets its own upper bound, outlier flag and correction.'],[],
     ['1. FACILITY REGISTRY'],
     ['Included types','Hospital, Clinic, CHC, CHP, MCHP'],
@@ -2126,6 +2179,8 @@ function methodologyRows(){
     ['Type spelling','Misspellings normalised (e.g. "Climic" → "Clinic"). "Home" (nursing homes) folded into Clinic.'],[],
     ['2. OWNERSHIP (Public / Private)'],
     ['Match order','1) DHIS2 OU ID (exact)  2) Chiefdom (Level 4) + Facility (Level 5)  3) Facility name  4) Unknown'],
+    ['In the master list but not in DHIS2','Reference list only. No DHIS2 org unit means no data to extract, so NO calculation is performed for these facilities: they appear in no total, no denominator, no reporting rate and no case export. They are listed by name in the Ownership Reconciliation report so the master list can be corrected at source.'],
+    ['In DHIS2 but not in the master list','Ownership = Unknown. The facility is STILL fetched and its data STILL extracted and counted in every other breakdown and in the national total. Unknown is reported as a third ownership class beside Public and Private, so Public + Private + Unknown reconciles to the total. Such facilities appear as Unmatched in the Ownership Reconciliation report.'],
     ['Source','NMCP PHU ownership master list'],[],
     ['3. FACILITY ACTIVITY'],
     ['Active','Reported at least one test during the selected period.'],
@@ -2151,7 +2206,7 @@ function methodologyRows(){
     ['Corrected','Value after correction. Equals Original when not an outlier; equals the facility-year MEDIAN (whole number) when an outlier was replaced.'],
     ['Reported','Yes if the facility reported confirmed cases that month; No if the month is a reporting gap.'],
     ['Source Form','Which facility form the month came from: Old form (up to March 2026) or New form / 2025_HF01 (from April 2026).'],
-    ['Facility Total / Community Total','Sum across the three age groups for that source. The Facility Total also includes the un-aged new-form microscopy total, so it can exceed the sum of the three facility age groups from April 2026.'],
+    ['Facility Total / Community Total','Sum across the three age groups for that source.'],
     ['Overall <age>','Facility <age> + Community <age> (corrected values).'],
     ['Confirmed series','Confirmed = positives only. Two series are produced: RDT + Microscopy (all methods) and RDT only (single method, comparable across April 2026).'],[],
     ['7. PERIOD GRID'],
@@ -2210,9 +2265,9 @@ function renderFormCoverage(){
 }
 
 
-// ── Microscopy Exceptions (display only — values are SKIPPED) ──
-// Microscopy needs a laboratory. Any microscopy value reported by an
-// MCHP / CHP / CHC / Clinic is implausible and is excluded from the data.
+// ── Wrong Reporting (display only — values are SKIPPED) ──
+// Microscopy needs a microscope and a laboratory. Any microscopy value
+// reported by an MCHP or a CHP is implausible and is excluded from the data.
 function getMicViol(){
   const list=Object.values(ST.micViol||{});
   list.sort((a,b)=>b.value-a.value||(a.district||'').localeCompare(b.district||''));
@@ -2243,8 +2298,8 @@ function downloadMicViol(fmt){
   if(fmt==='xlsx'){
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
-      ['MICROSCOPY REPORTED BY NON-HOSPITAL FACILITIES — SKIPPED'],[],
-      ['Rule','Microscopy requires a laboratory. Only Hospitals may report it.'],
+      ['WRONG REPORTING — MICROSCOPY REPORTED BY AN MCHP OR CHP — SKIPPED'],[],
+      ['Rule','Microscopy needs a microscope and a laboratory. MCHP and CHP have neither, so they may not report it. Hospital, CHC and Clinic may.'],
       ['Action','These values are EXCLUDED from all data, analyses and exports.'],[],
       ['Facility type','Value skipped'],
       ...Object.entries(R.byType).sort((a,b)=>b[1]-a[1]),
@@ -2252,25 +2307,25 @@ function downloadMicViol(fmt){
     ]),'Summary');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([MICFAC_HDR,...micFacRows()]),'By Facility');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([MIC_HDR,...micRows()]),'All Records');
-    XLSX.writeFile(wb,`NMCP_Microscopy_Exceptions_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;
+    XLSX.writeFile(wb,`NMCP_Wrong_Reporting_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;
   }
   const rows=micRows();
   const csv=[MIC_HDR.join(','),...rows.map(r=>r.map(c=>`"${c??''}"`).join(','))].join('\n');
   const a=document.createElement('a');
-  a.download=`NMCP_Microscopy_Exceptions_${ST.cfgStart}_${ST.cfgEnd}.csv`;
+  a.download=`NMCP_Wrong_Reporting_${ST.cfgStart}_${ST.cfgEnd}.csv`;
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
 }
 function renderMicViol(){
   const R=getMicViol();
   const box=document.getElementById('micBox');
   if(!R.list.length){
-    box.innerHTML='<div class="alert" style="margin:10px 0;background:#d4edda;border-color:#28a745;color:#155724;"><strong>None.</strong> No MCHP, CHP, CHC or Clinic reported microscopy.</div>';
+    box.innerHTML='<div class="alert" style="margin:10px 0;background:#d4edda;border-color:#28a745;color:#155724;"><strong>None.</strong> No MCHP or CHP reported microscopy in the selected period.</div>';
     return;
   }
   box.innerHTML=`
     <div class="alert alert-err" style="margin:10px 0;">
-      <strong>${R.list.length.toLocaleString()} microscopy record(s) from ${R.nFac.toLocaleString()} non-hospital facilities were SKIPPED</strong> — ${R.total.toLocaleString()} cases excluded from all data and analyses.<br>
-      Microscopy requires a laboratory; MCHP, CHP, CHC and Clinic cannot perform it. These entries are almost certainly data-entry errors (most likely RDT recorded in the microscopy column).
+      <strong>${R.list.length.toLocaleString()} microscopy record(s) from ${R.nFac.toLocaleString()} MCHP / CHP facilities were SKIPPED</strong> — ${R.total.toLocaleString()} cases excluded from all data and analyses.<br>
+      An MCHP or a CHP has no microscope and no laboratory, so it cannot perform microscopy. These entries are almost certainly data-entry errors, most likely an RDT result recorded in the microscopy column.
     </div>
     <div class="m-calc" style="margin-bottom:8px;">
       ${Object.entries(R.byType).sort((a,b)=>b[1]-a[1]).map(([t,v])=>
@@ -2439,7 +2494,9 @@ function getReporting(){
     perMap[p].type[t].add(r.ou_id);
   });
   const periods=Object.values(perMap).sort((a,b)=>a.period.localeCompare(b.period));
-  const ownKeys=['Public','Private'].filter(k=>denomOwn[k]);
+  // Unknown = in DHIS2 but not in the ownership master list. It is a real class
+  // and is charted alongside Public and Private, never dropped.
+  const ownKeys=['Public','Private','Unknown'].filter(k=>denomOwn[k]);
   const typeKeys=Object.keys(denomType).sort((a,b)=>denomType[b]-denomType[a]);
   return {periods,denomOwn,denomType,ownKeys,typeKeys};
 }
@@ -2499,7 +2556,7 @@ function repRows(dim){
 // ── REPORTING RATE — Facility vs Community vs Overall ────────
 // A facility is counted as REPORTING in a month if that source has a value.
 //   Facility  : any of the 3 facility age groups reported
-//   Community : any of the 3 community age groups reported (CHW/ETR, rolled up)
+//   Community : any of the 3 community age groups reported (iCCM, rolled up)
 //   Overall   : either source reported
 // Denominator = ACTIVE facilities (reported at least once in the period) for that source.
 function getSourceActivity(){
@@ -2619,7 +2676,7 @@ function renderReporting(){
     document.getElementById('repSrcBody').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
   }
   // 2. By age group — one chart per source
-  [['fac','repAgeFac','at Facility'],['com','repAgeCom','at Community (CHW / ETR)'],['all','repAgeAll','Overall']].forEach(([src,id,lab])=>{
+  [['fac','repAgeFac','at Facility'],['com','repAgeCom','at Community iCCM'],['all','repAgeAll','Overall']].forEach(([src,id,lab])=>{
     const {hdr,rows,periods,keys,denom,get}=rateRows(src);
     document.getElementById(id+'Chart').innerHTML=
       renderRateChart(periods,keys,denom,(p,k,d)=>d>0?(get(p,k)/d*100):0,null,
@@ -2867,22 +2924,22 @@ function renderComparative(){
   const srcSel=(document.getElementById('cmpLocSrc')||{}).value||'total';
   const srcLab={all_conf_total:'(Overall)',fac_conf_total:'at Facility',com_conf_total:'at Community',all_rdt_total:'(RDT only)'}[srcSel]||'(Overall)';
   paintCmp('cmpFac', CMP.periods, CMP.facAge,
-    {title:'Confirmed Malaria Cases at Facility — by Age Group', subtitle:'RDT + Microscopy positives by age · Old form to Mar 2026 · New HF01 form from Apr 2026 (new-form microscopy is un-aged, so it sits in the totals only)',
+    {title:'Confirmed Malaria Cases at Facility — by Age Group', subtitle:'RDT + Microscopy positives by age · Old form to Mar 2026 · New HF01 form from Apr 2026 · microscopy age-disaggregated throughout',
      xlab:'Month', ylab:'Confirmed cases at facility'});
   paintCmp('cmpCom', CMP.periods, CMP.comAge,
-    {title:'Confirmed Malaria Cases at Community — by Age Group', subtitle:'RDT positives only · CHW / ETR, rolled up from Level-6 posts',
+    {title:'Confirmed Malaria Cases at Community — by Age Group', subtitle:'RDT positives only · iCCM, rolled up from Level-6 posts',
      xlab:'Month', ylab:'Confirmed cases at community'});
   paintCmp('cmpAgg', CMP.periods, CMP.agg,
     {title:'All Ages — Confirmed Cases at Facility vs at Community', subtitle:'Age groups summed, both sources on the same scale',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpTest', CMP.periods, CMP.byTest,
-    {title:'Facility Confirmed Cases — RDT vs Microscopy', subtitle:'Positives by diagnostic method · microscopy by age to Mar 2026, un-aged element total from Apr 2026',
+    {title:'Facility Confirmed Cases — RDT vs Microscopy', subtitle:'Positives by diagnostic method · microscopy age-disaggregated on both forms',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpOv',  CMP.periods, CMP.ovAge,
     {title:'Overall Confirmed Malaria Cases — by Age Group', subtitle:'Facility + community',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   document.getElementById('cmpTprChart').innerHTML=renderAbsChart(CMP.periods,CMP.byMethod,
-    {title:'Series Break Check — RDT only vs RDT + Microscopy', subtitle:'The microscopy component is age-disaggregated to Mar 2026 and un-aged from Apr 2026. Use the RDT-only line for trends spanning the cutover.',
+    {title:'Series Break Check — RDT only vs RDT + Microscopy', subtitle:'Microscopy is age-disaggregated on both forms. The RDT-only line for trends spanning the cutover.',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   {
     const {hdr,rows}=cmpTable(CMP.periods,CMP.byMethod);
@@ -2963,11 +3020,12 @@ function getBiannual(){
     public:a.Public, private:a.Private, unknown:a.Unknown, total:a.total,
     pctPublic:a.total?(a.Public/a.total*100):0,
     pctPrivate:a.total?(a.Private/a.total*100):0,
+    pctUnknown:a.total?(a.Unknown/a.total*100):0,
     facPublic:a.facPub.size, facPrivate:a.facPri.size, facUnknown:a.facUnk.size
   }));
 }
-const BI_HDR=['Period','Year','Half','Public Confirmed','Private Confirmed','Total Confirmed','% Public','% Private','Public Active','Private Active'];
-function biRows(){return getBiannual().map(d=>[d.period,d.year,'H'+d.half,d.public,d.private,d.total,d.pctPublic.toFixed(1),d.pctPrivate.toFixed(1),d.facPublic,d.facPrivate]);}
+const BI_HDR=['Period','Year','Half','Public Confirmed','Private Confirmed','In DHIS2 Not in Master Confirmed','Total Confirmed','% Public','% Private','% In DHIS2 Not in Master','Public Active','Private Active','In DHIS2 Not in Master Active'];
+function biRows(){return getBiannual().map(d=>[d.period,d.year,'H'+d.half,d.public,d.private,d.unknown,d.total,d.pctPublic.toFixed(1),d.pctPrivate.toFixed(1),d.pctUnknown.toFixed(1),d.facPublic,d.facPrivate,d.facUnknown]);}
 function downloadBiannual(fmt){
   const rows=biRows();
   if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
@@ -3017,11 +3075,19 @@ function renderBiannualChart(data,opts){
 function renderBiannual(){
   const data=getBiannual();
   document.getElementById('biHead').innerHTML=`<tr>${BI_HDR.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  // Cell order MUST match BI_HDR exactly — 13 columns.
   document.getElementById('biBody').innerHTML=data.map(d=>
     `<tr><td>${d.period}</td><td>${d.year}</td><td>H${d.half}</td>`+
-    `<td>${d.public.toLocaleString()}</td><td>${d.private.toLocaleString()}</td>`+
-    `<td><strong>${d.total.toLocaleString()}</strong></td>`+
-    `<td>${d.pctPublic.toFixed(1)}%</td><td>${d.pctPrivate.toFixed(1)}%</td><td>${d.facPublic}</td><td>${d.facPrivate}</td></tr>`).join('');
+    `<td style="text-align:right;color:#2c6793;font-weight:700;">${d.public.toLocaleString()}</td>`+
+    `<td style="text-align:right;color:#8a6a00;font-weight:700;">${d.private.toLocaleString()}</td>`+
+    `<td style="text-align:right;color:#9aa7b2;font-weight:700;">${d.unknown.toLocaleString()}</td>`+
+    `<td style="text-align:right;"><strong>${d.total.toLocaleString()}</strong></td>`+
+    `<td style="text-align:right;color:#2c6793;">${d.pctPublic.toFixed(1)}%</td>`+
+    `<td style="text-align:right;color:#8a6a00;">${d.pctPrivate.toFixed(1)}%</td>`+
+    `<td style="text-align:right;color:#9aa7b2;">${d.pctUnknown.toFixed(1)}%</td>`+
+    `<td style="text-align:right;">${d.facPublic.toLocaleString()}</td>`+
+    `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
+    `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('biChart').innerHTML=renderBiannualChart(data,
     {title:'Confirmed Cases — Public vs Private (Bi-annual)', subtitle:'H1 = Jan–Jun · H2 = Jul–Dec',
      xlab:'Half-year', ylab:'Confirmed malaria cases'});
@@ -3045,11 +3111,12 @@ function getYearly(){
     public:a.Public, private:a.Private, unknown:a.Unknown, total:a.total,
     pctPublic:a.total?(a.Public/a.total*100):0,
     pctPrivate:a.total?(a.Private/a.total*100):0,
+    pctUnknown:a.total?(a.Unknown/a.total*100):0,
     facPublic:a.facPub.size, facPrivate:a.facPri.size, facUnknown:a.facUnk.size
   }));
 }
-const YR_HDR=['Year','Public Confirmed','Private Confirmed','Total Confirmed','% Public','% Private','Public Active','Private Active'];
-function yrRows(){return getYearly().map(d=>[d.year,d.public,d.private,d.total,d.pctPublic.toFixed(1),d.pctPrivate.toFixed(1),d.facPublic,d.facPrivate]);}
+const YR_HDR=['Year','Public Confirmed','Private Confirmed','In DHIS2 Not in Master Confirmed','Total Confirmed','% Public','% Private','% In DHIS2 Not in Master','Public Active','Private Active','In DHIS2 Not in Master Active'];
+function yrRows(){return getYearly().map(d=>[d.year,d.public,d.private,d.unknown,d.total,d.pctPublic.toFixed(1),d.pctPrivate.toFixed(1),d.pctUnknown.toFixed(1),d.facPublic,d.facPrivate,d.facUnknown]);}
 function downloadYearly(fmt){
   const rows=yrRows();
   if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
@@ -3063,12 +3130,19 @@ function downloadYearly(fmt){
 function renderYearly(){
   const data=getYearly();
   document.getElementById('yrHead').innerHTML=`<tr>${YR_HDR.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  // Cell order MUST match YR_HDR exactly — 11 columns.
   document.getElementById('yrBody').innerHTML=data.map(d=>
     `<tr><td>${d.year}</td>`+
-    `<td>${d.public.toLocaleString()}</td><td>${d.private.toLocaleString()}</td>`+
-    `<td><strong>${d.total.toLocaleString()}</strong></td>`+
-    `<td>${d.pctPublic.toFixed(1)}%</td><td>${d.pctPrivate.toFixed(1)}%</td>`+
-    `<td>${d.facPublic}</td><td>${d.facPrivate}</td></tr>`).join('');
+    `<td style="text-align:right;color:#2c6793;font-weight:700;">${d.public.toLocaleString()}</td>`+
+    `<td style="text-align:right;color:#8a6a00;font-weight:700;">${d.private.toLocaleString()}</td>`+
+    `<td style="text-align:right;color:#9aa7b2;font-weight:700;">${d.unknown.toLocaleString()}</td>`+
+    `<td style="text-align:right;"><strong>${d.total.toLocaleString()}</strong></td>`+
+    `<td style="text-align:right;color:#2c6793;">${d.pctPublic.toFixed(1)}%</td>`+
+    `<td style="text-align:right;color:#8a6a00;">${d.pctPrivate.toFixed(1)}%</td>`+
+    `<td style="text-align:right;color:#9aa7b2;">${d.pctUnknown.toFixed(1)}%</td>`+
+    `<td style="text-align:right;">${d.facPublic.toLocaleString()}</td>`+
+    `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
+    `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('yrChart').innerHTML=renderBiannualChart(data,
     {title:'Confirmed Cases — Public vs Private (Yearly)', subtitle:'Totals by year and facility ownership',
      xlab:'Year', ylab:'Confirmed malaria cases'});
@@ -3114,8 +3188,8 @@ function downloadR(){
 library(httr); library(jsonlite); library(dplyr); library(tidyr)
 BASE_URL <- "https://sl.dhis2.org/hmis23"; auth <- authenticate("USERNAME","PASSWORD")
 
-OLD_RDT <- "p6zQLDFjSfd"                       # old facility RDT Positive
-NEW_RDT <- "AwLklDAVtvq"; NEW_MIC <- "AMrdoWsiHMa"   # new facility RDT+ / Microscopy+
+OLD_RDT <- "p6zQLDFjSfd"                       # old form RDT Positive
+NEW_RDT <- "AwLklDAVtvq"; NEW_MIC <- "AMrdoWsiHMa"   # new form RDT+ / Microscopy+
 COM_RDT <- "T7xH8GwWpEM"                       # community RDT Positive (RDT only)
 # NOTE: the old form has no age-disaggregated microscopy-positive element, so facility
 # microscopy positives exist from Apr-2026 only. Use conf_rdt (RDT only) for trends
@@ -3212,8 +3286,8 @@ function downloadPy(){
 import requests, pandas as pd, numpy as np, re
 BASE_URL="https://sl.dhis2.org/hmis23"; AUTH=("USERNAME","PASSWORD")
 
-OLD_RDT="p6zQLDFjSfd"                          # old facility RDT Positive
-NEW_RDT, NEW_MIC = "AwLklDAVtvq","AMrdoWsiHMa" # new facility RDT+ / Microscopy+
+OLD_RDT="p6zQLDFjSfd"                          # old form RDT Positive
+NEW_RDT, NEW_MIC = "AwLklDAVtvq","AMrdoWsiHMa" # new form RDT+ / Microscopy+
 COM_RDT="T7xH8GwWpEM"                          # community RDT Positive (RDT only)
 # NOTE: the old form has no age-disaggregated microscopy-positive element, so facility
 # microscopy positives exist from Apr-2026 only. Use confirmed_rdt for trends that span
