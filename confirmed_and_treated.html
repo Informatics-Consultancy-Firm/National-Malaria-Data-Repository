@@ -141,7 +141,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <div class="m-step"><div class="m-num">1</div><div>
             <div class="m-title">Fetch the facility registry</div>
             All <strong>Level 5 (PHU)</strong> org units are pulled from DHIS2 with their full hierarchy, District (Level 2) and Chiefdom (Level 4).<br><br>
-            <strong>Level 6 iCCM units are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level 6 unit is mapped to its <strong>Level 5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level 6 units never appear as facilities in their own right, they only contribute community cases to their parent PHU.
+            <strong>Level 6 CHWs are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level 6 unit is mapped to its <strong>Level 5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level 6 units never appear as facilities in their own right, they only contribute community cases to their parent PHU.
           </div></div>
 
           <div class="m-step"><div class="m-num">2</div><div>
@@ -221,8 +221,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>NEW form</td><td><code>ht4jvP2ppBI</code></td><td><code>zV9set4PXcm</code></td></tr>
                 <tr><td>COMMUNITY (HTR)</td><td><code>h3zJa6hAgib</code></td><td><code>Imkks0HAl7E</code></td></tr>
               </table>
-              <div class="m-calc" style="margin-top:6px;"><b>Treated</b> = ACT &lt;24 hrs + ACT &gt;24 hrs. <b>HTR = Hard To Reach = community = iCCM</b>.</div>
-              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Both ACT elements are disaggregated exactly like the confirmed elements.</strong> On the <b>NEW form</b> <code>ht4jvP2ppBI</code> and <code>zV9set4PXcm</code> carry the same 24 category option combos (12 age bands × 2 sexes) as RDT and microscopy; on the <b>OLD form</b> and in <b>iCCM</b> they use the same three age COCs as their confirmed counterparts. Because confirmed and treated share the same age mapping at every source, the per age <b>min()</b> cap compares like with like.</div>
+              <div class="m-calc" style="margin-top:6px;"><b>Treated</b> = ACT &lt;24 hrs + ACT &gt;24 hrs. <b>HTR = Hard To Reach = community = CHWs</b>.</div>
+              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Both ACT elements are disaggregated exactly like the confirmed elements.</strong> On the <b>NEW form</b> <code>ht4jvP2ppBI</code> and <code>zV9set4PXcm</code> carry the same 24 category option combos (12 age bands × 2 sexes) as RDT and microscopy; on the <b>OLD form</b> and in <b>CHWs</b> they use the same three age COCs as their confirmed counterparts. Because confirmed and treated share the same age mapping at every source, the per age <b>min()</b> cap compares like with like.</div>
               <div class="m-egsub">OLD form: three age COCs</div>
               <table class="m-tbl">
                 <tr><th>Age group</th><th>COC UID</th><th>ACT &lt;24 hrs variable</th><th>ACT &gt;24 hrs variable</th></tr>
@@ -230,7 +230,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>05-14y</td><td><code>j7j6iaknOFn</code></td><td><code>wU8EdHifSLa.j7j6iaknOFn</code></td><td><code>XKTCuR0W3YN.j7j6iaknOFn</code></td></tr>
                 <tr><td>15+y</td><td><code>zK1aiw8zFac</code></td><td><code>wU8EdHifSLa.zK1aiw8zFac</code></td><td><code>XKTCuR0W3YN.zK1aiw8zFac</code></td></tr>
               </table>
-              <div class="m-egsub">COMMUNITY iCCM (HTR), three age COCs</div>
+              <div class="m-egsub">COMMUNITY CHW (HTR), three age COCs</div>
               <table class="m-tbl">
                 <tr><th>Age group</th><th>COC UID</th><th>ACT &lt;24 hrs variable</th><th>ACT &gt;24 hrs variable</th></tr>
                 <tr><td>02-59m <span class="m-mut">→ treated as 0-59m</span></td><td><code>NtjMVmRfvHH</code></td><td><code>h3zJa6hAgib.NtjMVmRfvHH</code></td><td><code>Imkks0HAl7E.NtjMVmRfvHH</code></td></tr>
@@ -295,7 +295,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>05-14y</td><td><code>qDXW7WMLT99</code></td><td><code>T7xH8GwWpEM.qDXW7WMLT99</code></td></tr>
                 <tr><td>15+y</td><td><code>mdjRPpvLKdu</code></td><td><code>T7xH8GwWpEM.mdjRPpvLKdu</code></td></tr>
               </table>
-              <div class="m-note" style="margin-top:6px;">Community has <strong>no microscopy variable</strong>. CHW and ETR posts test by RDT only, so community confirmed cases are RDT positives alone. The element is <code>T7xH8GwWpEM</code>: Fever case tested for Malaria (RDT) in HTR - Positive.</div>
+              <div class="m-note" style="margin-top:6px;">Community has <strong>no microscopy variable</strong>. CHWs test by RDT only, so community confirmed cases are RDT positives alone. The element is <code>T7xH8GwWpEM</code>: Fever case tested for Malaria (RDT) in HTR - Positive.</div>
               <div class="m-egsub">NEW form: RDT and Microscopy, 12 age bands × 2 sexes (sex collapsed on summation)</div>
               <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>RDT and Microscopy are both disaggregated by age band and sex, on the same 24 category option combos.</strong> Each band is fetched separately for <b>RDT</b> <code>AwLklDAVtvq</code> and for <b>Microscopy</b> <code>AMrdoWsiHMa</code>, the Male and Female pair is summed, and the bands are folded into the three reporting age groups. The last two columns are the exact dx strings sent to the analytics API, so nothing here is inferred.</div>
               <div class="m-calc" style="margin-top:6px;"><b>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</b> = <code>AwLklDAVtvq</code><br><b>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</b> = <code>AMrdoWsiHMa</code></div>
@@ -340,7 +340,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr style="opacity:.5;"><td>1-11m</td><td>Female</td><td>Female, 1-11m_X</td><td><code>NonO0cPD8ZS</code> <span style="color:#dc2626;font-weight:700;">not fetched</span></td><td><code>AwLklDAVtvq.NonO0cPD8ZS</code></td><td><code>AMrdoWsiHMa.NonO0cPD8ZS</code></td></tr>
               </table>
               <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>1-11m is not fetched: on any new-form element.</strong> The same exclusion applies to <b>RDT</b>, <b>Microscopy</b>, <b>ACT &lt;24 hrs</b> and <b>ACT &gt;24 hrs</b>. The band covers the same infants as <b>1-5m</b> plus <b>06-11m</b>, which are both fetched, so including it would count them twice. Because the exclusion is applied identically to confirmed and to treated, the per age min() cap is not distorted by one side counting a band the other drops. Its two COCs are listed above only so the omission is on the record. <span class="m-mut">Worth verifying against live data: if facilities enter infants in the combined 1-11m box rather than in 1-5m and 06-11m, those cases would not be picked up.</span></div>
-              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level 6 rollup.</strong> Community (HTR) data is reported by <strong>iCCM posts at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level 6 value is <strong>rolled up to its Level 5 PHU parent</strong>.</div>
+              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level 6 rollup.</strong> Community (HTR) data is reported by <strong>CHWs at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level 6 value is <strong>rolled up to its Level 5 PHU parent</strong>.</div>
             </div>
 
             <div class="m-egbox">
@@ -367,7 +367,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <table class="m-tbl">
               <tr><th>Level</th><th>Meaning</th></tr>
               <tr><td>Level 5</td><td>PHU: health facility (the unit of extraction)</td></tr>
-              <tr><td><b>Level 6</b></td><td><b>iCCM posts</b>: community reporting units, <b>rolled up to their Level 5 PHU</b></td></tr>
+              <tr><td><b>Level 6</b></td><td><b>CHWs</b>: community reporting units, <b>rolled up to their Level 5 PHU</b></td></tr>
               <tr><td>Level 4</td><td>Chiefdom</td></tr>
               <tr><td>Level 2</td><td>District</td></tr>
             </table>
@@ -398,7 +398,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           </div></div>
 
           <div class="m-step"><div class="m-num">5</div><div>
-            <div class="m-title">Detect and correct outliers <span class="m-tag">IQR method</span></div>
+            <div class="m-title">Detect and flag outliers <span class="m-tag">IQR method, flag only</span></div>
             Applied independently to <strong>each facility × each year × each age group</strong>. Only reported values (non-missing, greater than zero) are used.
 
             <div class="m-formula">
@@ -426,8 +426,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
               <div class="m-egsub">Step D · Set the fence</div>
               <div class="m-calc">Upper bound = Q3 + 3.0 × IQR = 141.25 + 3.0 × 17.5 = <b>193.75</b></div>
 
-              <div class="m-egsub">Step E · Flag and replace</div>
-              <div class="m-calc"><span class="m-bad">900</span> &gt; 193.75 &nbsp;→&nbsp; <b>Outlier = Yes</b> &nbsp;→&nbsp; replaced by the median &nbsp;→&nbsp; <span class="m-good">131</span><br>
+              <div class="m-egsub">Step E · Flag it</div>
+              <div class="m-calc"><span class="m-bad">900</span> &gt; 193.75 &nbsp;→&nbsp; <b>Outlier Flag = Yes</b> &nbsp;→&nbsp; the value <b>stays 900</b> and is listed in the Outliers tab for checking in DHIS2<br>
               <span class="m-mut">All other 11 months sit below the fence and are left completely untouched.</span></div>
 
               <div class="m-egsub">The same thing, drawn</div>
@@ -480,7 +480,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           </div></div>
 
           <div class="m-step"><div class="m-num">6</div><div>
-            <div class="m-title">Classify facilities as Active or Inactive</div>
+            <div class="m-title">Classify facilities as Reported or did not report</div>
             <ul class="m-list">
               <li><strong>Active</strong>: reported at least one confirmed or treated case during the selected period.</li>
               <li><strong>Inactive</strong>: present in the DHIS2 registry but reported no confirmed or treated cases at all for the period.</li>
@@ -497,7 +497,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
               </table>
               <div class="m-calc" style="margin-top:8px;">In a month where all 3 active facilities reported:<br>
               <span class="m-mut">If all 4 were counted:</span> &nbsp; 3 ÷ 4 = <b>75%</b>: this reads as a reporting failure<br>
-              <span class="m-good">Active facilities only (the method used here):</span> &nbsp; 3 ÷ 3 = <b>100%</b>: every functioning facility did report<br>
+              <span class="m-good">Facilities that reported only (the method used here):</span> &nbsp; 3 ÷ 3 = <b>100%</b>: every functioning facility did report<br>
               <span class="m-mut">Facility D is not a reporting problem; it is an <em>existence</em> problem. Separating the two keeps both measurable: activity is reported in its own analysis, and the reporting rate stays a clean measure of reporting behaviour.</span></div>
             </div>
           </div></div>
@@ -527,7 +527,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             Computed per month, broken down by <strong>ownership</strong> (Public, Private, In DHIS2 not in master) and by <strong>facility type</strong> (CHC, CHP, MCHP, Hospital, Clinic).
             <div class="m-egbox">
               <div class="m-eghead">Example: March, Public facilities</div>
-              <div class="m-calc">Active public facilities in the period: <b>1,200</b><br>
+              <div class="m-calc">Public facilities that reported in the period: <b>1,200</b><br>
               Public facilities that reported confirmed and treated in March: <b>1,044</b><br><br>
               Reporting rate = 1,044 ÷ 1,200 × 100 = <b>87.0%</b><br>
               <span class="m-mut">Read as: of the public facilities that actually function, 87% submitted testing data in March. The other 13% are genuine reporting gaps worth chasing.</span></div>
@@ -579,7 +579,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <strong>Age groups:</strong> 0-59m · 05-14y · 15+y<br>
         <strong>Note:</strong> Facility and community are kept as separate series, then combined into an Overall per age group.<br>
         <strong>Ownership:</strong> Matched on the DHIS2 <strong>OU ID</strong> first (exact), falling back to Level 4 (chiefdom) + Level 5 (facility) name. Adds a Public / Private column to every view and export.<br>
-        <strong>Outlier correction:</strong> IQR method: upper bound = Q3 + 3.0×IQR, computed per facility, per year, per variable (age group). Any value above the bound is <strong>replaced by the median</strong> (whole number) of that facility-year-variable. 0 stays 0, missing stays missing.
+        <strong>Outlier detection, flag only:</strong> IQR method: upper bound = Q3 + 3.0×IQR, computed per facility, per year, per variable (age group). Any value above the bound, or above <strong>5,000</strong> in a single facility month, is <strong>flagged and left unchanged</strong>. 0 stays 0, missing stays missing.
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
@@ -643,6 +643,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <button class="tabbtn" id="tabBtnComparative" onclick="showTab('comparative')">Comparative Analysis</button>
         <button class="tabbtn" id="tabBtnOutliers" onclick="showTab('outliers')">Outliers</button>
         <button class="tabbtn" id="tabBtnWrong" onclick="showTab('wrong')">Wrong Reporting</button>
+        <button class="tabbtn" id="tabBtnInfographics" onclick="showTab('infographics')">Infographics</button>
         <button class="tabbtn" id="tabBtnDownload" onclick="showTab('download')">Download</button>
       </div>
 
@@ -697,6 +698,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
       </div>
 
+      <div class="tabpane" id="tabInfographics">
+        <div id="infoBox"></div>
+      </div>
+
       <div class="tabpane" id="tabDownload">
 
       <!-- Download buttons -->
@@ -713,7 +718,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#15803d;">Community Monthly Data</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong>: iCCM, rolled up from Level 6 to the PHU. One row per facility per month, each age group, 0-59m, 05-14y, 15+y, with its <strong>Value as reported, IQR Upper Bound and Outlier Flag</strong>, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong>: CHWs, rolled up from Level 6 to the PHU. One row per facility per month, each age group, 0-59m, 05-14y, 15+y, with its <strong>Value as reported, IQR Upper Bound and Outlier Flag</strong>, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
             <button class="btn btn-green" onclick="downloadCSV('community')">↓ Community CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('community')">↓ Community Excel</button>
           </div>
@@ -822,7 +827,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">2 · Confirmed and Treated at Community / HTR, by age group</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-green btn-sm" onclick="downloadCmp('com','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed-and-treated at community iCCM (HTR = Hard To Reach), rolled up from Level 6. The community 02-59m band is treated as 0-59m.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed-and-treated at community CHW (HTR = Hard To Reach), rolled up from Level 6. The community 02-59m band is treated as 0-59m.</div>
         <div id="cmpComChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpComHead"></thead><tbody id="cmpComBody"></tbody></table></div>
       </div>
@@ -916,13 +921,13 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div id="exclBody"></div>
       </div>
 
-      <!-- Active vs Inactive facilities -->
+      <!-- Reporting and non reporting facilities -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Facility Activity: Active vs Inactive</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Facility Activity: Reported vs did not report</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-primary btn-sm" onclick="downloadActivity('active','csv')">↓ Active CSV</button>
-            <button class="btn btn-gold btn-sm" onclick="downloadActivity('inactive','csv')">↓ Inactive CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadActivity('active','csv')">↓ Reported CSV</button>
+            <button class="btn btn-gold btn-sm" onclick="downloadActivity('inactive','csv')">↓ Non reporting CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadActivity('all','xlsx')">↓ Excel</button>
           </div>
         </div>
@@ -937,7 +942,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate: at Facility vs at Community</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="downloadRate('source','csv')">↓ CSV</button><button class="btn btn-outline btn-sm" onclick="downloadRateAll()">↓ Excel (all sheets)</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Of the <strong>active</strong> facilities for each source, what % reported that month. <span style="color:#2c6793;font-weight:700;">Facility</span> = either facility form. <span style="color:#15803d;font-weight:700;">Community</span> = iCCM, rolled up to the PHU. Each has <strong>its own denominator</strong>, since far fewer facilities have CHW posts than have a facility form.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Of the <strong>active</strong> facilities for each source, what % reported that month. <span style="color:#2c6793;font-weight:700;">Facility</span> = either facility form. <span style="color:#15803d;font-weight:700;">Community</span> = CHWs, rolled up to the PHU. Each has <strong>its own denominator</strong>, since far fewer facilities have CHWs than have a facility form.</div>
         <div id="repSrcChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repSrcHead"></thead><tbody id="repSrcBody"></tbody></table></div>
       </div>
@@ -957,7 +962,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group: at Community / HTR</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadRate('com','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active community reporters submitting each age group. Note CHWs do not treat neonates, the community 02-59m band is treated as 0-59m.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active CHWs submitting each age group. Note CHWs do not treat neonates, the community 02-59m band is treated as 0-59m.</div>
         <div id="repAgeComChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repAgeComHead"></thead><tbody id="repAgeComBody"></tbody></table></div>
       </div>
@@ -1064,7 +1069,7 @@ const PROXY    = 'https://script.google.com/macros/s/AKfycbyRXc68PYSmDSCYPakAS8G
 const BASE_URL = 'https://sl.dhis2.org/hmis23';
 const AUTH     = 'Basic ' + btoa('musa-sillahkanu:Navigator/2024!');
 const L_PHU=5, L_DIST=2, L_CHIEF=4;
-const L_COM=6;   // Level 6 = iCCM community reporting units (children of the PHU)
+const L_COM=6;   // Level 6 = CHWs community reporting units (children of the PHU)
 const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // ═══════════════════════════════════════════════════════════════
@@ -1467,14 +1472,14 @@ async function startPipeline(){
     log(`Org units: ${(ouL5.organisationUnits||[]).length.toLocaleString()} Level 5 PHUs`,'info');
     await tick();
 
-    // Level 6 = iCCM posts. There are many thousands of them, so ONLY the parent
+    // Level 6 = CHWs. There are many thousands of them, so ONLY the parent
     // id is requested: pulling full ancestors here makes the response so large that
     // the request times out. All we need is the Level 5 parent to roll community up to.
     let ouL6={organisationUnits:[]};
     try{
       ouL6=await dhis2(`/api/organisationUnits.json?level=${L_COM}`
         +`&fields=id,parent[id]&paging=false&pageSize=100000`);
-      log(`Org units: ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level 6 iCCM posts`,'info');
+      log(`Org units: ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level 6 CHWs`,'info');
     }catch(e){
       log(`Level 6 fetch failed (${e.message||e}), continuing without community rollup`,'err');
     }
@@ -1501,18 +1506,18 @@ async function startPipeline(){
           districtName:rec.district,chiefdomName:rec.chiefdom};
       }
     });
-    // Level 6 iCCM post -> its Level 5 PHU parent (for community rollup)
+    // Level 6 CHW -> its Level 5 PHU parent (for community rollup)
     (ouL6.organisationUnits||[]).forEach(ou=>{
       const pid=ou.parent&&ou.parent.id;
       if(pid)childToL5[ou.id]=pid;
     });
-    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level 6 iCCM units rolled up to their PHU`);
+    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level 6 CHWs rolled up to their PHU`);
     log(`Registry built: ${Object.keys(ST.ouHierarchy).length.toLocaleString()} facilities included`,'ok');
     if(ST.excluded.length){
       const byR={}; ST.excluded.forEach(e=>byR[e.reason]=(byR[e.reason]||0)+1);
       Object.entries(byR).forEach(([r,n])=>log(`  excluded ${n}: ${r}`,'warn'));
     }
-    log(`${Object.keys(childToL5).length.toLocaleString()} Level 6 iCCM posts mapped to their PHU parent`,'info');
+    log(`${Object.keys(childToL5).length.toLocaleString()} Level 6 CHWs mapped to their PHU parent`,'info');
     await tick();
     setProgress(12);await sleep(30);
 
@@ -1545,7 +1550,7 @@ async function startPipeline(){
     const seenTriple=new Set();
     ST.comRollup=0;  // Level 6 community values rolled up to a Level 5 PHU
     let totalRows=0;
-    let confRows=0;   // accepted CONFIRMED values only (RDT + microscopy + iCCM RDT)
+    let confRows=0;   // accepted CONFIRMED values only (RDT + microscopy + CHW RDT)
                       //: lets this run be compared line-for-line with the confirmed app
     for(let ci=0;ci<ST.years.length;ci++){
       const yr=ST.years[ci];
@@ -1560,7 +1565,7 @@ async function startPipeline(){
       // analytics request: DHIS2 returns an empty result rather than an error.
       // The dx list is therefore split into chunks and fetched separately.
       // Facility elements (old + new form) only ever hold data at Level 5. Community
-      // elements are reported by iCCM posts at Level 6 and are also accepted at Level 5,
+      // elements are reported by CHWs at Level 6 and are also accepted at Level 5,
       // so only those need both levels. Asking every request for both levels made each
       // response cover 10,580 org units instead of 2,342.
       const OU_FAC='LEVEL-'+L_PHU;
@@ -1604,7 +1609,7 @@ async function startPipeline(){
         if(seenTriple.has(_tk)){ _a.dupRows++; _a.dupVal+=val; ST.dupRows++; ST.dupVal+=val; return; }
         seenTriple.add(_tk);
         // ── LEVEL-6 ROLLUP ────────────────────────────────────
-        // Community (HF04) is reported by iCCM posts at Level 6. Those values are
+        // Community (HF04) is reported by CHWs at Level 6. Those values are
         // rolled up to their Level 5 PHU parent. Facility forms are never reported at
         // Level 6, so any Level 6 row for a facility DE is ignored.
         const isL6=!!childToL5[ouId];
@@ -1707,7 +1712,7 @@ async function startPipeline(){
     setStep('s_fetch','done',`${totalRows.toLocaleString()} data points fetched`);
     log(`Fetch complete: ${totalRows.toLocaleString()} values accepted`,'ok');
     log(`  of which CONFIRMED: ${confRows.toLocaleString()} values (compare with the confirmed app's own "values accepted")`,'hl');
-    log(`Community rollup: ${(ST.comRollup||0).toLocaleString()} Level 6 iCCM values summed into their PHU`,'hl');
+    log(`Community rollup: ${(ST.comRollup||0).toLocaleString()} Level 6 CHW values summed into their PHU`,'hl');
     if(ST.dupRows)
       log(`Duplicate values: ${ST.dupRows.toLocaleString()} row(s) (${ST.dupVal.toLocaleString()} cases) arrived more than once for the same element+COC+period+facility and were counted ONCE`,'warn');
     else
@@ -1799,7 +1804,7 @@ async function startPipeline(){
     ST.rows=[];
     allOuIds.forEach(ouId=>{
       const ou=ST.ouHierarchy[ouId];if(!ou)return;
-      // Pass 1: does this facility report any ACT treatment in the period? (ACTIVE test)
+      // Pass 1: does this facility report any ACT treatment in the period? (DID THIS FACILITY REPORT test)
       let anyReported=false;
       ST.years.forEach(yr=>{
         const months=rawSlots[ouId][yr];if(!months)return;
@@ -1808,7 +1813,7 @@ async function startPipeline(){
           if(ALL_VARS.some(dx=>m[dx.field]!==null&&m[dx.field]!==undefined))anyReported=true;
         });
       });
-      if(!anyReported)return; // inactive facility, no rows at all
+      if(!anyReported)return; // facility reported nothing in the period, so no rows at all
       // Pass 2: emit a row for EVERY month in the selected range (complete grid).
       // Months with no data are kept with null values and Reported = No.
       ST.years.forEach(yr=>{
@@ -1823,7 +1828,7 @@ async function startPipeline(){
             period:`${yr}${String(mi+1).padStart(2,'0')}`,
           };
           row.src = m._new ? 'New form' : m._old ? 'Old form' : '';
-          // Per-form components, exactly as reported by each form (before correction)
+          // Per-form components, exactly as reported by each form
           ALL_VARS.forEach(dx=>{
             const o=m[dx.field+'_OLD'], n=m[dx.field+'_NEW'];
             row[dx.field+'_OLD']=(o!==null&&o!==undefined)?Math.round(o):null;
@@ -1906,7 +1911,7 @@ async function startPipeline(){
     const nCom=ST.rows.filter(r=>(r.com_total||0)>0).length;
     log(`Rows built: ${ST.rows.length.toLocaleString()} facility months across ${nAct.toLocaleString()} active facilities`,'ok');
     log(`  ${nRep.toLocaleString()} reported · ${(ST.rows.length-nRep).toLocaleString()} reporting gaps (Reported = No)`,'dim');
-    log(`  ${nCom.toLocaleString()} facility month(s) have community iCCM cases`,'hl');
+    log(`  ${nCom.toLocaleString()} facility month(s) have community CHW cases`,'hl');
     await tick();
     setProgress(95);await sleep(30);
 
@@ -1973,7 +1978,7 @@ async function startPipeline(){
         <div style="background:${bg};color:${color};padding:8px 12px;font-size:13px;font-weight:800;">${title}</div>
         <div style="padding:11px 12px;">
           <div style="font-size:22px;font-weight:800;color:${color};line-height:1.2;">${total.toLocaleString()}</div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:9px;">confirmed <b>and</b> treated · ${rows.toLocaleString()} facility months · ${facil.toLocaleString()} facilities</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:9px;">confirmed <b>and</b> treated · ${rows.toLocaleString()} facility months · ${facil.toLocaleString()} ${pre==='fac'?'facilities reporting at facility':pre==='com'?'facilities reporting at community level':'facilities that reported'}</div>
           <table class="m-tbl"><tr><th>Age</th><th style="text-align:right;">Confirmed</th><th style="text-align:right;">Treated</th><th style="text-align:right;">C &amp; T</th><th style="text-align:right;">Cov.</th></tr>${ageCell(pre)}</table>
           ${src?`<div style="font-size:10.5px;font-weight:800;color:var(--muted);margin:9px 0 3px;">OUTLIERS FLAGGED (values unchanged)</div>
           <table class="m-tbl"><tr><th>Age group</th><th style="text-align:right;">Found / Assessed</th><th style="text-align:right;">Rate</th></tr>${outCell(src)}</table>`:''}
@@ -1991,14 +1996,17 @@ async function startPipeline(){
       const ages=(r,pre)=>AGE_KEYS.reduce((x,k)=>x+(r[`${pre}_${k}`]||0),0);
       ST.rows.forEach(r=>{
         const g=keyFn(r); if(!g)return;
-        if(!m[g])m[g]={facConf:0,comConf:0,conf:0,rdt:0,mic:0,
+        if(!m[g])m[g]={facConf:0,comConf:0,conf:0,rdtFac:0,rdtCom:0,mic:0,
                        facTre:0,comTre:0,tre:0,lt24:0,gt24:0,
                        facCt:0,comCt:0,ct:0,facs:new Set()};
         const v=m[g];
         // CONFIRMED
         v.facConf+=r.fac_conf_total||0; v.comConf+=r.com_conf_total||0; v.conf+=r.all_conf_total||0;
-        v.rdt+=ages(r,'fac_rdt')+ages(r,'com_rdt');   // RDT, facility + iCCM
-        v.mic+=ages(r,'fac_mic');                     // Microscopy, facility only
+        // Facility and CHW are NEVER summed into one figure. RDT is reported per source,
+        // and microscopy is facility only because CHWs do not perform microscopy.
+        v.rdtFac+=ages(r,'fac_rdt');
+        v.rdtCom+=ages(r,'com_rdt');
+        v.mic+=ages(r,'fac_mic');
         // TREATED
         v.facTre+=r.fac_treat_total||0; v.comTre+=r.com_treat_total||0; v.tre+=r.all_treat_total||0;
         v.lt24+=(r.fac_lt24_total||0)+(r.com_lt24_total||0);
@@ -2011,7 +2019,7 @@ async function startPipeline(){
     };
     // Grand total across every group (facilities deduplicated, not summed)
     const detTotal=(m)=>{
-      const t={facConf:0,comConf:0,conf:0,rdt:0,mic:0,facTre:0,comTre:0,tre:0,
+      const t={facConf:0,comConf:0,conf:0,rdtFac:0,rdtCom:0,mic:0,facTre:0,comTre:0,tre:0,
                lt24:0,gt24:0,facCt:0,comCt:0,ct:0,facs:new Set()};
       Object.values(m).forEach(v=>{
         Object.keys(t).forEach(k=>{ if(k!=='facs')t[k]+=v[k]; });
@@ -2032,7 +2040,8 @@ async function startPipeline(){
         R(v.facConf,'color:#2c6793;font-weight:700;')+
         R(v.comConf,'color:#15803d;font-weight:700;')+
         R(v.conf,'font-weight:800;')+
-        R(v.rdt,'color:#dc2626;')+
+        R(v.rdtFac,'color:#dc2626;')+
+        R(v.rdtCom,'color:#dc2626;')+
         R(v.mic,'color:#8b5cf6;')+
         Pc(v.mic,v.conf,'color:#8b5cf6;')+
         // TREATED
@@ -2057,19 +2066,20 @@ async function startPipeline(){
           <thead>
             <tr>
               <th rowspan="2">${firstCol}</th><th rowspan="2" style="text-align:right;">Facilities</th>
-              <th colspan="6" style="text-align:center;background:#e8f2fa;color:#2c6793;">CONFIRMED</th>
+              <th colspan="7" style="text-align:center;background:#e8f2fa;color:#2c6793;">CONFIRMED</th>
               <th colspan="6" style="text-align:center;background:#eaf7ee;color:#15803d;">TREATED with ACT</th>
               <th colspan="2" style="text-align:center;background:#fff8e6;color:#8a6a00;">CONFIRMED &amp; TREATED</th>
             </tr>
             <tr>
               <th style="text-align:right;color:#2c6793;">At facility</th>
-              <th style="text-align:right;color:#15803d;">At iCCM</th>
+              <th style="text-align:right;color:#15803d;">At Community Level</th>
               <th style="text-align:right;">Total</th>
-              <th style="text-align:right;color:#dc2626;">RDT</th>
+              <th style="text-align:right;color:#dc2626;">RDT at facility</th>
+              <th style="text-align:right;color:#dc2626;">RDT at Community Level</th>
               <th style="text-align:right;color:#8b5cf6;">Microscopy</th>
               <th style="text-align:right;color:#8b5cf6;">% mic</th>
               <th style="text-align:right;color:#2c6793;">At facility</th>
-              <th style="text-align:right;color:#15803d;">At iCCM</th>
+              <th style="text-align:right;color:#15803d;">At Community Level</th>
               <th style="text-align:right;">Total</th>
               <th style="text-align:right;color:#15803d;">&lt;24 hrs</th>
               <th style="text-align:right;color:#b45309;">&gt;24 hrs</th>
@@ -2079,7 +2089,7 @@ async function startPipeline(){
             </tr>
           </thead>
           <tbody>${rows}</tbody></table></div>
-        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5;">RDT + Microscopy = Confirmed Total. &lt;24 hrs + &gt;24 hrs = Treated Total. Microscopy is facility only, since iCCM has no microscopy variable.</div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5;">RDT at facility + RDT at Community Level + Microscopy = Confirmed Total. Facility and CHW figures are never combined into a single column. &lt;24 hrs + &gt;24 hrs = Treated Total. Microscopy is facility only, since CHWs have no microscopy variable.</div>
         </div>`;
     };
     // Activity + form transition summary
@@ -2087,9 +2097,9 @@ async function startPipeline(){
     const nViol=Object.keys(ST.cutViol||{}).length;
     document.getElementById('summaryDetail').innerHTML=
       `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;">
-         <div class="stat-pill ok">Active: ${actv.active.length.toLocaleString()}</div>
-         <div class="stat-pill warn">Inactive: ${actv.inactive.length.toLocaleString()}</div>
-         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level 6 iCCM values rolled up</div>
+         <div class="stat-pill ok">Reported: ${actv.active.length.toLocaleString()}</div>
+         <div class="stat-pill warn">Did not report: ${actv.inactive.length.toLocaleString()}</div>
+         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level 6 CHW values rolled up</div>
          ${nViol?`<div class="stat-pill warn" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">${nViol.toLocaleString()} form-rule violation(s) ignored</div>`
               :`<div class="stat-pill ok">No form-rule violations</div>`}
        </div>`+
@@ -2102,7 +2112,7 @@ async function startPipeline(){
       panel('CONFIRMED AND TREATED AT FACILITY','#2c6793','#e8f2fa',facTotal,facRows,facFacil,'fac','fac',
             `Confirmed <b>${facConf.toLocaleString()}</b> · Treated <b>${facTreat.toLocaleString()}</b> · <b>min() = ${facTotal.toLocaleString()}</b><br>Coverage <span style="color:#15803d;font-weight:700;">${covFac}%</span>`)+
       panel('CONFIRMED AND TREATED AT COMMUNITY (HTR)','#15803d','#d4edda',comTotal,comRows,comFacil,'com','com',
-            `HTR = community = iCCM. Confirmed <b>${comConf.toLocaleString()}</b> · Treated <b>${comTreat.toLocaleString()}</b> · <b>min() = ${comTotal.toLocaleString()}</b><br>Coverage <span style="color:#15803d;font-weight:700;">${covCom}%</span> · ${(ST.comRollup||0).toLocaleString()} Level 6 values rolled up.`)+
+            `HTR = community = CHWs. Confirmed <b>${comConf.toLocaleString()}</b> · Treated <b>${comTreat.toLocaleString()}</b> · <b>min() = ${comTotal.toLocaleString()}</b><br>Coverage <span style="color:#15803d;font-weight:700;">${covCom}%</span> · ${(ST.comRollup||0).toLocaleString()} Level 6 values rolled up.`)+
       panel('OVERALL CONFIRMED AND TREATED','#8a6a00','#fff8e6',allTotal,ST.rows.filter(r=>r.reported==='Yes').length,
             [...new Set(ST.rows.filter(r=>r.reported==='Yes').map(r=>r.ou_id))].length,'all',null,
             `<b>Confirmed and Treated = min(Confirmed, Treated)</b>, capped per age group. <b>Confirmed = RDT positive + Microscopy positive.</b><br>Confirmed <b>${allConf.toLocaleString()}</b> · Treated <b>${allTreat.toLocaleString()}</b><br><b>C &amp; T = ${allTotal.toLocaleString()}</b> &nbsp;(${facTotal.toLocaleString()} + ${comTotal.toLocaleString()})<br><br><span style="font-size:15px;font-weight:800;color:#15803d;">Coverage ${covAll}%</span><br><span style="color:var(--muted);font-size:10.5px;">${allTotal.toLocaleString()} confirmed-and-treated ÷ ${allConf.toLocaleString()} confirmed</span>${excess?`<br><span style="color:#dc2626;font-size:10.5px;">${excess.toLocaleString()} excess treated discarded by the cap</span>`:''}`);
@@ -2111,6 +2121,7 @@ async function startPipeline(){
     renderExcluded();
     renderFormCoverage();
     renderActivity();
+    renderInfographics();
     renderComparative();
     renderReporting();
     renderBiannual();
@@ -2129,8 +2140,8 @@ async function startPipeline(){
     const gcm=ST.rows.reduce((a,r)=>a+(r.com_conf_total||0),0);
     const gfc=ST.rows.reduce((a,r)=>a+(r.fac_conf_total||0),0);
     log(`Confirmed ${gConf.toLocaleString()} · Treated ${gTre.toLocaleString()}`,'hl');
-    log(`  confirmed split: RDT only ${gr.toLocaleString()} (facility ${gFacRdt.toLocaleString()} + iCCM ${gComRdt.toLocaleString()}) · facility microscopy ${gm.toLocaleString()}`,'hl');
-    log(`  confirmed by source: at facility ${gfc.toLocaleString()} · at iCCM ${gcm.toLocaleString()} · check: RDT + microscopy = ${(gr+gm).toLocaleString()} vs confirmed ${gConf.toLocaleString()}${(gr+gm)===gConf?' ✓':' ✗ MISMATCH'}`,'hl');
+    log(`  confirmed split: RDT only ${gr.toLocaleString()} (facility ${gFacRdt.toLocaleString()} + CHWs ${gComRdt.toLocaleString()}) · facility microscopy ${gm.toLocaleString()}`,'hl');
+    log(`  confirmed by source: at facility ${gfc.toLocaleString()} · at CHWs ${gcm.toLocaleString()} · check: RDT + microscopy = ${(gr+gm).toLocaleString()} vs confirmed ${gConf.toLocaleString()}${(gr+gm)===gConf?' ✓':' ✗ MISMATCH'}`,'hl');
     log(`Confirmed and Treated = min() per age group = ${gCt.toLocaleString()} · coverage ${gConf?(gCt/gConf*100).toFixed(1):0}%`,'hl');
     if(gEx)log(`${gEx.toLocaleString()} excess treated discarded by the cap (treated > confirmed)`,'warn');
     log('Analyses rendered. Done.','ok');
@@ -2471,14 +2482,14 @@ const FLAG_ABOVE=5000;
 // ── EXTREME VALUES ───────────────────────────────────────────
 // A single monthly cell holding a value far above anything clinically possible is a
 // data entry error, most often a 9 or 10 digit number (an ID, a phone number, a
-// barcode) typed into a count field. Outlier correction cannot always remove these:
+// barcode) typed into a count field. The IQR test cannot always see these:
 // it needs at least 4 reported months in the facility-year, and if several months are
 // inflated the median is inflated too. Every such value is captured here with its
 // facility and month so it can be corrected at source in DHIS2.
 const EXTREME_MIN=FLAG_ABOVE;   // a monthly count at one facility above this is not credible
 function extremeRows(){
   const L=(ST.extremes||[]).slice().sort((a,b)=>b.value-a.value);
-  // was this cell later replaced by outlier correction?
+  // was this cell flagged as an outlier?
   const flagged=new Set((ST.outlierLog||[]).map(o=>`${o.ouId}|${o.year}|${o.month}|${o.field||''}`));
   return L.map(e=>[e.district,e.chiefdom,e.facility,e.hfType,e.ownership,e.period,
     e.de,e.deName,e.coc,e.band,e.field,e.value,
@@ -2631,6 +2642,160 @@ function downloadFetchAudit(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([AUDIT_HDR,...rows]),'By dx');
   XLSX.writeFile(wb,`NMCP_ConfirmedAndTreated_FetchAudit_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
 }
+// ── INFOGRAPHICS FIGURES ─────────────────────────────────────
+// Drawn here as inline SVG so the page needs no external images and works offline.
+// Original simple cartoon figures in everyday clothes, one per reporting age group.
+function figToddler(){return `
+<svg viewBox="0 0 150 220" style="width:100%;max-width:150px;height:auto;">
+  <ellipse cx="75" cy="212" rx="34" ry="5" fill="#000" opacity=".08"/>
+  <!-- legs -->
+  <rect x="60" y="150" width="12" height="42" rx="6" fill="#8d5524"/>
+  <rect x="79" y="150" width="12" height="42" rx="6" fill="#8d5524"/>
+  <ellipse cx="66" cy="196" rx="11" ry="7" fill="#e05c5c"/>
+  <ellipse cx="85" cy="196" rx="11" ry="7" fill="#e05c5c"/>
+  <!-- shorts -->
+  <path d="M55 128h41v22a4 4 0 0 1-4 4H79v-9h-8v9H59a4 4 0 0 1-4-4z" fill="#2f74b5"/>
+  <!-- t shirt -->
+  <path d="M56 92c0-9 8-15 19-15s19 6 19 15v38H56z" fill="#f2c14e"/>
+  <!-- arms -->
+  <rect x="38" y="95" width="12" height="34" rx="6" fill="#a86a3d" transform="rotate(12 44 112)"/>
+  <rect x="100" y="95" width="12" height="34" rx="6" fill="#a86a3d" transform="rotate(-12 106 112)"/>
+  <circle cx="41" cy="132" r="7" fill="#a86a3d"/>
+  <circle cx="109" cy="132" r="7" fill="#a86a3d"/>
+  <!-- ball in hand -->
+  <circle cx="117" cy="137" r="11" fill="#e8734a"/>
+  <path d="M106 137h22M117 126v22" stroke="#fff" stroke-width="2" opacity=".7"/>
+  <!-- head -->
+  <circle cx="75" cy="58" r="32" fill="#a86a3d"/>
+  <!-- curly hair -->
+  <g fill="#3a2415">
+    <circle cx="52" cy="42" r="11"/><circle cx="66" cy="32" r="12"/><circle cx="82" cy="30" r="12"/>
+    <circle cx="96" cy="40" r="11"/><circle cx="101" cy="54" r="9"/><circle cx="48" cy="56" r="9"/>
+  </g>
+  <!-- face -->
+  <circle cx="65" cy="60" r="4.5" fill="#2b1a10"/><circle cx="86" cy="60" r="4.5" fill="#2b1a10"/>
+  <circle cx="66.5" cy="58.5" r="1.6" fill="#fff"/><circle cx="87.5" cy="58.5" r="1.6" fill="#fff"/>
+  <path d="M67 74q8 7 16 0" stroke="#2b1a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="55" cy="68" r="4" fill="#e08a7a" opacity=".5"/>
+  <circle cx="95" cy="68" r="4" fill="#e08a7a" opacity=".5"/>
+</svg>`;}
+function figChild(){return `
+<svg viewBox="0 0 150 220" style="width:100%;max-width:150px;height:auto;">
+  <ellipse cx="75" cy="212" rx="34" ry="5" fill="#000" opacity=".08"/>
+  <rect x="61" y="146" width="12" height="48" rx="6" fill="#8d5524"/>
+  <rect x="78" y="146" width="12" height="48" rx="6" fill="#8d5524"/>
+  <ellipse cx="66" cy="198" rx="11" ry="7" fill="#3f7f52"/>
+  <ellipse cx="85" cy="198" rx="11" ry="7" fill="#3f7f52"/>
+  <path d="M56 122h39v24a4 4 0 0 1-4 4H79v-10h-8v10H60a4 4 0 0 1-4-4z" fill="#5b6b8a"/>
+  <path d="M55 84c0-10 9-16 20-16s20 6 20 16v40H55z" fill="#4aa3a0"/>
+  <path d="M55 96h40v6H55z" fill="#3d8a87"/>
+  <rect x="36" y="86" width="12" height="38" rx="6" fill="#a86a3d" transform="rotate(10 42 105)"/>
+  <rect x="102" y="86" width="12" height="38" rx="6" fill="#a86a3d" transform="rotate(-24 108 105)"/>
+  <circle cx="40" cy="127" r="7" fill="#a86a3d"/>
+  <circle cx="116" cy="122" r="7" fill="#a86a3d"/>
+  <circle cx="75" cy="48" r="28" fill="#a86a3d"/>
+  <g fill="#3a2415">
+    <circle cx="55" cy="34" r="10"/><circle cx="68" cy="25" r="11"/><circle cx="83" cy="25" r="11"/>
+    <circle cx="95" cy="34" r="10"/><circle cx="99" cy="46" r="8"/><circle cx="51" cy="46" r="8"/>
+  </g>
+  <circle cx="66" cy="50" r="4" fill="#2b1a10"/><circle cx="85" cy="50" r="4" fill="#2b1a10"/>
+  <circle cx="67.3" cy="48.7" r="1.4" fill="#fff"/><circle cx="86.3" cy="48.7" r="1.4" fill="#fff"/>
+  <path d="M68 62q7 6 14 0" stroke="#2b1a10" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`;}
+function figAdult(){return `
+<svg viewBox="0 0 150 220" style="width:100%;max-width:150px;height:auto;">
+  <ellipse cx="75" cy="212" rx="36" ry="5" fill="#000" opacity=".08"/>
+  <rect x="62" y="138" width="13" height="58" rx="6" fill="#3b4a63"/>
+  <rect x="77" y="138" width="13" height="58" rx="6" fill="#3b4a63"/>
+  <ellipse cx="67" cy="200" rx="12" ry="7" fill="#2b2b2b"/>
+  <ellipse cx="86" cy="200" rx="12" ry="7" fill="#2b2b2b"/>
+  <path d="M56 114h40v26a4 4 0 0 1-4 4H60a4 4 0 0 1-4-4z" fill="#3b4a63"/>
+  <path d="M54 72c0-11 9-18 21-18s21 7 21 18v44H54z" fill="#c9622f"/>
+  <path d="M75 54v62" stroke="#a8501f" stroke-width="2" opacity=".6"/>
+  <rect x="34" y="74" width="13" height="44" rx="6" fill="#a86a3d" transform="rotate(8 40 96)"/>
+  <rect x="103" y="74" width="13" height="44" rx="6" fill="#a86a3d" transform="rotate(-8 109 96)"/>
+  <circle cx="39" cy="122" r="7.5" fill="#a86a3d"/>
+  <circle cx="111" cy="122" r="7.5" fill="#a86a3d"/>
+  <circle cx="75" cy="36" r="25" fill="#a86a3d"/>
+  <path d="M51 34a24 24 0 0 1 48 0z" fill="#2f1d12"/>
+  <path d="M51 34q24 -9 48 0v-3a24 24 0 0 0-48 0z" fill="#2f1d12"/>
+  <circle cx="67" cy="38" r="3.6" fill="#2b1a10"/><circle cx="84" cy="38" r="3.6" fill="#2b1a10"/>
+  <circle cx="68.2" cy="36.9" r="1.3" fill="#fff"/><circle cx="85.2" cy="36.9" r="1.3" fill="#fff"/>
+  <path d="M69 49q6 5 12 0" stroke="#2b1a10" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+</svg>`;}
+// ── INFOGRAPHICS TAB ─────────────────────────────────────────
+// One card per reporting age group: the figure, the count, its share of the total, and
+// the facility and community split. Facility and community are shown separately, never
+// added into one figure.
+const INFO_FIELD='ct';
+const INFO_WHAT='confirmed and treated cases';
+const INFO_AGES=[
+  {key:'u5',   title:'Under 5 years',      sub:'0 to 59 months',  fig:figToddler, color:'#2f74b5', bg:'#e8f2fa'},
+  {key:'c514', title:'5 to 14 years',      sub:'school age',      fig:figChild,   color:'#3f7f52', bg:'#e9f6ec'},
+  {key:'a15',  title:'15 years and above', sub:'adults',          fig:figAdult,   color:'#8a6a00', bg:'#fff8e6'},
+];
+function infoTotals(){
+  const t={};
+  INFO_AGES.forEach(a=>{t[a.key]={all:0,fac:0,com:0,facs:new Set()};});
+  (ST.rows||[]).forEach(r=>{
+    INFO_AGES.forEach(a=>{
+      const all=r[`all_${INFO_FIELD}_${a.key}`], fac=r[`fac_${INFO_FIELD}_${a.key}`], com=r[`com_${INFO_FIELD}_${a.key}`];
+      t[a.key].all+=all||0; t[a.key].fac+=fac||0; t[a.key].com+=com||0;
+      if((all||0)>0)t[a.key].facs.add(r.ou_id);
+    });
+  });
+  t.grand=INFO_AGES.reduce((s,a)=>s+t[a.key].all,0);
+  return t;
+}
+function renderInfographics(){
+  const box=document.getElementById('infoBox'); if(!box)return;
+  const t=infoTotals();
+  if(!t.grand){
+    box.innerHTML='<div class="alert" style="margin:10px 0;">Run the extract first, then this tab fills in.</div>';
+    return;
+  }
+  const period=`${ST.cfgStart||''} to ${ST.cfgEnd||''}`;
+  const cards=INFO_AGES.map(a=>{
+    const v=t[a.key];
+    const pct=t.grand?(v.all/t.grand*100).toFixed(1):'0.0';
+    const barW=t.grand?Math.max(2,(v.all/t.grand*100)):0;
+    return `<div style="flex:1;min-width:250px;border:1.5px solid ${a.color};border-radius:12px;overflow:hidden;background:#fff;">
+      <div style="background:${a.color};color:#fff;padding:9px 14px;font-size:13px;font-weight:800;">${a.title}
+        <span style="font-weight:400;opacity:.85;"> ${a.sub}</span></div>
+      <div style="padding:14px;display:flex;gap:14px;align-items:flex-end;">
+        <div style="flex:0 0 120px;">${a.fig()}</div>
+        <div style="flex:1;">
+          <div style="font-size:30px;font-weight:800;color:${a.color};line-height:1.05;">${v.all.toLocaleString()}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${INFO_WHAT}</div>
+          <div style="height:9px;background:${a.bg};border-radius:5px;overflow:hidden;margin-bottom:4px;">
+            <div style="height:100%;width:${barW}%;background:${a.color};"></div></div>
+          <div style="font-size:12px;font-weight:700;color:${a.color};margin-bottom:9px;">${pct}% of all ages</div>
+          <table class="m-tbl" style="margin:0;">
+            <tr><td>At facility</td><td style="text-align:right;font-weight:700;color:#2c6793;">${v.fac.toLocaleString()}</td></tr>
+            <tr><td>At community level</td><td style="text-align:right;font-weight:700;color:#15803d;">${v.com.toLocaleString()}</td></tr>
+            <tr><td>Facilities reporting</td><td style="text-align:right;font-weight:700;">${v.facs.size.toLocaleString()}</td></tr>
+          </table>
+        </div>
+      </div></div>`;
+  }).join('');
+  box.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:var(--blue-dk);">${INFO_WHAT.replace(/^./,c=>c.toUpperCase())} by age group</div>
+        <div style="font-size:11px;color:var(--muted);">${period} · all districts · figures as reported, no outlier has been altered</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:26px;font-weight:800;color:var(--blue-dk);line-height:1;">${t.grand.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);">all ages together</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">${cards}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;">
+      The three age groups add up to the all ages figure. <strong>At facility</strong> and <strong>at community level</strong>
+      are shown separately and are never combined into a single number. The community under 5 band is reported as 2 to 59
+      months and is treated as 0 to 59 months here, since CHWs do not treat neonates.
+    </div>`;
+}
 // ── Tabs ─────────────────────────────────────────────────────
 function showCfgTab(t){
   ['extract','method'].forEach(n=>{
@@ -2640,7 +2805,7 @@ function showCfgTab(t){
   });
 }
 function showTab(t){
-  ['summary','comparative','download','analysis','wrong','outliers'].forEach(n=>{
+  ['summary','comparative','download','analysis','wrong','outliers','infographics'].forEach(n=>{
     document.getElementById('tab'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
     document.getElementById('tabBtn'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
   });
@@ -2702,7 +2867,7 @@ function methodologyRows(){
     ['Why','A facility cannot have treated more confirmed cases than it confirmed. Where Treated > Confirmed (presumptive treatment or data entry error), the excess is DISCARDED, so coverage can never exceed 100%.'],
     ['Why per age group','Example: Confirmed 100/60/40, Treated 130/60/25. Per-age cap = 100+60+25 = 185. Capping on totals would give min(200,215) = 200, which HIDES the 0-59m over-report by netting it against the 15+ shortfall. The per age cap is the stricter and more honest figure.'],
     ['Facility and community','Capped separately, then summed. Mixing them before the cap would let facility over-reporting be masked by community under-reporting.'],
-    ['Order of operations','Outlier correction runs FIRST on the 21 raw series; the min() cap is applied AFTER, so it operates on cleaned values.'],
+    ['Order of operations','Outlier DETECTION runs on the 21 raw series and changes nothing; the min() cap is applied to the values AS REPORTED, so it operates on cleaned values.'],
     [],
     ['CONFIRMED: test positive cases'],
     ['  OLD form RDT Positive','p6zQLDFjSfd  ·  ages 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
@@ -2720,14 +2885,14 @@ function methodologyRows(){
     ['  Treated disaggregation','NEW form ht4jvP2ppBI / zV9set4PXcm carry the SAME 24 category option combos (12 age bands x 2 sexes) as the confirmed elements, verified against the DHIS2 metadata export. OLD form wU8EdHifSLa / XKTCuR0W3YN use the same three age COCs as the old confirmed elements (m5T8uBNB8aN / j7j6iaknOFn / zK1aiw8zFac). Community h3zJa6hAgib / Imkks0HAl7E use the same three as community RDT (NtjMVmRfvHH / qDXW7WMLT99 / mdjRPpvLKdu).'],
     ['  Why that matters','Confirmed and treated share the same age mapping at every source, so the per age min() cap compares like with like.'],
     ['  1-11m excluded','The 1-11m band (Male QFTvC3ZBlaE / Female NonO0cPD8ZS) is NOT fetched on ANY new-form element - RDT, Microscopy, ACT <24h and ACT >24h alike - because it covers the same infants as 1-5m plus 06-11m, which are both fetched. Applied identically to confirmed and treated, so the cap is not distorted.'],
-    ['  Treated','= ACT <24 hrs + ACT >24 hrs.  HTR = Hard To Reach = community = iCCM.'],
+    ['  Treated','= ACT <24 hrs + ACT >24 hrs.  HTR = Hard To Reach = community = CHWs.'],
     [],
     ['NEW FORM AGE MAPPING (sex collapsed on summation)'],
     ['  -> 0-59m','0-7d (M X1fJr7y51lU / F ajwU95HMY2p); 08-28d (M QVABDpl0H4k / F wOsJkGpglpx); 1-5m (M EBG5ZbRgj46 / F z0s3iTdlbsd); 06-11m (M KIJHMZSahcW / F aCwYAbE3GHL); 12-59m (M CcMrNXzzVHL / F YHJ1j33ZMs5)'],
     ['  -> 05-14y','05-09y (M eGhQxrBx3sy / F i4MRLwVtIGa); 10-14y (M oZ7YgBgNGRd / F UI2y7qIOkvz)'],
     ['  -> 15+y','15-19y (M OzqClEP84wm / F vshWQEGCCTp); 20-44y (M ztWgelWML6b / F fLgy2fpBWrb); 45-59y (M zqNF6erLupJ / F eaWE8YjN4j0); 60+y (M hGJdT29m3P6 / F g2NiIyG3PLj)'],
     ['  02-59m treated as 0-59m','The community under-5 band is 2-59 months (CHWs do not treat neonates). It is TREATED AS 0-59m so facility and community align.'],
-    ['  LEVEL-6 ROLLUP','Community (HTR) data is reported by iCCM posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level 6 value is rolled up to its Level 5 PHU parent.'],
+    ['  LEVEL-6 ROLLUP','Community (HTR) data is reported by CHWs at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level 6 value is rolled up to its Level 5 PHU parent.'],
     [],
     ['DERIVED INDICATORS'],
     ['  Confirmed <age>','RDT Positive + Microscopy Positive (facility) / RDT Positive (community)'],
@@ -2742,8 +2907,8 @@ function methodologyRows(){
     ['OLD FORM','Used up to and including March 2026. Any value AFTER March 2026 is IGNORED.'],
     ['NEW FORM','Used from April 2026 onwards. Any value BEFORE April 2026 is IGNORED.'],
     ['COMMUNITY / HTR','ALL periods. HF04 is a separate dataset, unaffected by the HF01 form change.'],
-    ['Org unit levels','Level 5 = PHU (facility, unit of extraction)  ·  Level 6 = iCCM community posts (rolled up to Level 5)  ·  Level 4 = Chiefdom  ·  Level 2 = District'],
-    ['Note','Each age group is a separate variable throughout: each gets its own upper bound, outlier flag and correction.'],[],
+    ['Org unit levels','Level 5 = PHU (facility, unit of extraction)  ·  Level 6 = CHWs (rolled up to Level 5)  ·  Level 4 = Chiefdom  ·  Level 2 = District'],
+    ['Note','Each age group is a separate variable throughout: each gets its own upper bound and its own flag.'],[],
     ['1. FACILITY REGISTRY'],
     ['Included types','Hospital, Clinic, CHC, CHP, MCHP'],
     ['Excluded: laboratories','Names containing "Laboratory". Not health facilities; many are typed "Hospital" in the source (e.g. Bo Regional Hospital Laboratory), which would inflate the Hospital count.'],
@@ -2756,17 +2921,18 @@ function methodologyRows(){
     ['In DHIS2 but not in the master list','Ownership = Unknown. The facility is STILL fetched and its data STILL extracted and counted in every other breakdown and in the national total. Unknown is reported as a third ownership class beside Public and Private, so Public + Private + Unknown reconciles to the total. Such facilities appear as Unmatched in the Ownership Reconciliation report.'],
     ['Source','NMCP PHU ownership master list'],[],
     ['3. FACILITY ACTIVITY'],
-    ['Active','Reported at least one confirmed or treated case during the selected period.'],
-    ['Inactive','Present in the DHIS2 registry but reported no confirmed or treated cases at all in the period. Excluded from reporting-rate denominators.'],[],
-    ['4. OUTLIER DETECTION AND CORRECTION'],
+    ['Reported','Reported at least one confirmed or treated case during the selected period.'],
+    ['Did not report','Present in the DHIS2 registry but reported no confirmed or treated cases at all in the period. Excluded from reporting-rate denominators.'],[],
+    ['4. OUTLIER DETECTION (FLAG ONLY, NOTHING IS CORRECTED)'],
+    ['Detection','Two tests, both FLAG ONLY. 1) IQR: value above Q3 + 3.0 x IQR for that facility, year and series. 2) Absolute: value above 5,000 in a single facility month, which catches what the IQR test cannot see, namely series with fewer than 4 reported months and values large enough to inflate Q3 above themselves.'],
+    ['No correction','No value is ever changed. Every total, analysis and export uses the value AS REPORTED. Flagged values are listed in the Outliers tab and its export so they can be corrected at source in DHIS2.'],
     ['Method','IQR (Tukey) outlier fence, applied per facility, per year, per variable (age group).'],
     ['Upper bound','Q3 + 3.0 × IQR, where IQR = Q3 − Q1, computed on reported (non-null, > 0) values.'],
-    ['Correction','Values above the upper bound are REPLACED BY THE MEDIAN of that facility-year-variable (median imputation), not capped to the bound. The median is rounded to a WHOLE NUMBER, since case counts are never fractional. Values at or below the bound are unchanged.'],
     ['Zeros / missing','0 stays 0; missing stays missing. Neither is flagged or used to compute the bound.'],
     ['Minimum data','Groups with fewer than 4 reported values get no IQR bound (quartiles unstable). The absolute 5,000 threshold still applies to them.'],
     ['FLAG ONLY','No value is ever changed. Outliers are flagged for review and correction at source in DHIS2. Every total, analysis and export uses the value AS REPORTED.'],
     ['Second test','Any value above 5,000 in a single facility month is flagged regardless of the facility pattern. This catches what the IQR test cannot: series with fewer than 4 reported months, and values large enough to inflate Q3 above themselves.'],
-    ['Why 3.0','Tukey defines 1.5×IQR as "outlier" and 3.0×IQR as "far outlier". 3.0 is used because outliers are REPLACED by the median (a large change), so the fence is kept wide to avoid replacing genuine seasonal malaria peaks.'],
+    ['Why 3.0','Tukey defines 1.5×IQR as "outlier" and 3.0×IQR as "far outlier". 3.0 keeps the flag list short enough to be actionable and lets genuine seasonal malaria peaks through.'],
     ['Why the median','The median is robust (unaffected by the outlier itself) and represents the facility\'s typical month for that year, so a corrupted value is replaced by a plausible one rather than by the threshold.'],[],
     ['5. REPORTING RATE'],
     ['Definition','% of ACTIVE facilities reporting in a given month.'],
@@ -2775,7 +2941,7 @@ function methodologyRows(){
     ['Note','Inactive facilities are excluded from the denominator, so the rate measures reporting among facilities that actually function.'],[],
     ['6. OUTPUT COLUMNS (per age group)'],
     ['Columns per series','Each series has: Value (as reported), IQR Upper Bound, Outlier Flag. There is NO Corrected column - nothing is corrected. Old columns were: Original, Upper Bound, Outlier, Corrected.'],
-    ['Original','Raw value as returned by DHIS2, before any correction.'],
+    ['Value','The value as reported by DHIS2. Nothing is altered, so this is also the value used in every total and analysis.'],
     ['Upper Bound','The IQR threshold that value was tested against (Q3 + 3.0 × IQR).'],
     ['Outlier','Yes if the original value exceeded the upper bound.'],
     ['Reported','Yes if the facility reported that month; No if the month is a reporting gap.'],
@@ -2985,9 +3151,9 @@ function renderViolations(){
     </table></div>`;
 }
 
-// ── Active / Inactive facilities ─────────────────────────────
+// ── Reporting and non reporting facilities ─────────────────────────────
 // A facility is ACTIVE if it reported at least one confirmed or treated case in the selected period.
-// Inactive = present in the DHIS2 registry but no confirmed and treated at all for the period.
+// Did not report = present in the DHIS2 registry but nothing at all for the period under review.
 function getActivity(){
   const activeIds=new Set(ST.rows.filter(r=>r.reported==='Yes').map(r=>r.ou_id));
   const active=[], inactive=[];
@@ -3004,7 +3170,7 @@ function getActivity(){
   const bump=(o,k,f)=>{o[k]=o[k]||{active:0,inactive:0};o[k][f]++;};
   active.forEach(f=>{bump(byOwn,f.ownership,'active');bump(byType,f.type,'active');});
   inactive.forEach(f=>{bump(byOwn,f.ownership,'inactive');bump(byType,f.type,'inactive');});
-  // Active denominators used by reporting rate
+  // Denominator for the reporting rate: facilities that reported at least once
   const denomOwn={}, denomType={};
   active.forEach(f=>{denomOwn[f.ownership]=(denomOwn[f.ownership]||0)+1;denomType[f.type]=(denomType[f.type]||0)+1;});
   return {active,inactive,byOwn,byType,denomOwn,denomType};
@@ -3014,19 +3180,19 @@ function actRows(scope){
   const {active,inactive}=getActivity();
   const pick=scope==='active'?active:scope==='inactive'?inactive:[...inactive,...active];
   return pick.map(f=>[f.ou_id,f.district,f.chiefdom,f.facility,f.type,f.ownership,
-    scope==='active'?'Active':scope==='inactive'?'Inactive':(active.includes(f)?'Active':'Inactive')]);
+    scope==='active'?'Reported':scope==='inactive'?'Did not report':(active.includes(f)?'Reported':'Did not report')]);
 }
 function downloadActivity(scope,fmt){
   if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
     const {byOwn,byType,active,inactive}=getActivity();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Category','Active','Inactive','Total','% Active'],
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Category','Reported','Did not report','Total','% Reported'],
       ...Object.entries(byOwn).map(([k,v])=>[k,v.active,v.inactive,v.active+v.inactive,((v.active/(v.active+v.inactive))*100).toFixed(1)]),
       [],['By Facility Type'],
       ...Object.entries(byType).map(([k,v])=>[k,v.active,v.inactive,v.active+v.inactive,((v.active/(v.active+v.inactive))*100).toFixed(1)]),
       [],['TOTAL',active.length,inactive.length,active.length+inactive.length,
           ((active.length/(active.length+inactive.length))*100).toFixed(1)]]),'Summary');
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ACT_HDR,...actRows('active')]),'Active');
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ACT_HDR,...actRows('inactive')]),'Inactive');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ACT_HDR,...actRows('active')]),'Reported');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ACT_HDR,...actRows('inactive')]),'Did not report');
     XLSX.writeFile(wb,`NMCP_ConfirmedAndTreated_Facility_Activity_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;}
   const rows=actRows(scope);
   const csv=[ACT_HDR.join(','),...rows.map(r=>r.map(c=>`"${c??''}"`).join(','))].join('\n');
@@ -3038,8 +3204,8 @@ function renderActivity(){
   const {active,inactive,byOwn,byType}=getActivity();
   const tot=active.length+inactive.length;
   document.getElementById('actStats').innerHTML=[
-    `<div class="stat-pill ok">Active: ${active.length.toLocaleString()} (${tot?(active.length/tot*100).toFixed(1):0}%)</div>`,
-    `<div class="stat-pill warn">Inactive: ${inactive.length.toLocaleString()}</div>`,
+    `<div class="stat-pill ok">Reported: ${active.length.toLocaleString()} (${tot?(active.length/tot*100).toFixed(1):0}%)</div>`,
+    `<div class="stat-pill warn">Did not report: ${inactive.length.toLocaleString()}</div>`,
     `<div class="stat-pill">Registry total: ${tot.toLocaleString()}</div>`,
   ].join('');
   const mk=(obj,label)=>{
@@ -3049,7 +3215,7 @@ function renderActivity(){
     return `<div style="flex:1;min-width:280px;">
       <div style="font-size:12px;font-weight:700;color:var(--blue-dk);margin-bottom:6px;">${label}</div>
       <div class="data-table-wrap"><table class="data-table">
-        <thead><tr><th>${label}</th><th>Active</th><th>Inactive</th><th>Total</th><th>% Active</th></tr></thead>
+        <thead><tr><th>${label}</th><th>Reported</th><th>Did not report</th><th>Total</th><th>% Reported</th></tr></thead>
         <tbody>${rows}</tbody></table></div></div>`;
   };
   document.getElementById('actTables').innerHTML=mk(byOwn,'Ownership')+mk(byType,'Facility Type');
@@ -3134,7 +3300,7 @@ function repRows(dim){
 // ── REPORTING RATE: Facility vs Community vs Overall ────────
 // A facility is counted as REPORTING in a month if that source has a value.
 //   Facility: any of the 3 facility age groups reported
-//   Community : any of the 3 community age groups reported (iCCM, rolled up)
+//   Community : any of the 3 community age groups reported (CHWs, rolled up)
 //   Overall : either source reported
 // Denominator = ACTIVE facilities (reported at least once in the period) for that source.
 function getSourceActivity(){
@@ -3254,7 +3420,7 @@ function renderReporting(){
     document.getElementById('repSrcBody').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
   }
   // 2. By age group: one chart per source
-  [['fac','repAgeFac','at Facility'],['com','repAgeCom','at Community iCCM'],['all','repAgeAll','Overall']].forEach(([src,id,lab])=>{
+  [['fac','repAgeFac','at Facility'],['com','repAgeCom','at Community CHW'],['all','repAgeAll','Overall']].forEach(([src,id,lab])=>{
     const {hdr,rows,periods,keys,denom,get}=rateRows(src);
     document.getElementById(id+'Chart').innerHTML=
       renderRateChart(periods,keys,denom,(p,k,d)=>d>0?(get(p,k)/d*100):0,null,
@@ -3511,7 +3677,7 @@ function renderComparative(){
     {title:'Confirmed and Treated at Facility: by Age Group', subtitle:'min(Confirmed, Treated) per age group · old form to Mar 2026 · new HF01 form from Apr 2026',
      xlab:'Month', ylab:'Confirmed and treated'});
   paintCmp('cmpCom', CMP.periods, CMP.comAge,
-    {title:'Confirmed and Treated at Community iCCM, by Age Group', subtitle:'iCCM, rolled up from Level 6 posts to their PHU',
+    {title:'Confirmed and Treated at Community CHW, by Age Group', subtitle:'CHWs, rolled up from Level 6 to their PHU',
      xlab:'Month', ylab:'Confirmed and treated'});
   paintCmp('cmpAgg', CMP.periods, CMP.agg,
     {title:'All Ages: Confirmed and Treated at Facility vs at Community', subtitle:'Age groups summed, both sources on the same scale',
@@ -3539,9 +3705,13 @@ function renderComparative(){
   document.getElementById('cmpLocHead').innerHTML=
     `<tr><th>District</th><th style="text-align:right;">Confirmed and Treated</th><th style="text-align:right;">% of total</th></tr>`;
   const locTot=CMP.byLoc.reduce((a,d)=>a+d.value,0);
+  // NATIONAL row closes every district table, so the column can be read against its own total.
   document.getElementById('cmpLocBody').innerHTML=[...CMP.byLoc].reverse().map(d=>
     `<tr><td>${d.name}</td><td style="text-align:right;font-weight:700;">${d.value.toLocaleString()}</td>`+
-    `<td style="text-align:right;">${locTot?(d.value/locTot*100).toFixed(1):'0.0'}%</td></tr>`).join('');
+    `<td style="text-align:right;">${locTot?(d.value/locTot*100).toFixed(1):'0.0'}%</td></tr>`).join('')
+    +`<tr style="background:#fff8e6;border-top:2px solid #8a6a00;"><td style="font-weight:800;">NATIONAL</td>`
+    +`<td style="text-align:right;font-weight:800;">${locTot.toLocaleString()}</td>`
+    +`<td style="text-align:right;font-weight:800;">100.0%</td></tr>`;
 }
 function downloadCmp(which,fmt){
   const c=CMP||cmpBuild();
@@ -3549,6 +3719,7 @@ function downloadCmp(which,fmt){
     const tot=c.byLoc.reduce((a,d)=>a+d.value,0);
     const hdr=['District','Confirmed and Treated','% of Total'];
     const rows=[...c.byLoc].reverse().map(d=>[d.name,d.value,tot?(d.value/tot*100).toFixed(1):'0.0']);
+    rows.push(['NATIONAL',tot,'100.0']);   // every district table closes with the national total
     if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([hdr,...rows]),'By District');
       XLSX.writeFile(wb,`NMCP_ConfirmedAndTreated_ByDistrict_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;}
@@ -3813,7 +3984,7 @@ dx_map <- bind_rows(
 # Microscopy is excluded for MCHP and CHP only: those rows are dropped later.
 # Hospital, CHC and Clinic MAY report microscopy and are kept in full.
 
-# ── 1. Org units: Level 5 (PHU) + Level 6 (iCCM = HTR) ────
+# ── 1. Org units: Level 5 (PHU) + Level 6 (CHWs = HTR) ────
 FIELDS <- "id,displayName,level,ancestors[id,displayName,level]"
 ou5 <- fromJSON(content(GET(paste0(BASE_URL,"/api/organisationUnits.json?level=5&fields=",FIELDS,"&paging=false"),auth),"text"),simplifyVector=FALSE)$organisationUnits
 ou6 <- fromJSON(content(GET(paste0(BASE_URL,"/api/organisationUnits.json?level=6&fields=id,parent[id]&paging=false"),auth),"text"),simplifyVector=FALSE)$organisationUnits
@@ -3955,7 +4126,7 @@ for t,de in NEW.items():
 for t,de in COM.items():
     for a,c in COM_COC.items(): dx_map[f"{de}.{c}"]=(f"com_{t}_{a}","com")
 
-# ── 1. Org units: Level 5 (PHU) + Level 6 (iCCM = HTR) ────
+# ── 1. Org units: Level 5 (PHU) + Level 6 (CHWs = HTR) ────
 F="id,displayName,level,ancestors[id,displayName,level]"
 ou5=requests.get(f"{BASE_URL}/api/organisationUnits.json?level=5&fields={F}&paging=false",auth=AUTH).json()["organisationUnits"]
 ou6=requests.get(f"{BASE_URL}/api/organisationUnits.json?level=6&fields=id,parent[id]&paging=false",auth=AUTH).json()["organisationUnits"]
