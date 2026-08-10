@@ -403,7 +403,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
             <div class="m-formula">
               Q1 = 25th percentile &nbsp;·&nbsp; Q3 = 75th percentile &nbsp;·&nbsp; IQR = Q3 − Q1<br>
-              <strong>Upper bound = Q3 + 3.0 × IQR</strong> &nbsp; → &nbsp; anything above it is replaced by the <strong>median</strong>
+              <strong>Upper bound = Q3 + 3.0 × IQR</strong> &nbsp; → &nbsp; anything above it is <strong>flagged</strong> and left exactly as reported
             </div>
 
             <div class="m-egbox">
@@ -459,12 +459,12 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                   <!-- the outlier -->
                   <rect x="533" y="68" width="26" height="102" fill="#dc2626"/><text x="546" y="182" font-size="8" text-anchor="middle" font-weight="700" fill="#dc2626">900</text>
                   <text x="546" y="63" font-size="9" text-anchor="middle" font-weight="700" fill="#dc2626">outlier</text>
-                  <!-- replacement arrow -->
+                  <!-- flag marker -->
                   <line x1="571" y1="80" x2="571" y2="134" stroke="#28a745" stroke-width="1.6"/>
                   <polygon points="567,134 575,134 571,142" fill="#28a745"/>
                   <text x="580" y="112" font-size="9" font-weight="700" fill="#28a745">→ 131</text>
                 </g>
-                <text x="40" y="200" font-size="9" fill="#6c7a89">Only the red bar crosses the fence. It is replaced by the green median line; every blue bar is kept exactly as reported.</text>
+                <text x="40" y="200" font-size="9" fill="#6c7a89">Only the red bar crosses the fence. It is flagged for review; every bar, including the red one, is kept exactly as reported.</text>
               </svg>
             </div>
 
@@ -767,7 +767,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#1a3a5c;">Reproducible Code</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">R and Python scripts that reproduce the exact same fetch, exclusions, and IQR-based outlier detection with median replacement.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">R and Python scripts that reproduce the exact same fetch, exclusions, and IQR-based outlier detection, flag only.</div>
             <button class="btn btn-outline" onclick="downloadR()">↓ R Script (.R)</button>
             <button class="btn btn-outline" onclick="downloadPy()">↓ Python Script (.py)</button>
           </div>
@@ -1391,7 +1391,7 @@ function addStep(id,txt){_sn++;const d=document.createElement('div');d.className
 function setStep(id,status,msg){const el=stepEls[id];if(!el)return;el.className='step-item '+status;const pre={running:'',done:'✓ ',error:'✗ '}[status]||'';const sp=el.querySelector('span');sp.textContent=pre+(msg||sp.textContent.replace(/^[✓✗] /,''));}
 
 // ═══════════════════════════════════════════════════════════════
-//  WINSORISATION (upper bound only, 99.75th pct)
+//  OUTLIER DETECTION (upper bound only, flag only)
 // ═══════════════════════════════════════════════════════════════
 function percentile(arr,p){
   if(!arr.length)return 0;
@@ -1409,7 +1409,7 @@ function iqrUpperBound(vals){
   return q3+IQR_K*iqr;
 }
 // Median of the reported (non-null, >0) values for that facility / year / variable.
-// This is the REPLACEMENT value for any detected outlier.
+// Reported next to each flagged value as a reference point. Nothing is replaced.
 function medianOf(vals){
   const reported=vals.filter(v=>v!==null&&v!==undefined&&v>0);
   if(!reported.length)return null;
@@ -1460,7 +1460,7 @@ async function startPipeline(){
 
   addStep('s_ou',   'Fetch Level 5 facility registry with hierarchy');
   addStep('s_fetch',`Fetch confirmed + treated: old + new form + community, ${cfgS} → ${cfgE} · ${years.length} year(s)`);
-  addStep('s_wins', 'Detect outliers (Q3 + 3.0×IQR), replace with facility-year median');
+  addStep('s_wins', 'Detect and flag outliers (Q3 + 3.0×IQR, or above 5,000), no value is changed');
   addStep('s_build','Build output rows: facility, community, overall');
 
   try{
@@ -1728,7 +1728,7 @@ async function startPipeline(){
     await tick();
     setProgress(55);await sleep(30);
 
-    // ── S3: Winsorise per facility per year ───────────────────
+    // ── S3: Flag outliers per facility per year ───────────────────
     setStep('s_wins','running');
     log(`Outlier detection: FLAG ONLY, no value is changed. IQR (Q3 + ${IQR_K}×IQR) per facility × year × series, plus any value above ${FLAG_ABOVE.toLocaleString()} in a single facility month…`,'info');
     await tick();
@@ -2025,15 +2025,28 @@ async function startPipeline(){
         Object.keys(t).forEach(k=>{ if(k!=='facs')t[k]+=v[k]; });
         v.facs.forEach(id=>t.facs.add(id));
       });
+      t._groups=m;   // needed to average the group percentages
       return t;
     };
     const pct=(n,d)=>d?(n/d*100).toFixed(1):'0.0';
     // Cell order MUST match the header below, 16 columns.
     const detRow=(g,v,tot)=>{
+      // For the NATIONAL row every percentage is the UNWEIGHTED AVERAGE of the group
+      // percentages, not the national numerator over the national denominator. Averaging
+      // gives a small district the same weight as a large one, which is what an average
+      // across districts means. The two figures differ whenever the groups differ in size,
+      // so the NATIONAL percentages will not tie back to the NATIONAL counts on the same row.
+      const meanPct=(nk,dk)=>{
+        const gs=Object.values(v._groups||{}).filter(x=>(x[dk]||0)>0);
+        if(!gs.length)return '0.0';
+        return (gs.reduce((a,x)=>a+(x[nk]||0)/(x[dk]||0)*100,0)/gs.length).toFixed(1);
+      };
+      const PctOf=(nk,dk)=> tot ? meanPct(nk,dk)
+        : ((v[dk]||0) ? ((v[nk]||0)/(v[dk]||0)*100).toFixed(1) : '0.0');
       const bg=tot?'background:#fff8e6;border-top:2px solid #8a6a00;':'';
       const w =tot?'font-weight:800;':'';
       const R=(val,style)=>`<td style="text-align:right;${style||''}">${(val||0).toLocaleString()}</td>`;
-      const Pc=(n,d,style)=>`<td style="text-align:right;${style||''}">${pct(n,d)}%</td>`;
+      const Pc=(nk,dk,style)=>`<td style="text-align:right;${style||''}">${PctOf(nk,dk)}%</td>`;
       return `<tr style="${bg}"><td style="${w}">${g}</td>`+
         `<td style="text-align:right;${w}">${v.facs.size.toLocaleString()}</td>`+
         // CONFIRMED
@@ -2043,17 +2056,17 @@ async function startPipeline(){
         R(v.rdtFac,'color:#dc2626;')+
         R(v.rdtCom,'color:#dc2626;')+
         R(v.mic,'color:#8b5cf6;')+
-        Pc(v.mic,v.conf,'color:#8b5cf6;')+
+        Pc('mic','conf','color:#8b5cf6;')+
         // TREATED
         R(v.facTre,'color:#2c6793;font-weight:700;')+
         R(v.comTre,'color:#15803d;font-weight:700;')+
         R(v.tre,'font-weight:800;')+
         R(v.lt24,'color:#15803d;')+
         R(v.gt24,'color:#b45309;')+
-        Pc(v.lt24,v.tre,'color:#15803d;')+
+        Pc('lt24','tre','color:#15803d;')+
         // CONFIRMED AND TREATED
         R(v.ct,'font-weight:800;color:#8a6a00;')+
-        Pc(v.ct,v.conf,'font-weight:800;color:#15803d;')+
+        Pc('ct','conf','font-weight:800;color:#15803d;')+
         `</tr>`;
     };
     const detTable=(title,m,firstCol,totalLabel)=>{
@@ -2089,6 +2102,7 @@ async function startPipeline(){
             </tr>
           </thead>
           <tbody>${rows}</tbody></table></div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5;">Percentages in the <strong>NATIONAL</strong> row are the <strong>average of the group percentages</strong>, giving each group equal weight. They are deliberately not the national numerator over the national denominator, so they will not tie back to the counts on that row.</div>
         <div style="font-size:10.5px;color:var(--muted);margin-top:4px;line-height:1.5;">RDT at facility + RDT at Community Level + Microscopy = Confirmed Total. Facility and CHW figures are never combined into a single column. &lt;24 hrs + &gt;24 hrs = Treated Total. Microscopy is facility only, since CHWs have no microscopy variable.</div>
         </div>`;
     };
@@ -2103,10 +2117,10 @@ async function startPipeline(){
          ${nViol?`<div class="stat-pill warn" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">${nViol.toLocaleString()} form-rule violation(s) ignored</div>`
               :`<div class="stat-pill ok">No form-rule violations</div>`}
        </div>`+
-      detTable('Confirmed and Treated by Ownership', byGroup(r=>r.ownership), 'Ownership')+
-      detTable('Confirmed and Treated by Facility Type', byGroup(r=>r.hfType), 'Facility Type')+
+      detTable('Confirmed and Treated by Ownership', byGroup(r=>r.ownership), 'Ownership', 'NATIONAL')+
+      detTable('Confirmed and Treated by Facility Type', byGroup(r=>r.hfType), 'Facility Type', 'NATIONAL')+
       detTable('Confirmed and Treated by District', byGroup(r=>r.district), 'District', 'NATIONAL')+
-      detTable('Confirmed and Treated by Year', byGroup(r=>r.year), 'Year');
+      detTable('Confirmed and Treated by Year', byGroup(r=>r.year), 'Year', 'NATIONAL');
 
     document.getElementById('summaryPanels').innerHTML=
       panel('CONFIRMED AND TREATED AT FACILITY','#2c6793','#e8f2fa',facTotal,facRows,facFacil,'fac','fac',
@@ -2933,7 +2947,7 @@ function methodologyRows(){
     ['FLAG ONLY','No value is ever changed. Outliers are flagged for review and correction at source in DHIS2. Every total, analysis and export uses the value AS REPORTED.'],
     ['Second test','Any value above 5,000 in a single facility month is flagged regardless of the facility pattern. This catches what the IQR test cannot: series with fewer than 4 reported months, and values large enough to inflate Q3 above themselves.'],
     ['Why 3.0','Tukey defines 1.5×IQR as "outlier" and 3.0×IQR as "far outlier". 3.0 keeps the flag list short enough to be actionable and lets genuine seasonal malaria peaks through.'],
-    ['Why the median','The median is robust (unaffected by the outlier itself) and represents the facility\'s typical month for that year, so a corrupted value is replaced by a plausible one rather than by the threshold.'],[],
+    ['Why the median is shown','The median is robust (unaffected by the outlier itself) and represents the facility\'s typical month for that year, so it shows what a normal month looks like when judging a flagged value. Nothing is replaced.'],[],
     ['5. REPORTING RATE'],
     ['Definition','% of ACTIVE facilities reporting in a given month.'],
     ['Formula','(facilities with confirmed/treated data that month ÷ active facilities in that group) × 100'],
@@ -3751,7 +3765,8 @@ function downloadCmpAll(){
   });
   const lt=c.byLoc.reduce((a,d)=>a+d.value,0);
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['District','Confirmed and Treated','% of Total'],
-    ...[...c.byLoc].reverse().map(d=>[d.name,d.value,lt?(d.value/lt*100).toFixed(1):'0.0'])]),'By District');
+    ...[...c.byLoc].reverse().map(d=>[d.name,d.value,lt?(d.value/lt*100).toFixed(1):'0.0']),
+    ['NATIONAL',lt,'100.0']]),'By District');   // closes with the national total
   XLSX.writeFile(wb,`NMCP_ConfirmedAndTreated_TimeSeries_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
 }
 
@@ -4030,7 +4045,7 @@ violations <- raw %>% filter(violation); raw <- raw %>% filter(!violation)
 raw <- raw %>% mutate(year=as.integer(substr(period,1,4)), month=as.integer(substr(period,5,6))) %>%
   group_by(ou_id,year,month,field) %>% summarise(value=sum(value), .groups="drop")
 
-# ── 4. Outliers: IQR bound, replace with year median ───────
+# ── 4. Outliers: IQR bound plus the 5,000 ceiling, FLAG ONLY, nothing replaced ───────
 iqr_upper <- function(x){ r<-x[!is.na(x)&x>0]; if(length(r)<4) return(NA_real_)
   q<-quantile(r,c(.25,.75),na.rm=TRUE,type=7); unname(q[2]+3.0*(q[2]-q[1])) }
 med_of <- function(x){ r<-x[!is.na(x)&x>0]; if(!length(r)) return(NA_real_); round(median(r)) }
@@ -4181,7 +4196,7 @@ violations=raw[viol].copy(); raw=raw[~viol].copy()
 raw["year"]=raw.period.str[:4].astype(int); raw["month"]=raw.period.str[4:6].astype(int)
 raw=raw.groupby(["ou_id","year","month","field"],as_index=False)["value"].sum()
 
-# ── 4. Outliers: IQR bound, replace with year median ───────
+# ── 4. Outliers: IQR bound plus the 5,000 ceiling, FLAG ONLY, nothing replaced ───────
 def iqr_upper(x):
     r=x[x>0].dropna()
     if len(r)<4: return np.nan
