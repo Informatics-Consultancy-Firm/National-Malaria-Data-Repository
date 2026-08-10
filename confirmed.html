@@ -243,7 +243,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr style="opacity:.5;"><td>1-11m</td><td>Male</td><td>Male, 1-11m_X</td><td><code>QFTvC3ZBlaE</code> <span style="color:#dc2626;font-weight:700;">not fetched</span></td><td><code>AwLklDAVtvq.QFTvC3ZBlaE</code></td><td><code>AMrdoWsiHMa.QFTvC3ZBlaE</code></td></tr>
                 <tr style="opacity:.5;"><td>1-11m</td><td>Female</td><td>Female, 1-11m_X</td><td><code>NonO0cPD8ZS</code> <span style="color:#dc2626;font-weight:700;">not fetched</span></td><td><code>AwLklDAVtvq.NonO0cPD8ZS</code></td><td><code>AMrdoWsiHMa.NonO0cPD8ZS</code></td></tr>
               </table>
-              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>1-11m is not fetched, for RDT or for microscopy.</strong> It covers the same infants as <b>1-5m</b> plus <b>06-11m</b>, which are both fetched, so including it would count them twice. Its two COCs are listed above only so the omission is on the record.</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>1-11m is not fetched, for RDT or for microscopy.</strong> It covers the same infants as <b>1-5m</b> plus <b>06-11m</b>, which are both fetched, so including it would count them twice. Its two COCs are listed above only so the omission is on the record. <span class="m-mut">Worth verifying against live data: if facilities enter infants in the combined 1-11m box rather than in 1-5m and 06-11m, those cases would not be picked up.</span></div>
             </div>
 
             <div class="m-egbox">
@@ -445,7 +445,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <div class="m-formula">
               <strong>Reporting rate = (facilities reporting tests that month ÷ ACTIVE facilities in that group) × 100</strong>
             </div>
-            Computed per month, broken down by <strong>ownership</strong> (Public vs Private) and by <strong>facility type</strong> (CHC, CHP, MCHP, Hospital, Clinic).
+            Computed per month, broken down by <strong>ownership</strong> (Public, Private, In DHIS2 not in master) and by <strong>facility type</strong> (CHC, CHP, MCHP, Hospital, Clinic).
             <div class="m-egbox">
               <div class="m-eghead">Example — March, Public facilities</div>
               <div class="m-calc">Active public facilities in the period: <b>1,200</b><br>
@@ -478,7 +478,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>150</td><td>194</td><td>No</td><td>150</td></tr>
               </table>
             </div>
-            Analyses include RDT vs Microscopy, a series-break check, Public vs Private (bi-annual and yearly), monthly reporting rates, facility activity, excluded facilities, and an ownership reconciliation — all downloadable as CSV or Excel.
+            Analyses include RDT vs Microscopy, a series-break check, ownership (bi-annual and yearly), monthly reporting rates, facility activity, excluded facilities, and an ownership reconciliation — all downloadable as CSV or Excel.
           </div></div>
 
           <div style="background:#fff8e6;border:1.5px solid var(--gold);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:11.5px;">
@@ -539,6 +539,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <span style="display:flex;gap:10px;align-items:center;">
           <span id="logElapsed" style="font-size:11px;color:#58a6ff;font-family:ui-monospace,Menlo,Consolas,monospace;">0.0s</span>
           <button class="btn btn-outline btn-sm" style="padding:2px 9px;font-size:10px;" onclick="copyLog()">Copy</button>
+          <button class="btn btn-outline btn-sm" style="padding:2px 9px;font-size:10px;" onclick="downloadLog()">↓ Log</button>
         </span>
       </div>
       <div id="logBox" class="log-box"></div>
@@ -622,6 +623,30 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">All monthly values replaced as outliers: original, corrected (median), upper bound (Q3 + 3.0×IQR), facility details.</div>
             <button class="btn btn-gold" onclick="downloadCSV('outliers')">↓ Outliers CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('outliers')">↓ Outliers Excel</button>
+          </div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-card-head" style="background:#b91c1c;">Extreme Values</div>
+          <div class="dl-card-body">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every single facility-month holding a value above 5,000 — with facility, district, month, data element and age band, the largest first, and whether outlier correction replaced it. These are <strong>data-entry errors in DHIS2</strong>, so this is the list to send back for correction at source.</div>
+            <button class="btn btn-primary" onclick="downloadExtremes()">↓ Extreme Values Excel</button>
+          </div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-card-head" style="background:#0f766e;">Fetch Audit</div>
+          <div class="dl-card-body">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Exactly what the analytics API returned, <strong>per data element and per category option combo</strong>: rows returned, value returned, value accepted, and what was removed as microscopy at an MCHP/CHP or as the wrong form. Diff this between two runs or two tools to find the single variable that disagrees.</div>
+            <button class="btn btn-primary" onclick="downloadFetchAudit()">↓ Audit Excel</button>
+          </div>
+        </div>
+        <div class="dl-card">
+          <div class="dl-card-head" style="background:#30363d;">Run Log</div>
+          <div class="dl-card-body">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">The full timestamped log of this run — org units, batch row counts, outliers per series, skipped records and the final totals. The live log disappears when the pipeline screen closes, so it is kept here.</div>
+            <button class="btn btn-primary" onclick="downloadLog()">&#8595; Log (.txt)</button>
+            <button class="btn btn-outline" onclick="copyLog()">Copy</button>
+            <button class="btn btn-outline" onclick="toggleLogView()">View</button>
+            <div id="logBoxDL" class="log-box" style="display:none;margin-top:10px;max-height:320px;"></div>
           </div>
         </div>
         <div class="dl-card">
@@ -838,7 +863,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reporting rate: ownership -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month — Public vs Private</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month — by Ownership</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of <strong>active</strong> facilities reporting confirmed cases each month, by ownership. Facilities absent from the ownership master list are charted as <strong>Unknown</strong>. Inactive facilities are excluded from the denominator.</div>
         <div id="repOwnChart"></div>
@@ -858,7 +883,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Bi-annual -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases: Public vs Private — Bi-annual</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership — Bi-annual</span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-primary btn-sm" onclick="downloadBiannual('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadBiannual('xlsx')">↓ Excel</button>
@@ -872,7 +897,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Yearly -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases: Public vs Private — Yearly</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership — Yearly</span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-primary btn-sm" onclick="downloadYearly('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadYearly('xlsx')">↓ Excel</button>
@@ -1086,24 +1111,69 @@ let ST={startYr:null,endYr:null,years:[],ouHierarchy:{},
 // ═══════════════════════════════════════════════════════════════
 //  UTILITIES
 // ═══════════════════════════════════════════════════════════════
-async function dhis2(path,retries=3){
+// ── RESILIENT ANALYTICS FETCH ────────────────────────────────
+// Two independent safety nets, both safe because the pipeline de-duplicates on
+// element+COC+period+facility, so neither chunking nor period splitting can change a total:
+//   1. a batch that fails after its retries is SPLIT IN HALF and each half retried,
+//      down to a single dx;
+//   2. a single dx that still fails is split BY PERIOD, down to one month.
+// `ouDim` is passed in because facility elements only ever have data at Level 5, so
+// asking for Level 6 as well multiplies the org unit dimension for no benefit.
+async function fetchAnalytics(dxList, peList, ouDim, label){
+  const path='/api/analytics.json?dimension=dx:'+dxList.join(';')
+    +'&dimension=pe:'+peList.join(';')
+    +'&dimension=ou:'+ouDim
+    +'&displayProperty=NAME&paging=false&ignoreLimit=true';
+  try{
+    return await dhis2(path);
+  }catch(e){
+    if(dxList.length>1){
+      const mid=Math.ceil(dxList.length/2);
+      log(`  ${label}: failed with ${dxList.length} data values — splitting into ${mid} + ${dxList.length-mid} and retrying`,'warn');
+      await tick();
+      const a=await fetchAnalytics(dxList.slice(0,mid), peList, ouDim, label+'a');
+      const b=await fetchAnalytics(dxList.slice(mid),  peList, ouDim, label+'b');
+      return {rows:[...(a.rows||[]),...(b.rows||[])]};
+    }
+    if(peList.length>1){
+      const mid=Math.ceil(peList.length/2);
+      log(`  ${label}: one data value over ${peList.length} month(s) failed — splitting the period ${mid} + ${peList.length-mid}`,'warn');
+      await tick();
+      const a=await fetchAnalytics(dxList, peList.slice(0,mid), ouDim, label+'p1');
+      const b=await fetchAnalytics(dxList, peList.slice(mid),  ouDim, label+'p2');
+      return {rows:[...(a.rows||[]),...(b.rows||[])]};
+    }
+    log(`  ${label}: a single data value for a single month still failed — ${e.message||e}`,'err');
+    throw e;
+  }
+}
+// NO CLIENT-SIDE TIMEOUT. On a slow connection a large analytics request can legitimately
+// take many minutes, and cutting it off wastes the work already done and forces a retry
+// that will be just as slow. A request is therefore allowed to run until it either
+// completes or the browser itself reports the connection dead. Only genuine errors are
+// retried. The elapsed time of every failure is logged so a slow link is easy to tell
+// apart from a broken one.
+async function dhis2(path,retries=4){
   const url=BASE_URL+path;
   const pUrl=PROXY+'?url='+encodeURIComponent(url)+'&Authorization='+encodeURIComponent(AUTH);
   let lastErr;
   for(let a=1;a<=retries;a++){
+    const t0=performance.now();
     try{
-      // Large analytics batches can be slow — allow up to 3 minutes before giving up.
-      const ctl=new AbortController();
-      const timer=setTimeout(()=>ctl.abort(),180000);
-      const r=await fetch(pUrl,{signal:ctl.signal});
-      clearTimeout(timer);
+      const r=await fetch(pUrl);
       if(!r.ok)throw new Error('HTTP '+r.status);
       return await r.json();
     }
     catch(e){
       lastErr=e;
-      if(typeof log==='function')log(`  request failed (attempt ${a}/${retries}): ${e.message||e}`,'warn');
-      if(a<retries)await sleep(1200*Math.pow(2,a-1));
+      const secs=((performance.now()-t0)/1000).toFixed(0);
+      if(typeof log==='function')
+        log(`  request failed (attempt ${a}/${retries}): ${(e.message||String(e))} after ${secs}s`,'warn');
+      if(a<retries){
+        const wait=Math.round(3000*Math.pow(2,a-1)/1000);
+        if(typeof log==='function')log(`  waiting ${wait}s before retry ${a+1}/${retries}…`,'dim');
+        await sleep(3000*Math.pow(2,a-1));
+      }
     }
   }
   throw new Error('DHIS2 failed: '+(lastErr?.message||'network'));
@@ -1122,9 +1192,13 @@ function getHFType(n){
 }
 // ── LIVE LOG ─────────────────────────────────────────────────
 let LOG_T0=0, LOG_TIMER=null;
+let LOG_LINES=[];   // kept in memory: the live log element is hidden after the run
+const logLines=()=>LOG_LINES.length?LOG_LINES.slice()
+  :[...document.querySelectorAll('#logBox .log-line')].map(l=>l.textContent);
 function logReset(){
   LOG_T0=performance.now();
   const b=document.getElementById('logBox'); if(b)b.innerHTML='';
+  LOG_LINES=[];
   clearInterval(LOG_TIMER);
   LOG_TIMER=setInterval(()=>{
     const el=document.getElementById('logElapsed');
@@ -1133,18 +1207,43 @@ function logReset(){
 }
 function logStop(){clearInterval(LOG_TIMER);}
 function log(msg,kind){
-  const b=document.getElementById('logBox'); if(!b)return;
   const t=((performance.now()-LOG_T0)/1000).toFixed(1)+'s';
+  const b=document.getElementById('logBox');
+  if(!b){LOG_LINES.push(t+'  '+String(msg).replace(/<[^>]*>/g,''));return;}
   const cls={info:'log-i',ok:'log-ok',warn:'log-warn',err:'log-err',dim:'log-dim',hl:'log-hl'}[kind||'dim'];
   const line=document.createElement('div');
   line.className='log-line';
   line.innerHTML=`<span class="log-t">${t}</span><span class="${cls}">${msg}</span>`;
   b.appendChild(line);
   b.scrollTop=b.scrollHeight;   // keep the newest line in view
+  LOG_LINES.push(t+'  '+line.textContent.slice(t.length));
 }
 function copyLog(){
-  const b=document.getElementById('logBox'); if(!b)return;
-  navigator.clipboard.writeText([...b.querySelectorAll('.log-line')].map(l=>l.textContent).join('\n'));
+  navigator.clipboard.writeText(logLines().join('\n'));
+}
+function downloadLog(){
+  const lines=logLines();
+  if(!lines.length){alert('No log yet — run the extract first.');return;}
+  const head=[
+    'NMCP Sierra Leone - Confirmed Malaria Cases',
+    'Run log',
+    'Period: '+(ST.cfgStart||'?')+' to '+(ST.cfgEnd||'?'),
+    'Generated: '+new Date().toISOString(),
+    'Rows: '+((ST.rows||[]).length.toLocaleString()),
+    ''.padEnd(60,'-'),''];
+  const txt=head.concat(lines).join('\n');
+  const a=document.createElement('a');
+  a.download=`NMCP_Confirmed_RunLog_${ST.cfgStart||'start'}_${ST.cfgEnd||'end'}.txt`;
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);a.click();
+}
+function toggleLogView(){
+  const b=document.getElementById('logBoxDL'); if(!b)return;
+  if(b.style.display==='none'){
+    const src=document.getElementById('logBox');
+    b.innerHTML = (src&&src.innerHTML) ? src.innerHTML
+      : logLines().map(l=>`<div class="log-line">${l}</div>`).join('');
+    b.style.display='block';
+  } else b.style.display='none';
 }
 // Yield to the browser so the log actually paints while work is running
 const tick=()=>new Promise(r=>setTimeout(r,0));
@@ -1318,41 +1417,82 @@ async function startPipeline(){
     ST.comRollup=0;  // Level-6 community values rolled up to a Level-5 PHU
     ST.micViol={};   // microscopy reported by an MCHP or CHP (skipped, recorded)
     ST.micSkipped=0; ST.micSkippedVal=0;
+    ST.dxAudit={};   // per-dx tally of what analytics returned and what we did with it
+    ST.dupRows=0; ST.dupVal=0;
+    ST.extremes=[];   // single cells too large to be real (see EXTREME_MIN)
+    // ── IDEMPOTENT FETCH ──────────────────────────────────────
+    // A value is uniquely identified by data element + COC + period + org unit.
+    // If the same triple arrives twice — a repeated row in one response, or the
+    // same dx served by more than one batch — the second copy is a DUPLICATE and
+    // must not be summed again. Without this the total depends on how the dx list
+    // happened to be chunked, which is exactly the bug this guards against.
+    const seenTriple=new Set();
     let totalRows=0;
     for(let ci=0;ci<ST.years.length;ci++){
       const yr=ST.years[ci];
       const mos=yearMonths(yr);
       if(!mos.length)continue;
       setStep('s_fetch','running',`Year ${yr} — ${mos.length} month(s) (${ci+1}/${ST.years.length})`);
-      const pe=mos.map(mo=>`${yr}${mo}`).join(';');
+      const peList=mos.map(mo=>`${yr}${mo}`);   // full period ids, e.g. 202601
+      const pe=peList.join(';');
 
       // ── BATCHED FETCH ─────────────────────────────────────
       // 103 data values x ~6,000 org units x 12 months is far too large for one
       // analytics request — DHIS2 returns an empty result rather than an error.
       // The dx list is therefore split into chunks and fetched separately.
+      // Facility elements (old + new form) only ever hold data at Level 5. Community
+      // elements are reported by iCCM posts at Level 6 and are also accepted at Level 5,
+      // so only those need both levels. Asking every request for both levels made each
+      // response cover 10,580 org units instead of 2,342.
+      const OU_FAC='LEVEL-'+L_PHU;
+      const OU_COM='LEVEL-'+L_PHU+';LEVEL-'+L_COM;
+      const isComDx=(dx)=>((DX_MAP[dx]||{}).src==='com');
       const DX_ALL=[...new Set(ALL_DX.map(d=>d.dxStr))];
-      const CHUNK=12;
+      const DX_FAC=DX_ALL.filter(d=>!isComDx(d));
+      const DX_COM=DX_ALL.filter(isComDx);
+      const CHUNK=6;   // smaller requests fail far less often; de-duplication makes
+                       // the chunk size irrelevant to the totals
       const chunks=[];
-      for(let i=0;i<DX_ALL.length;i+=CHUNK)chunks.push(DX_ALL.slice(i,i+CHUNK));
-      log(`Fetching ${yr} — ${mos.length} month(s), ${DX_ALL.length} data values in ${chunks.length} batches, Level-5 + Level-6…`,'info');
+      for(let i=0;i<DX_FAC.length;i+=CHUNK)chunks.push({dx:DX_FAC.slice(i,i+CHUNK),ou:OU_FAC,scope:'Level-5'});
+      // Community elements are fetched ONE AT A TIME: they are the heaviest requests
+      // because they span both org unit levels.
+      DX_COM.forEach(d=>chunks.push({dx:[d],ou:OU_COM,scope:'Level-5 + Level-6'}));
+      log(`Fetching ${yr} — ${mos.length} month(s), ${DX_ALL.length} data values in ${chunks.length} batches (${DX_FAC.length} facility at Level-5, ${DX_COM.length} community at Level-5 + Level-6)…`,'info');
       await tick();
 
       let yrRows=0;
       for(let bi=0;bi<chunks.length;bi++){
         const t0=performance.now();
         setStep('s_fetch','running',`Year ${yr} — batch ${bi+1}/${chunks.length}`);
-        const resp=await dhis2('/api/analytics.json?dimension=dx:'+chunks[bi].join(';')
-          +'&dimension=pe:'+pe
-          +'&dimension=ou:LEVEL-'+L_PHU+';LEVEL-'+L_COM
-          +'&displayProperty=NAME&paging=false&ignoreLimit=true');
+        const resp=await fetchAnalytics(chunks[bi].dx, peList, chunks[bi].ou, `${yr} batch ${bi+1}/${chunks.length}`);
         const got=(resp.rows||[]).length;
         yrRows+=got;
         log(`  ${yr} batch ${bi+1}/${chunks.length}: ${got.toLocaleString()} rows in ${((performance.now()-t0)/1000).toFixed(1)}s`, got?'ok':'warn');
         await tick();
         (resp.rows||[]).forEach(row=>{
         const[dxStr,period,ouId,rawVal]=row;
-        const val=parseFloat(rawVal)||0;if(!val)return;
-        const map=DX_MAP[dxStr];if(!map)return;
+        const val=parseFloat(rawVal)||0;
+        const map=DX_MAP[dxStr];
+        // Audit every returned row BEFORE any filter, so the tally is what DHIS2 sent.
+        const _a=ST.dxAudit[dxStr]||(ST.dxAudit[dxStr]={rows:0,raw:0,acceptedRows:0,accepted:0,
+          micRows:0,micVal:0,formRows:0,formVal:0,dupRows:0,dupVal:0,
+          band:(map&&map.band)||'',field:(map&&map.field)||''});
+        _a.rows++; _a.raw+=val;
+        if(!val)return;
+        if(!map)return;
+        // Same value delivered twice — count it once only.
+        const _tk=dxStr+'|'+period+'|'+ouId;
+        if(seenTriple.has(_tk)){ _a.dupRows++; _a.dupVal+=val; ST.dupRows++; ST.dupVal+=val; return; }
+        seenTriple.add(_tk);
+        if(val>=EXTREME_MIN && ST.extremes.length<20000){
+          const _de=dxStr.split('.')[0], _coc=dxStr.split('.')[1]||'';
+          ST.extremes.push({ouId:effectiveId, facility:ou.name, hfType:ou.hfType,
+            chiefdom:ou.chiefdomName, district:ou.districtName,
+            ownership:getOwnership(ou.chiefdomName,ou.name,effectiveId),
+            period, year:parseInt(period.slice(0,4)), month:parseInt(period.slice(4,6)),
+            de:_de, deName:DE_NAMES[_de]||'', coc:_coc,
+            band:map.band||'', field:map.field, value:val, disposition:'accepted'});
+        }
         // ── LEVEL-6 ROLLUP ────────────────────────────────────
         // Community (HF04) is reported by iCCM posts at Level 6. Those values are
         // rolled up to their Level-5 PHU parent. Facility forms are never reported at
@@ -1379,6 +1519,9 @@ async function startPipeline(){
             value:0 };
           ST.micViol[mk].value+=val;
           ST.micSkipped++; ST.micSkippedVal+=val;
+          { const _e=ST.extremes[ST.extremes.length-1];
+            if(_e&&_e.value===val&&_e.period===period)_e.disposition='skipped (microscopy at MCHP/CHP)'; }
+          _a.micRows++; _a.micVal+=val;
           return; // SKIPPED — never enters rawSlots
         }
 
@@ -1408,6 +1551,9 @@ async function startPipeline(){
           const ak=(DX_MAP[dxStr]||{}).field.replace(/^fac_|^com_/,'');
           v[ak]=(v[ak]||0)+val;
           v.total+=val;
+          _a.formRows++; _a.formVal+=val;
+          { const _e=ST.extremes[ST.extremes.length-1];
+            if(_e&&_e.value===val&&_e.period===period)_e.disposition='ignored (wrong form)'; }
           return; // IGNORED — never enters rawSlots
         }
 
@@ -1426,6 +1572,7 @@ async function startPipeline(){
         slot[srcKey]+=val;
         if(map.src==='old')slot._old=true; else if(map.src==='new')slot._new=true; else slot._com=true;
         totalRows++;
+        _a.acceptedRows++; _a.accepted+=val;
       });
       }  // ── end batch loop ──
       if(!yrRows)log(`  ${yr}: NO DATA returned — check the data elements exist for this period`,'err');
@@ -1435,6 +1582,12 @@ async function startPipeline(){
     setStep('s_fetch','done',`${totalRows.toLocaleString()} data points fetched`);
     log(`Fetch complete — ${totalRows.toLocaleString()} values accepted`,'ok');
     log(`Community rollup — ${(ST.comRollup||0).toLocaleString()} Level-6 iCCM values summed into their PHU`,'hl');
+    if(ST.dupRows)
+      log(`Duplicate values — ${ST.dupRows.toLocaleString()} row(s) (${ST.dupVal.toLocaleString()} cases) arrived more than once for the same element+COC+period+facility and were counted ONCE`,'warn');
+    else
+      log('Duplicate check — no value arrived twice','ok');
+    logExtremes();
+    logAudit();
     if(ST.micSkipped)
       log(`Microscopy at MCHP/CHP — SKIPPED ${ST.micSkipped.toLocaleString()} record(s) (${ST.micSkippedVal.toLocaleString()} cases). See Wrong Reporting.`,'warn');
     else
@@ -2072,6 +2225,106 @@ function renderReconciliation(){
     tbl(dhisOnly,['District','Chiefdom','Facility','Type'],false);
 }
 
+// ── EXTREME VALUES ───────────────────────────────────────────
+// A single monthly cell holding a value far above anything clinically possible is a
+// data-entry error, most often a 9 or 10 digit number (an ID, a phone number, a
+// barcode) typed into a count field. Outlier correction cannot always remove these:
+// it needs at least 4 reported months in the facility-year, and if several months are
+// inflated the median is inflated too. Every such value is captured here with its
+// facility and month so it can be corrected at source in DHIS2.
+const EXTREME_MIN=5000;   // a monthly count at one facility above this is not credible
+function extremeRows(){
+  const L=(ST.extremes||[]).slice().sort((a,b)=>b.value-a.value);
+  // was this cell later replaced by outlier correction?
+  const corrected=new Set((ST.outlierLog||[]).map(o=>`${o.ouId}|${o.year}|${o.month}|${o.field||''}`));
+  return L.map(e=>[e.district,e.chiefdom,e.facility,e.hfType,e.ownership,e.period,
+    e.de,e.deName,e.coc,e.band,e.field,e.value,
+    corrected.has(`${e.ouId}|${e.year}|${e.month}|${e.field}`)?'Yes':'No',
+    e.disposition]);
+}
+const EXTREME_HDR=['District','Chiefdom','Facility','Type','Ownership','Period',
+  'Data Element UID','Data Element','COC UID','Band','Field','Value',
+  'Replaced by outlier correction','What happened to it'];
+function logExtremes(){
+  const L=(ST.extremes||[]).slice().sort((a,b)=>b.value-a.value);
+  if(!L.length){log(`Extreme values — none above ${EXTREME_MIN.toLocaleString()} in a single facility-month`,'ok');return;}
+  const sum=L.reduce((a,b)=>a+b.value,0);
+  log(`Extreme values — ${L.length.toLocaleString()} cell(s) above ${EXTREME_MIN.toLocaleString()}, totalling ${sum.toLocaleString()}. See the Extreme Values report.`,'warn');
+  L.slice(0,10).forEach(e=>log(`    ${e.value.toLocaleString()} · ${e.facility} (${e.hfType}, ${e.district}) · ${e.period} · ${e.deName} · ${e.band}`,'dim'));
+  if(L.length>10)log(`    …and ${(L.length-10).toLocaleString()} more`,'dim');
+}
+function downloadExtremes(){
+  const rows=extremeRows();
+  if(!rows.length){alert('No extreme values found — nothing to export.');return;}
+  const L=(ST.extremes||[]);
+  const byDx={};
+  L.forEach(e=>{const k=e.de+'.'+e.coc; byDx[k]=byDx[k]||{n:0,sum:0,max:0,name:e.deName,band:e.band};
+    byDx[k].n++; byDx[k].sum+=e.value; byDx[k].max=Math.max(byDx[k].max,e.value);});
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
+    ['EXTREME VALUES — single facility-months above '+EXTREME_MIN.toLocaleString()],[],
+    ['These are data-entry errors in DHIS2, not extraction errors. Correct them at source.'],[],
+    ['dx','Data Element','Band','Cells','Total','Largest single value'],
+    ...Object.keys(byDx).sort((a,b)=>byDx[b].sum-byDx[a].sum)
+      .map(k=>[k,byDx[k].name,byDx[k].band,byDx[k].n,byDx[k].sum,byDx[k].max])
+  ]),'Summary');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([EXTREME_HDR,...rows]),'Every Cell');
+  XLSX.writeFile(wb,`NMCP_Confirmed_ExtremeValues_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
+}
+// ── FETCH AUDIT ──────────────────────────────────────────────
+// One record per dx string (data element . category option combo) with what the
+// analytics API returned and what happened to it. Two runs of two different tools
+// can be diffed on this to find exactly which variable disagrees.
+function auditRows(){
+  const A=ST.dxAudit||{};
+  return Object.keys(A).sort().map(dx=>{
+    const a=A[dx], de=dx.split('.')[0], coc=dx.split('.')[1]||'(element total)';
+    return [de, coc, dx, DE_NAMES[de]||'', (a.band||''), (a.field||''),
+            a.rows, a.raw, a.acceptedRows, a.accepted,
+            a.micRows, a.micVal, a.formRows, a.formVal, a.dupRows||0, a.dupVal||0];
+  });
+}
+const AUDIT_HDR=['Data Element UID','COC UID','dx string','Data Element Name','Band','Field',
+  'Rows returned','Value returned','Rows accepted','Value accepted',
+  'Rows skipped (microscopy MCHP/CHP)','Value skipped','Rows ignored (wrong form)','Value ignored',
+  'Rows DUPLICATE (dropped)','Value DUPLICATE (dropped)'];
+function auditByDE(){
+  const A=ST.dxAudit||{}, byDE={};
+  Object.keys(A).forEach(dx=>{
+    const de=dx.split('.')[0], a=A[dx];
+    byDE[de]=byDE[de]||{rows:0,raw:0,acceptedRows:0,accepted:0,micVal:0,formVal:0,n:0};
+    const b=byDE[de];
+    b.rows+=a.rows; b.raw+=a.raw; b.acceptedRows+=a.acceptedRows; b.accepted+=a.accepted;
+    b.micVal+=a.micVal; b.formVal+=a.formVal; b.n++;
+  });
+  return byDE;
+}
+function logAudit(){
+  const byDE=auditByDE();
+  log('Fetch audit — per data element (returned → accepted, with what was removed):','info');
+  Object.keys(byDE).sort((x,y)=>byDE[y].accepted-byDE[x].accepted).forEach(de=>{
+    const b=byDE[de];
+    log(`  ${de} ${(DE_NAMES[de]||'').slice(0,58)} · ${b.n} dx · ${b.rows.toLocaleString()} rows`
+      + ` · returned ${b.raw.toLocaleString()} → accepted ${b.accepted.toLocaleString()}`
+      + (b.micVal?` · microscopy-skipped ${b.micVal.toLocaleString()}`:'')
+      + (b.formVal?` · wrong-form-ignored ${b.formVal.toLocaleString()}`:''),'dim');
+  });
+}
+function downloadFetchAudit(){
+  const rows=auditRows();
+  if(!rows.length){alert('No audit yet — run the extract first.');return;}
+  const wb=XLSX.utils.book_new();
+  const byDE=auditByDE();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
+    ['FETCH AUDIT — what the analytics API returned, per data element'],[],
+    ['Data Element','Name','dx count','Rows returned','Value returned','Value accepted',
+     'Microscopy skipped','Wrong form ignored'],
+    ...Object.keys(byDE).sort().map(de=>[de,DE_NAMES[de]||'',byDE[de].n,byDE[de].rows,
+      byDE[de].raw,byDE[de].accepted,byDE[de].micVal,byDE[de].formVal])
+  ]),'By Data Element');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([AUDIT_HDR,...rows]),'By dx');
+  XLSX.writeFile(wb,`NMCP_Confirmed_FetchAudit_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
+}
 // ── Tabs ─────────────────────────────────────────────────────
 function showCfgTab(t){
   ['extract','method'].forEach(n=>{
@@ -2686,7 +2939,7 @@ function renderReporting(){
     document.getElementById(id+'Body').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
   });
   // 3. Ownership / HF type (kept, but now on Overall reporting)
-  [['own','repOwn','Public vs Private'],['type','repType','Health Facility Type']].forEach(([dim,id,lab])=>{
+  [['own','repOwn','Ownership'],['type','repType','Health Facility Type']].forEach(([dim,id,lab])=>{
     const {hdr,rows,periods,keys,den}=repRows(dim);
     document.getElementById(id+'Chart').innerHTML=
       renderLineChart(periods,keys,den,(p,k,d)=>_repVal(p,k,d,dim),
@@ -3000,7 +3253,7 @@ function downloadCmpAll(){
   XLSX.writeFile(wb,`NMCP_Confirmed_TimeSeries_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
 }
 
-// ── Bi-annual analysis: Public vs Private ───────────────────
+// ── Bi-annual analysis: by ownership ────────────────────────
 // Half-years: H1 = Jan–Jun, H2 = Jul–Dec. Aggregates malaria test totals by ownership.
 function getBiannual(){
   const agg={};
@@ -3029,7 +3282,7 @@ function biRows(){return getBiannual().map(d=>[d.period,d.year,'H'+d.half,d.publ
 function downloadBiannual(fmt){
   const rows=biRows();
   if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([BI_HDR,...rows]),'Confirmed Public vs Private');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([BI_HDR,...rows]),'Confirmed by Ownership');
     XLSX.writeFile(wb,`NMCP_Confirmed_PubPriv_Biannual_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;}
   const csv=[BI_HDR.join(','),...rows.map(r=>r.map(c=>`"${c??''}"`).join(','))].join('\n');
   const a=document.createElement('a');
@@ -3043,12 +3296,12 @@ function renderBiannualChart(data,opts){
   const pad={l:70,r:16,t:38,b:70};
   const W=Math.max(520,data.length*96+pad.l+pad.r), H=345;
   const plotW=W-pad.l-pad.r, plotH=H-pad.t-pad.b;
-  const rawMax=Math.max(1,...data.map(d=>Math.max(d.public,d.private)));
+  const rawMax=Math.max(1,...data.map(d=>Math.max(d.public,d.private,d.unknown||0)));
   const p10=Math.pow(10,Math.floor(Math.log10(rawMax)));
   const niceMax=Math.ceil(rawMax/p10)*p10;
   const y=v=>pad.t+plotH-(v/niceMax)*plotH;
   const groupW=plotW/data.length;
-  const nBars=2;
+  const nBars=3;   // Public · Private · In DHIS2 not in master
   const barW=Math.min(24,(groupW-16)/nBars);
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;font-family:'Segoe UI',sans-serif;">`;
   if(opts.title)s+=`<text x="${pad.l+plotW/2}" y="18" text-anchor="middle" font-size="13.5" font-weight="700" fill="#12395c">${opts.title}</text>`;
@@ -3060,7 +3313,8 @@ function renderBiannualChart(data,opts){
   s+=`<text x="${pad.l+plotW/2}" y="${H-26}" text-anchor="middle" font-size="11" font-weight="700" fill="#2c4b62">${opts.xlab||'Period'}</text>`;
   data.forEach((d,i)=>{
     const gx=pad.l+i*groupW+groupW/2;
-    const bars=[['#2c6793',d.public,'Public'],['#ffc107',d.private,'Private']];
+    const bars=[['#2c6793',d.public,'Public'],['#ffc107',d.private,'Private'],
+                ['#9aa7b2',d.unknown||0,'In DHIS2 not in master']];
     const totW=bars.length*barW+(bars.length-1)*4, x0=gx-totW/2;
     bars.forEach(([col,val,lab],bi)=>{
       const bx=x0+bi*(barW+4);
@@ -3068,7 +3322,7 @@ function renderBiannualChart(data,opts){
     s+=`<text x="${gx}" y="${H-pad.b+16}" text-anchor="middle" font-size="10" fill="#2c4b62" font-weight="700">${d.period}</text>`;});
   s+=`<line x1="${pad.l}" y1="${pad.t+plotH}" x2="${W-pad.r}" y2="${pad.t+plotH}" stroke="#b9c9d8" stroke-width="1.5"/>`;
   let lx=pad.l;
-  const leg=[['#2c6793','Public'],['#ffc107','Private']];
+  const leg=[['#2c6793','Public'],['#ffc107','Private'],['#9aa7b2','In DHIS2 not in master']];
   leg.forEach(([col,lab])=>{s+=`<rect x="${lx}" y="${H-11}" width="11" height="11" fill="${col}" rx="2"/><text x="${lx+16}" y="${H-1}" font-size="11" fill="#2c4b62">${lab}</text>`;lx+=lab.length*7+34;});
   return `<div style="overflow-x:auto;">${s}</svg></div>`;
 }
@@ -3089,11 +3343,11 @@ function renderBiannual(){
     `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
     `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('biChart').innerHTML=renderBiannualChart(data,
-    {title:'Confirmed Cases — Public vs Private (Bi-annual)', subtitle:'H1 = Jan–Jun · H2 = Jul–Dec',
+    {title:'Confirmed Cases by Ownership — Bi-annual', subtitle:'H1 = Jan–Jun · H2 = Jul–Dec',
      xlab:'Half-year', ylab:'Confirmed malaria cases'});
 }
 
-// ── Yearly analysis: Public vs Private ──────────────────────
+// ── Yearly analysis: by ownership ───────────────────────────
 function getYearly(){
   const agg={};
   ST.rows.forEach(r=>{
@@ -3120,7 +3374,7 @@ function yrRows(){return getYearly().map(d=>[d.year,d.public,d.private,d.unknown
 function downloadYearly(fmt){
   const rows=yrRows();
   if(fmt==='xlsx'){const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([YR_HDR,...rows]),'Confirmed Public vs Private (Yearly)');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([YR_HDR,...rows]),'Confirmed by Ownership (Yearly)');
     XLSX.writeFile(wb,`NMCP_Confirmed_PubPriv_Yearly_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;}
   const csv=[YR_HDR.join(','),...rows.map(r=>r.map(c=>`"${c??''}"`).join(','))].join('\n');
   const a=document.createElement('a');
@@ -3144,7 +3398,7 @@ function renderYearly(){
     `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
     `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('yrChart').innerHTML=renderBiannualChart(data,
-    {title:'Confirmed Cases — Public vs Private (Yearly)', subtitle:'Totals by year and facility ownership',
+    {title:'Confirmed Cases by Ownership — Yearly', subtitle:'Totals by year and facility ownership',
      xlab:'Year', ylab:'Confirmed malaria cases'});
 }
 
