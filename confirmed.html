@@ -135,34 +135,34 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div style="font-size:12px;color:#2c4b62;line-height:1.75;">
 
           <div style="background:var(--blue-lt);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
-            <strong style="color:var(--blue);">Purpose.</strong> This tool extracts monthly <strong>confirmed malaria cases</strong> — test-positive results only (RDT and Microscopy) — from DHIS2 for every health facility in Sierra Leone, from the old form, the new HF01 facility form and community reporting. It cleans the data, attaches Public/Private ownership, and produces analysis-ready tables. Every step below is applied automatically on each run.
+            <strong style="color:var(--blue);">Purpose.</strong> This tool extracts monthly <strong>confirmed malaria cases</strong>: test positive results only (RDT and Microscopy), from DHIS2 for every health facility in Sierra Leone, from the old form, the new HF01 facility form and community reporting. It cleans the data, attaches Public/Private ownership, and produces analysis-ready tables. Every step below is applied automatically on each run.
           </div>
 
           <div class="m-step"><div class="m-num">1</div><div>
             <div class="m-title">Fetch the facility registry</div>
-            All <strong>Level-5 (PHU)</strong> org units are pulled from DHIS2 with their full hierarchy — District (Level 2) and Chiefdom (Level 4).<br><br>
-            <strong>Level-6 iCCM units are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level-6 unit is mapped to its <strong>Level-5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level-6 units never appear as facilities in their own right — they only contribute community cases to their parent PHU.
+            All <strong>Level 5 (PHU)</strong> org units are pulled from DHIS2 with their full hierarchy, District (Level 2) and Chiefdom (Level 4).<br><br>
+            <strong>Level 6 iCCM units are also pulled.</strong> Community tests are reported at Level 6, not at the facility, so each Level 6 unit is mapped to its <strong>Level 5 PHU parent</strong> and its values are <strong>rolled up</strong> to that facility. Level 6 units never appear as facilities in their own right, they only contribute community cases to their parent PHU.
           </div></div>
 
           <div class="m-step"><div class="m-num">2</div><div>
             <div class="m-title">Apply exclusions <span class="m-tag">before any data is fetched</span></div>
-            A facility is dropped entirely — appearing in no analysis, denominator, or export — if it is:
+            A facility is dropped entirely, appearing in no analysis, denominator, or export, if it is:
             <ul class="m-list">
               <li><strong>A laboratory</strong> (name contains "Laboratory"). These are not health facilities, yet many are typed <em>Hospital</em> in the source (e.g. "Bo Regional Hospital Laboratory"), which would inflate the Hospital count.</li>
-              <li><strong>A Marie Stopes facility</strong> — excluded by NMCP request (specialised SRH provider).</li>
-              <li><strong>Of an unrecognised type</strong> — the type cannot be derived from the facility name.</li>
+              <li><strong>A Marie Stopes facility</strong>: excluded by NMCP request (specialised SRH provider).</li>
+              <li><strong>Of an unrecognised type</strong>: the type cannot be derived from the facility name.</li>
             </ul>
             Facility types are normalised to five categories: <strong>Hospital, Clinic, CHC, CHP, MCHP</strong>. Misspellings are folded in ("Climic" → Clinic), as are nursing homes ("Home" → Clinic).
             <div class="m-egbox">
-              <div class="m-eghead">Example — why this matters</div>
+              <div class="m-eghead">Example: why this matters</div>
               <table class="m-tbl">
                 <tr><th>Facility name</th><th>Type in source</th><th>Decision</th></tr>
-                <tr><td>Bo Regional Hospital <b>Laboratory</b></td><td>Hospital</td><td class="m-bad">Excluded — it is a lab, not a hospital</td></tr>
-                <tr><td>Connaught Hospital <b>Laboratory</b></td><td>Hospital</td><td class="m-bad">Excluded — lab</td></tr>
-                <tr><td><b>Marie Stopes</b> (Kakua) Clinic</td><td>Clinic</td><td class="m-bad">Excluded — NMCP request</td></tr>
-                <tr><td>JC Boima Memorial <b>Climic</b></td><td>Climic</td><td class="m-good">Kept — type corrected to Clinic</td></tr>
-                <tr><td>St John Clinic and Nursing <b>Home</b></td><td>Home</td><td class="m-good">Kept — folded into Clinic</td></tr>
-                <tr><td>Bo Government Hospital</td><td>Hospital</td><td class="m-good">Kept — a real hospital</td></tr>
+                <tr><td>Bo Regional Hospital <b>Laboratory</b></td><td>Hospital</td><td class="m-bad">Excluded: it is a lab, not a hospital</td></tr>
+                <tr><td>Connaught Hospital <b>Laboratory</b></td><td>Hospital</td><td class="m-bad">Excluded: lab</td></tr>
+                <tr><td><b>Marie Stopes</b> (Kakua) Clinic</td><td>Clinic</td><td class="m-bad">Excluded: NMCP request</td></tr>
+                <tr><td>JC Boima Memorial <b>Climic</b></td><td>Climic</td><td class="m-good">Kept: type corrected to Clinic</td></tr>
+                <tr><td>St John Clinic and Nursing <b>Home</b></td><td>Home</td><td class="m-good">Kept: folded into Clinic</td></tr>
+                <tr><td>Bo Government Hospital</td><td>Hospital</td><td class="m-good">Kept: a real hospital</td></tr>
               </table>
               <div class="m-calc" style="margin-top:8px;">Effect on the Hospital count: <b>106 → 90</b> real hospitals, once the 16 laboratories mislabelled as "Hospital" are removed.<br>
               <span class="m-mut">Left in, they would sit in the Hospital denominator forever reporting nothing, dragging the Hospital reporting rate down for no real reason.</span></div>
@@ -174,10 +174,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             <div class="m-title">Fetch testing data</div>
             Monthly values are pulled from the DHIS2 analytics API for every month in the selected range.
 
-            <div class="m-note" style="border-left:3px solid var(--gold);"><strong>Confirmed cases = positives only.</strong> This tool extracts <strong>confirmed malaria cases</strong> — test-positive results only. Facility records positives by <strong>RDT</strong> and <strong>Microscopy</strong>; community records <strong>RDT positives only</strong> (CHWs do not perform microscopy). Everything maps onto <strong>three age groups</strong>: 0-59m, 05-14y, 15+y.</div>
+            <div class="m-note" style="border-left:3px solid var(--gold);"><strong>Confirmed cases = positives only.</strong> This tool extracts <strong>confirmed malaria cases</strong>: test positive results only. Facility records positives by <strong>RDT</strong> and <strong>Microscopy</strong>; community records <strong>RDT positives only</strong> (CHWs do not perform microscopy). Everything maps onto <strong>three age groups</strong>: 0-59m, 05-14y, 15+y.</div>
 
             <div class="m-egbox">
-              <div class="m-eghead">OLD FORM — HF01 Outpatient morbidity <code>ij1VNJwxKCh</code></div>
+              <div class="m-eghead">OLD FORM: HF01 Outpatient morbidity <code>ij1VNJwxKCh</code></div>
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th><th>Ages</th></tr>
                 <tr><td>Fever case tested for Malaria (RDT) - Positive</td><td><code>p6zQLDFjSfd</code></td><td>0-59m / 05-14y / 15+y</td></tr>
@@ -189,18 +189,18 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>05-14y</td><td><code>j7j6iaknOFn</code></td><td><code>p6zQLDFjSfd.j7j6iaknOFn</code></td><td><code>Sz13vbo2Qwh.j7j6iaknOFn</code></td></tr>
                 <tr><td>15+y</td><td><code>zK1aiw8zFac</code></td><td><code>p6zQLDFjSfd.zK1aiw8zFac</code></td><td><code>Sz13vbo2Qwh.zK1aiw8zFac</code></td></tr>
               </table>
-              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Both methods are age-disaggregated on the old form</strong>, and both use the same three age COCs. RDT and microscopy positives are therefore complete, by age, for every month up to March 2026.</div>
+              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Both methods are age disaggregated on the old form</strong>, and both use the same three age COCs. RDT and microscopy positives are therefore complete, by age, for every month up to March 2026.</div>
             </div>
 
             <div class="m-egbox">
-              <div class="m-eghead">NEW FORM — 2025_HF01 <code>fB66asHJITQ</code></div>
+              <div class="m-eghead">NEW FORM: 2025_HF01 <code>fB66asHJITQ</code></div>
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th></tr>
                 <tr><td>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</td><td><code>AwLklDAVtvq</code></td></tr>
                 <tr><td>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</td><td><code>AMrdoWsiHMa</code></td></tr>
               </table>
               <div class="m-note" style="margin-top:6px;"><strong>RDT and Microscopy are each split by 12 age bands × 2 sexes</strong>; sex is collapsed on summation. Full variable list below.</div>
-              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Both new-form elements are age-disaggregated, and identically so.</strong> Verified against the DHIS2 metadata export: <code>AwLklDAVtvq</code> and <code>AMrdoWsiHMa</code> both use category combo <code>Gender_Age_0-7d_11m_12-59m_05-09y_15y_20-49y_cohorts_65+y</code> and share the <strong>same 24 category option combos</strong> (12 age bands × 2 sexes). Microscopy is therefore fetched band by band exactly like RDT, the Male and Female pair for each band is summed, and the bands are folded into the three reporting age groups. There is <strong>no un-aged microscopy series</strong> and no change in the shape of the microscopy component at the cutover.</div>
+              <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>Both new-form elements are age disaggregated, and identically so.</strong> Verified against the DHIS2 metadata export: <code>AwLklDAVtvq</code> and <code>AMrdoWsiHMa</code> both use category combo <code>Gender_Age_0-7d_11m_12-59m_05-09y_15y_20-49y_cohorts_65+y</code> and share the <strong>same 24 category option combos</strong> (12 age bands × 2 sexes). Microscopy is therefore fetched band by band exactly like RDT, the Male and Female pair for each band is summed, and the bands are folded into the three reporting age groups. There is <strong>no un-aged microscopy series</strong> and no change in the shape of the microscopy component at the cutover.</div>
               <div class="m-note" style="border-left:3px solid var(--gold);margin-top:6px;"><strong>RDT and Microscopy are both disaggregated by age band and sex, on the same 24 category option combos.</strong> Each band is fetched separately for <b>RDT</b> <code>AwLklDAVtvq</code> and for <b>Microscopy</b> <code>AMrdoWsiHMa</code>, the Male and Female pair is summed, and the bands are folded into the three reporting age groups. The last two columns are the exact dx strings sent to the analytics API, so nothing here is inferred.</div>
               <div class="m-calc" style="margin-top:6px;"><b>HF01_Fever cases tested for Malaria (RDT) - Positive_Cases</b> = <code>AwLklDAVtvq</code><br><b>HF01_Fever cases tested for Malaria (Microscopy) - Positive_Cases</b> = <code>AMrdoWsiHMa</code></div>
               <div class="m-egsub">Bands folded into <b>0-59m</b></div>
@@ -247,7 +247,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             </div>
 
             <div class="m-egbox">
-              <div class="m-eghead">COMMUNITY — HF04 Community Based Services <code>nufVxEfy3Ps</code></div>
+              <div class="m-eghead">COMMUNITY: HF04 Community Based Services <code>nufVxEfy3Ps</code></div>
               <table class="m-tbl">
                 <tr><th>Data element</th><th>UID</th></tr>
                 <tr><td>Fever case tested for Malaria (RDT) in HTR - Positive</td><td><code>T7xH8GwWpEM</code></td></tr>
@@ -258,8 +258,8 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <tr><td>05-14y</td><td><code>qDXW7WMLT99</code></td><td><code>T7xH8GwWpEM.qDXW7WMLT99</code></td></tr>
                 <tr><td>15+y</td><td><code>mdjRPpvLKdu</code></td><td><code>T7xH8GwWpEM.mdjRPpvLKdu</code></td></tr>
               </table>
-              <div class="m-note" style="margin-top:6px;">Community has <strong>no microscopy variable</strong>. CHW and ETR posts test by RDT only, so community confirmed cases are RDT positives alone. The element is <code>T7xH8GwWpEM</code> — Fever case tested for Malaria (RDT) in HTR - Positive.</div>
-              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level-6 rollup.</strong> Community cases are reported by <strong>iCCM posts at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level-6 value is <strong>rolled up to its Level-5 PHU parent</strong>. Facility forms are never reported at Level 6, so any Level-6 value for a facility data element is ignored.</div>
+              <div class="m-note" style="margin-top:6px;">Community has <strong>no microscopy variable</strong>. CHW and ETR posts test by RDT only, so community confirmed cases are RDT positives alone. The element is <code>T7xH8GwWpEM</code>: Fever case tested for Malaria (RDT) in HTR - Positive.</div>
+              <div class="m-note" style="border-left:3px solid var(--blue);margin-top:6px;"><strong>Level 6 rollup.</strong> Community cases are reported by <strong>iCCM posts at Level 6</strong>. Analytics is queried at <strong>LEVEL-5 and LEVEL-6</strong> and every Level 6 value is <strong>rolled up to its Level 5 PHU parent</strong>. Facility forms are never reported at Level 6, so any Level 6 value for a facility data element is ignored.</div>
             </div>
 
             <div class="m-egbox">
@@ -268,52 +268,52 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
                 <b>Confirmed at facility &lt;age&gt;</b> = RDT Positive + Microscopy Positive<br>
                 <b>Confirmed at community &lt;age&gt;</b> = RDT Positive, iCCM<br>
                 <b>Confirmed overall &lt;age&gt;</b> = at facility + at community<br><br>
-                <b>Confirmed — RDT only</b> = facility RDT+ &nbsp;+&nbsp; community RDT+
+                <b>Confirmed: RDT only</b> = facility RDT+ &nbsp;+&nbsp; community RDT+
               </div>
-              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series — and why.</strong> Facility microscopy positives are age-disaggregated on <em>both</em> forms, so the per-age RDT + Microscopy figures are complete and consistently defined throughout, before and after the cutover. A <b>RDT-only</b> series is still produced alongside them, because it is a single method available at every facility including those with no laboratory, which makes it the better series for comparing places rather than periods. Both are in every export, and the <b>Series Break Check</b> chart plots them together so any step can be inspected.</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;"><strong>Two confirmed series, and why.</strong> Facility microscopy positives are age disaggregated on <em>both</em> forms, so the per age RDT + Microscopy figures are complete and consistently defined throughout, before and after the cutover. A <b>RDT only</b> series is still produced alongside them, because it is a single method available at every facility including those with no laboratory, which makes it the better series for comparing places rather than periods. Both are in every export, and the <b>Series Break Check</b> chart plots them together so any step can be inspected.</div>
               <div class="m-calc"><b>9 series</b> are cleaned independently: facility RDT+, facility Microscopy+ and community RDT+, each across the 3 age groups. Outlier detection runs on each series separately.</div>
 
-              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>Microscopy is excluded for MCHP and CHP.</strong> Microscopy needs a microscope and a laboratory, and neither an <strong>MCHP</strong> nor a <strong>CHP</strong> has one, so any microscopy value they report is <strong>skipped</strong> — it never enters the data, the analyses or any export. Such entries are almost certainly data-entry errors, most often an RDT result recorded in the microscopy column. <strong>Hospital, CHC and Clinic may report microscopy</strong> and their values are kept in full. Every skipped record is listed, with its facility and value, in the <strong>Wrong Reporting</strong> tab.</div>
-              <div class="m-egsub">Form cutover — April 2026</div>
+              <div class="m-note" style="border-left:3px solid #dc2626;margin-top:6px;"><strong>Microscopy is excluded for MCHP and CHP.</strong> Microscopy needs a microscope and a laboratory, and neither an <strong>MCHP</strong> nor a <strong>CHP</strong> has one, so any microscopy value they report is <strong>skipped</strong>: it never enters the data, the analyses or any export. Such entries are almost certainly data entry errors, most often an RDT result recorded in the microscopy column. <strong>Hospital, CHC and Clinic may report microscopy</strong> and their values are kept in full. Every skipped record is listed, with its facility and value, in the <strong>Wrong Reporting</strong> tab.</div>
+              <div class="m-egsub">Form cutover: April 2026</div>
               <table class="m-tbl">
                 <tr><th>Source</th><th>Period used</th><th>Ignored</th></tr>
                 <tr><td style="color:#dc2626;font-weight:700;">OLD FORM</td><td>Up to and including <b>March 2026</b></td><td class="m-bad">Any value <b>after March 2026</b></td></tr>
                 <tr><td style="color:#15803d;font-weight:700;">NEW FORM</td><td>From <b>April 2026</b> onwards</td><td class="m-bad">Any value <b>before April 2026</b></td></tr>
-                <tr><td style="color:#2c6793;font-weight:700;">COMMUNITY (HF04)</td><td><b>All periods</b></td><td class="m-mut">None — separate dataset</td></tr>
+                <tr><td style="color:#2c6793;font-weight:700;">COMMUNITY (HF04)</td><td><b>All periods</b></td><td class="m-mut">None: separate dataset</td></tr>
               </table>
             </div>
 
             <div class="m-egsub">Org unit levels</div>
             <table class="m-tbl">
               <tr><th>Level</th><th>Meaning</th></tr>
-              <tr><td>Level 5</td><td>PHU — health facility (the unit of extraction)</td></tr>
-              <tr><td><b>Level 6</b></td><td><b>iCCM posts</b> — community reporting units, <b>rolled up to their Level-5 PHU</b></td></tr>
+              <tr><td>Level 5</td><td>PHU: health facility (the unit of extraction)</td></tr>
+              <tr><td><b>Level 6</b></td><td><b>iCCM posts</b>: community reporting units, <b>rolled up to their Level 5 PHU</b></td></tr>
               <tr><td>Level 4</td><td>Chiefdom</td></tr>
               <tr><td>Level 2</td><td>District</td></tr>
             </table>
 
-            Each of the six series is treated as a <strong>separate variable</strong> throughout — they are never merged before cleaning, so each gets its own outlier bound, flag and correction.
+            Each of the six series is treated as a <strong>separate variable</strong> throughout: they are never merged before cleaning, so each gets its own outlier bound and its own flag.
           </div></div>
 
           <div class="m-step"><div class="m-num">4</div><div>
             <div class="m-title">Attach ownership (Public / Private / In DHIS2 not in master)</div>
             Each facility is matched to the NMCP PHU ownership master list, in this order:
             <ol class="m-list">
-              <li><strong>DHIS2 OU ID</strong> — exact, and immune to renames or spelling changes</li>
+              <li><strong>DHIS2 OU ID</strong>: exact, and immune to renames or spelling changes</li>
               <li>Chiefdom (Level 4) + Facility name (Level 5)</li>
               <li>Facility name alone</li>
             </ol>
             <div class="m-note" style="border-left:3px solid var(--blue);"><strong>In the master list but not in DHIS2 is a reference list only.</strong> There is no DHIS2 org unit, so there is no data to extract and <strong>no calculation is performed for these facilities</strong>. They appear in no total, no denominator, no reporting rate and no case export. They are listed by name in the <strong>Ownership Reconciliation</strong> report so the master list can be corrected at source, and nothing else.</div>
             <div class="m-note" style="border-left:3px solid var(--gold);"><strong>In DHIS2 but not in the master list means ownership is Unknown, and nothing more.</strong> The facility is still fetched, its data still extracted, and its cases still counted in every district, facility type, age group and national total. Only the ownership label is affected. <strong>Unknown is a classification, not an exclusion</strong>, and it is shown as a third class beside Public and Private wherever ownership is reported, so Public plus Private plus Unknown always reconciles to the total. The facilities concerned are listed in the <strong>Ownership Reconciliation</strong> report as Unmatched, so the master list can be corrected at source.</div>
             <div class="m-egbox">
-              <div class="m-eghead">Example — why the OU ID must come first</div>
+              <div class="m-eghead">Example: why the OU ID must come first</div>
               <div style="font-size:11.5px;margin-bottom:6px;">Two <em>different</em> facilities in DHIS2 share the exact same name:</div>
               <table class="m-tbl">
                 <tr><th>OU ID</th><th>District</th><th>Chiefdom (L4)</th><th>Facility (L5)</th></tr>
                 <tr><td><code>O7vEvf1gdfY</code></td><td>Bo</td><td><b>Kakua</b></td><td>Keindeyella MCHP</td></tr>
                 <tr><td><code>RNfYTOFCBvh</code></td><td>Bo</td><td><b>Tikonko</b></td><td>Keindeyella MCHP</td></tr>
               </table>
-              <div class="m-calc" style="margin-top:8px;">Matching on <b>name alone</b> cannot tell these apart. Matching on the <b>OU ID</b> resolves each one exactly — and keeps working even if NMCP later renames a facility or fixes a typo in DHIS2.</div>
+              <div class="m-calc" style="margin-top:8px;">Matching on <b>name alone</b> cannot tell these apart. Matching on the <b>OU ID</b> resolves each one exactly, and keeps working even if NMCP later renames a facility or fixes a typo in DHIS2.</div>
             </div>
           </div></div>
 
@@ -327,7 +327,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             </div>
 
             <div class="m-egbox">
-              <div class="m-eghead">Worked example — one facility, 0-59m, 12 months of one year</div>
+              <div class="m-eghead">Worked example: one facility, 0-59m, 12 months of one year</div>
 
               <div class="m-egsub">Step A · The 12 monthly values, sorted</div>
               <div class="m-vals">110, 115, 120, 125, 128, <b>130, 132</b>, 135, 140, 145, 150, <span class="m-bad">900</span></div>
@@ -341,7 +341,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
               <div class="m-egsub">Step C · Measure the normal spread</div>
               <div class="m-calc">IQR = Q3 − Q1 = 141.25 − 123.75 = <b>17.5</b><br>
-              <span class="m-mut">The middle 50% of this facility's months span just 17.5 cases — it is a steady facility.</span></div>
+              <span class="m-mut">The middle 50% of this facility's months span just 17.5 cases: it is a steady facility.</span></div>
 
               <div class="m-egsub">Step D · Set the fence</div>
               <div class="m-calc">Upper bound = Q3 + 3.0 × IQR = 141.25 + 3.0 × 17.5 = <b>193.75</b></div>
@@ -390,44 +390,43 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
             <div class="m-egsub" style="margin-top:12px;">What is NOT touched</div>
             <ul class="m-list">
-              <li><strong>Zeros stay zero.</strong> A facility that genuinely saw 0 patients keeps its 0 — it is never flagged, and never used to compute the bound or the median.</li>
+              <li><strong>Zeros stay zero.</strong> A facility that genuinely saw 0 patients keeps its 0, it is never flagged, and never used to compute the bound or the median.</li>
               <li><strong>Missing stays missing.</strong> A month with no report stays blank; the tool never invents a value for it.</li>
-              <li><strong>Fewer than 4 reported values?</strong> No bound is computed (quartiles would be unstable) and nothing is corrected.</li>
-              <li><strong>Values below the bound are never altered</strong> — even the highest one. In the example, 150 is the biggest normal month and survives untouched.</li>
+              <li><strong>Fewer than 4 reported values?</strong> No IQR bound is computed (quartiles would be unstable). The absolute threshold still applies.</li>
+              <li><strong>Nothing at all is altered.</strong> Detection is <strong>flag only</strong>: every total, analysis and export uses the value exactly as reported in DHIS2. A flag is a request to check the entry at source, not a change to the data.</li>
             </ul>
 
-            <div class="m-note"><strong>Why 3.0 and not 1.5?</strong> Tukey calls 1.5×IQR an "outlier" fence and 3.0×IQR a "far outlier" fence. Because a flagged value is <em>replaced by the median</em> — a big change, not a gentle trim — a false alarm is costly. Malaria is seasonal, so a rainy-season month is <em>legitimately</em> two to three times a dry-season month. The wide 3.0 fence lets those real peaks through and reserves correction for values that are almost certainly data-entry errors (a stray digit, a duplicated entry).<br><br>
-            <strong>Why the median, not the bound?</strong> The median is <em>robust</em> — that 900 barely moves it (131 with the 900, 130 without). So the replacement is not contaminated by the very value it is replacing, and the facility ends up with a plausible typical month rather than the extreme threshold that happened to catch it.</div>
+            <div class="m-note"><strong><strong>Why 3.0 and not 1.5?</strong> Tukey calls 1.5&times;IQR an "outlier" fence and 3.0&times;IQR a "far outlier" fence. The wider fence keeps the flag list short enough for someone to actually work through. Malaria is seasonal, so a rainy season month is legitimately two or three times a dry season month, and a narrow fence would fill the list with those real peaks. 3.0 lets them through and reserves the flag for values that are almost certainly data entry errors, such as a stray digit or a duplicated entry.<br><br><strong>Why is the median still shown?</strong> Nothing is replaced, but the facility median is reported alongside each flagged value because it tells you what a normal month looks like at that facility. That is usually all someone needs to see whether the flagged figure is credible or a typing error.</div>
           </div></div>
 
           <div class="m-step"><div class="m-num">6</div><div>
             <div class="m-title">Classify facilities as Active or Inactive</div>
             <ul class="m-list">
-              <li><strong>Active</strong> — reported at least one confirmed case during the selected period.</li>
-              <li><strong>Inactive</strong> — present in the DHIS2 registry but reported no confirmed cases at all for the period.</li>
+              <li><strong>Active</strong>: reported at least one confirmed case during the selected period.</li>
+              <li><strong>Inactive</strong>: present in the DHIS2 registry but reported no confirmed cases at all for the period.</li>
             </ul>
             <div class="m-egbox">
-              <div class="m-eghead">Example — why inactive facilities are removed from the denominator</div>
+              <div class="m-eghead">Example: why inactive facilities are removed from the denominator</div>
               <div style="font-size:11.5px;margin-bottom:6px;">Suppose a group has 4 private facilities. Facility D never reports at all in the period:</div>
               <table class="m-tbl">
                 <tr><th>Facility</th><th>Reported at least once?</th><th>Status</th></tr>
                 <tr><td>A</td><td>Yes</td><td class="m-good">Active</td></tr>
                 <tr><td>B</td><td>Yes</td><td class="m-good">Active</td></tr>
                 <tr><td>C</td><td>Yes</td><td class="m-good">Active</td></tr>
-                <tr><td>D</td><td class="m-bad">No — never, all period</td><td class="m-bad">Inactive</td></tr>
+                <tr><td>D</td><td class="m-bad">No: never, all period</td><td class="m-bad">Inactive</td></tr>
               </table>
               <div class="m-calc" style="margin-top:8px;">In a month where all 3 active facilities reported:<br>
-              <span class="m-mut">If all 4 were counted:</span> &nbsp; 3 ÷ 4 = <b>75%</b> — this reads as a reporting failure<br>
-              <span class="m-good">Active facilities only (the method used here):</span> &nbsp; 3 ÷ 3 = <b>100%</b> — every functioning facility did report<br>
+              <span class="m-mut">If all 4 were counted:</span> &nbsp; 3 ÷ 4 = <b>75%</b>: this reads as a reporting failure<br>
+              <span class="m-good">Active facilities only (the method used here):</span> &nbsp; 3 ÷ 3 = <b>100%</b>: every functioning facility did report<br>
               <span class="m-mut">Facility D is not a reporting problem; it is an <em>existence</em> problem. Separating the two keeps both measurable: activity is reported in its own analysis, and the reporting rate stays a clean measure of reporting behaviour.</span></div>
             </div>
           </div></div>
 
           <div class="m-step"><div class="m-num">7</div><div>
             <div class="m-title">Build a complete period grid</div>
-            For every <strong>active</strong> facility, a row is created for <strong>every month</strong> of the selected range — including months with no data. Those appear explicitly with <strong>Reported = No</strong> rather than silently disappearing, so reporting gaps are visible and countable.
+            For every <strong>active</strong> facility, a row is created for <strong>every month</strong> of the selected range: including months with no data. Those appear explicitly with <strong>Reported = No</strong> rather than silently disappearing, so reporting gaps are visible and countable.
             <div class="m-egbox">
-              <div class="m-eghead">Example — a facility that did not report in June</div>
+              <div class="m-eghead">Example: a facility that did not report in June</div>
               <table class="m-tbl">
                 <tr><th>Month</th><th>Tested</th><th>Reported</th></tr>
                 <tr><td>Apr</td><td>103</td><td class="m-good">Yes</td></tr>
@@ -447,7 +446,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
             </div>
             Computed per month, broken down by <strong>ownership</strong> (Public, Private, In DHIS2 not in master) and by <strong>facility type</strong> (CHC, CHP, MCHP, Hospital, Clinic).
             <div class="m-egbox">
-              <div class="m-eghead">Example — March, Public facilities</div>
+              <div class="m-eghead">Example: March, Public facilities</div>
               <div class="m-calc">Active public facilities in the period: <b>1,200</b><br>
               Public facilities that reported tests in March: <b>1,044</b><br><br>
               Reporting rate = 1,044 ÷ 1,200 × 100 = <b>87.0%</b><br>
@@ -457,32 +456,33 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
           <div class="m-step"><div class="m-num">9</div><div>
             <div class="m-title">Produce the outputs</div>
-            Each age group carries four columns, in this order:
+            Each age group carries three columns, in this order:
             <ul class="m-list">
-              <li><strong>Original</strong> — the raw value from DHIS2, before any correction</li>
-              <li><strong>Upper Bound</strong> — the threshold it was tested against (Q3 + 3.0 × IQR)</li>
-              <li><strong>Outlier</strong> — Yes if the original exceeded the bound</li>
-              <li><strong>Corrected</strong> — equals Original when clean; equals the facility-year median when replaced</li>
+              <li><strong>Value</strong>: the value as reported in DHIS2. This is what every total and analysis uses.</li>
+              <li><strong>IQR Upper Bound</strong>: the threshold it was tested against (Q3 + 3.0 × IQR), blank where there were fewer than 4 reported months</li>
+              <li><strong>Outlier Flag</strong>: Yes if it exceeded the IQR bound <em>or</em> 5,000 in that single facility month</li>
             </ul>
-            Plus derived <strong>Confirmed</strong> per age group — at facility, at community and overall — and a <strong>RDT-only</strong> series that is comparable across the April 2026 cutover.
+            <div class="m-note" style="border-left:3px solid #dc2626;"><strong>There is no Corrected column, because nothing is corrected.</strong> The flag marks a value for review so it can be fixed at source in DHIS2. Until it is fixed, the reported value is what the tool reports.</div>
+            Plus derived <strong>Confirmed</strong> per age group: at facility, at community and overall, and a <strong>RDT only</strong> series that is comparable across the April 2026 cutover.
             <div class="m-egbox">
-              <div class="m-eghead">Example — reading one row (the facility from Step 5, December)</div>
+              <div class="m-eghead">Example: reading one row (the facility from Step 5, December)</div>
               <table class="m-tbl">
-                <tr><th>Original</th><th>Upper Bound</th><th>Outlier</th><th>Corrected</th></tr>
-                <tr><td class="m-bad"><b>900</b></td><td>194</td><td class="m-bad"><b>Yes</b></td><td class="m-good"><b>131</b></td></tr>
+                <tr><th>Value</th><th>IQR Upper Bound</th><th>Outlier Flag</th></tr>
+                <tr><td class="m-bad"><b>900</b></td><td>194</td><td class="m-bad"><b>Yes</b></td></tr>
               </table>
-              <div class="m-calc" style="margin-top:8px;">Reads left to right as the decision chain: <b>here is the raw value → here is the threshold it was tested against → here is the verdict → here is what it became.</b></div>
-              <div style="font-size:11.5px;margin-top:10px;">A clean month in the same facility looks like this — Original and Corrected are identical, which is your signal that nothing was changed:</div>
+              <div class="m-calc" style="margin-top:8px;">Reads left to right: <b>here is the reported value → here is the threshold it was tested against → here is the verdict.</b> The 900 stays 900 in every total and every export; the flag simply says this entry needs checking.</div>
+              <div style="font-size:11.5px;margin-top:10px;">A clean month in the same facility:</div>
               <table class="m-tbl">
-                <tr><th>Original</th><th>Upper Bound</th><th>Outlier</th><th>Corrected</th></tr>
-                <tr><td>150</td><td>194</td><td>No</td><td>150</td></tr>
+                <tr><th>Value</th><th>IQR Upper Bound</th><th>Outlier Flag</th></tr>
+                <tr><td>150</td><td>194</td><td>No</td></tr>
               </table>
+              <div class="m-calc" style="margin-top:8px;">The second test is absolute: any value above <b>5,000</b> in one facility month is flagged whatever its facility's own pattern, which catches what the IQR bound cannot, a series with too few months to form a bound, or a value so large it inflates Q3 above itself.</div>
             </div>
-            Analyses include RDT vs Microscopy, a series-break check, ownership (bi-annual and yearly), monthly reporting rates, facility activity, excluded facilities, and an ownership reconciliation — all downloadable as CSV or Excel.
+            Analyses include RDT vs Microscopy, a series-break check, ownership (biannual and yearly), monthly reporting rates, facility activity, excluded facilities, and an ownership reconciliation, all downloadable as CSV or Excel.
           </div></div>
 
           <div style="background:#fff8e6;border:1.5px solid var(--gold);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:11.5px;">
-            <strong>Reading the results.</strong> Because outliers are replaced by the median rather than merely trimmed, corrected totals sit slightly below raw totals wherever a correction occurred. Check the per-variable outlier rate after each run: a high rate (say above ~5% of data points) usually means genuine seasonality is being flagged, not errors — worth inspecting before the figures are used.
+            <strong>Reading the results.</strong> Totals are raw totals: no outlier has been removed or reduced, so a facility with a bad entry still inflates its district until the entry is fixed in DHIS2. Check the per-variable outlier rate after each run: a high rate (say above ~5% of data points) usually means genuine seasonality is being flagged, not errors, worth inspecting before the figures are used.
           </div>
 
         </div>
@@ -491,15 +491,15 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <div class="tabpane" id="cfgExtract">
       <div style="background:var(--blue-lt);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--blue-dk);line-height:1.7;">
         <strong>What this tool fetches:</strong><br>
-        Confirmed malaria cases at Level-5 facility for each month, from the <strong>old form</strong>, the <strong>new HF01 facility form</strong>, and <strong>community</strong> — mapped onto three age groups (0-59m, 05-14y, 15+y).<br>
+        Confirmed malaria cases at Level 5 facility for each month, from the <strong>old form</strong>, the <strong>new HF01 facility form</strong>, and <strong>community</strong>: mapped onto three age groups (0-59m, 05-14y, 15+y).<br>
         <strong>OLD FORM:</strong> RDT Positive <code>p6zQLDFjSfd</code> · Microscopy Positive <code>Sz13vbo2Qwh</code> (both by age)<br>
-        <strong>NEW FORM:</strong> RDT Positive <code>AwLklDAVtvq</code> · Microscopy Positive <code>AMrdoWsiHMa</code> — both by age band × sex, on the same 24 COCs<br>
+        <strong>NEW FORM:</strong> RDT Positive <code>AwLklDAVtvq</code> · Microscopy Positive <code>AMrdoWsiHMa</code>: both by age band × sex, on the same 24 COCs<br>
         <strong>COMMUNITY:</strong> RDT Positive <code>T7xH8GwWpEM</code> (RDT only, all periods)<br>
         <strong>Cutover:</strong> Old form up to <strong>March 2026</strong>; new form from <strong>April 2026</strong>. Community is unaffected.<br>
         <strong>Age groups:</strong> 0-59m · 05-14y · 15+y<br>
         <strong>Note:</strong> Facility and community are kept as separate series, then combined into an Overall per age group.<br>
         <strong>Ownership:</strong> Matched on the DHIS2 <strong>OU ID</strong> first (exact), falling back to Level 4 (chiefdom) + Level 5 (facility) name. Adds a Public / Private column to every view and export.<br>
-        <strong>Outlier correction:</strong> IQR method — upper bound = Q3 + 3.0×IQR, computed per facility, per year, per variable (age group). Any value above the bound is <strong>replaced by the median</strong> (whole number) of that facility-year-variable. 0 stays 0, missing stays missing.
+        <strong>Outlier correction:</strong> IQR method: upper bound = Q3 + 3.0×IQR, computed per facility, per year, per variable (age group). Any value above the bound is <strong>replaced by the median</strong> (whole number) of that facility-year-variable. 0 stays 0, missing stays missing.
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
@@ -561,6 +561,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <button class="tabbtn active" id="tabBtnSummary" onclick="showTab('summary')">Summary Statistics</button>
         <button class="tabbtn" id="tabBtnAnalysis" onclick="showTab('analysis')">Analysis</button>
         <button class="tabbtn" id="tabBtnComparative" onclick="showTab('comparative')">Comparative Analysis</button>
+        <button class="tabbtn" id="tabBtnOutliers" onclick="showTab('outliers')">Outliers</button>
         <button class="tabbtn" id="tabBtnWrong" onclick="showTab('wrong')">Wrong Reporting</button>
         <button class="tabbtn" id="tabBtnDownload" onclick="showTab('download')">Download</button>
       </div>
@@ -570,12 +571,41 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div id="summaryDetail"></div>
       </div>
 
-      <div class="tabpane" id="tabWrong">
+      <div class="tabpane" id="tabOutliers">
 
-      <!-- Wrong Reporting — microscopy at an MCHP or CHP -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Wrong Reporting — microscopy reported by an MCHP or CHP <span style="font-weight:400;color:var(--muted);">(skipped · display only)</span></span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Outliers: every flagged value <span style="font-weight:400;color:var(--muted);">(detected only, nothing changed)</span></span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-gold btn-sm" onclick="downloadOutlierTab('csv')">&#8595; CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadOutlierTab('xlsx')">&#8595; Excel</button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Every value that broke the IQR bound for its facility, year and series, or came in above 5,000 in a single facility month. <strong>No value has been altered.</strong> The figures below are exactly what DHIS2 holds, so this is the list to work through and correct at source. The facility median is shown only to give you a sense of what a normal month looks like at that facility.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+          <select class="form-control" id="outFilterRule" style="width:auto;" onchange="renderOutlierTab()">
+            <option value="">All reasons</option>
+            <option value="iqr">Above the IQR bound only</option>
+            <option value="abs">Above 5,000 only</option>
+            <option value="both">Broke both tests</option>
+          </select>
+          <select class="form-control" id="outFilterDistrict" style="width:auto;" onchange="renderOutlierTab()">
+            <option value="">All districts</option>
+          </select>
+          <input type="text" class="form-control" id="outSearch" placeholder="Search facility, series&hellip;" style="max-width:220px;" oninput="renderOutlierTab()">
+          <span id="outCount" style="font-size:11px;color:var(--muted);"></span>
+        </div>
+        <div id="outTableBox"></div>
+      </div>
+
+      </div>
+
+      <div class="tabpane" id="tabWrong">
+
+      <!-- Wrong Reporting: microscopy at an MCHP or CHP -->
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Wrong Reporting: microscopy reported by an MCHP or CHP <span style="font-weight:400;color:var(--muted);">(skipped · display only)</span></span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-gold btn-sm" onclick="downloadMicViol('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadMicViol('xlsx')">↓ Excel</button>
@@ -594,7 +624,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#2c6793;">Facility Monthly Data</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">One row per facility per month. <strong>Facility only</strong> (old form + new HF01 form). Each age group — 0-59m, 05-14y, 15+y — with its <strong>Original, Upper Bound, Outlier and Corrected</strong> value, plus Facility Total, Reported and Source Form.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">One row per facility per month. <strong>Facility only</strong> (old form + new HF01 form). Each age group, 0-59m, 05-14y, 15+y, with its <strong>Value as reported, IQR Upper Bound and Outlier Flag</strong>, plus Facility Total, Reported and Source Form.</div>
             <button class="btn btn-primary" onclick="downloadCSV('facility')">↓ Facility CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('facility')">↓ Facility Excel</button>
           </div>
@@ -603,7 +633,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#15803d;">Community Monthly Data</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong> — iCCM, rolled up from Level-6 to the PHU. One row per facility per month, each age group — 0-59m, 05-14y, 15+y — with its <strong>Original, Upper Bound, Outlier and Corrected</strong> value, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;"><strong>Community only</strong>: iCCM, rolled up from Level 6 to the PHU. One row per facility per month, each age group, 0-59m, 05-14y, 15+y, with its <strong>Value as reported, IQR Upper Bound and Outlier Flag</strong>, plus Community Total. The community 02-59m band is treated as 0-59m.</div>
             <button class="btn btn-green" onclick="downloadCSV('community')">↓ Community CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('community')">↓ Community Excel</button>
           </div>
@@ -612,7 +642,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#8a6a00;">Overall Combined</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Facility <strong>+</strong> Community in one table: every raw series, plus Confirmed per age group (at facility, at community, overall) and the RDT-only series. The Excel bundles all sheets — Overall, Facility, Community, Outliers, Outlier Summary, Excluded Facilities and Methodology.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Facility <strong>+</strong> Community in one table: every raw series, plus Confirmed per age group (at facility, at community, overall) and the RDT only series. The Excel bundles all sheets, Overall, Facility, Community, Outliers, Outlier Summary, Excluded Facilities and Methodology.</div>
             <button class="btn btn-gold" onclick="downloadCSV('overall')">↓ Overall CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('overall')">↓ Overall Excel (all sheets)</button>
           </div>
@@ -620,7 +650,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#7c3d1a;">Outlier Log</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">All monthly values replaced as outliers: original, corrected (median), upper bound (Q3 + 3.0×IQR), facility details.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every value flagged as an outlier: the value as reported, the bound (median), upper bound (Q3 + 3.0×IQR), facility details.</div>
             <button class="btn btn-gold" onclick="downloadCSV('outliers')">↓ Outliers CSV</button>
             <button class="btn btn-outline" onclick="downloadExcel('outliers')">↓ Outliers Excel</button>
           </div>
@@ -628,7 +658,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#b91c1c;">Extreme Values</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every single facility-month holding a value above 5,000 — with facility, district, month, data element and age band, the largest first, and whether outlier correction replaced it. These are <strong>data-entry errors in DHIS2</strong>, so this is the list to send back for correction at source.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every single facility month holding a value above 5,000, with facility, district, month, data element and age band, the largest first, and whether outlier correction replaced it. These are <strong>data entry errors in DHIS2</strong>, so this is the list to send back for correction at source.</div>
             <button class="btn btn-primary" onclick="downloadExtremes()">↓ Extreme Values Excel</button>
           </div>
         </div>
@@ -642,7 +672,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#30363d;">Run Log</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">The full timestamped log of this run — org units, batch row counts, outliers per series, skipped records and the final totals. The live log disappears when the pipeline screen closes, so it is kept here.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">The full timestamped log of this run, org units, batch row counts, outliers per series, skipped records and the final totals. The live log disappears when the pipeline screen closes, so it is kept here.</div>
             <button class="btn btn-primary" onclick="downloadLog()">&#8595; Log (.txt)</button>
             <button class="btn btn-outline" onclick="copyLog()">Copy</button>
             <button class="btn btn-outline" onclick="toggleLogView()">View</button>
@@ -660,7 +690,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="dl-card">
           <div class="dl-card-head" style="background:#6b21a8;">Facility Ownership Match Report</div>
           <div class="dl-card-body">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every unique Level-5 facility in the registry (by OU ID), whether or not it reported data. Columns: OU ID, district, chiefdom, facility, type, ownership, match status, has data. Unmatched = not found in the ownership list.</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Every unique Level 5 facility in the registry (by OU ID), whether or not it reported data. Columns: OU ID, district, chiefdom, facility, type, ownership, match status, has data. Unmatched = not found in the ownership list.</div>
             <button class="btn btn-primary" onclick="downloadMatchReport('all')">↓ Full Report CSV</button>
             <button class="btn btn-gold" onclick="downloadMatchReport('unmatched')">↓ Unmatched Only CSV</button>
             <button class="btn btn-outline" onclick="downloadMatchExcel()">↓ Excel (both sheets)</button>
@@ -695,30 +725,30 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <div class="tabpane" id="tabComparative">
 
         <div style="background:var(--blue-lt);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:11.5px;color:var(--blue-dk);line-height:1.7;">
-          <strong>Absolute case counts over time</strong> — not rates. Every value is the <strong>corrected</strong> monthly total summed across all reporting facilities. Hover any point for the exact figure; each legend entry shows the series total for the whole period.
+          <strong>Absolute case counts over time</strong>: not rates. Every value is the <strong>reported</strong> monthly total summed across all reporting facilities. Hover any point for the exact figure; each legend entry shows the series total for the whole period.
         </div>
 
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">1 · Confirmed Cases at Facility — by age group</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">1 · Confirmed Cases at Facility: by age group</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-primary btn-sm" onclick="downloadCmp('fac','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at facility, split by <span style="color:#2c6793;font-weight:700;">0-59m</span>, <span style="color:#e0a800;font-weight:700;">05-14y</span> and <span style="color:#8b5cf6;font-weight:700;">15+y</span>. Old form up to Mar 2026, new HF01 form from Apr 2026 — a clean transition should show no step-change.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at facility, split by <span style="color:#2c6793;font-weight:700;">0-59m</span>, <span style="color:#e0a800;font-weight:700;">05-14y</span> and <span style="color:#8b5cf6;font-weight:700;">15+y</span>. Old form up to Mar 2026, new HF01 form from Apr 2026, a clean transition should show no step-change.</div>
         <div id="cmpFacChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpFacHead"></thead><tbody id="cmpFacBody"></tbody></table></div>
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">2 · Confirmed Cases at Community iCCM — by age group</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">2 · Confirmed Cases at Community iCCM, by age group</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-green btn-sm" onclick="downloadCmp('com','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at community (RDT positives only), same three age groups, rolled up from Level-6 iCCM posts. The community 02-59m band is treated as 0-59m.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Monthly confirmed cases at community (RDT positives only), same three age groups, rolled up from Level 6 iCCM posts. The community 02-59m band is treated as 0-59m.</div>
         <div id="cmpComChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpComHead"></thead><tbody id="cmpComBody"></tbody></table></div>
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">3 · All ages — Confirmed at Facility vs at Community</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">3 · All ages: Confirmed at Facility vs at Community</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-gold btn-sm" onclick="downloadCmp('agg','csv')">↓ CSV</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed cases summed across age groups. <span style="color:#2c6793;font-weight:700;">At facility</span> against <span style="color:#15803d;font-weight:700;">at community</span>, on the same scale.</div>
@@ -727,25 +757,25 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">4 · Facility Confirmed Cases — RDT vs Microscopy</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">4 · Facility Confirmed Cases: RDT vs Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="downloadCmp('test','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method, all periods. Microscopy is age-disaggregated on both forms, so the series plotted here is defined the same way throughout.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Confirmed positives at facility by diagnostic method, all periods. Microscopy is age disaggregated on both forms, so the series plotted here is defined the same way throughout.</div>
         <div id="cmpTestChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTestHead"></thead><tbody id="cmpTestBody"></tbody></table></div>
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">5 · Series Break Check — RDT only vs RDT + Microscopy</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">5 · Series Break Check: RDT only vs RDT + Microscopy</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadCmp('tpr','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> The microscopy component keeps the same shape across the cutover, but the two forms use different age bands and are filled in by different people, so a step in <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> at April 2026 should still be checked against data capture before it is read as transmission. The <span style="color:#dc2626;font-weight:700;">RDT-only</span> line is a single method throughout and is the more conservative comparison.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;"><strong>Read this before using a trend that spans April 2026.</strong> The microscopy component keeps the same shape across the cutover, but the two forms use different age bands and are filled in by different people, so a step in <span style="color:#2c6793;font-weight:700;">RDT + Microscopy</span> at April 2026 should still be checked against data capture before it is read as transmission. The <span style="color:#dc2626;font-weight:700;">RDT only</span> line is a single method throughout and is the more conservative comparison.</div>
         <div id="cmpTprChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="cmpTprHead"></thead><tbody id="cmpTprBody"></tbody></table></div>
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">6 · Overall Confirmed Cases — by age group</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">6 · Overall Confirmed Cases: by age group</span>
           <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-gold btn-sm" onclick="downloadCmp('ov','csv')">↓ CSV</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Overall confirmed cases (facility + community) by age group, with the all-ages total.</div>
@@ -757,10 +787,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
           <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">7 · By location (District)</span>
           <div style="display:flex;gap:8px;align-items:center;"><select class="form-control" id="cmpLocSrc" style="width:auto;font-size:12px;padding:4px 8px;" onchange="renderComparative()">
-              <option value="all_conf_total">Confirmed — overall</option>
-              <option value="fac_conf_total">Confirmed — at facility</option>
-              <option value="com_conf_total">Confirmed — at community</option>
-              <option value="all_rdt_total">Confirmed — RDT only</option>
+              <option value="all_conf_total">Confirmed: overall</option>
+              <option value="fac_conf_total">Confirmed: at facility</option>
+              <option value="com_conf_total">Confirmed: at community</option>
+              <option value="all_rdt_total">Confirmed: RDT only</option>
             </select><button class="btn btn-outline btn-sm" onclick="downloadCmp('loc','csv')">↓ CSV</button><button class="btn btn-outline btn-sm" onclick="downloadCmpAll()">↓ Excel (all sheets)</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Total malaria tests per district for the whole period, all ages combined. Bars run <strong>lowest to highest</strong>. Use the selector to plot cases at facility, at community, or overall.</div>
@@ -774,7 +804,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Form transition -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Form Transition — Old Form vs New Form (2025_HF01)</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Form Transition: Old Form vs New Form (2025_HF01)</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Testing is collected on two facility forms (RDT + Microscopy) plus a community source (RDT only). New form data entry starts <strong>April 2026</strong>: the <span style="color:#dc2626;font-weight:700;">old form</span> is used up to March 2026 and the <span style="color:#15803d;font-weight:700;">new form</span> from April 2026. Values outside each form's window are ignored, so the two can never double-count.</div>
         <div id="formStats" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
@@ -782,7 +812,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
         <div class="data-table-wrap" style="max-height:300px;"><table class="data-table"><thead id="formHead"></thead><tbody id="formBody"></tbody></table></div>
 
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0 6px;">
-          <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">Form Rule Violations — wrong form for the period <span style="font-weight:400;color:var(--muted);">(ignored in all calculations · display only)</span></span>
+          <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">Form Rule Violations: wrong form for the period <span style="font-weight:400;color:var(--muted);">(ignored in all calculations · display only)</span></span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-gold btn-sm" onclick="downloadViolations('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadViolations('xlsx')">↓ Excel</button>
@@ -794,7 +824,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Excluded facilities -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Excluded Facilities — Not Fetched</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Excluded Facilities: Not Fetched</span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-primary btn-sm" onclick="downloadExcluded('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadExcluded('xlsx')">↓ Excel</button>
@@ -808,7 +838,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Active vs Inactive facilities -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Facility Activity — Active vs Inactive</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Facility Activity: Active vs Inactive</span>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-primary btn-sm" onclick="downloadActivity('active','csv')">↓ Active CSV</button>
             <button class="btn btn-gold btn-sm" onclick="downloadActivity('inactive','csv')">↓ Inactive CSV</button>
@@ -823,7 +853,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reporting: Facility vs Community vs Overall -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate — at Facility vs at Community</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate: at Facility vs at Community</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="downloadRate('source','csv')">↓ CSV</button><button class="btn btn-outline btn-sm" onclick="downloadRateAll()">↓ Excel (all sheets)</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Of the <strong>active</strong> facilities for each source, what % reported that month. <span style="color:#2c6793;font-weight:700;">Facility</span> = either facility form. <span style="color:#15803d;font-weight:700;">Community</span> = iCCM, rolled up to the PHU. Each has <strong>its own denominator</strong>, since far fewer facilities have CHW posts than have a facility form.</div>
@@ -834,7 +864,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reporting by age group -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group — Confirmed at Facility</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group: Confirmed at Facility</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-sm" onclick="downloadRate('fac','csv')">↓ CSV</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active facility reporters submitting each age group (0-59m · 05-14y · 15+y). A line sitting below the others means that age band is being under-reported.</div>
@@ -843,16 +873,16 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group — Confirmed at Community iCCM</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group: Confirmed at Community iCCM</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-gold btn-sm" onclick="downloadRate('com','csv')">↓ CSV</button></div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active community reporters submitting each age group. Note CHWs do not treat neonates — the community 02-59m band is treated as 0-59m.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of active community reporters submitting each age group. Note CHWs do not treat neonates, the community 02-59m band is treated as 0-59m.</div>
         <div id="repAgeComChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repAgeComHead"></thead><tbody id="repAgeComBody"></tbody></table></div>
       </div>
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group — Overall</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Age Group: Overall</span>
           <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="downloadRate('all','csv')">↓ CSV</button></div>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of all active facilities submitting each age group, counting facility and community together.</div>
@@ -863,7 +893,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reporting rate: ownership -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month — by Ownership</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month: by Ownership</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of <strong>active</strong> facilities reporting confirmed cases each month, by ownership. Facilities absent from the ownership master list are charted as <strong>Unknown</strong>. Inactive facilities are excluded from the denominator.</div>
         <div id="repOwnChart"></div>
@@ -873,23 +903,23 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reporting rate: HF type -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month — Health Facility Type</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Reporting Rate by Month: Health Facility Type</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">% of <strong>active</strong> facilities reporting confirmed cases each month, by facility type. Denominator = active facilities of that type.</div>
         <div id="repTypeChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="repTypeHead"></thead><tbody id="repTypeBody"></tbody></table></div>
       </div>
 
-      <!-- Bi-annual -->
+      <!-- Biannual -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership — Bi-annual</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership: Biannual</span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-primary btn-sm" onclick="downloadBiannual('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadBiannual('xlsx')">↓ Excel</button>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Half-years: <strong>H1 = Jan–Jun</strong>, <strong>H2 = Jul–Dec</strong>. Confirmed case totals by ownership, with % Public and % Private.</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Half-years: <strong>H1 = Jan-Jun</strong>, <strong>H2 = Jul-Dec</strong>. Confirmed case totals by ownership, with % Public and % Private.</div>
         <div id="biChart"></div>
         <div class="data-table-wrap" style="margin-top:12px;"><table class="data-table"><thead id="biHead"></thead><tbody id="biBody"></tbody></table></div>
       </div>
@@ -897,7 +927,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Yearly -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership — Yearly</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Confirmed Cases by Ownership: Yearly</span>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-primary btn-sm" onclick="downloadYearly('csv')">↓ CSV</button>
             <button class="btn btn-outline btn-sm" onclick="downloadYearly('xlsx')">↓ Excel</button>
@@ -911,7 +941,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
       <!-- Reconciliation -->
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Ownership Reconciliation — Master vs DHIS2</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue-dk);">Ownership Reconciliation: Master vs DHIS2</span>
           <button class="btn btn-primary btn-sm" onclick="downloadReconciliation()">↓ Excel (3 sheets + summary)</button>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Excel has a Summary plus three sheets: <strong>Found in Both</strong>, <strong>In Master Not in DHIS2</strong>, and <strong>In DHIS2 Not in Master</strong>.</div>
@@ -921,7 +951,7 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI',Roboto,Arial,sans-s
 
         <div style="margin-top:16px;">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-            <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">In Master, Not in DHIS2 <span style="font-weight:400;color:var(--muted);">(facility list only — no data, no calculation)</span></span>
+            <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">In Master, Not in DHIS2 <span style="font-weight:400;color:var(--muted);">(facility list only, no data, no calculation)</span></span>
             <button class="btn btn-outline btn-sm" onclick="downloadReconCsv('masterOnly')">↓ CSV</button>
           </div>
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.6;">These facilities exist in the ownership master list but have <strong>no matching org unit in DHIS2</strong>, so there is no data to fetch for them. They are a <strong>reference list only</strong>: they enter no total, no denominator, no reporting rate and no export of case data. Shown so the master list can be corrected at source.</div>
@@ -957,21 +987,21 @@ const L_COM=6;   // Level 6 = iCCM community reporting units (children of the PH
 const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // ═══════════════════════════════════════════════════════════════
-//  CONFIRMED MALARIA CASES — positives only (RDT + Microscopy)
+//  CONFIRMED MALARIA CASES: positives only (RDT + Microscopy)
 // ═══════════════════════════════════════════════════════════════
 const OLD_FAC_DS='ij1VNJwxKCh', NEW_FAC_DS='fB66asHJITQ', COM_DS='nufVxEfy3Ps';
 
-// OLD form — RDT Positive and Microscopy Positive, both age-disaggregated
+// OLD form: RDT Positive and Microscopy Positive, both age disaggregated
 // on the same three age COCs (0-59m / 05-14y / 15+y).
 const OLD_DE = { rdt_pos:'p6zQLDFjSfd', mic_pos:'Sz13vbo2Qwh' };
-// NEW form (2025_HF01) — RDT Positive AND Microscopy Positive. Verified against the
+// NEW form (2025_HF01), RDT Positive AND Microscopy Positive. Verified against the
 // DHIS2 metadata export: BOTH elements use category combo
 // Gender_Age_0-7d_11m_12-59m_05-09y_15y_20-49y_cohorts_65+y and share the SAME 24
-// category option combos (12 age bands x 2 sexes), so both are age-disaggregated and
+// category option combos (12 age bands x 2 sexes), so both are age disaggregated and
 // both are fetched band by band.
 const NEW_DE = { rdt_pos:'AwLklDAVtvq', mic_pos:'AMrdoWsiHMa' };
 const NEW_MIC_DE = NEW_DE.mic_pos;   // kept for the metadata-name lookup below
-// COMMUNITY (HF04) — RDT only (CHWs do not perform microscopy)
+// COMMUNITY (HF04), RDT only (CHWs do not perform microscopy)
 const COM_DE = { rdt_pos:'T7xH8GwWpEM' };
 
 // ── THREE AGE GROUPS ──────────────────────────────────────────
@@ -994,7 +1024,7 @@ const NEW_BANDS = {
   a15: {'15-19y':['OzqClEP84wm','vshWQEGCCTp'], '20-44y':['ztWgelWML6b','fLgy2fpBWrb'],
         '45-59y':['zqNF6erLupJ','eaWE8YjN4j0'], '60+y':['hGJdT29m3P6','g2NiIyG3PLj']},
 };
-// DELIBERATELY OMITTED: 1-11m — overlaps 1-5m + 06-11m.
+// DELIBERATELY OMITTED: 1-11m: overlaps 1-5m + 06-11m.
 const NEW_OMIT = {'1-11m':['QFTvC3ZBlaE','NonO0cPD8ZS']};
 
 // ── MICROSCOPY IS EXCLUDED FOR MCHP AND CHP ──────────────────
@@ -1005,12 +1035,12 @@ const NEW_OMIT = {'1-11m':['QFTvC3ZBlaE','NonO0cPD8ZS']};
 const MIC_EXCL_TYPES = ['MCHP','CHP'];
 const isMicroscopy = (field)=>/(^|_)mic(_|$)/.test(field||'');
 
-// ── FORM CUTOVER — new form starts April 2026 ────────
+// ── FORM CUTOVER: new form starts April 2026 ────────
 const OLD_FORM_END   = 202603;
 const NEW_FORM_START = 202604;
 
 // ── OUTPUT VARIABLES ─────────────────────────────────────────
-// 9 series: facility RDT+ , facility Microscopy+ , community RDT+  ×  3 age groups
+// 9 series: facility RDT+, facility Microscopy+, community RDT+  ×  3 age groups
 const SERIES = [
   {src:'fac', test:'rdt', label:'Facility RDT Positive'},
   {src:'fac', test:'mic', label:'Facility Microscopy Positive'},
@@ -1022,10 +1052,10 @@ const ALL_VARS = SERIES.flatMap(x=>AGE_KEYS.map(k=>({
   label:`${x.label} ${AGE_LABEL[k]}`})));
 // ── FETCH MAP ────────────────────────────────────────────────
 const ALL_DX = [
-  // OLD form — RDT Positive + Microscopy Positive, both on the three age COCs
+  // OLD form: RDT Positive + Microscopy Positive, both on the three age COCs
   ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.rdt_pos}.${OLD_COC[k]}`, field:`fac_rdt_${k}`, src:'old', band:AGE_LABEL[k]})),
   ...AGE_KEYS.map(k=>({dxStr:`${OLD_DE.mic_pos}.${OLD_COC[k]}`, field:`fac_mic_${k}`, src:'old', band:AGE_LABEL[k]})),
-  // NEW form — RDT Positive AND Microscopy Positive, sex collapsed.
+  // NEW form: RDT Positive AND Microscopy Positive, sex collapsed.
   // Both elements carry the SAME 24 category option combos (12 age bands x 2 sexes),
   // confirmed against the DHIS2 metadata export, so both are fetched band by band and
   // the Male/Female pair is summed into one age group.
@@ -1036,7 +1066,7 @@ const ALL_DX = [
       {dxStr:`${de}.${f}`, field:`fac_${t}_${k}`, src:'new', band, sex:'Female'},
     ]));
   }),
-  // COMMUNITY — RDT Positive, rolled up from Level 6
+  // COMMUNITY: RDT Positive, rolled up from Level 6
   ...AGE_KEYS.map(k=>({dxStr:`${COM_DE.rdt_pos}.${COM_COC[k]}`, field:`com_rdt_${k}`, src:'com', band:AGE_LABEL[k]})),
 ];
 const DX_MAP={}; ALL_DX.forEach(d=>{DX_MAP[d.dxStr]=d;});
@@ -1063,8 +1093,8 @@ function _ownNorm(s){return (s||'').toUpperCase().replace(/\s+/g,' ').trim();}
 function isLaboratory(name){return /\bLABORATOR/i.test(name||'');}
 function isMarieStopes(name){return /MARIE\s*STOPES/i.test(name||'');}
 function exclusionReason(name){
-  if(isLaboratory(name))   return 'Laboratory — not a health facility';
-  if(isMarieStopes(name))  return 'Marie Stopes — excluded by NMCP';
+  if(isLaboratory(name))   return 'Laboratory: not a health facility';
+  if(isMarieStopes(name))  return 'Marie Stopes: excluded by NMCP';
   return null;
 }
 // Normalise facility-type spelling from the master file (Climic → Clinic, etc.)
@@ -1112,7 +1142,7 @@ let ST={startYr:null,endYr:null,years:[],ouHierarchy:{},
 //  UTILITIES
 // ═══════════════════════════════════════════════════════════════
 // ── RESILIENT ANALYTICS FETCH ────────────────────────────────
-// Two independent safety nets, both safe because the pipeline de-duplicates on
+// Two independent safety nets, both safe because the pipeline deduplicates on
 // element+COC+period+facility, so neither chunking nor period splitting can change a total:
 //   1. a batch that fails after its retries is SPLIT IN HALF and each half retried,
 //      down to a single dx;
@@ -1129,7 +1159,7 @@ async function fetchAnalytics(dxList, peList, ouDim, label){
   }catch(e){
     if(dxList.length>1){
       const mid=Math.ceil(dxList.length/2);
-      log(`  ${label}: failed with ${dxList.length} data values — splitting into ${mid} + ${dxList.length-mid} and retrying`,'warn');
+      log(`  ${label}: failed with ${dxList.length} data values, splitting into ${mid} + ${dxList.length-mid} and retrying`,'warn');
       await tick();
       const a=await fetchAnalytics(dxList.slice(0,mid), peList, ouDim, label+'a');
       const b=await fetchAnalytics(dxList.slice(mid),  peList, ouDim, label+'b');
@@ -1137,13 +1167,13 @@ async function fetchAnalytics(dxList, peList, ouDim, label){
     }
     if(peList.length>1){
       const mid=Math.ceil(peList.length/2);
-      log(`  ${label}: one data value over ${peList.length} month(s) failed — splitting the period ${mid} + ${peList.length-mid}`,'warn');
+      log(`  ${label}: one data value over ${peList.length} month(s) failed, splitting the period ${mid} + ${peList.length-mid}`,'warn');
       await tick();
       const a=await fetchAnalytics(dxList, peList.slice(0,mid), ouDim, label+'p1');
       const b=await fetchAnalytics(dxList, peList.slice(mid),  ouDim, label+'p2');
       return {rows:[...(a.rows||[]),...(b.rows||[])]};
     }
-    log(`  ${label}: a single data value for a single month still failed — ${e.message||e}`,'err');
+    log(`  ${label}: a single data value for a single month still failed, ${e.message||e}`,'err');
     throw e;
   }
 }
@@ -1194,7 +1224,7 @@ function getHFType(n){
 let LOG_T0=0, LOG_TIMER=null;
 let LOG_LINES=[];   // kept in memory: the live log element is hidden after the run
 const logLines=()=>LOG_LINES.length?LOG_LINES.slice()
-  :[...document.querySelectorAll('#logBox .log-line')].map(l=>l.textContent);
+:[...document.querySelectorAll('#logBox .log-line')].map(l=>l.textContent);
 function logReset(){
   LOG_T0=performance.now();
   const b=document.getElementById('logBox'); if(b)b.innerHTML='';
@@ -1223,7 +1253,7 @@ function copyLog(){
 }
 function downloadLog(){
   const lines=logLines();
-  if(!lines.length){alert('No log yet — run the extract first.');return;}
+  if(!lines.length){alert('No log yet: run the extract first.');return;}
   const head=[
     'NMCP Sierra Leone - Confirmed Malaria Cases',
     'Run log',
@@ -1241,7 +1271,7 @@ function toggleLogView(){
   if(b.style.display==='none'){
     const src=document.getElementById('logBox');
     b.innerHTML = (src&&src.innerHTML) ? src.innerHTML
-      : logLines().map(l=>`<div class="log-line">${l}</div>`).join('');
+    : logLines().map(l=>`<div class="log-line">${l}</div>`).join('');
     b.style.display='block';
   } else b.style.display='none';
 }
@@ -1251,7 +1281,7 @@ const tick=()=>new Promise(r=>setTimeout(r,0));
 function setPill(t,bg){const el=document.getElementById('headerPill');el.textContent=t;el.style.background=bg||'rgba(255,255,255,.15)';}
 function setProgress(p){document.getElementById('pbarFill').style.width=p+'%';document.getElementById('pctLabel').textContent=Math.round(p)+'%';}
 const stepEls={};let _sn=0;
-function addStep(id,txt){_sn++;const d=document.createElement('div');d.className='step-item pending';d.id='st_'+id;d.innerHTML=`<div class="step-dot"></div><span>Step ${_sn} — ${txt}</span>`;document.getElementById('stepList').appendChild(d);stepEls[id]=d;}
+function addStep(id,txt){_sn++;const d=document.createElement('div');d.className='step-item pending';d.id='st_'+id;d.innerHTML=`<div class="step-dot"></div><span>Step ${_sn}: ${txt}</span>`;document.getElementById('stepList').appendChild(d);stepEls[id]=d;}
 function setStep(id,status,msg){const el=stepEls[id];if(!el)return;el.className='step-item '+status;const pre={running:'',done:'✓ ',error:'✗ '}[status]||'';const sp=el.querySelector('span');sp.textContent=pre+(msg||sp.textContent.replace(/^[✓✗] /,''));}
 
 // ═══════════════════════════════════════════════════════════════
@@ -1277,22 +1307,8 @@ function iqrUpperBound(vals){
 function medianOf(vals){
   const reported=vals.filter(v=>v!==null&&v!==undefined&&v>0);
   if(!reported.length)return null;
-  // Rounded to a WHOLE NUMBER — case counts are never fractional.
+  // Rounded to a WHOLE NUMBER: case counts are never fractional.
   return Math.round(percentile(reported,50));
-}
-function winsorizeUpper(vals){
-  // vals: array of numbers or null (null = missing)
-  // Any value above the IQR upper bound is REPLACED BY THE MEDIAN of that
-  // facility-year-variable (not capped to the bound). 0 stays 0, null stays null.
-  const hi=iqrUpperBound(vals);
-  if(!isFinite(hi))return vals;
-  const med=medianOf(vals);
-  if(med===null)return vals;
-  return vals.map(v=>{
-    if(v===null||v===undefined)return null;
-    if(v===0)return 0;
-    return v>hi?med:v;
-  });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1312,7 +1328,7 @@ async function startPipeline(){
   if(!cfgS||!cfgE){errEl.textContent='Please select both Start Month and End Month.';errEl.style.display='block';return;}
   if(cfgS>cfgE){errEl.textContent='Start Month must be on or before End Month.';errEl.style.display='block';return;}
   logReset();
-  log(`Confirmed malaria cases (positives only) — ${cfgS} to ${cfgE}`,'hl');
+  log(`Confirmed malaria cases (positives only), ${cfgS} to ${cfgE}`,'hl');
   log('Connecting to DHIS2…','info');
   // Derive years and period list from range
   const startYr=parseInt(cfgS.slice(0,4)), endYr=parseInt(cfgE.slice(0,4));
@@ -1336,10 +1352,10 @@ async function startPipeline(){
   Object.keys(stepEls).forEach(k=>delete stepEls[k]);
   _sn=0;setProgress(2);setPill('Running…','rgba(255,193,7,.5)');
 
-  addStep('s_ou',   'Fetch Level-5 facility registry with hierarchy');
-  addStep('s_fetch',`Fetch confirmed cases — old + new form + community — ${cfgS} → ${cfgE} · ${years.length} year(s)`);
-  addStep('s_wins', 'Detect outliers (Q3 + 3.0×IQR) — replace with facility-year median');
-  addStep('s_build','Build output rows — facility, community, overall');
+  addStep('s_ou',   'Fetch Level 5 facility registry with hierarchy');
+  addStep('s_fetch',`Fetch confirmed cases: old + new form + community, ${cfgS} → ${cfgE} · ${years.length} year(s)`);
+  addStep('s_wins', 'Detect outliers (Q3 + 3.0×IQR), replace with facility-year median');
+  addStep('s_build','Build output rows: facility, community, overall');
 
   try{
     // ── S1: Org Units ─────────────────────────────────────────
@@ -1347,19 +1363,19 @@ async function startPipeline(){
     // Level 5 = PHU (facility). Needs the full hierarchy (district / chiefdom).
     const ouL5=await dhis2(`/api/organisationUnits.json?level=${L_PHU}`
       +`&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false&pageSize=50000`);
-    log(`Org units — ${(ouL5.organisationUnits||[]).length.toLocaleString()} Level-5 PHUs`,'info');
+    log(`Org units: ${(ouL5.organisationUnits||[]).length.toLocaleString()} Level 5 PHUs`,'info');
     await tick();
 
     // Level 6 = iCCM posts. There are many thousands of them, so ONLY the parent
-    // id is requested — pulling full ancestors here makes the response so large that
-    // the request times out. All we need is the Level-5 parent to roll community up to.
+    // id is requested: pulling full ancestors here makes the response so large that
+    // the request times out. All we need is the Level 5 parent to roll community up to.
     let ouL6={organisationUnits:[]};
     try{
       ouL6=await dhis2(`/api/organisationUnits.json?level=${L_COM}`
         +`&fields=id,parent[id]&paging=false&pageSize=100000`);
-      log(`Org units — ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level-6 iCCM posts`,'info');
+      log(`Org units: ${(ouL6.organisationUnits||[]).length.toLocaleString()} Level 6 iCCM posts`,'info');
     }catch(e){
-      log(`Level-6 fetch failed (${e.message||e}) — continuing without community rollup`,'err');
+      log(`Level 6 fetch failed (${e.message||e}), continuing without community rollup`,'err');
     }
     await tick();
     const ouResp={organisationUnits:(ouL5.organisationUnits||[])};
@@ -1384,18 +1400,18 @@ async function startPipeline(){
           districtName:rec.district,chiefdomName:rec.chiefdom};
       }
     });
-    // Level-6 iCCM post -> its Level-5 PHU parent (for community rollup)
+    // Level 6 iCCM post -> its Level 5 PHU parent (for community rollup)
     (ouL6.organisationUnits||[]).forEach(ou=>{
       const pid=ou.parent&&ou.parent.id;
       if(pid)childToL5[ou.id]=pid;
     });
-    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level-6 iCCM units rolled up to their PHU`);
-    log(`Registry built — ${Object.keys(ST.ouHierarchy).length.toLocaleString()} facilities included`,'ok');
+    setStep('s_ou','done',`${Object.keys(ST.ouHierarchy).length} facilities included · ${ST.excluded.length} excluded · ${Object.keys(childToL5).length} Level 6 iCCM units rolled up to their PHU`);
+    log(`Registry built: ${Object.keys(ST.ouHierarchy).length.toLocaleString()} facilities included`,'ok');
     if(ST.excluded.length){
       const byR={}; ST.excluded.forEach(e=>byR[e.reason]=(byR[e.reason]||0)+1);
-      Object.entries(byR).forEach(([r,n])=>log(`  excluded ${n} — ${r}`,'warn'));
+      Object.entries(byR).forEach(([r,n])=>log(`  excluded ${n}: ${r}`,'warn'));
     }
-    log(`${Object.keys(childToL5).length.toLocaleString()} Level-6 iCCM posts mapped to their PHU parent`,'info');
+    log(`${Object.keys(childToL5).length.toLocaleString()} Level 6 iCCM posts mapped to their PHU parent`,'info');
     await tick();
     setProgress(12);await sleep(30);
 
@@ -1414,7 +1430,7 @@ async function startPipeline(){
     ST.cutIgnored={oldAfter:0,newBefore:0};
     ST.cutIgnoredVal={oldAfter:0,newBefore:0};
     ST.cutViol={};   // facilities breaking the form-window rule (recorded, not used)
-    ST.comRollup=0;  // Level-6 community values rolled up to a Level-5 PHU
+    ST.comRollup=0;  // Level 6 community values rolled up to a Level 5 PHU
     ST.micViol={};   // microscopy reported by an MCHP or CHP (skipped, recorded)
     ST.micSkipped=0; ST.micSkippedVal=0;
     ST.dxAudit={};   // per-dx tally of what analytics returned and what we did with it
@@ -1422,8 +1438,8 @@ async function startPipeline(){
     ST.extremes=[];   // single cells too large to be real (see EXTREME_MIN)
     // ── IDEMPOTENT FETCH ──────────────────────────────────────
     // A value is uniquely identified by data element + COC + period + org unit.
-    // If the same triple arrives twice — a repeated row in one response, or the
-    // same dx served by more than one batch — the second copy is a DUPLICATE and
+    // If the same triple arrives twice, a repeated row in one response, or the
+    // same dx served by more than one batch, the second copy is a DUPLICATE and
     // must not be summed again. Without this the total depends on how the dx list
     // happened to be chunked, which is exactly the bug this guards against.
     const seenTriple=new Set();
@@ -1432,13 +1448,13 @@ async function startPipeline(){
       const yr=ST.years[ci];
       const mos=yearMonths(yr);
       if(!mos.length)continue;
-      setStep('s_fetch','running',`Year ${yr} — ${mos.length} month(s) (${ci+1}/${ST.years.length})`);
+      setStep('s_fetch','running',`Year ${yr}: ${mos.length} month(s) (${ci+1}/${ST.years.length})`);
       const peList=mos.map(mo=>`${yr}${mo}`);   // full period ids, e.g. 202601
       const pe=peList.join(';');
 
       // ── BATCHED FETCH ─────────────────────────────────────
       // 103 data values x ~6,000 org units x 12 months is far too large for one
-      // analytics request — DHIS2 returns an empty result rather than an error.
+      // analytics request: DHIS2 returns an empty result rather than an error.
       // The dx list is therefore split into chunks and fetched separately.
       // Facility elements (old + new form) only ever hold data at Level 5. Community
       // elements are reported by iCCM posts at Level 6 and are also accepted at Level 5,
@@ -1450,20 +1466,20 @@ async function startPipeline(){
       const DX_ALL=[...new Set(ALL_DX.map(d=>d.dxStr))];
       const DX_FAC=DX_ALL.filter(d=>!isComDx(d));
       const DX_COM=DX_ALL.filter(isComDx);
-      const CHUNK=6;   // smaller requests fail far less often; de-duplication makes
+      const CHUNK=6;   // smaller requests fail far less often; deduplication makes
                        // the chunk size irrelevant to the totals
       const chunks=[];
-      for(let i=0;i<DX_FAC.length;i+=CHUNK)chunks.push({dx:DX_FAC.slice(i,i+CHUNK),ou:OU_FAC,scope:'Level-5'});
+      for(let i=0;i<DX_FAC.length;i+=CHUNK)chunks.push({dx:DX_FAC.slice(i,i+CHUNK),ou:OU_FAC,scope:'Level 5'});
       // Community elements are fetched ONE AT A TIME: they are the heaviest requests
       // because they span both org unit levels.
-      DX_COM.forEach(d=>chunks.push({dx:[d],ou:OU_COM,scope:'Level-5 + Level-6'}));
-      log(`Fetching ${yr} — ${mos.length} month(s), ${DX_ALL.length} data values in ${chunks.length} batches (${DX_FAC.length} facility at Level-5, ${DX_COM.length} community at Level-5 + Level-6)…`,'info');
+      DX_COM.forEach(d=>chunks.push({dx:[d],ou:OU_COM,scope:'Level 5 + Level 6'}));
+      log(`Fetching ${yr}: ${mos.length} month(s), ${DX_ALL.length} data values in ${chunks.length} batches (${DX_FAC.length} facility at Level 5, ${DX_COM.length} community at Level 5 + Level 6)…`,'info');
       await tick();
 
       let yrRows=0;
       for(let bi=0;bi<chunks.length;bi++){
         const t0=performance.now();
-        setStep('s_fetch','running',`Year ${yr} — batch ${bi+1}/${chunks.length}`);
+        setStep('s_fetch','running',`Year ${yr}: batch ${bi+1}/${chunks.length}`);
         const resp=await fetchAnalytics(chunks[bi].dx, peList, chunks[bi].ou, `${yr} batch ${bi+1}/${chunks.length}`);
         const got=(resp.rows||[]).length;
         yrRows+=got;
@@ -1480,10 +1496,20 @@ async function startPipeline(){
         _a.rows++; _a.raw+=val;
         if(!val)return;
         if(!map)return;
-        // Same value delivered twice — count it once only.
+        // Same value delivered twice, count it once only.
         const _tk=dxStr+'|'+period+'|'+ouId;
         if(seenTriple.has(_tk)){ _a.dupRows++; _a.dupVal+=val; ST.dupRows++; ST.dupVal+=val; return; }
         seenTriple.add(_tk);
+        // ── LEVEL-6 ROLLUP ────────────────────────────────────
+        // Community (HF04) is reported by iCCM posts at Level 6. Those values are
+        // rolled up to their Level 5 PHU parent. Facility forms are never reported at
+        // Level 6, so any Level 6 row for a facility DE is ignored.
+        const isL6=!!childToL5[ouId];
+        if(isL6 && map.src!=='com')return;
+        const effectiveId=childToL5[ouId]||ouId;
+        const ou=ST.ouHierarchy[effectiveId];if(!ou)return;
+        // Capture implausibly large single cells. Must sit AFTER effectiveId and ou are
+        // resolved, since it records the facility the value belongs to.
         if(val>=EXTREME_MIN && ST.extremes.length<20000){
           const _de=dxStr.split('.')[0], _coc=dxStr.split('.')[1]||'';
           ST.extremes.push({ouId:effectiveId, facility:ou.name, hfType:ou.hfType,
@@ -1493,14 +1519,6 @@ async function startPipeline(){
             de:_de, deName:DE_NAMES[_de]||'', coc:_coc,
             band:map.band||'', field:map.field, value:val, disposition:'accepted'});
         }
-        // ── LEVEL-6 ROLLUP ────────────────────────────────────
-        // Community (HF04) is reported by iCCM posts at Level 6. Those values are
-        // rolled up to their Level-5 PHU parent. Facility forms are never reported at
-        // Level 6, so any Level-6 row for a facility DE is ignored.
-        const isL6=!!childToL5[ouId];
-        if(isL6 && map.src!=='com')return;
-        const effectiveId=childToL5[ouId]||ouId;
-        const ou=ST.ouHierarchy[effectiveId];if(!ou)return;
         if(isL6)ST.comRollup++;
 
         const yr2=parseInt(period.slice(0,4));
@@ -1522,7 +1540,7 @@ async function startPipeline(){
           { const _e=ST.extremes[ST.extremes.length-1];
             if(_e&&_e.value===val&&_e.period===period)_e.disposition='skipped (microscopy at MCHP/CHP)'; }
           _a.micRows++; _a.micVal+=val;
-          return; // SKIPPED — never enters rawSlots
+          return; // SKIPPED: never enters rawSlots
         }
 
         // ── FORM CUTOVER ──────────────────────────────────────
@@ -1530,13 +1548,13 @@ async function startPipeline(){
         //   OLD form: used only up to March 2026 · NEW form: only from April 2026.
         // Values outside a form's own window are IGNORED (never summed), but they
         // are RECORDED so the facilities breaking the reporting rule can be shown.
-        // COMMUNITY (HF04) is a different dataset — no cutover applies to it.
+        // COMMUNITY (HF04) is a different dataset, no cutover applies to it.
         const pNum=parseInt(period,10);
         const badOld = map.src==='old' && pNum>OLD_FORM_END;
         const badNew = map.src==='new' && pNum<NEW_FORM_START;
         if(badOld||badNew){
           const kind = badOld ? 'Old form used AFTER March 2026'
-                              : 'New form used BEFORE April 2026';
+                            : 'New form used BEFORE April 2026';
           if(badOld){ST.cutIgnored.oldAfter++; ST.cutIgnoredVal.oldAfter+=val;}
           else      {ST.cutIgnored.newBefore++; ST.cutIgnoredVal.newBefore+=val;}
           const vk=`${effectiveId}|${period}|${map.src}`;
@@ -1554,7 +1572,7 @@ async function startPipeline(){
           _a.formRows++; _a.formVal+=val;
           { const _e=ST.extremes[ST.extremes.length-1];
             if(_e&&_e.value===val&&_e.period===period)_e.disposition='ignored (wrong form)'; }
-          return; // IGNORED — never enters rawSlots
+          return; // IGNORED: never enters rawSlots
         }
 
         if(!rawSlots[effectiveId])rawSlots[effectiveId]={};
@@ -1575,36 +1593,36 @@ async function startPipeline(){
         _a.acceptedRows++; _a.accepted+=val;
       });
       }  // ── end batch loop ──
-      if(!yrRows)log(`  ${yr}: NO DATA returned — check the data elements exist for this period`,'err');
+      if(!yrRows)log(`  ${yr}: NO DATA returned: check the data elements exist for this period`,'err');
       setProgress(15+Math.round(ci/ST.years.length*40));
       await sleep(30);
     }
     setStep('s_fetch','done',`${totalRows.toLocaleString()} data points fetched`);
-    log(`Fetch complete — ${totalRows.toLocaleString()} values accepted`,'ok');
-    log(`Community rollup — ${(ST.comRollup||0).toLocaleString()} Level-6 iCCM values summed into their PHU`,'hl');
+    log(`Fetch complete: ${totalRows.toLocaleString()} values accepted`,'ok');
+    log(`Community rollup: ${(ST.comRollup||0).toLocaleString()} Level 6 iCCM values summed into their PHU`,'hl');
     if(ST.dupRows)
-      log(`Duplicate values — ${ST.dupRows.toLocaleString()} row(s) (${ST.dupVal.toLocaleString()} cases) arrived more than once for the same element+COC+period+facility and were counted ONCE`,'warn');
+      log(`Duplicate values: ${ST.dupRows.toLocaleString()} row(s) (${ST.dupVal.toLocaleString()} cases) arrived more than once for the same element+COC+period+facility and were counted ONCE`,'warn');
     else
-      log('Duplicate check — no value arrived twice','ok');
+      log('Duplicate check: no value arrived twice','ok');
     logExtremes();
     logAudit();
     if(ST.micSkipped)
-      log(`Microscopy at MCHP/CHP — SKIPPED ${ST.micSkipped.toLocaleString()} record(s) (${ST.micSkippedVal.toLocaleString()} cases). See Wrong Reporting.`,'warn');
+      log(`Microscopy at MCHP/CHP: SKIPPED ${ST.micSkipped.toLocaleString()} record(s) (${ST.micSkippedVal.toLocaleString()} cases). See Wrong Reporting.`,'warn');
     else
-      log('Microscopy — no MCHP or CHP reported it','ok');
+      log('Microscopy: no MCHP or CHP reported it','ok');
     const _nv=Object.keys(ST.cutViol||{}).length;
-    if(_nv)log(`Form cutover — ${_nv.toLocaleString()} facility-month(s) reported on the wrong form (ignored)`,'warn');
+    if(_nv)log(`Form cutover: ${_nv.toLocaleString()} facility month(s) reported on the wrong form (ignored)`,'warn');
     await tick();
     setProgress(55);await sleep(30);
 
     // ── S3: Winsorise per facility per year ───────────────────
     setStep('s_wins','running');
-    log('Outlier detection — IQR (Q3 + 3.0×IQR) per facility × year × series…','info');
+    log(`Outlier detection: FLAG ONLY, no value is changed. IQR (Q3 + ${IQR_K}×IQR) per facility × year × series, plus any value above ${FLAG_ABOVE.toLocaleString()} in a single facility month…`,'info');
     await tick();
-    let winCount=0, totalAssessed=0;
-    // Per-variable (per age group) outlier stats: assessed + corrected counts
+    let flagCount=0, totalAssessed=0, iqrCount=0, absCount=0;
+    // Per-variable (per age group) outlier stats: assessed + flagged counts
     ST.varStats={};
-    ALL_VARS.forEach(dx=>{ST.varStats[dx.field]={assessed:0,corrected:0,label:dx.label};});
+    ALL_VARS.forEach(dx=>{ST.varStats[dx.field]={assessed:0,flagged:0,label:dx.label};});
     // upperBoundStore[ouId|yr|field] = IQR upper bound for that variable
     ST.upperBoundStore={};
     const upperBoundStore=ST.upperBoundStore;
@@ -1613,11 +1631,14 @@ async function startPipeline(){
       const ou=ST.ouHierarchy[ouId];
       ST.years.forEach(yr=>{
         const months=rawSlots[ouId][yr];if(!months)return;
-        // Detect per output variable (IQR bound = Q3 + 3.0×IQR); replace outliers with median
+        // DETECT ONLY: values are NEVER changed. Two independent tests flag a cell:
+        //   1. IQR: value above Q3 + 3.0xIQR for that facility-year series
+        //   2. Absolute: value above FLAG_ABOVE, whatever the facility's own pattern
+        // Both are recorded as issues for review. The reported value is what is used in
+        // every total, every analysis and every export.
         ALL_VARS.forEach(dx=>{
           const field=dx.field;
           const vals=months.map(m=>m[field]);
-          const w=winsorizeUpper(vals);
           const reported=vals.filter(v=>v!==null&&v!==undefined&&v>0);
           totalAssessed+=reported.length;
           ST.varStats[field].assessed+=reported.length;
@@ -1625,40 +1646,48 @@ async function startPipeline(){
           upperBoundStore[`${ouId}|${yr}|${field}`]=isFinite(hi)?Math.round(hi):null;
           vals.forEach((v,i)=>{
             if(v===null||v===0)return;
-            if(w[i]!==null&&Math.abs(v-w[i])>0.001){
-              winCount++;
-              ST.varStats[field].corrected++;
-              ST.outlierLog.push({
-                ouId, facility:ou?ou.name:'', hfType:ou?ou.hfType:'',
-                chiefdom:ou?ou.chiefdomName:'', district:ou?ou.districtName:'',
-                ownership:ou?getOwnership(ou.chiefdomName,ou.name,ou.id):'Unknown',
-                year:yr, month:i+1,
-                srcLabel: dx.label,
-                ageLabel: dx.age?AGE_LABEL[dx.age]:'un-aged',
-                field,
-                original:Math.round(v), corrected:Math.round(w[i]),
-                upperBound:isFinite(hi)?Math.round(hi):'',
-              });
-              months[i][`${field}_orig`]=v; // keep original before overwrite
-              months[i][field]=w[i];
-            }
+            const overIqr = isFinite(hi) && v>hi;
+            const overAbs = v>FLAG_ABOVE;
+            if(!overIqr && !overAbs)return;
+            const reasons=[];
+            if(overIqr)reasons.push(`above the IQR bound (Q3 + ${IQR_K}xIQR = ${Math.round(hi).toLocaleString()})`);
+            if(overAbs){reasons.push(`above ${FLAG_ABOVE.toLocaleString()} in a single facility month`);absCount++;}
+            if(overIqr)iqrCount++;
+            flagCount++;
+            ST.varStats[field].flagged++;
+            ST.outlierLog.push({
+              ouId, facility:ou?ou.name:'', hfType:ou?ou.hfType:'',
+              chiefdom:ou?ou.chiefdomName:'', district:ou?ou.districtName:'',
+              ownership:ou?getOwnership(ou.chiefdomName,ou.name,ou.id):'Unknown',
+              year:yr, month:i+1,
+              srcLabel: dx.label,
+              ageLabel: dx.age?AGE_LABEL[dx.age]:'un-aged',
+              field,
+              value:Math.round(v),
+              upperBound:isFinite(hi)?Math.round(hi):'',
+              facilityMedian:medianOf(vals),
+              reason:reasons.join(' and '),
+              overIqr:overIqr?'Yes':'No', overAbs:overAbs?'Yes':'No',
+            });
           });
         });
       });
     });
     ALL_VARS.forEach(v=>{
-      const vs=ST.varStats[v.field]||{corrected:0,assessed:0};
-      const pc=vs.assessed?(vs.corrected/vs.assessed*100).toFixed(2):'0.00';
-      log(`  ${v.label}: ${vs.corrected.toLocaleString()} outlier(s) of ${vs.assessed.toLocaleString()} assessed (${pc}%)`,vs.corrected?'warn':'dim');
+      const vs=ST.varStats[v.field]||{flagged:0,assessed:0};
+      const pc=vs.assessed?(vs.flagged/vs.assessed*100).toFixed(2):'0.00';
+      log(`  ${v.label}: ${vs.flagged.toLocaleString()} flagged of ${vs.assessed.toLocaleString()} assessed (${pc}%)`,vs.flagged?'warn':'dim');
     });
+    log(`  ${flagCount.toLocaleString()} cell(s) flagged in total, ${iqrCount.toLocaleString()} by the IQR bound, ${absCount.toLocaleString()} for being above ${FLAG_ABOVE.toLocaleString()} (a cell can trip both)`,flagCount?'warn':'ok');
+    log('  NO values were changed: every total and export uses the value as reported','ok');
     await tick();
-    setStep('s_wins','done',`${winCount} values corrected across ${[...new Set(ST.outlierLog.map(r=>r.ouId))].length} facilities`);
+    setStep('s_wins','done',`${flagCount} values flagged (none changed) across ${[...new Set(ST.outlierLog.map(r=>r.ouId))].length} facilities`);
     setProgress(75);await sleep(30);
 
     // ── S4: Build output rows ─────────────────────────────────
     setStep('s_build','running');
-    // Build lookup of corrected slots for outlier flag
-    const correctedSet=new Set(ST.outlierLog.map(r=>`${r.ouId}|${r.year}|${r.month}|${r.field}`));
+    // Build lookup of flagged slots for the outlier flag column
+    const flaggedSet=new Set(ST.outlierLog.map(r=>`${r.ouId}|${r.year}|${r.month}|${r.field}`));
     ST.rows=[];
     allOuIds.forEach(ouId=>{
       const ou=ST.ouHierarchy[ouId];if(!ou)return;
@@ -1671,7 +1700,7 @@ async function startPipeline(){
           if(ALL_VARS.some(dx=>m[dx.field]!==null&&m[dx.field]!==undefined))anyReported=true;
         });
       });
-      if(!anyReported)return; // inactive facility — no rows at all
+      if(!anyReported)return; // inactive facility, no rows at all
       // Pass 2: emit a row for EVERY month in the selected range (complete grid).
       // Months with no data are kept with null values and Reported = No.
       ST.years.forEach(yr=>{
@@ -1697,21 +1726,19 @@ async function startPipeline(){
           ALL_VARS.forEach(dx=>{
             const v=m[dx.field];
             row[dx.field]=v!==null&&v!==undefined?Math.round(v):null;
-            const orig=(m[dx.field+'_orig']!==undefined)?m[dx.field+'_orig']:v;
-            row[dx.field+'_orig']=orig!==null&&orig!==undefined?Math.round(orig):null;
-            row[dx.field+'_outlier']=correctedSet.has(`${ouId}|${yr}|${mi+1}|${dx.field}`)?'Yes':'No';
+            row[dx.field+'_outlier']=flaggedSet.has(`${ouId}|${yr}|${mi+1}|${dx.field}`)?'Yes':'No';
             const ub=ST.upperBoundStore[`${ouId}|${yr}|${dx.field}`];
             row[dx.field+'_ub']=(ub!==null&&ub!==undefined)?ub:'';
           });
           // ── Derived per age group ──
           AGE_KEYS.forEach(k=>{
             const fr=row[`fac_rdt_${k}`], fm=row[`fac_mic_${k}`], cr=row[`com_rdt_${k}`];
-            // Confirmed at facility / community / overall — ALL METHODS (RDT + Microscopy)
+            // Confirmed at facility / community / overall, ALL METHODS (RDT + Microscopy)
             row[`fac_conf_${k}`]=(fr!==null||fm!==null)?((fr||0)+(fm||0)):null;
             row[`com_conf_${k}`]=cr;
             row[`all_conf_${k}`]=(row[`fac_conf_${k}`]!==null||cr!==null)
               ?((row[`fac_conf_${k}`]||0)+(cr||0)):null;
-            // Confirmed — RDT ONLY. A single-method series, comparable across the
+            // Confirmed: RDT ONLY. A single-method series, comparable across the
             // April-2026 cutover and across facilities that have no laboratory.
             row[`all_rdt_${k}`]=(fr!==null||cr!==null)?((fr||0)+(cr||0)):null;
           });
@@ -1719,7 +1746,7 @@ async function startPipeline(){
           // ── Totals across age groups ──
           const sumOf=(pre)=>{const v=AGE_KEYS.map(k=>row[`${pre}_${k}`]);
             return v.some(x=>x!==null)?v.reduce((a,b)=>a+(b||0),0):null;};
-          // Microscopy is age-disaggregated on BOTH forms, so every total is simply the
+          // Microscopy is age disaggregated on BOTH forms, so every total is simply the
           // sum of its three age groups. There is no un-aged residual to carry.
           row.fac_rdt_total  = sumOf('fac_rdt');
           row.fac_mic_total  = sumOf('fac_mic');
@@ -1742,9 +1769,9 @@ async function startPipeline(){
     const nAct=[...new Set(ST.rows.map(r=>r.ou_id))].length;
     const nRep=ST.rows.filter(r=>r.reported==='Yes').length;
     const nCom=ST.rows.filter(r=>(r.com_total||0)>0).length;
-    log(`Rows built — ${ST.rows.length.toLocaleString()} facility-months across ${nAct.toLocaleString()} active facilities`,'ok');
+    log(`Rows built: ${ST.rows.length.toLocaleString()} facility months across ${nAct.toLocaleString()} active facilities`,'ok');
     log(`  ${nRep.toLocaleString()} reported · ${(ST.rows.length-nRep).toLocaleString()} reporting gaps (Reported = No)`,'dim');
-    log(`  ${nCom.toLocaleString()} facility-month(s) have community iCCM cases`,'hl');
+    log(`  ${nCom.toLocaleString()} facility month(s) have community iCCM cases`,'hl');
     await tick();
     setProgress(95);await sleep(30);
 
@@ -1766,7 +1793,7 @@ async function startPipeline(){
     const facFacil = [...new Set(ST.rows.filter(r=>(r.fac_total||0)>0).map(r=>r.ou_id))].length;
     const comFacil = [...new Set(ST.rows.filter(r=>(r.com_total||0)>0).map(r=>r.ou_id))].length;
     const nOutlierFac  = [...new Set(ST.outlierLog.map(r=>r.ouId))].length;
-    const outlierPct   = totalAssessed>0?(winCount/totalAssessed*100).toFixed(2):0;
+    const outlierPct   = totalAssessed>0?(flagCount/totalAssessed*100).toFixed(2):0;
     const ownCounts={Public:0,Private:0,Unknown:0};
     Object.values(ST.ouHierarchy||{}).forEach(ou=>{
       const o=getOwnership(ou.chiefdomName,ou.name,ou.id);
@@ -1777,9 +1804,9 @@ async function startPipeline(){
     // Top strip: run context only
     document.getElementById('statsRow').innerHTML=[
       `<div class="stat-pill ok">${ST.cfgStart} → ${ST.cfgEnd} · ${ST.years.length} year(s)</div>`,
-      `<div class="stat-pill">${ST.rows.length.toLocaleString()} facility-months</div>`,
+      `<div class="stat-pill">${ST.rows.length.toLocaleString()} facility months</div>`,
       `<div class="stat-pill ok">${totalFacilities.toLocaleString()} facilities · ${ownCounts.Public.toLocaleString()} Public · ${ownCounts.Private.toLocaleString()} Private</div>`,
-      `<div class="stat-pill warn">${ST.outlierLog.length.toLocaleString()} outlier corrections · ${nOutlierFac} facilities · ${outlierPct}% of ${totalAssessed.toLocaleString()} points</div>`,
+      `<div class="stat-pill warn">${ST.outlierLog.length.toLocaleString()} outliers flagged · ${nOutlierFac} facilities · ${outlierPct}% of ${totalAssessed.toLocaleString()} points</div>`,
     ].join('');
 
     // ── Facility / Community / Overall summary panels ──
@@ -1793,10 +1820,10 @@ async function startPipeline(){
       }).join('');
     };
     const outCell=(src)=>ALL_VARS.filter(v=>v.src===src).map(v=>{
-      const vs=(ST.varStats||{})[v.field]||{corrected:0,assessed:0};
-      const pc=vs.assessed?(vs.corrected/vs.assessed*100).toFixed(2):'0.00';
+      const vs=(ST.varStats||{})[v.field]||{flagged:0,assessed:0};
+      const pc=vs.assessed?(vs.flagged/vs.assessed*100).toFixed(2):'0.00';
       const vlab=`${v.test==='mic'?'Microscopy':'RDT'} ${v.age?AGE_LABEL[v.age]:'un-aged'}`;
-      return `<tr><td>${vlab}</td><td style="text-align:right;">${vs.corrected.toLocaleString()} / ${vs.assessed.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${vs.corrected?'#dc2626':'#6b7280'};">${pc}%</td></tr>`;
+      return `<tr><td>${vlab}</td><td style="text-align:right;">${vs.flagged.toLocaleString()} / ${vs.assessed.toLocaleString()}</td><td style="text-align:right;font-weight:700;color:${vs.flagged?'#dc2626':'#6b7280'};">${pc}%</td></tr>`;
     }).join('');
 
     const panel=(title,color,bg,total,rows,facil,pre,src,note)=>`
@@ -1804,9 +1831,9 @@ async function startPipeline(){
         <div style="background:${bg};color:${color};padding:8px 12px;font-size:13px;font-weight:800;">${title}</div>
         <div style="padding:11px 12px;">
           <div style="font-size:22px;font-weight:800;color:${color};line-height:1.2;">${total.toLocaleString()}</div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:9px;">confirmed cases · ${rows.toLocaleString()} facility-months · ${facil.toLocaleString()} facilities</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:9px;">confirmed cases · ${rows.toLocaleString()} facility months · ${facil.toLocaleString()} facilities</div>
           <table class="m-tbl"><tr><th>Age group</th><th style="text-align:right;">Confirmed cases</th><th style="text-align:right;">Share</th></tr>${ageCell(pre)}</table>
-          ${src?`<div style="font-size:10.5px;font-weight:800;color:var(--muted);margin:9px 0 3px;">OUTLIERS CORRECTED</div>
+          ${src?`<div style="font-size:10.5px;font-weight:800;color:var(--muted);margin:9px 0 3px;">OUTLIERS FLAGGED (values unchanged)</div>
           <table class="m-tbl"><tr><th>Age group</th><th style="text-align:right;">Found / Assessed</th><th style="text-align:right;">Rate</th></tr>${outCell(src)}</table>`:''}
           ${note?`<div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.55;">${note}</div>`:''}
         </div>
@@ -1844,7 +1871,7 @@ async function startPipeline(){
         `<td style="text-align:right;color:#8b5cf6;font-weight:700;">${v.mic.toLocaleString()}</td>`+
         `<td style="text-align:right;color:#8b5cf6;">${pm}%</td></tr>`;
     };
-    // Grand total across every group in the table (facilities de-duplicated).
+    // Grand total across every group in the table (facilities deduplicated).
     const detTotal=(m)=>{
       const t={fac:0,com:0,all:0,pos:0,mic:0,facs:new Set()};
       Object.values(m).forEach(v=>{
@@ -1878,9 +1905,9 @@ async function startPipeline(){
       `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;">
          <div class="stat-pill ok">Active: ${actv.active.length.toLocaleString()}</div>
          <div class="stat-pill warn">Inactive: ${actv.inactive.length.toLocaleString()}</div>
-         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level-6 iCCM values rolled up</div>
+         <div class="stat-pill">${(ST.comRollup||0).toLocaleString()} Level 6 iCCM values rolled up</div>
          ${nViol?`<div class="stat-pill warn" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">${nViol.toLocaleString()} form-rule violation(s) ignored</div>`
-                :`<div class="stat-pill ok">No form-rule violations</div>`}
+              :`<div class="stat-pill ok">No form-rule violations</div>`}
        </div>`+
       detTable('Confirmed Cases by Ownership', byGroup(r=>r.ownership), 'Ownership')+
       detTable('Confirmed Cases by Facility Type', byGroup(r=>r.hfType), 'Facility Type')+
@@ -1891,16 +1918,17 @@ async function startPipeline(){
       panel('CONFIRMED CASES AT FACILITY','#2c6793','#e8f2fa',facTotal,facRows,facFacil,'fac','fac',
             `RDT <b>${facRdt.toLocaleString()}</b> + Microscopy <b>${facMic.toLocaleString()}</b> (${micPct}% microscopy).`)+
       panel('CONFIRMED CASES AT COMMUNITY','#15803d','#d4edda',comTotal,comRows,comFacil,'com','com',
-            `RDT only — CHWs do not perform microscopy.<br>${(ST.comRollup||0).toLocaleString()} Level-6 values rolled up. Community 02-59m treated as 0-59m.`)+
+            `RDT only: CHWs do not perform microscopy.<br>${(ST.comRollup||0).toLocaleString()} Level 6 values rolled up. Community 02-59m treated as 0-59m.`)+
       panel('OVERALL CONFIRMED CASES','#8a6a00','#fff8e6',allTotal,ST.rows.filter(r=>r.reported==='Yes').length,
             [...new Set(ST.rows.filter(r=>r.reported==='Yes').map(r=>r.ou_id))].length,'all',null,
-            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Facility microscopy is age-disaggregated on both forms, so every age group and every total carries its full RDT plus microscopy component.</span>`);
+            `Confirmed = at facility + at community.<br><b>${facTotal.toLocaleString()} + ${comTotal.toLocaleString()} = ${allTotal.toLocaleString()}</b><br><br><span style="color:#dc2626;font-weight:700;">RDT only: ${allRdt.toLocaleString()}</span><br><span style="color:var(--muted);font-size:10.5px;">Facility microscopy is age disaggregated on both forms, so every age group and every total carries its full RDT plus microscopy component.</span>`);
 
     buildPreview();
     renderExcluded();
     renderFormCoverage();
     renderActivity();
-    renderMicViol();   // Wrong Reporting tab
+    renderMicViol();
+  renderOutlierTab();   // Wrong Reporting tab
     renderComparative();
     renderReporting();
     renderBiannual();
@@ -1913,8 +1941,8 @@ async function startPipeline(){
     const gc=ST.rows.reduce((a,r)=>a+(r.com_conf_total||0),0);
     const gr=ST.rows.reduce((a,r)=>a+(r.all_rdt_total||0),0);
     const gm=ST.rows.reduce((a,r)=>a+(r.fac_mic_total||0),0);
-    log(`Confirmed — at facility ${gf.toLocaleString()} + at community ${gc.toLocaleString()} = ${gt.toLocaleString()}`,'hl');
-    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (age-disaggregated on both forms)`,'hl');
+    log(`Confirmed: at facility ${gf.toLocaleString()} + at community ${gc.toLocaleString()} = ${gt.toLocaleString()}`,'hl');
+    log(`RDT only ${gr.toLocaleString()} · facility microscopy ${gm.toLocaleString()} (age disaggregated on both forms)`,'hl');
     log('Analyses rendered. Done.','ok');
     logStop();
 
@@ -1939,7 +1967,7 @@ async function startPipeline(){
 function buildHeaders(){
   const base=['District','Chiefdom','Facility','Type','Ownership','Year','Month','Period'];
   const rawBlk=(filter)=>ALL_VARS.filter(filter).flatMap(v=>[
-    `${v.label} Original`, `${v.label} Upper Bound`, `${v.label} Outlier`, `${v.label} Corrected`]);
+    `${v.label} Value`, `${v.label} IQR Upper Bound`, `${v.label} Outlier Flag`]);
   const confBlk=(pre,lbl)=>AGE_KEYS.map(k=>`${lbl} ${AGE_LABEL[k]}`).concat([`${lbl} Total`]);
   return {
     overall:[...base,
@@ -1954,21 +1982,22 @@ function buildHeaders(){
     community:[...base, ...rawBlk(v=>v.src==='com'),
       ...confBlk('com_conf','Confirmed at Community'), 'Community Reported'],
     outliers:['District','Chiefdom','Facility','Type','Ownership','Year','Month','Series','Age Group',
-      'Original Value','Corrected Value','Upper Bound (Q3 + 3.0×IQR)','Outlier'],
+      'Value as reported','IQR Upper Bound (Q3 + 3.0×IQR)','Facility-year median (for reference only)',
+      'Above IQR bound','Above 5,000','Why it was flagged','Value changed?'],
   };
 }
 
 function getRows(type){
   const base=r=>[r.district,r.chiefdom,r.facility,r.hfType,r.ownership??'',r.year,r.month_name,r.period];
   const rawBlk=(r,filter)=>ALL_VARS.filter(filter).flatMap(v=>[
-    r[`${v.field}_orig`]??'', r[`${v.field}_ub`]??'', r[`${v.field}_outlier`]??'No', r[v.field]??'']);
+    r[v.field]??'', r[`${v.field}_ub`]??'', r[`${v.field}_outlier`]??'No']);
   const confBlk=(r,pre)=>AGE_KEYS.map(k=>r[`${pre}_${k}`]??'').concat([r[`${pre}_total`]??'']);
 
   if(type==='outliers'){
     return ST.outlierLog.map(r=>[
       r.district,r.chiefdom,r.facility,r.hfType,r.ownership??'',r.year,MONTH_NAMES[r.month-1],
       r.srcLabel||'', r.ageLabel||'',
-      r.original, r.corrected, r.upperBound, 'Yes']);
+      r.value, r.upperBound, r.facilityMedian ?? '', r.overIqr||'', r.overAbs||'', r.reason||'', 'No: flagged only']);
   }
   if(type==='community'){
     return ST.rows.filter(r=>r.com_conf_total!==null&&r.com_conf_total!==undefined)
@@ -2003,9 +2032,9 @@ function buildPreview(){
     return `<tr>${r.map((c,ci)=>{
       const isOutCol=outlierCols.includes(ci);
       // A value column is flagged when its matching "<name> Outlier" column (2 cols later) is Yes
-      const base=String(hdrs[ci]).replace(/ (Original|Corrected)$/,'');
-      const outIdx=hdrs.indexOf(base+' Outlier');
-      const isPairedValue=/ (Original|Corrected)$/.test(hdrs[ci]) && outIdx>=0 && r[outIdx]==='Yes';
+      const base=String(hdrs[ci]).replace(/ Value$/,'');
+      const outIdx=hdrs.indexOf(base+' Outlier Flag');
+      const isPairedValue=/ Value$/.test(hdrs[ci]) && outIdx>=0 && r[outIdx]==='Yes';
       let style='';
       if(isOutCol){ style = c==='Yes' ? 'font-weight:800;color:#dc2626;' : c==='No' ? 'color:#6b7280;' : ''; }
       else if(isPairedValue){ style='font-weight:800;color:#dc2626;'; }
@@ -2035,7 +2064,7 @@ function downloadCSV(type){
 
 // ── Facility Ownership Match Report ──────────────────────────
 function getFacilityReport(scope){
-  // Every unique Level-5 facility in the registry (keyed by unique ou_id),
+  // Every unique Level 5 facility in the registry (keyed by unique ou_id),
   // independent of whether it reported confirmed cases in the period.
   const withData=new Set(ST.rows.map(r=>r.ou_id));
   let list=Object.values(ST.ouHierarchy||{}).map(ou=>{
@@ -2136,8 +2165,8 @@ function downloadReconciliation(){
   const H4=['District','Chiefdom','Facility','Type'];
   const R2=getReconciliation();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Category','Count'],
-    ['Matched — DHIS2 facilities',both.length],
-    ['Matched — master rows',R2.masterMatched],
+    ['Matched: DHIS2 facilities',both.length],
+    ['Matched: master rows',R2.masterMatched],
     ['In Master, Not in DHIS2',masterOnly.length],
     ['In DHIS2, Not in Master',dhisOnly.length],
     [],
@@ -2196,24 +2225,24 @@ function renderReconciliation(){
       <b>Master side:</b> ${masterMatched.toLocaleString()} matched + ${masterOnly.length.toLocaleString()} not in DHIS2 = <b>${masterTotal.toLocaleString()}</b> master rows<br>
       <b>DHIS2 side:</b> ${both.length.toLocaleString()} matched + ${dhisOnly.length.toLocaleString()} not in master = <b>${dhisTotal.toLocaleString()}</b> DHIS2 facilities<br>
       ${extraFromDup
-        ? `<span style="color:#b45309;"><b>The two totals differ by ${extraFromDup}</b> because ${extraFromDup} master row(s) are matched by more than one DHIS2 facility — the same facility name exists at two different org units. Nothing is missing; the master list simply holds one row for a name that DHIS2 stores twice. See the shared-name list below.</span>`
-        : `<span style="color:#15803d;">Both sides balance exactly.</span>`}
-      ${balanced?'':'<br><span style="color:#dc2626;">Counts do not balance — please report this.</span>'}
+        ? `<span style="color:#b45309;"><b>The two totals differ by ${extraFromDup}</b> because ${extraFromDup} master row(s) are matched by more than one DHIS2 facility, the same facility name exists at two different org units. Nothing is missing; the master list simply holds one row for a name that DHIS2 stores twice. See the shared-name list below.</span>`
+      : `<span style="color:#15803d;">Both sides balance exactly.</span>`}
+      ${balanced?'':'<br><span style="color:#dc2626;">Counts do not balance: please report this.</span>'}
     </div>`;
   // Shared-name table
   const dupBox=document.getElementById('dupBox');
   dupBox.innerHTML = duplicates.length
     ? `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:14px 0 6px;">
-         <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">Shared Facility Names — one master row, several DHIS2 facilities</span>
+         <span style="font-size:13px;font-weight:700;color:var(--blue-dk);">Shared Facility Names: one master row, several DHIS2 facilities</span>
          <button class="btn btn-outline btn-sm" onclick="downloadReconCsv('duplicates')">↓ CSV</button>
        </div>
        <div class="data-table-wrap" style="max-height:220px;"><table class="data-table">
         <thead><tr><th>OU ID</th><th>District</th><th>Chiefdom</th><th>Facility</th><th>Type</th><th>Ownership</th><th>DHIS2 facilities with this name</th></tr></thead>
         <tbody>${duplicates.map(d=>`<tr><td>${d.ou_id}</td><td>${d.district}</td><td>${d.chiefdom}</td><td>${d.facility}</td><td>${d.type}</td><td>${d.ownership}</td><td>${d.dhis2Count}</td></tr>`).join('')}</tbody>
        </table></div>`
-    : '';
+  : '';
   const tbl=(list,cols,withOwn)=>{
-    if(!list.length)return '<div style="font-size:12px;color:#155724;background:#d4edda;border:1.5px solid #28a745;border-radius:8px;padding:10px;">✓ None — all facilities matched.</div>';
+    if(!list.length)return '<div style="font-size:12px;color:#155724;background:#d4edda;border:1.5px solid #28a745;border-radius:8px;padding:10px;">✓ None: all facilities matched.</div>';
     return `<div class="data-table-wrap" style="max-height:280px;"><table class="data-table">
       <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
       <tbody>${list.map(x=>`<tr><td>${x.district}</td><td>${x.chiefdom}</td><td>${x.facility}</td><td>${x.type}</td>${withOwn?`<td>${x.ownership}</td>`:''}</tr>`).join('')}</tbody>
@@ -2225,51 +2254,125 @@ function renderReconciliation(){
     tbl(dhisOnly,['District','Chiefdom','Facility','Type'],false);
 }
 
+// ── OUTLIER DETECTION IS FLAG-ONLY ───────────────────────────
+// No value is ever changed. Outliers are reported as issues for review and correction
+// at source in DHIS2. Every total, analysis and export uses the value AS REPORTED.
+// Two tests run side by side:
+//   1. IQR : value above Q3 + IQR_K x IQR within the facility-year series. Relative to
+//             the facility's own pattern, but blind where a series has fewer than 4
+//             reported months, or where one value is large enough to inflate Q3 itself.
+//   2. FLAG_ABOVE: an absolute ceiling that does not depend on the facility's pattern,
+//             so it catches exactly what the IQR test cannot see. The average cell in
+//             this data is about 11 and the busiest age band averages 71.
+const FLAG_ABOVE=5000;
 // ── EXTREME VALUES ───────────────────────────────────────────
 // A single monthly cell holding a value far above anything clinically possible is a
-// data-entry error, most often a 9 or 10 digit number (an ID, a phone number, a
+// data entry error, most often a 9 or 10 digit number (an ID, a phone number, a
 // barcode) typed into a count field. Outlier correction cannot always remove these:
 // it needs at least 4 reported months in the facility-year, and if several months are
 // inflated the median is inflated too. Every such value is captured here with its
 // facility and month so it can be corrected at source in DHIS2.
-const EXTREME_MIN=5000;   // a monthly count at one facility above this is not credible
+const EXTREME_MIN=FLAG_ABOVE;   // a monthly count at one facility above this is not credible
 function extremeRows(){
   const L=(ST.extremes||[]).slice().sort((a,b)=>b.value-a.value);
   // was this cell later replaced by outlier correction?
-  const corrected=new Set((ST.outlierLog||[]).map(o=>`${o.ouId}|${o.year}|${o.month}|${o.field||''}`));
+  const flagged=new Set((ST.outlierLog||[]).map(o=>`${o.ouId}|${o.year}|${o.month}|${o.field||''}`));
   return L.map(e=>[e.district,e.chiefdom,e.facility,e.hfType,e.ownership,e.period,
     e.de,e.deName,e.coc,e.band,e.field,e.value,
-    corrected.has(`${e.ouId}|${e.year}|${e.month}|${e.field}`)?'Yes':'No',
+    flagged.has(`${e.ouId}|${e.year}|${e.month}|${e.field}`)?'Yes':'No',
     e.disposition]);
 }
 const EXTREME_HDR=['District','Chiefdom','Facility','Type','Ownership','Period',
   'Data Element UID','Data Element','COC UID','Band','Field','Value',
-  'Replaced by outlier correction','What happened to it'];
+  'Flagged as an outlier','What happened to it'];
 function logExtremes(){
   const L=(ST.extremes||[]).slice().sort((a,b)=>b.value-a.value);
-  if(!L.length){log(`Extreme values — none above ${EXTREME_MIN.toLocaleString()} in a single facility-month`,'ok');return;}
+  if(!L.length){log(`Extreme values: none above ${EXTREME_MIN.toLocaleString()} in a single facility month`,'ok');return;}
   const sum=L.reduce((a,b)=>a+b.value,0);
-  log(`Extreme values — ${L.length.toLocaleString()} cell(s) above ${EXTREME_MIN.toLocaleString()}, totalling ${sum.toLocaleString()}. See the Extreme Values report.`,'warn');
+  log(`Extreme values: ${L.length.toLocaleString()} cell(s) above ${EXTREME_MIN.toLocaleString()}, totalling ${sum.toLocaleString()}. See the Extreme Values report.`,'warn');
   L.slice(0,10).forEach(e=>log(`    ${e.value.toLocaleString()} · ${e.facility} (${e.hfType}, ${e.district}) · ${e.period} · ${e.deName} · ${e.band}`,'dim'));
   if(L.length>10)log(`    …and ${(L.length-10).toLocaleString()} more`,'dim');
 }
 function downloadExtremes(){
   const rows=extremeRows();
-  if(!rows.length){alert('No extreme values found — nothing to export.');return;}
+  if(!rows.length){alert('No extreme values found: nothing to export.');return;}
   const L=(ST.extremes||[]);
   const byDx={};
   L.forEach(e=>{const k=e.de+'.'+e.coc; byDx[k]=byDx[k]||{n:0,sum:0,max:0,name:e.deName,band:e.band};
     byDx[k].n++; byDx[k].sum+=e.value; byDx[k].max=Math.max(byDx[k].max,e.value);});
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
-    ['EXTREME VALUES — single facility-months above '+EXTREME_MIN.toLocaleString()],[],
-    ['These are data-entry errors in DHIS2, not extraction errors. Correct them at source.'],[],
+    ['EXTREME VALUES: single facility months above '+EXTREME_MIN.toLocaleString()],[],
+    ['These are data entry errors in DHIS2, not extraction errors. Correct them at source.'],[],
     ['dx','Data Element','Band','Cells','Total','Largest single value'],
     ...Object.keys(byDx).sort((a,b)=>byDx[b].sum-byDx[a].sum)
       .map(k=>[k,byDx[k].name,byDx[k].band,byDx[k].n,byDx[k].sum,byDx[k].max])
   ]),'Summary');
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([EXTREME_HDR,...rows]),'Every Cell');
   XLSX.writeFile(wb,`NMCP_Confirmed_ExtremeValues_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
+}
+// ── OUTLIERS TAB ─────────────────────────────────────────────
+// Shows the outlier log in full: every flagged row, every column, nothing summarised.
+// Values are as reported in DHIS2. Nothing here has been altered.
+const OUTTAB_HDR=['District','Chiefdom','Facility','Type','Ownership','Year','Month','Series','Age Group',
+  'Value as reported','IQR Upper Bound','Facility median (reference)','Above IQR bound','Above 5,000',
+  'Why it was flagged','Value changed?'];
+function outlierTabRows(){
+  const rule=(document.getElementById('outFilterRule')||{}).value||'';
+  const dist=(document.getElementById('outFilterDistrict')||{}).value||'';
+  const q=((document.getElementById('outSearch')||{}).value||'').toLowerCase().trim();
+  return (ST.outlierLog||[]).filter(r=>{
+    if(dist&&r.district!==dist)return false;
+    if(rule==='iqr'&&!(r.overIqr==='Yes'&&r.overAbs!=='Yes'))return false;
+    if(rule==='abs'&&!(r.overAbs==='Yes'&&r.overIqr!=='Yes'))return false;
+    if(rule==='both'&&!(r.overAbs==='Yes'&&r.overIqr==='Yes'))return false;
+    if(q){
+      const hay=`${r.facility} ${r.district} ${r.chiefdom} ${r.srcLabel} ${r.ageLabel} ${r.hfType}`.toLowerCase();
+      if(!hay.includes(q))return false;
+    }
+    return true;
+  }).sort((a,b)=>b.value-a.value)
+   .map(r=>[r.district,r.chiefdom,r.facility,r.hfType,r.ownership??'',r.year,MONTH_NAMES[r.month-1],
+     r.srcLabel||'',r.ageLabel||'',r.value,r.upperBound,r.facilityMedian??'',
+     r.overIqr||'',r.overAbs||'',r.reason||'','No, flagged only']);
+}
+function renderOutlierTab(){
+  const box=document.getElementById('outTableBox'); if(!box)return;
+  // district list, filled once from the log
+  const sel=document.getElementById('outFilterDistrict');
+  if(sel&&sel.options.length<=1){
+    [...new Set((ST.outlierLog||[]).map(r=>r.district).filter(Boolean))].sort()
+      .forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+  }
+  const rows=outlierTabRows();
+  const cnt=document.getElementById('outCount');
+  if(cnt)cnt.textContent=`${rows.length.toLocaleString()} of ${(ST.outlierLog||[]).length.toLocaleString()} flagged value(s)`;
+  if(!rows.length){
+    box.innerHTML='<div class="alert" style="margin:10px 0;background:#d4edda;border-color:#28a745;color:#155724;"><strong>Nothing to show.</strong> No value was flagged for the current filters.</div>';
+    return;
+  }
+  const cell=(v,i)=>{
+    if(i===9)return `<td style="text-align:right;font-weight:800;color:#dc2626;">${Number(v).toLocaleString()}</td>`;
+    if(i===10||i===11)return `<td style="text-align:right;color:var(--muted);">${v===''?'':Number(v).toLocaleString()}</td>`;
+    if(i===12||i===13)return `<td style="text-align:center;font-weight:700;color:${v==='Yes'?'#dc2626':'#9aa7b2'};">${v}</td>`;
+    return `<td>${v}</td>`;
+  };
+  box.innerHTML=`<div class="data-table-wrap" style="max-height:520px;"><table class="data-table">
+    <thead><tr>${OUTTAB_HDR.map((h,i)=>`<th style="${i>=9&&i<=11?'text-align:right;':i===12||i===13?'text-align:center;':''}">${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>`<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function downloadOutlierTab(fmt){
+  const rows=outlierTabRows();
+  if(!rows.length){alert('Nothing to export for the current filters.');return;}
+  if(fmt==='xlsx'){
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([OUTTAB_HDR,...rows]),'Outliers');
+    XLSX.writeFile(wb,`NMCP_Confirmed_Outliers_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);return;
+  }
+  const csv=[OUTTAB_HDR.join(','),...rows.map(r=>r.map(c=>`"${c??''}"`).join(','))].join('\n');
+  const a=document.createElement('a');
+  a.download=`NMCP_Confirmed_Outliers_${ST.cfgStart}_${ST.cfgEnd}.csv`;
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
 }
 // ── FETCH AUDIT ──────────────────────────────────────────────
 // One record per dx string (data element . category option combo) with what the
@@ -2301,7 +2404,7 @@ function auditByDE(){
 }
 function logAudit(){
   const byDE=auditByDE();
-  log('Fetch audit — per data element (returned → accepted, with what was removed):','info');
+  log('Fetch audit: per data element (returned → accepted, with what was removed):','info');
   Object.keys(byDE).sort((x,y)=>byDE[y].accepted-byDE[x].accepted).forEach(de=>{
     const b=byDE[de];
     log(`  ${de} ${(DE_NAMES[de]||'').slice(0,58)} · ${b.n} dx · ${b.rows.toLocaleString()} rows`
@@ -2312,11 +2415,11 @@ function logAudit(){
 }
 function downloadFetchAudit(){
   const rows=auditRows();
-  if(!rows.length){alert('No audit yet — run the extract first.');return;}
+  if(!rows.length){alert('No audit yet: run the extract first.');return;}
   const wb=XLSX.utils.book_new();
   const byDE=auditByDE();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
-    ['FETCH AUDIT — what the analytics API returned, per data element'],[],
+    ['FETCH AUDIT: what the analytics API returned, per data element'],[],
     ['Data Element','Name','dx count','Rows returned','Value returned','Value accepted',
      'Microscopy skipped','Wrong form ignored'],
     ...Object.keys(byDE).sort().map(de=>[de,DE_NAMES[de]||'',byDE[de].n,byDE[de].rows,
@@ -2334,7 +2437,7 @@ function showCfgTab(t){
   });
 }
 function showTab(t){
-  ['summary','comparative','download','analysis','wrong'].forEach(n=>{
+  ['summary','comparative','download','analysis','wrong','outliers'].forEach(n=>{
     document.getElementById('tab'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
     document.getElementById('tabBtn'+n.charAt(0).toUpperCase()+n.slice(1)).classList.toggle('active',n===t);
   });
@@ -2381,17 +2484,17 @@ function renderExcluded(){
         <thead><tr>${EXCL_HDR.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
         <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??''}</td>`).join('')}</tr>`).join('')}</tbody>
        </table></div>`
-    : '<div style="font-size:12px;color:var(--muted);">No facilities excluded.</div>';
+  : '<div style="font-size:12px;color:var(--muted);">No facilities excluded.</div>';
 }
 
 // ── Methodology ──────────────────────────────────────────────
 function methodologyRows(){
   return [
-    ['NMCP Confirmed Cases Extract (RDT + Microscopy) — Methodology'],[],
+    ['NMCP Confirmed Cases Extract (RDT + Microscopy), Methodology'],[],
     ['Period',`${ST.cfgStart||''} to ${ST.cfgEnd||''}`],
-    ['Source','DHIS2 HMIS — analytics API, Level-5 (PHU) facilities'],
+    ['Source','DHIS2 HMIS: analytics API, Level 5 (PHU) facilities'],
     [],
-    ['DATA ELEMENTS EXTRACTED — CONFIRMED CASES (POSITIVES ONLY)'],
+    ['DATA ELEMENTS EXTRACTED: CONFIRMED CASES (POSITIVES ONLY)'],
     ['OLD FORM','HF01 Outpatient morbidity  ·  ij1VNJwxKCh'],
     ['  RDT Positive','p6zQLDFjSfd  ·  ages 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
     ['  Microscopy Positive','Sz13vbo2Qwh  ·  same age COCs: 0-59m m5T8uBNB8aN / 05-14y j7j6iaknOFn / 15+y zK1aiw8zFac'],
@@ -2406,19 +2509,19 @@ function methodologyRows(){
     ['COMMUNITY','HF04 Community Based Services  ·  nufVxEfy3Ps  ·  RDT ONLY (CHWs do not perform microscopy)'],
     ['  RDT Positive','T7xH8GwWpEM  ·  ages 02-59m NtjMVmRfvHH / 05-14y qDXW7WMLT99 / 15+y mdjRPpvLKdu'],
     ['  02-59m treated as 0-59m','The community under-5 band is 2-59 months (CHWs do not treat neonates). It is TREATED AS 0-59m so facility and community align.'],
-    ['  LEVEL-6 ROLLUP','Community cases are reported by iCCM posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level-6 value is rolled up to its Level-5 PHU parent.'],
+    ['  LEVEL-6 ROLLUP','Community cases are reported by iCCM posts at LEVEL 6. Analytics is queried at LEVEL-5 and LEVEL-6, and every Level 6 value is rolled up to its Level 5 PHU parent.'],
     [],
-    ['COMPUTATION — Confirmed at facility <age>','RDT Positive <age> + Microscopy Positive <age>  (age-disaggregated microscopy exists up to March 2026)'],
-    ['COMPUTATION — Confirmed at facility TOTAL','sum of the three age groups'],
-    ['COMPUTATION — Confirmed at community','RDT Positive, iCCM'],
-    ['COMPUTATION — Confirmed overall','at facility + at community'],
-    ['COMPUTATION — Confirmed RDT only','facility RDT Positive + community RDT Positive'],
-    ['** CUTOVER NOTE **','Microscopy is age-disaggregated on BOTH forms (old Sz13vbo2Qwh on three age COCs; new AMrdoWsiHMa on the same 24 age/sex COCs as RDT), so the microscopy component does not change shape at the cutover. The two forms do use different age bands and different data capture, so a step at April 2026 should still be checked against reporting before it is read as transmission. A RDT-only series is exported alongside for that comparison.'],
+    ['COMPUTATION: Confirmed at facility <age>','RDT Positive <age> + Microscopy Positive <age>  (age disaggregated microscopy exists up to March 2026)'],
+    ['COMPUTATION: Confirmed at facility TOTAL','sum of the three age groups'],
+    ['COMPUTATION: Confirmed at community','RDT Positive, iCCM'],
+    ['COMPUTATION: Confirmed overall','at facility + at community'],
+    ['COMPUTATION: Confirmed RDT only','facility RDT Positive + community RDT Positive'],
+    ['** CUTOVER NOTE **','Microscopy is age disaggregated on BOTH forms (old Sz13vbo2Qwh on three age COCs; new AMrdoWsiHMa on the same 24 age/sex COCs as RDT), so the microscopy component does not change shape at the cutover. The two forms do use different age bands and different data capture, so a step at April 2026 should still be checked against reporting before it is read as transmission. A RDT only series is exported alongside for that comparison.'],
     ['Series cleaned','9 series independently: facility RDT+, facility Microscopy+ and community RDT+, each across the 3 age groups.'],
     [],
     ['MICROSCOPY EXCLUDED FOR MCHP AND CHP','Microscopy needs a microscope and a laboratory. MCHP and CHP have neither, so any microscopy value they report is SKIPPED - it never enters the data, the analyses or any export. Hospital, CHC and Clinic may report microscopy and their values are kept in full. Every skipped record is listed in the Wrong Reporting tab.'],
     [],
-    ['FORM CUTOVER — APRIL 2026'],
+    ['FORM CUTOVER: APRIL 2026'],
     ['OLD FORM','Used up to and including March 2026. Any value AFTER March 2026 is IGNORED.'],
     ['NEW FORM','Used from April 2026 onwards. Any value BEFORE April 2026 is IGNORED.'],
     ['COMMUNITY','ALL periods. HF04 is a separate dataset, unaffected by the HF01 form change.'],
@@ -2426,9 +2529,9 @@ function methodologyRows(){
     ['Note','Each age group is a separate variable throughout: each gets its own upper bound, outlier flag and correction.'],[],
     ['1. FACILITY REGISTRY'],
     ['Included types','Hospital, Clinic, CHC, CHP, MCHP'],
-    ['Excluded — laboratories','Names containing "Laboratory". Not health facilities; many are typed "Hospital" in the source (e.g. Bo Regional Hospital Laboratory), which would inflate the Hospital count.'],
-    ['Excluded — Marie Stopes','All Marie Stopes facilities, excluded by NMCP request (specialised SRH provider).'],
-    ['Excluded — unrecognised type','Facilities whose type cannot be derived from the name.'],
+    ['Excluded: laboratories','Names containing "Laboratory". Not health facilities; many are typed "Hospital" in the source (e.g. Bo Regional Hospital Laboratory), which would inflate the Hospital count.'],
+    ['Excluded: Marie Stopes','All Marie Stopes facilities, excluded by NMCP request (specialised SRH provider).'],
+    ['Excluded: unrecognised type','Facilities whose type cannot be derived from the name.'],
     ['Type spelling','Misspellings normalised (e.g. "Climic" → "Clinic"). "Home" (nursing homes) folded into Clinic.'],[],
     ['2. OWNERSHIP (Public / Private)'],
     ['Match order','1) DHIS2 OU ID (exact)  2) Chiefdom (Level 4) + Facility (Level 5)  3) Facility name  4) Unknown'],
@@ -2443,7 +2546,9 @@ function methodologyRows(){
     ['Upper bound','Q3 + 3.0 × IQR, where IQR = Q3 − Q1, computed on reported (non-null, > 0) values.'],
     ['Correction','Values above the upper bound are REPLACED BY THE MEDIAN of that facility-year-variable (median imputation), not capped to the bound. The median is rounded to a WHOLE NUMBER, since case counts are never fractional. Values at or below the bound are unchanged.'],
     ['Zeros / missing','0 stays 0; missing stays missing. Neither is flagged or used to compute the bound.'],
-    ['Minimum data','Groups with fewer than 4 reported values get no bound (quartiles unstable) and are left uncorrected.'],
+    ['Minimum data','Groups with fewer than 4 reported values get no IQR bound (quartiles unstable). The absolute 5,000 threshold still applies to them.'],
+    ['FLAG ONLY','No value is ever changed. Outliers are flagged for review and correction at source in DHIS2. Every total, analysis and export uses the value AS REPORTED.'],
+    ['Second test','Any value above 5,000 in a single facility month is flagged regardless of the facility pattern. This catches what the IQR test cannot: series with fewer than 4 reported months, and values large enough to inflate Q3 above themselves.'],
     ['Why 3.0','Tukey defines 1.5×IQR as "outlier" and 3.0×IQR as "far outlier". 3.0 is used because outliers are REPLACED by the median (a large change), so the fence is kept wide to avoid replacing genuine seasonal malaria peaks.'],
     ['Why the median','The median is robust (unaffected by the outlier itself) and represents the facility\'s typical month for that year, so a corrupted value is replaced by a plausible one rather than by the threshold.'],[],
     ['5. REPORTING RATE'],
@@ -2452,15 +2557,14 @@ function methodologyRows(){
     ['Groups','By ownership (Public / Private) and by facility type (CHC, CHP, MCHP, Hospital, Clinic).'],
     ['Note','Inactive facilities are excluded from the denominator, so the rate measures reporting among facilities that actually function.'],[],
     ['6. OUTPUT COLUMNS (per age group)'],
-    ['Columns per series','Each of the 6 series (Facility/Community x 0-59m/05-14y/15+y) has: Original, Upper Bound, Outlier, Corrected.'],
+    ['Columns per series','Each series has: Value (as reported), IQR Upper Bound, Outlier Flag. There is NO Corrected column - nothing is corrected. Old columns were: Original, Upper Bound, Outlier, Corrected.'],
     ['Original','Raw value as returned by DHIS2, before any correction.'],
     ['Upper Bound','The IQR threshold that value was tested against (Q3 + 3.0 × IQR).'],
     ['Outlier','Yes if the original value exceeded the upper bound.'],
-    ['Corrected','Value after correction. Equals Original when not an outlier; equals the facility-year MEDIAN (whole number) when an outlier was replaced.'],
     ['Reported','Yes if the facility reported confirmed cases that month; No if the month is a reporting gap.'],
     ['Source Form','Which facility form the month came from: Old form (up to March 2026) or New form / 2025_HF01 (from April 2026).'],
     ['Facility Total / Community Total','Sum across the three age groups for that source.'],
-    ['Overall <age>','Facility <age> + Community <age> (corrected values).'],
+    ['Overall <age>','Facility <age> + Community <age> (values as reported).'],
     ['Confirmed series','Confirmed = positives only. Two series are produced: RDT + Microscopy (all methods) and RDT only (single method, comparable across April 2026).'],[],
     ['7. PERIOD GRID'],
     ['Completeness','A row is emitted for every month of the selected range for each active facility, so non-reporting months appear explicitly (Reported = No) rather than being dropped.'],
@@ -2495,17 +2599,17 @@ function renderFormCoverage(){
   const ci=ST.cutIgnored||{oldAfter:0,newBefore:0};
   const cv=ST.cutIgnoredVal||{oldAfter:0,newBefore:0};
   document.getElementById('formStats').innerHTML=[
-    `<div class="stat-pill" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">Old form: ${nOld.toLocaleString()} facility-months</div>`,
-    `<div class="stat-pill" style="background:#d4edda;border-color:#15803d;color:#15803d;">New form (2025_HF01): ${nNew.toLocaleString()} facility-months</div>`,
+    `<div class="stat-pill" style="background:#fee2e2;border-color:#dc2626;color:#dc2626;">Old form: ${nOld.toLocaleString()} facility months</div>`,
+    `<div class="stat-pill" style="background:#d4edda;border-color:#15803d;color:#15803d;">New form (2025_HF01): ${nNew.toLocaleString()} facility months</div>`,
   ].join('');
   document.getElementById('cutInfo').innerHTML=`
     <div class="m-calc" style="margin:8px 0;">
       <b>Cutover applied.</b> New form data entry starts <b>April 2026</b>.<br>
-      <span style="color:#dc2626;font-weight:700;">Old form</span> — used up to <b>March 2026</b>; values after that are ignored
+      <span style="color:#dc2626;font-weight:700;">Old form</span>: used up to <b>March 2026</b>; values after that are ignored
       (${ci.oldAfter.toLocaleString()} value(s), ${cv.oldAfter.toLocaleString()} cases).<br>
-      <span style="color:#15803d;font-weight:700;">New form</span> — used from <b>April 2026</b>; values before that are ignored
+      <span style="color:#15803d;font-weight:700;">New form</span>: used from <b>April 2026</b>; values before that are ignored
       (${ci.newBefore.toLocaleString()} value(s), ${cv.newBefore.toLocaleString()} cases).<br>
-      <span class="m-mut">Each form is confined to its own window, so a facility-month can only ever take values from one form. Anything reported on the wrong form is listed below.</span>
+      <span class="m-mut">Each form is confined to its own window, so a facility month can only ever take values from one form. Anything reported on the wrong form is listed below.</span>
     </div>`;
   document.getElementById('formHead').innerHTML =
     `<tr><th>Month</th><th style="color:#dc2626;">Old form</th><th style="color:#15803d;">New form (2025_HF01)</th><th>Total reporting</th></tr>`;
@@ -2518,7 +2622,7 @@ function renderFormCoverage(){
 }
 
 
-// ── Wrong Reporting (display only — values are SKIPPED) ──
+// ── Wrong Reporting (display only, values are SKIPPED) ──
 // Microscopy needs a microscope and a laboratory. Any microscopy value
 // reported by an MCHP or a CHP is implausible and is excluded from the data.
 function getMicViol(){
@@ -2551,7 +2655,7 @@ function downloadMicViol(fmt){
   if(fmt==='xlsx'){
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
-      ['WRONG REPORTING — MICROSCOPY REPORTED BY AN MCHP OR CHP — SKIPPED'],[],
+      ['WRONG REPORTING: MICROSCOPY REPORTED BY AN MCHP OR CHP, SKIPPED'],[],
       ['Rule','Microscopy needs a microscope and a laboratory. MCHP and CHP have neither, so they may not report it. Hospital, CHC and Clinic may.'],
       ['Action','These values are EXCLUDED from all data, analyses and exports.'],[],
       ['Facility type','Value skipped'],
@@ -2577,8 +2681,8 @@ function renderMicViol(){
   }
   box.innerHTML=`
     <div class="alert alert-err" style="margin:10px 0;">
-      <strong>${R.list.length.toLocaleString()} microscopy record(s) from ${R.nFac.toLocaleString()} MCHP / CHP facilities were SKIPPED</strong> — ${R.total.toLocaleString()} cases excluded from all data and analyses.<br>
-      An MCHP or a CHP has no microscope and no laboratory, so it cannot perform microscopy. These entries are almost certainly data-entry errors, most likely an RDT result recorded in the microscopy column.
+      <strong>${R.list.length.toLocaleString()} microscopy record(s) from ${R.nFac.toLocaleString()} MCHP / CHP facilities were SKIPPED</strong>: ${R.total.toLocaleString()} cases excluded from all data and analyses.<br>
+      An MCHP or a CHP has no microscope and no laboratory, so it cannot perform microscopy. These entries are almost certainly data entry errors, most likely an RDT result recorded in the microscopy column.
     </div>
     <div class="m-calc" style="margin-bottom:8px;">
       ${Object.entries(R.byType).sort((a,b)=>b[1]-a[1]).map(([t,v])=>
@@ -2634,12 +2738,12 @@ function renderViolations(){
   }
   box.innerHTML=`
     <div class="alert alert-err" style="margin:10px 0;">
-      <strong>${list.length.toLocaleString()} facility-month(s) across ${nFac.toLocaleString()} facility(ies) reported on the wrong form.</strong><br>
-      These values are <b>IGNORED</b> in every calculation — they are shown here only so the facilities can be followed up.
+      <strong>${list.length.toLocaleString()} facility month(s) across ${nFac.toLocaleString()} facility(ies) reported on the wrong form.</strong><br>
+      These values are <b>IGNORED</b> in every calculation: they are shown here only so the facilities can be followed up.
     </div>
     <div class="m-calc" style="margin-bottom:8px;">
-      <span style="color:#dc2626;font-weight:700;">Old form used AFTER March 2026</span>: ${oldAfter.length.toLocaleString()} facility-month(s) · ${sumOld.toLocaleString()} cases ignored<br>
-      <span style="color:#15803d;font-weight:700;">New form used BEFORE April 2026</span>: ${newBefore.length.toLocaleString()} facility-month(s) · ${sumNew.toLocaleString()} cases ignored
+      <span style="color:#dc2626;font-weight:700;">Old form used AFTER March 2026</span>: ${oldAfter.length.toLocaleString()} facility month(s) · ${sumOld.toLocaleString()} cases ignored<br>
+      <span style="color:#15803d;font-weight:700;">New form used BEFORE April 2026</span>: ${newBefore.length.toLocaleString()} facility month(s) · ${sumNew.toLocaleString()} cases ignored
     </div>
     <div class="data-table-wrap" style="max-height:340px;"><table class="data-table">
       <thead><tr>
@@ -2806,11 +2910,11 @@ function repRows(dim){
   });
   return {hdr,rows,periods,keys,den};
 }
-// ── REPORTING RATE — Facility vs Community vs Overall ────────
+// ── REPORTING RATE: Facility vs Community vs Overall ────────
 // A facility is counted as REPORTING in a month if that source has a value.
-//   Facility  : any of the 3 facility age groups reported
+//   Facility: any of the 3 facility age groups reported
 //   Community : any of the 3 community age groups reported (iCCM, rolled up)
-//   Overall   : either source reported
+//   Overall : either source reported
 // Denominator = ACTIVE facilities (reported at least once in the period) for that source.
 function getSourceActivity(){
   const facA=new Set(), comA=new Set(), allA=new Set();
@@ -2900,7 +3004,7 @@ function renderRateChart(periods,keys,denom,valueOf,colors,opts){
 // Table rows for any reporting view
 function rateRows(view){
   const R = view==='source' ? getReportingSource()
-          : getReportingAge(view);   // 'fac' | 'com' | 'all'
+        : getReportingAge(view);   // 'fac' | 'com' | 'all'
   const {periods,denom,keys}=R;
   const hdr=['Period','Year','Month'];
   keys.forEach(k=>hdr.push(`${k} Reporting`,`${k} Active`,`${k} Rate %`));
@@ -2923,17 +3027,17 @@ function renderReporting(){
     const {hdr,rows,periods,keys,denom,get}=rateRows('source');
     document.getElementById('repSrcChart').innerHTML=
       renderRateChart(periods,keys,denom,(p,k,d)=>d>0?(get(p,k)/d*100):0,SRC_COLORS,
-        {title:'Reporting Rate — Confirmed Cases at Facility vs at Community', subtitle:'% of active reporters for each source (separate denominators)',
+        {title:'Reporting Rate: Confirmed Cases at Facility vs at Community', subtitle:'% of active reporters for each source (separate denominators)',
          xlab:'Month', ylab:'Reporting rate (%)'});
     document.getElementById('repSrcHead').innerHTML=`<tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr>`;
     document.getElementById('repSrcBody').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
   }
-  // 2. By age group — one chart per source
+  // 2. By age group: one chart per source
   [['fac','repAgeFac','at Facility'],['com','repAgeCom','at Community iCCM'],['all','repAgeAll','Overall']].forEach(([src,id,lab])=>{
     const {hdr,rows,periods,keys,denom,get}=rateRows(src);
     document.getElementById(id+'Chart').innerHTML=
       renderRateChart(periods,keys,denom,(p,k,d)=>d>0?(get(p,k)/d*100):0,null,
-        {title:`Reporting Rate by Age Group — Confirmed ${lab}`, subtitle:'% of active reporters submitting each age group',
+        {title:`Reporting Rate by Age Group: Confirmed ${lab}`, subtitle:'% of active reporters submitting each age group',
          xlab:'Month', ylab:'Reporting rate (%)'});
     document.getElementById(id+'Head').innerHTML=`<tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr>`;
     document.getElementById(id+'Body').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
@@ -2943,7 +3047,7 @@ function renderReporting(){
     const {hdr,rows,periods,keys,den}=repRows(dim);
     document.getElementById(id+'Chart').innerHTML=
       renderLineChart(periods,keys,den,(p,k,d)=>_repVal(p,k,d,dim),
-        {title:`Reporting Rate by Month — ${lab}`, subtitle:'% of active facilities reporting tests',
+        {title:`Reporting Rate by Month: ${lab}`, subtitle:'% of active facilities reporting tests',
          xlab:'Month', ylab:'Reporting rate (%)'});
     document.getElementById(id+'Head').innerHTML=`<tr>${hdr.map(h=>`<th>${h}</th>`).join('')}</tr>`;
     document.getElementById(id+'Body').innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
@@ -2968,7 +3072,7 @@ function downloadRateAll(){
   XLSX.writeFile(wb,`NMCP_Confirmed_ReportingRates_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
 }
 
-// ── COMPARATIVE ANALYSIS — absolute case counts over time ────
+// ── COMPARATIVE ANALYSIS: absolute case counts over time ────
 const CMP_AGE_COLORS={'0-59m':'#2c6793','05-14y':'#e0a800','15+y':'#8b5cf6'};
 const CMP_SRC_COLORS={'At facility':'#2c6793','At community':'#15803d',Overall:'#8a6a00'};
 const CMP_PALETTE=['#2c6793','#15803d','#e0a800','#8b5cf6','#dc2626','#0891b2','#db2777','#65a30d',
@@ -3026,7 +3130,7 @@ function renderAbsChart(periods, series, opts){
   return `<div style="overflow-x:auto;">${s}</svg></div>`;
 }
 
-// Horizontal bar chart — sorted lowest to highest
+// Horizontal bar chart: sorted lowest to highest
 function renderHBar(items, opts){
   opts=opts||{};
   if(!items.length)return '<div style="color:var(--muted);font-size:12px;">No data to chart.</div>';
@@ -3062,7 +3166,7 @@ function renderHBar(items, opts){
   return `<div style="overflow-x:auto;">${s}</svg></div>`;
 }
 
-// Horizontal bar chart — categories sorted lowest -> highest
+// Horizontal bar chart: categories sorted lowest -> highest
 function renderHBar(items, opts){
   opts=opts||{};
   if(!items.length)return '<div style="color:var(--muted);font-size:12px;">No data to chart.</div>';
@@ -3119,13 +3223,13 @@ function cmpBuild(){
   const idx={}; periods.forEach((p,i)=>idx[p.period]=i);
   const blank=()=>new Array(periods.length).fill(0);
 
-  // 1 & 2 — CONFIRMED CASES by age group, per source
+  // 1 & 2: CONFIRMED CASES by age group, per source
   const bySrcAge=(pre)=>AGE_KEYS.map(k=>{
     const vals=blank();
     ST.rows.forEach(r=>{ vals[idx[r.period]] += (r[`${pre}_conf_${k}`]||0); });
     return {name:AGE_LABEL[k], color:CMP_AGE_COLORS[AGE_LABEL[k]], values:vals};
   });
-  // RDT-only vs All-methods — exposes the April-2026 series break
+  // RDT only vs All-methods: exposes the April-2026 series break
   const byMethod=[
     {name:'RDT only (comparable)', color:'#dc2626', values:blank()},
     {name:'RDT + Microscopy',      color:'#2c6793', values:blank()},
@@ -3134,21 +3238,21 @@ function cmpBuild(){
     byMethod[0].values[idx[r.period]] += (r.all_rdt_total||0);
     byMethod[1].values[idx[r.period]] += (r.all_conf_total||0);
   });
-  // RDT vs Microscopy (facility) — confirmed cases by method
+  // RDT vs Microscopy (facility), confirmed cases by method
   const byTest=TESTS.map((t,i)=>{
     const vals=blank();
     ST.rows.forEach(r=>{ vals[idx[r.period]] += (r[`fac_${t.k}_total`]||0); });
     return {name:t.label, color:i===0?'#2c6793':'#8b5cf6', values:vals};
   });
 
-  // 3 — all ages aggregated: Facility vs Community vs Overall
+  // 3: all ages aggregated: Facility vs Community vs Overall
   const agg=[['At facility','fac_conf_total'],['At community','com_conf_total']].map(([nm,f])=>{
     const vals=blank();
     ST.rows.forEach(r=>{ vals[idx[r.period]] += (r[f]||0); });
     return {name:nm, color:CMP_SRC_COLORS[nm], values:vals};
   });
 
-  // Overall confirmed — by age group, plus all ages
+  // Overall confirmed: by age group, plus all ages
   const ovAge=AGE_KEYS.map(k=>{
     const vals=blank();
     ST.rows.forEach(r=>{ vals[idx[r.period]] += (r[`all_conf_${k}`]||0); });
@@ -3160,8 +3264,8 @@ function cmpBuild(){
     ovAge.push({name:'All ages', color:'#8a6a00', values:t});
   }
 
-  // 4 — all ages, by LOCATION (district), for the selected source
-  // 5 — all ages, total per DISTRICT for the selected source (lowest -> highest)
+  // 4: all ages, by LOCATION (district), for the selected source
+  // 5: all ages, total per DISTRICT for the selected source (lowest -> highest)
   const src=(document.getElementById('cmpLocSrc')||{}).value||'all_conf_total';
   const totals={};
   ST.rows.forEach(r=>{ if(!r.district)return; totals[r.district]=(totals[r.district]||0)+(r[src]||0); });
@@ -3177,22 +3281,22 @@ function renderComparative(){
   const srcSel=(document.getElementById('cmpLocSrc')||{}).value||'total';
   const srcLab={all_conf_total:'(Overall)',fac_conf_total:'at Facility',com_conf_total:'at Community',all_rdt_total:'(RDT only)'}[srcSel]||'(Overall)';
   paintCmp('cmpFac', CMP.periods, CMP.facAge,
-    {title:'Confirmed Malaria Cases at Facility — by Age Group', subtitle:'RDT + Microscopy positives by age · Old form to Mar 2026 · New HF01 form from Apr 2026 · microscopy age-disaggregated throughout',
+    {title:'Confirmed Malaria Cases at Facility, by Age Group', subtitle:'RDT + Microscopy positives by age · Old form to Mar 2026 · New HF01 form from Apr 2026 · microscopy age disaggregated throughout',
      xlab:'Month', ylab:'Confirmed cases at facility'});
   paintCmp('cmpCom', CMP.periods, CMP.comAge,
-    {title:'Confirmed Malaria Cases at Community — by Age Group', subtitle:'RDT positives only · iCCM, rolled up from Level-6 posts',
+    {title:'Confirmed Malaria Cases at Community, by Age Group', subtitle:'RDT positives only · iCCM, rolled up from Level 6 posts',
      xlab:'Month', ylab:'Confirmed cases at community'});
   paintCmp('cmpAgg', CMP.periods, CMP.agg,
-    {title:'All Ages — Confirmed Cases at Facility vs at Community', subtitle:'Age groups summed, both sources on the same scale',
+    {title:'All Ages: Confirmed Cases at Facility vs at Community', subtitle:'Age groups summed, both sources on the same scale',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpTest', CMP.periods, CMP.byTest,
-    {title:'Facility Confirmed Cases — RDT vs Microscopy', subtitle:'Positives by diagnostic method · microscopy age-disaggregated on both forms',
+    {title:'Facility Confirmed Cases: RDT vs Microscopy', subtitle:'Positives by diagnostic method · microscopy age disaggregated on both forms',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   paintCmp('cmpOv',  CMP.periods, CMP.ovAge,
-    {title:'Overall Confirmed Malaria Cases — by Age Group', subtitle:'Facility + community',
+    {title:'Overall Confirmed Malaria Cases: by Age Group', subtitle:'Facility + community',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   document.getElementById('cmpTprChart').innerHTML=renderAbsChart(CMP.periods,CMP.byMethod,
-    {title:'Series Break Check — RDT only vs RDT + Microscopy', subtitle:'Microscopy is age-disaggregated on both forms. The RDT-only line for trends spanning the cutover.',
+    {title:'Series Break Check: RDT only vs RDT + Microscopy', subtitle:'Microscopy is age disaggregated on both forms. The RDT only line for trends spanning the cutover.',
      xlab:'Month', ylab:'Confirmed malaria cases'});
   {
     const {hdr,rows}=cmpTable(CMP.periods,CMP.byMethod);
@@ -3202,7 +3306,7 @@ function renderComparative(){
   }
   const locColor={total:'#8a6a00',fac_total:'#2c6793',com_total:'#15803d'}[srcSel];
   document.getElementById('cmpLocChart').innerHTML=renderHBar(CMP.byLoc,
-    {title:`Confirmed Malaria Cases ${srcLab} — by District`,
+    {title:`Confirmed Malaria Cases ${srcLab}: by District`,
      subtitle:'All ages combined, whole period · districts ordered lowest to highest',
      xlab:'Malaria tests', ylab:'District', color:locColor});
   document.getElementById('cmpLocHead').innerHTML=
@@ -3253,8 +3357,8 @@ function downloadCmpAll(){
   XLSX.writeFile(wb,`NMCP_Confirmed_TimeSeries_${ST.cfgStart}_${ST.cfgEnd}.xlsx`);
 }
 
-// ── Bi-annual analysis: by ownership ────────────────────────
-// Half-years: H1 = Jan–Jun, H2 = Jul–Dec. Aggregates malaria test totals by ownership.
+// ── Biannual analysis: by ownership ────────────────────────
+// Half-years: H1 = Jan-Jun, H2 = Jul-Dec. Aggregates malaria test totals by ownership.
 function getBiannual(){
   const agg={};
   ST.rows.forEach(r=>{
@@ -3329,7 +3433,7 @@ function renderBiannualChart(data,opts){
 function renderBiannual(){
   const data=getBiannual();
   document.getElementById('biHead').innerHTML=`<tr>${BI_HDR.map(h=>`<th>${h}</th>`).join('')}</tr>`;
-  // Cell order MUST match BI_HDR exactly — 13 columns.
+  // Cell order MUST match BI_HDR exactly, 13 columns.
   document.getElementById('biBody').innerHTML=data.map(d=>
     `<tr><td>${d.period}</td><td>${d.year}</td><td>H${d.half}</td>`+
     `<td style="text-align:right;color:#2c6793;font-weight:700;">${d.public.toLocaleString()}</td>`+
@@ -3343,7 +3447,7 @@ function renderBiannual(){
     `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
     `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('biChart').innerHTML=renderBiannualChart(data,
-    {title:'Confirmed Cases by Ownership — Bi-annual', subtitle:'H1 = Jan–Jun · H2 = Jul–Dec',
+    {title:'Confirmed Cases by Ownership: Biannual', subtitle:'H1 = Jan-Jun · H2 = Jul-Dec',
      xlab:'Half-year', ylab:'Confirmed malaria cases'});
 }
 
@@ -3384,7 +3488,7 @@ function downloadYearly(fmt){
 function renderYearly(){
   const data=getYearly();
   document.getElementById('yrHead').innerHTML=`<tr>${YR_HDR.map(h=>`<th>${h}</th>`).join('')}</tr>`;
-  // Cell order MUST match YR_HDR exactly — 11 columns.
+  // Cell order MUST match YR_HDR exactly, 11 columns.
   document.getElementById('yrBody').innerHTML=data.map(d=>
     `<tr><td>${d.year}</td>`+
     `<td style="text-align:right;color:#2c6793;font-weight:700;">${d.public.toLocaleString()}</td>`+
@@ -3398,16 +3502,16 @@ function renderYearly(){
     `<td style="text-align:right;">${d.facPrivate.toLocaleString()}</td>`+
     `<td style="text-align:right;">${d.facUnknown.toLocaleString()}</td></tr>`).join('');
   document.getElementById('yrChart').innerHTML=renderBiannualChart(data,
-    {title:'Confirmed Cases by Ownership — Yearly', subtitle:'Totals by year and facility ownership',
+    {title:'Confirmed Cases by Ownership: Yearly', subtitle:'Totals by year and facility ownership',
      xlab:'Year', ylab:'Confirmed malaria cases'});
 }
 
 const OUT_SUMMARY_HDR=['Series','Age Group','Outliers Found','Data Points Assessed','Outlier %'];
 function getOutlierSummary(){
   return ALL_VARS.map(dx=>{
-    const vs=(ST.varStats||{})[dx.field]||{corrected:0,assessed:0};
-    const pct=vs.assessed>0?(vs.corrected/vs.assessed*100).toFixed(2):'0.00';
-    return [dx.label, dx.age?AGE_LABEL[dx.age]:'un-aged', vs.corrected, vs.assessed, pct];
+    const vs=(ST.varStats||{})[dx.field]||{flagged:0,assessed:0};
+    const pct=vs.assessed>0?(vs.flagged/vs.assessed*100).toFixed(2):'0.00';
+    return [dx.label, dx.age?AGE_LABEL[dx.age]:'un-aged', vs.flagged, vs.assessed, pct];
   });
 }
 
@@ -3437,7 +3541,7 @@ function triggerDL(content,fname){const a=document.createElement('a');a.href='da
 
 function downloadR(){
   const s=ST.cfgStart||'2025-01',e=ST.cfgEnd||'2026-12';
-  triggerDL(`# NMCP Sierra Leone — Confirmed Malaria Cases (positives only)
+  triggerDL(`# NMCP Sierra Leone: Confirmed Malaria Cases (positives only)
 # Period: ${s} to ${e} | ICF-SL
 library(httr); library(jsonlite); library(dplyr); library(tidyr)
 BASE_URL <- "https://sl.dhis2.org/hmis23"; auth <- authenticate("USERNAME","PASSWORD")
@@ -3445,9 +3549,9 @@ BASE_URL <- "https://sl.dhis2.org/hmis23"; auth <- authenticate("USERNAME","PASS
 OLD_RDT <- "p6zQLDFjSfd"                       # old form RDT Positive
 NEW_RDT <- "AwLklDAVtvq"; NEW_MIC <- "AMrdoWsiHMa"   # new form RDT+ / Microscopy+
 COM_RDT <- "T7xH8GwWpEM"                       # community RDT Positive (RDT only)
-# NOTE: the old form has no age-disaggregated microscopy-positive element, so facility
+# NOTE: the old form has no age disaggregated microscopy-positive element, so facility
 # microscopy positives exist from Apr-2026 only. Use conf_rdt (RDT only) for trends
-# spanning the cutover — it is defined identically before and after.
+# spanning the cutover: it is defined identically before and after.
 
 OLD_COC <- c(u5="m5T8uBNB8aN", c514="j7j6iaknOFn", a15="zK1aiw8zFac")
 COM_COC <- c(u5="NtjMVmRfvHH", c514="qDXW7WMLT99", a15="mdjRPpvLKdu")  # 02-59m AS 0-59m
@@ -3508,9 +3612,11 @@ iqr_upper <- function(x){ r<-x[!is.na(x)&x>0]; if(length(r)<4) return(NA_real_)
   q<-quantile(r,c(.25,.75),na.rm=TRUE,type=7); unname(q[2]+3.0*(q[2]-q[1])) }
 med_of <- function(x){ r<-x[!is.na(x)&x>0]; if(!length(r)) return(NA_real_); round(median(r)) }
 raw <- raw %>% group_by(ou_id,year,field) %>%
-  mutate(upper_bound=round(iqr_upper(value)), year_median=med_of(value), value_orig=value,
-         outlier=ifelse(!is.na(upper_bound)&value_orig>upper_bound,"Yes","No"),
-         value=ifelse(outlier=="Yes",year_median,value_orig)) %>% ungroup()
+  # FLAG ONLY - the value is never changed. Two independent tests, both recorded.
+  mutate(upper_bound=round(iqr_upper(value)), facility_median=med_of(value),
+         above_iqr=ifelse(!is.na(upper_bound)&value>upper_bound,"Yes","No"),
+         above_abs=ifelse(value>FLAG_ABOVE,"Yes","No"),
+         outlier=ifelse(above_iqr=="Yes"|above_abs=="Yes","Yes","No")) %>% ungroup()
 
 wide <- raw %>% select(ou_id,year,month,field,value) %>%
   pivot_wider(names_from=field, values_from=value, values_fill=0)
@@ -3524,7 +3630,7 @@ for(a in c("u5","c514","a15")){
 }
 wide <- wide %>% mutate(
   confirmed_total = all_conf_u5 + all_conf_c514 + all_conf_a15,   # RDT + Microscopy
-  confirmed_rdt   = all_rdt_u5  + all_rdt_c514  + all_rdt_a15     # RDT only — safe across Apr-2026
+  confirmed_rdt   = all_rdt_u5  + all_rdt_c514  + all_rdt_a15     # RDT only, safe across Apr-2026
 ) %>% left_join(ou_df, by="ou_id")
 
 write.csv(wide,       paste0("NMCP_Confirmed_",s,"_",e,".csv"), row.names=FALSE)
@@ -3535,7 +3641,7 @@ cat("Done. Files saved.\\n")
 
 function downloadPy(){
   const s=ST.cfgStart||'2025-01',e=ST.cfgEnd||'2026-12';
-  triggerDL(`# NMCP Sierra Leone — Confirmed Malaria Cases (positives only)
+  triggerDL(`# NMCP Sierra Leone: Confirmed Malaria Cases (positives only)
 # Period: ${s} to ${e} | ICF-SL
 import requests, pandas as pd, numpy as np, re
 BASE_URL="https://sl.dhis2.org/hmis23"; AUTH=("USERNAME","PASSWORD")
@@ -3543,9 +3649,9 @@ BASE_URL="https://sl.dhis2.org/hmis23"; AUTH=("USERNAME","PASSWORD")
 OLD_RDT="p6zQLDFjSfd"                          # old form RDT Positive
 NEW_RDT, NEW_MIC = "AwLklDAVtvq","AMrdoWsiHMa" # new form RDT+ / Microscopy+
 COM_RDT="T7xH8GwWpEM"                          # community RDT Positive (RDT only)
-# NOTE: the old form has no age-disaggregated microscopy-positive element, so facility
+# NOTE: the old form has no age disaggregated microscopy-positive element, so facility
 # microscopy positives exist from Apr-2026 only. Use confirmed_rdt for trends that span
-# the cutover — it is defined identically before and after.
+# the cutover: it is defined identically before and after.
 
 OLD_COC={"u5":"m5T8uBNB8aN","c514":"j7j6iaknOFn","a15":"zK1aiw8zFac"}
 COM_COC={"u5":"NtjMVmRfvHH","c514":"qDXW7WMLT99","a15":"mdjRPpvLKdu"}   # 02-59m AS 0-59m
@@ -3585,7 +3691,7 @@ ou_df=pd.DataFrame([{"ou_id":o["id"],"facility":o["displayName"],"hf_type":hf_ty
 ou_df=ou_df[ou_df.hf_type.isin(["Hospital","Clinic","CHC","CHP","MCHP"])]
 child_to_l5={o["id"]:(anc(o,5) or {}).get("id") for o in ou6}
 
-# Fetch in BATCHES — a single request with all dx returns empty from DHIS2
+# Fetch in BATCHES: a single request with all dx returns empty from DHIS2
 dx_all=list(dx_map); chunks=[dx_all[i:i+12] for i in range(0,len(dx_all),12)]
 frames=[]
 for yr in range(int("${s}"[:4]), int("${e}"[:4])+1):
@@ -3624,10 +3730,10 @@ def med_of(x):
     return round(np.median(r)) if len(r) else np.nan
 g=raw.groupby(["ou_id","year","field"])["value"]
 raw["upper_bound"]=g.transform(iqr_upper); raw["year_median"]=g.transform(med_of)
-raw["value_orig"]=raw["value"]
-is_out=raw.upper_bound.notna() & (raw.value_orig>raw.upper_bound)
-raw["outlier"]=np.where(is_out,"Yes","No")
-raw["value"]=np.where(is_out, raw.year_median, raw.value_orig)
+# FLAG ONLY - the value is never changed. Two independent tests, both recorded.
+raw["above_iqr"]=np.where(raw.upper_bound.notna() & (raw.value>raw.upper_bound),"Yes","No")
+raw["above_abs"]=np.where(raw.value>FLAG_ABOVE,"Yes","No")
+raw["outlier"]=np.where((raw.above_iqr=="Yes")|(raw.above_abs=="Yes"),"Yes","No")
 
 wide=raw.pivot_table(index=["ou_id","year","month"],columns="field",values="value",fill_value=0).reset_index()
 for a in ["u5","c514","a15"]:
