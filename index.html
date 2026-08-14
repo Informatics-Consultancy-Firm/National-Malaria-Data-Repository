@@ -1752,47 +1752,10 @@ function endSplash(){
     sp.classList.add('hide');
     setTimeout(function(){ sp.style.display='none'; }, 520);
 }
-/* Coming back from a tool. The tool's Home button returns to index.html?back=1, so the
-   splash is skipped and the user is put back where they were rather than at the start. */
-function resumeFromTool(){
-    var q=new URLSearchParams(location.search);
-    if(q.get('back')!=='1')return false;
-    // The tool hands the role and section back on the query string, which survives any
-    // navigation. sessionStorage is only a fallback, since it is not kept between
-    // documents when the portal is opened straight from a file.
-    var role=q.get('role')||''; var tab=q.get('tab')||'';
-    if(!role||!tab){
-      try{ role=role||sessionStorage.getItem('nmcpReturnRole')||'';
-           tab =tab ||sessionStorage.getItem('nmcpReturnTab') ||''; }catch(e){}
-    }
-    var sp=document.getElementById('splash'); if(sp){sp.style.display='none';}
-    splashDone=true;
-    if(role && typeof enableTabsForRole==='function'){
-        try{
-            enableTabsForRole(role);
-            var pm=document.getElementById('programModal');
-            if(pm)pm.style.display='none';        // the grid must not sit on top of the portal
-            if(tab)activateTab(tab);
-            document.body.style.overflow='auto';
-            return true;
-        }catch(e){}
-    }
-    return false;   // could not resume, so the menu is left showing rather than a blank page
-}
 (function(){
     var rm=document.getElementById('roleModal');
     if(rm)rm.style.display='none';
     showDirectorates();                 // ready behind the splash, so there is no flash of blank
-    // Resuming touches elements right across the page, so it waits for the document to be
-    // parsed. Running it inline here silently failed and dropped the user back at the menu.
-    var q0=new URLSearchParams(location.search);
-    if(q0.get('back')==='1'){
-        var sp0=document.getElementById('splash'); if(sp0)sp0.style.display='none';
-        splashDone=true;
-        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',resumeFromTool);
-        else resumeFromTool();
-        return;
-    }
     var bar=document.getElementById('splashBar');
     if(bar){
         bar.style.transition='width '+SPLASH_MS+'ms linear';
@@ -1803,62 +1766,17 @@ function resumeFromTool(){
 
 /* HMIS EXTRACTION CARD HELPERS */
 
-/* ── OPENING TOOLS IN THE SAME BROWSER, NOT IN AN IFRAME ─────
-   Local html pages now take over the whole window instead of being squeezed into an
-   iframe. Two things are passed on the query string so the tool can offer a way back:
-     home  the page to return to
-     tab   the section the user came from, so Home lands where they left
-   Anything not a local page is left alone: a PDF is rendered by the browser's own viewer
-   and cannot carry a Home button, and an external site is not ours to add one to, so both
-   open in a NEW tab and the portal stays put in this one. */
-var HOME_PAGE = (location.pathname.split('/').pop() || 'index.html');
-
-/* The Main menu button is added to every tool automatically by a service worker, so no
-   tool file has to be edited and a new one needs nothing done to it. Registration is
-   best effort: on a file:// address service workers are not allowed, and there the tools
-   that already have the button built in still work. */
-var swReady = null;
-if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
-  swReady = navigator.serviceWorker.register('sw.js')
-    .then(function(){ return navigator.serviceWorker.ready; })
-    .catch(function(){ return null; });
-}
-function isLocalPage(src){
-  if(!src)return false;
-  if(/^https?:/i.test(src))return false;           // external site
-  if(/\.pdf(\?|#|$)/i.test(src))return false;      // browser pdf viewer
-  return /\.html?(\?|#|$)/i.test(src);
-}
-function toolUrl(src, tab){
-  var sep = src.indexOf('?')>=0 ? '&' : '?';
-  return src + sep + 'home=' + encodeURIComponent(HOME_PAGE)
-             + (tab ? '&tab=' + encodeURIComponent(tab) : '')
-             + (currentUserRole ? '&role=' + encodeURIComponent(currentUserRole) : '');
-}
-function openTool(src, title, tab){
-  if(!src)return;
-  try{
-    sessionStorage.setItem('nmcpReturnTab', tab || '');
-    sessionStorage.setItem('nmcpReturnRole', currentUserRole || '');
-  }catch(e){}
-  if(isLocalPage(src)){
-    var url = toolUrl(src, tab);
-    // Give the worker a moment to be ready, so even the first tool opened in a fresh
-    // session gets its Main menu button. Never wait long, and never block on failure.
-    if(swReady){
-      var done=false, go=function(){ if(!done){ done=true; window.location.href=url; } };
-      setTimeout(go, 1200);
-      swReady.then(go, go);
-    } else {
-      window.location.href = url;
-    }
-  } else {
-    window.open(src, '_blank', 'noopener');         // pdf or external, keep the portal here
-  }
-}
+/* Tools are embedded in the page rather than navigated to, so the portal stays the top
+   document throughout. That is what keeps the sidebar, the role rules and the Main menu
+   button available at all times, and it is why no tool file needs anything added to it.
+   PDFs and external sites are embedded the same way, or opened in a new tab by their own
+   link, so there is nothing to inject anywhere. */
 function openHmisFrame(src, title) {
-    /* kept for the existing onclick handlers; it now navigates instead of embedding */
-    openTool(src, title, 'hmis-extraction');
+    document.getElementById('hmisFrameTitle').textContent = title;
+    document.getElementById('hmisFrameEmbed').src = src;
+    var pane = document.getElementById('hmisFramePane');
+    pane.style.display = 'block';
+    setTimeout(function(){ pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
 }
 function closeHmisFrame() {
     document.getElementById('hmisFramePane').style.display = 'none';
@@ -2102,9 +2020,7 @@ function activateTab(tabId) {
         var iframe = document.getElementById('frame-'+tabId);
         if (iframe) {
             var dataSrc = iframe.getAttribute('data-src');
-            /* A tool is no longer embedded. Leaving the iframe in place keeps the markup
-               and the role rules untouched, but the tool itself opens in the window. */
-            if (dataSrc) { openTool(dataSrc, tabId, tabId); return; }
+            if (dataSrc && !iframe.src.endsWith(dataSrc)) iframe.src = dataSrc;
         }
     }
 
