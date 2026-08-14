@@ -1757,20 +1757,42 @@ function endSplash(){
 function resumeFromTool(){
     var q=new URLSearchParams(location.search);
     if(q.get('back')!=='1')return false;
-    var role=''; var tab='';
-    try{ role=sessionStorage.getItem('nmcpReturnRole')||''; tab=sessionStorage.getItem('nmcpReturnTab')||''; }catch(e){}
+    // The tool hands the role and section back on the query string, which survives any
+    // navigation. sessionStorage is only a fallback, since it is not kept between
+    // documents when the portal is opened straight from a file.
+    var role=q.get('role')||''; var tab=q.get('tab')||'';
+    if(!role||!tab){
+      try{ role=role||sessionStorage.getItem('nmcpReturnRole')||'';
+           tab =tab ||sessionStorage.getItem('nmcpReturnTab') ||''; }catch(e){}
+    }
     var sp=document.getElementById('splash'); if(sp){sp.style.display='none';}
     splashDone=true;
     if(role && typeof enableTabsForRole==='function'){
-        try{ enableTabsForRole(role); if(tab)activateTab(tab); return true; }catch(e){}
+        try{
+            enableTabsForRole(role);
+            var pm=document.getElementById('programModal');
+            if(pm)pm.style.display='none';        // the grid must not sit on top of the portal
+            if(tab)activateTab(tab);
+            document.body.style.overflow='auto';
+            return true;
+        }catch(e){}
     }
-    return false;
+    return false;   // could not resume, so the menu is left showing rather than a blank page
 }
 (function(){
     var rm=document.getElementById('roleModal');
     if(rm)rm.style.display='none';
     showDirectorates();                 // ready behind the splash, so there is no flash of blank
-    if(resumeFromTool())return;
+    // Resuming touches elements right across the page, so it waits for the document to be
+    // parsed. Running it inline here silently failed and dropped the user back at the menu.
+    var q0=new URLSearchParams(location.search);
+    if(q0.get('back')==='1'){
+        var sp0=document.getElementById('splash'); if(sp0)sp0.style.display='none';
+        splashDone=true;
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',resumeFromTool);
+        else resumeFromTool();
+        return;
+    }
     var bar=document.getElementById('splashBar');
     if(bar){
         bar.style.transition='width '+SPLASH_MS+'ms linear';
@@ -1799,7 +1821,8 @@ function isLocalPage(src){
 function toolUrl(src, tab){
   var sep = src.indexOf('?')>=0 ? '&' : '?';
   return src + sep + 'home=' + encodeURIComponent(HOME_PAGE)
-             + (tab ? '&tab=' + encodeURIComponent(tab) : '');
+             + (tab ? '&tab=' + encodeURIComponent(tab) : '')
+             + (currentUserRole ? '&role=' + encodeURIComponent(currentUserRole) : '');
 }
 function openTool(src, title, tab){
   if(!src)return;
