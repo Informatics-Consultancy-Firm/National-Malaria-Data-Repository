@@ -874,6 +874,7 @@
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
                 <button class="nav-child nav-l2" data-tab="population-estimate">5.0.7 Population</button>
                 <button class="nav-child nav-l2" data-tab="performance-framework">5.0.8 Performance Framework</button>
+                <button class="nav-child nav-l2" data-tab="archive">5.0.9 Google Drive Files</button>
             </div>
         </div>
 
@@ -1321,6 +1322,7 @@
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="population-estimate" class="tab-content"><div class="iframe-pane"><iframe id="frame-population-estimate" src="" data-src="https://informatics-consultancy-firm.github.io/population-estimate/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="performance-framework" class="tab-content"><div class="iframe-pane"><iframe id="frame-performance-framework" src="" data-src="https://informatics-consultancy-firm.github.io/nmcp-pf-2027-2030/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="archive" class="tab-content"><div class="iframe-pane"><iframe id="frame-archive" src="" data-src="google_drive_files.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- D-MAT (AUTOMATION) -->
     <div id="dmat-dqa" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-dqa" src="" data-src="dqa.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1816,7 +1818,7 @@ var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supp
 var roleAccess = {
     national: ['welcome','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','population-estimate','performance-framework','snt','mpr','other-trend-allages','other-trend-u5']
+               'sbd-app','analytics-training','population-estimate','performance-framework','archive','snt','mpr','other-trend-allages','other-trend-u5']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
                .concat(ENTO_TABS).concat(FINANCE_TABS),
@@ -1831,7 +1833,7 @@ var roleAccess = {
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
     admin:    ['welcome','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','population-estimate','performance-framework','snt','mpr','other-trend-allages','other-trend-u5',
+               'sbd-app','analytics-training','population-estimate','performance-framework','archive','snt','mpr','other-trend-allages','other-trend-u5',
                'admin-dashboard']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
@@ -1983,7 +1985,7 @@ var pageLabelMap = {
     'int-mass-itn':'3.0 Interventions · Mass ITN','int-sbd':'3.0 Interventions · SBD','int-irs':'3.0 Interventions · IRS',
     'user-guide':'User Guide','bulletins':'Monthly Bulletin','mpd':'Malaria Programme Docs',
     'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report','sbd-app':'Data Collection Apps','analytics-training':'Analytics Learning',
-    'population-estimate':'Population','performance-framework':'Performance Framework',
+    'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
     'dmat-suspected':'D-MAT · Suspected','dmat-tested':'D-MAT · Tested','dmat-confirmed':'D-MAT · Confirmed Cases',
     'dmat-treated':'D-MAT · Confirmed and Treated','dmat-confirmed-not-treated':'D-MAT · Confirmed and Not Treated',
@@ -2023,6 +2025,7 @@ function activateTab(tabId) {
         var iframe = document.getElementById('frame-'+tabId);
         if (iframe) {
             var dataSrc = iframe.getAttribute('data-src');
+            if (tabId === 'archive' && dataSrc) dataSrc += '?role=' + encodeURIComponent(currentUserRole || '');
             if (dataSrc && !iframe.src.endsWith(dataSrc)) iframe.src = dataSrc;
         }
     }
