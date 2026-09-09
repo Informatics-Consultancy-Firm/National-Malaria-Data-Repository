@@ -342,6 +342,7 @@
         .nav-l3-toggle { display:flex !important; align-items:center; justify-content:space-between; font-weight:600 !important; color:rgba(255,255,255,0.75) !important; padding: 10px 14px 10px 50px !important; font-size:11.5px !important; width:100%; background:transparent; border:none; cursor:pointer; font-family:inherit; border-left:3px solid transparent; }
         .nav-l4        { padding: 9px 14px 9px 64px !important; font-size:11px !important; }
         .nav-item.active { background: rgba(255,193,7,0.18) !important; color: white !important; border-left-color: var(--gold) !important; font-weight: 700 !important; }
+        .nav-group-btn.active { background: rgba(255,193,7,0.18) !important; color: white !important; border-left-color: var(--gold) !important; font-weight: 700 !important; }
         .nav-l1-toggle.active, .nav-l2-toggle.active, .nav-l3-toggle.active {
             color: #fff !important; background: rgba(255,193,7,0.12) !important;
             border-left: 3px solid rgba(255,193,7,0.6) !important; font-weight:700 !important;
@@ -368,6 +369,8 @@
             .nav-item, .nav-group-btn { font-size: 12px; padding: 10px 14px; }
             .nav-child { font-size: 11px; padding: 7px 14px 7px 36px; }
             .brand-title { font-size: 12px; }
+            /* TABLET VIEW — tool panes fit the visible viewport rather than a fixed 85vh */
+            .iframe-pane iframe { min-height: calc(100vh - 96px); min-height: calc(100dvh - 96px); }
         }
         @media (max-width: 768px) {
             body { display: block; }
@@ -666,10 +669,17 @@
     </div>
 
     <div class="nav-scroll">
-        <button class="nav-item active" data-tab="welcome" style="margin-top:6px;">
-            <svg class="nav-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Welcome
-        </button>
+        <div class="nav-group">
+            <button class="nav-group-btn open active" data-group="welcome" data-tab="welcome" style="margin-top:6px;">
+                <svg class="nav-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span class="nav-group-label">Welcome</span>
+                <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="nav-group-children open" id="children-welcome">
+                <button class="nav-child nav-l2" data-tab="architecture">NMDR Architecture &amp; Data Flow</button>
+                <button class="nav-child nav-l2" data-tab="use-cases">NMDR Use Cases &mdash; WHO AFRO</button>
+            </div>
+        </div>
 
         <!-- 1.0 MALARIA SURVEILLANCE -->
         <div class="nav-section-label" style="margin-top:10px;">1.0 Malaria Surveillance</div>
@@ -870,7 +880,18 @@
                     <button class="nav-child nav-l3" data-tab="survey-data">5.0.4.1 Data</button>
                     <button class="nav-child nav-l3" data-tab="survey-report">5.0.4.2 Report</button>
                 </div>
-                <button class="nav-child nav-l2" data-tab="sbd-app">5.0.5 Data Collection Apps</button>
+                <button class="nav-child nav-l2-toggle" id="dctToggle" onclick="toggleNestedGroup('dctChildren','dctChevron','dctToggle',event)">
+                    <span>5.0.5 Data Collection Apps</span>
+                    <svg id="dctChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="dctChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
+                    <button class="nav-child nav-l3" data-tab="dct-sbd">5.0.5.1 SBD</button>
+                    <button class="nav-child nav-l3" data-tab="dct-mocm-phu">5.0.5.2 MOCM (PHU)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-mocm-hospital">5.0.5.3 MOCM (Hospital)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-mocm-lab">5.0.5.4 MOCM (Lab)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-warehouse">5.0.5.5 Warehouse Assessment</button>
+                    <button class="nav-child nav-l3" data-tab="dct-sbc">5.0.5.6 SBC Coaching (Form K)</button>
+                </div>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
                 <button class="nav-child nav-l2" data-tab="population-estimate">5.0.7 Population</button>
                 <button class="nav-child nav-l2" data-tab="performance-framework">5.0.8 Performance Framework</button>
@@ -918,8 +939,24 @@
                 <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="nav-group-children" id="children-retro">
-                <button class="nav-child nav-l2" data-tab="snt">7.0.1 SNT 2015&#8211;2025</button>
-                <button class="nav-child nav-l2" data-tab="mpr">7.0.2 MPR 2021&#8211;2023</button>
+                <button class="nav-child nav-l2-toggle" id="sntToggle" onclick="toggleNestedGroup('sntChildren','sntChevron','sntToggle',event)">
+                    <span>7.0.1 SNT 2015&#8211;2025</span>
+                    <svg id="sntChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="sntChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
+                    <button class="nav-child nav-l3" data-tab="snt-data">7.0.1.1 Data</button>
+                    <button class="nav-child nav-l3" data-tab="snt-report">7.0.1.2 Report</button>
+                    <button class="nav-child nav-l3" data-tab="snt-dashboard">7.0.1.3 Dashboard</button>
+                </div>
+                <button class="nav-child nav-l2-toggle" id="mprToggle" onclick="toggleNestedGroup('mprChildren','mprChevron','mprToggle',event)">
+                    <span>7.0.2 MPR 2021&#8211;2023</span>
+                    <svg id="mprChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="mprChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
+                    <button class="nav-child nav-l3" data-tab="mpr-data">7.0.2.1 Data</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-report">7.0.2.2 Report</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-dashboard">7.0.2.3 Dashboard</button>
+                </div>
                 <button class="nav-child nav-l2-toggle" id="otherAnalysisToggle" onclick="toggleNestedGroup('otherAnalysisChildren','otherAnalysisChevron','otherAnalysisToggle',event)">
                     <span>7.0.3 Other Analysis</span>
                     <svg id="otherAnalysisChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1039,6 +1076,10 @@
             </div></div>
         </div>
 
+    </div>
+
+    <!-- Architecture — moved out of Welcome, now its own sub-page -->
+    <div id="architecture" class="tab-content">
         <div class="section-label" style="margin-top:4px;">NMDR Architecture &amp; Data Flow</div>
         <div class="nmdr-info-block">
             <div class="nmdr-info-header">
@@ -1056,7 +1097,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Use Cases — moved out of Welcome, now its own sub-page -->
+    <div id="use-cases" class="tab-content">
         <div class="section-label" style="margin-top:4px">NMDR Use Cases &mdash; WHO AFRO</div>
         <div class="slides-container">
             <div class="slides-header">NMDR Use Cases &mdash; WHO AFRO Presentation</div>
@@ -1318,7 +1362,12 @@
     <div id="mpd" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpd" src="" data-src="mpd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-data" src="" data-src="survey_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-report" src="" data-src="survey_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="sbd-app" class="tab-content"><div class="iframe-pane"><iframe id="frame-sbd-app" src="" data-src="data_collection.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-sbd" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbd" src="" data-src="sbd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-mocm-phu" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-phu" src="" data-src="mocm_phu.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-mocm-hospital" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-hospital" src="" data-src="mocm_hospital.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-mocm-lab" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-lab" src="" data-src="mocm_lab.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-warehouse" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-warehouse" src="" data-src="warehouse.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-sbc" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbc" src="" data-src="form_k.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="population-estimate" class="tab-content"><div class="iframe-pane"><iframe id="frame-population-estimate" src="" data-src="https://informatics-consultancy-firm.github.io/population-estimate/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="performance-framework" class="tab-content"><div class="iframe-pane"><iframe id="frame-performance-framework" src="" data-src="https://informatics-consultancy-firm.github.io/nmcp-pf-2027-2030/" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1341,8 +1390,12 @@
     <div id="dmat-eidsr" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-eidsr" src="" data-src="dmat_eidsr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- SNT / MPR / OTHER -->
-    <div id="snt" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt" src="" data-src="snt.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="mpr" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr" src="" data-src="mpr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-data" src="" data-src="snt_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-report" src="" data-src="snt_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-dashboard" src="" data-src="snt_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-data" src="" data-src="mpr_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-report" src="" data-src="mpr_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-dashboard" src="" data-src="mpr_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-allages" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-allages" src="" data-src="other_trend_allages.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-u5" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-u5" src="" data-src="other_trend_u5.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
@@ -1814,30 +1867,33 @@ var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
 var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
+var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc'];
+var SNT_TABS         = ['snt-data','snt-report','snt-dashboard'];
+var MPR_TABS         = ['mpr-data','mpr-report','mpr-dashboard'];
 
 var roleAccess = {
-    national: ['welcome','me-dqa','me-detailed',
+    national: ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','population-estimate','performance-framework','archive','snt','mpr','other-trend-allages','other-trend-u5']
+               'analytics-training','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
-               .concat(ENTO_TABS).concat(FINANCE_TABS),
-    district: ['welcome','me-dqa','me-detailed']
+               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS).concat(SNT_TABS).concat(MPR_TABS),
+    district: ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(DMAT_TABS),
-    chiefdom: ['welcome','me-dqa','me-detailed']
+    chiefdom: ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
-    phu:      ['welcome','me-dqa','me-detailed']
+    phu:      ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
-    admin:    ['welcome','me-dqa','me-detailed',
+    admin:    ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'sbd-app','analytics-training','population-estimate','performance-framework','archive','snt','mpr','other-trend-allages','other-trend-u5',
+               'analytics-training','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5',
                'admin-dashboard']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
-               .concat(ENTO_TABS).concat(FINANCE_TABS)
+               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS).concat(SNT_TABS).concat(MPR_TABS)
 };
 
 function enableTabsForRole(role) {
@@ -1963,7 +2019,7 @@ function loadMeDqa() {
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
 var pageLabelMap = {
-    'welcome':'Welcome','me-dqa':'M&E · DQA',
+    'welcome':'Welcome','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Use Cases — WHO AFRO','me-dqa':'M&E · DQA',
     'me-summary-epi':'Detailed · Malaria Epi (Summary)',
     'me-summary-int':'Detailed · Intervention (Summary)',
     'me-summary-stock':'Detailed · Stock (Summary)',
@@ -1984,7 +2040,11 @@ var pageLabelMap = {
     'int-vitamin-a':'Routine · Vitamin A','int-iptp':'Routine · IPTp','int-anc':'Routine · ANC',
     'int-mass-itn':'3.0 Interventions · Mass ITN','int-sbd':'3.0 Interventions · SBD','int-irs':'3.0 Interventions · IRS',
     'user-guide':'User Guide','bulletins':'Monthly Bulletin','mpd':'Malaria Programme Docs',
-    'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report','sbd-app':'Data Collection Apps','analytics-training':'Analytics Learning',
+    'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report',
+    'dct-sbd':'Data Collection Apps · SBD','dct-mocm-phu':'Data Collection Apps · MOCM (PHU)',
+    'dct-mocm-hospital':'Data Collection Apps · MOCM (Hospital)','dct-mocm-lab':'Data Collection Apps · MOCM (Lab)',
+    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)',
+    'analytics-training':'Analytics Learning',
     'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
     'dmat-suspected':'D-MAT · Suspected','dmat-tested':'D-MAT · Tested','dmat-confirmed':'D-MAT · Confirmed Cases',
@@ -1993,7 +2053,8 @@ var pageLabelMap = {
     'dmat-tpr':'D-MAT · Test Positivity Rate',
     'dmat-comparative':'D-MAT · Comparative Analysis','dmat-u5':'D-MAT · Under 5','dmat-allages':'D-MAT · All Ages',
     'dmat-eidsr':'D-MAT · eIDSR',
-    'snt':'SNT 2015–2025','mpr':'MPR 2021–2023',
+    'snt-data':'SNT 2015–2025 · Data','snt-report':'SNT 2015–2025 · Report','snt-dashboard':'SNT 2015–2025 · Dashboard',
+    'mpr-data':'MPR 2021–2023 · Data','mpr-report':'MPR 2021–2023 · Report','mpr-dashboard':'MPR 2021–2023 · Dashboard',
     'other-trend-allages':'Other Analysis · Trend Analysis (All Ages)',
     'other-trend-u5':'Other Analysis · Trend Analysis (Under 5)',
     'ento-data':'Vector Control · Entomology · Data','ento-report':'Vector Control · Entomology · Report',
@@ -2014,7 +2075,7 @@ function activateTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
     var el = document.getElementById(tabId);
     if (el) el.classList.add('active');
-    document.querySelectorAll('.nav-item[data-tab], .nav-child[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.nav-item[data-tab], .nav-group-btn[data-tab], .nav-child[data-tab]').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('[data-tab="'+tabId+'"]').forEach(function(b){ b.classList.add('active'); });
 
     if (tabId === 'me-dqa') {
@@ -2110,7 +2171,7 @@ function toggleGroup(groupId){
     var isOpen=c.classList.contains('open');
     c.classList.toggle('open',!isOpen);b.classList.toggle('open',!isOpen);
 }
-document.querySelectorAll('.nav-group-btn[data-group]').forEach(function(btn){ btn.addEventListener('click',function(){ toggleGroup(this.getAttribute('data-group')); }); });
+document.querySelectorAll('.nav-group-btn[data-group]').forEach(function(btn){ btn.addEventListener('click',function(){ toggleGroup(this.getAttribute('data-group')); var t=this.getAttribute('data-tab'); if(t) activateTab(t); }); });
 
 /* HAMBURGER / DRAWER */
 var hamburgerBtn=document.getElementById('hamburgerBtn'),sidebar=document.getElementById('sidebar'),sidebarOverlay=document.getElementById('sidebarOverlay');
@@ -2126,7 +2187,7 @@ document.getElementById('logoutBtn').addEventListener('click',function(){
     currentUserRole=null;selectedRole=null;meDqaLoaded=false;
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
     document.getElementById('welcome').classList.add('active');
-    document.querySelectorAll('.nav-item[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='welcome');});
+    document.querySelectorAll('.nav-item[data-tab], .nav-group-btn[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='welcome');});
     document.querySelectorAll('.nav-child[data-tab]').forEach(function(b){b.classList.remove('active');});
     updateTopbarPage('welcome');
     document.getElementById('adminTabBtn').style.display='none';
