@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMDR Archive — Google Drive Files</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#004080;--primary-dark:#003060;--primary-light:#0060a0;
+  --accent:#ffc107;--accent-dark:#e0a800;
+  --success:#28a745;--danger:#dc3545;
+  --gray-100:#f0f4f8;--gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--gray-800);}
+.wrap{max-width:1000px;margin:0 auto;padding:20px;}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.header h1{font-family:'Oswald',sans-serif;font-size:1.3rem;color:var(--primary);}
+.header p{font-size:.8rem;color:var(--gray-600);}
+.mode-badge{font-size:.7rem;font-weight:700;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:var(--gray-100);color:var(--gray-600);}
+.mode-badge.admin{background:rgba(255,193,7,.25);color:#8a6100;}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.btn{padding:9px 16px;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Oswald',sans-serif;text-transform:uppercase;border:2px solid transparent;display:inline-flex;align-items:center;gap:6px;}
+.btn-gold{background:var(--accent);border-color:var(--accent);color:#000;}
+.btn-gold:hover{background:var(--accent-dark);}
+.btn-outline{background:#fff;border-color:var(--primary);color:var(--primary);}
+.btn-outline:hover{background:var(--gray-100);}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.btn-danger{background:#fff;border-color:var(--danger);color:var(--danger);padding:5px 10px;font-size:.7rem;}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+
+.breadcrumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px;background:var(--gray-100);border-radius:8px;margin-bottom:16px;font-size:.85rem;}
+.crumb{cursor:pointer;color:var(--primary);font-weight:600;}
+.crumb:hover{text-decoration:underline;}
+.crumb-sep{color:var(--gray-400);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.card{border:2px solid var(--gray-200);border-radius:10px;padding:14px;transition:border-color .2s;}
+.card:hover{border-color:var(--primary-light);}
+.card-folder{cursor:pointer;background:#f8fafc;}
+.card-icon{font-size:1.6rem;margin-bottom:6px;}
+.card-name{font-weight:600;font-size:.9rem;word-break:break-word;}
+.card-desc{font-size:.75rem;color:var(--gray-600);margin-top:4px;}
+.card-meta{font-size:.7rem;color:var(--gray-400);margin-top:6px;}
+.card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.card-actions .btn{padding:5px 10px;font-size:.7rem;}
+
+.empty-state{text-align:center;padding:50px 20px;color:var(--gray-600);}
+.loading{text-align:center;padding:40px;color:var(--gray-600);font-size:.9rem;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:15px;}
+.modal-overlay.active{display:flex;}
+.modal{background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.modal-header{background:var(--primary);color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center;}
+.modal-header h2{font-family:'Oswald',sans-serif;font-size:1.05rem;}
+.modal-close{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;}
+.modal-body{padding:18px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-weight:600;margin-bottom:5px;font-size:.85rem;}
+.form-group input{width:100%;padding:10px 12px;border:2px solid var(--gray-200);border-radius:6px;font-family:inherit;font-size:.9rem;}
+.modal-footer{padding:14px 18px;border-top:1px solid var(--gray-200);display:flex;gap:8px;justify-content:flex-end;}
+.progress-bar{height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden;margin-top:8px;display:none;}
+.progress-fill{height:100%;background:var(--accent);width:0%;transition:width .2s;}
+
+.notification{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);padding:12px 24px;border-radius:8px;font-weight:600;z-index:600;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 5px 20px rgba(0,0,0,.3);font-size:.85rem;}
+.notification.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notification.success{background:#d4edda;color:#155724;}
+.notification.error{background:#f8d7da;color:#721c24;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div>
+      <h1>📁 NMDR Archive — Google Drive Files</h1>
+      <p>Policy documents, strategic plans, campaign files and reports</p>
+    </div>
+    <span class="mode-badge" id="modeBadge">Loading…</span>
+  </div>
+
+  <div class="toolbar" id="adminToolbar" style="display:none;">
+    <button class="btn btn-gold" onclick="openCreateFolderModal()">+ New Folder</button>
+    <button class="btn btn-primary" onclick="triggerUpload()">⬆ Upload File</button>
+    <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelected(this)">
+  </div>
+
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <div id="content"><div class="loading">Loading folder contents…</div></div>
+</div>
+
+<!-- Create Folder Modal -->
+<div class="modal-overlay" id="createFolderModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Create New Folder</h2><button class="modal-close" onclick="closeCreateFolderModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Folder Name</label><input type="text" id="newFolderName" placeholder="e.g., Q1 Reports"></div>
+      <div class="form-group"><label>Description (optional)</label><input type="text" id="folderDescription" placeholder="Brief description"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeCreateFolderModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="submitCreateFolder()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload progress -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-header"><h2>Uploading File</h2></div>
+    <div class="modal-body">
+      <p id="uploadFileName" style="font-size:.85rem;color:var(--gray-600);"></p>
+      <div class="progress-bar" style="display:block;"><div class="progress-fill" id="uploadProgressFill"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+// Paste the /exec URL from your Apps Script deployment here
+const ARCHIVE_API = 'PUT_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+// Admin status inherited from the NMDR portal login. The portal passes the
+// role as ?role=admin when it loads this page into its iframe; falls back to
+// localStorage nmdrRole for portal builds that persist role that way, and
+// defaults to view-only if opened standalone with neither present.
+const urlRole = new URLSearchParams(window.location.search).get('role');
+const isAdmin = (urlRole === 'admin') || (!urlRole && localStorage.getItem('nmdrRole') === 'admin');
+
+let currentFolderId = null; // null until first list() tells us the root id
+let pathStack = []; // [{id, name}]
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('modeBadge').textContent = isAdmin ? 'Admin — full access' : 'View & download';
+  document.getElementById('modeBadge').className = 'mode-badge' + (isAdmin ? ' admin' : '');
+  if (isAdmin) document.getElementById('adminToolbar').style.display = 'flex';
+  loadFolder(null);
+});
+
+async function loadFolder(folderId) {
+  document.getElementById('content').innerHTML = '<div class="loading">Loading folder contents…</div>';
+  try {
+    const url = ARCHIVE_API + '?action=list' + (folderId ? '&folderId=' + encodeURIComponent(folderId) : '');
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) { showNotification(data.error, 'error'); return; }
+
+    currentFolderId = data.folderId;
+    if (!pathStack.length || pathStack[pathStack.length - 1].id !== data.folderId) {
+      // only push if we navigated forward; breadcrumb clicks handle backward trimming themselves
+    }
+    renderBreadcrumb(data.isRoot);
+    renderContents(data);
+  } catch (err) {
+    document.getElementById('content').innerHTML = '<div class="empty-state">Could not reach the archive. Check ARCHIVE_API is set to your deployed Apps Script URL.</div>';
+  }
+}
+
+function openFolder(id, name) {
+  pathStack.push({ id, name });
+  loadFolder(id);
+}
+
+function renderBreadcrumb(isRoot) {
+  const el = document.getElementById('breadcrumb');
+  let html = `<span class="crumb" onclick="goToRoot()">🏠 Root</span>`;
+  pathStack.forEach((p, i) => {
+    html += `<span class="crumb-sep">›</span><span class="crumb" onclick="goToCrumb(${i})">${escapeHtml(p.name)}</span>`;
+  });
+  el.innerHTML = html;
+}
+
+function goToRoot() {
+  pathStack = [];
+  loadFolder(null);
+}
+
+function goToCrumb(index) {
+  pathStack = pathStack.slice(0, index + 1);
+  loadFolder(pathStack[index].id);
+}
+
+function renderContents(data) {
+  const el = document.getElementById('content');
+  if (!data.folders.length && !data.files.length) {
+    el.innerHTML = '<div class="empty-state">This folder is empty.' + (isAdmin ? ' Use New Folder or Upload File above.' : '') + '</div>';
+    return;
+  }
+  let html = '<div class="grid">';
+  data.folders.forEach(f => {
+    html += `<div class="card card-folder" onclick="openFolder('${f.id}','${escapeHtml(f.name).replace(/'/g, "\\'")}')">
+      <div class="card-icon">📁</div>
+      <div class="card-name">${escapeHtml(f.name)}</div>
+      ${f.description ? `<div class="card-desc">${escapeHtml(f.description)}</div>` : ''}
+      ${isAdmin ? `<div class="card-actions"><button class="btn btn-danger" onclick="event.stopPropagation();removeFolder('${f.id}')">Delete</button></div>` : ''}
+    </div>`;
+  });
+  data.files.forEach(f => {
+    html += `<div class="card">
+      <div class="card-icon">📄</div>
+      <div class="card-name">${escapeHtml(f.name)}</div>
+      <div class="card-meta">${formatSize(f.size)} · ${formatDate(f.createdAt)}</div>
+      <div class="card-actions">
+        <button class="btn btn-outline" onclick="window.open('${f.viewUrl}','_blank')">View</button>
+        <button class="btn btn-primary" onclick="window.open('${f.downloadUrl}','_blank')">Download</button>
+        ${isAdmin ? `<button class="btn btn-danger" onclick="removeFile('${f.id}')">Delete</button>` : ''}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ===== Create folder =====
+function openCreateFolderModal() {
+  document.getElementById('newFolderName').value = '';
+  document.getElementById('folderDescription').value = '';
+  document.getElementById('createFolderModal').classList.add('active');
+}
+function closeCreateFolderModal() {
+  document.getElementById('createFolderModal').classList.remove('active');
+}
+async function submitCreateFolder() {
+  const name = document.getElementById('newFolderName').value.trim();
+  if (!name) { showNotification('Folder name required', 'error'); return; }
+  const description = document.getElementById('folderDescription').value.trim();
+  try {
+    const res = await fetch(ARCHIVE_API, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'createFolder', parentId: currentFolderId, name, description })
+    });
+    const data = await res.json();
+    if (data.error) { showNotification(data.error, 'error'); return; }
+    closeCreateFolderModal();
+    showNotification(`Folder "${name}" created`, 'success');
+    loadFolder(currentFolderId);
+  } catch (err) {
+    showNotification('Could not create folder', 'error');
+  }
+}
+
+// ===== Upload file =====
+function triggerUpload() {
+  document.getElementById('fileInput').click();
+}
+function handleFileSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async function () {
+    const base64Data = reader.result.split(',')[1];
+    document.getElementById('uploadFileName').textContent = file.name;
+    document.getElementById('uploadModal').classList.add('active');
+    try {
+      const res = await fetch(ARCHIVE_API, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'uploadFile',
+          folderId: currentFolderId,
+          fileName: file.name,
+          mimeType: file.type,
+          base64Data
+        })
+      });
+      const data = await res.json();
+      document.getElementById('uploadModal').classList.remove('active');
+      if (data.error) { showNotification(data.error, 'error'); return; }
+      showNotification(`"${file.name}" uploaded`, 'success');
+      loadFolder(currentFolderId);
+    } catch (err) {
+      document.getElementById('uploadModal').classList.remove('active');
+      showNotification('Upload failed', 'error');
+    }
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== Delete =====
+async function removeFolder(id) {
+  if (!confirm('Delete this folder and everything inside it?')) return;
+  const res = await fetch(ARCHIVE_API, { method: 'POST', body: JSON.stringify({ action: 'deleteFolder', folderId: id }) });
+  const data = await res.json();
+  if (data.error) { showNotification(data.error, 'error'); return; }
+  showNotification('Folder deleted', 'success');
+  loadFolder(currentFolderId);
+}
+async function removeFile(id) {
+  if (!confirm('Delete this file?')) return;
+  const res = await fetch(ARCHIVE_API, { method: 'POST', body: JSON.stringify({ action: 'deleteFile', fileId: id }) });
+  const data = await res.json();
+  if (data.error) { showNotification(data.error, 'error'); return; }
+  showNotification('File deleted', 'success');
+  loadFolder(currentFolderId);
+}
+
+// ===== Helpers =====
+function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function formatDate(d) { if (!d) return ''; return new Date(d).toLocaleDateString(); }
+function formatSize(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+function showNotification(msg, type) {
+  const n = document.createElement('div');
+  n.className = `notification ${type} show`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  setTimeout(() => n.remove(), 3000);
+}
+</script>
+</body>
+</html>
