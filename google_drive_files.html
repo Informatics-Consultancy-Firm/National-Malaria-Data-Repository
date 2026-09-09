@@ -71,6 +71,16 @@ body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--
 .notification.error{background:#f8d7da;color:#721c24;}
 .icon-inline{display:inline-flex;vertical-align:-3px;margin-right:4px;}
 .icon-inline svg{display:block;}
+
+.present-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:700;padding:20px;}
+.present-overlay.active{display:flex;}
+.present-box{background:#fff;border-radius:10px;width:100%;max-width:1000px;height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.present-bar{background:var(--primary);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.present-bar span{font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.present-bar button{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.present-bar button:hover{background:rgba(255,255,255,.3);}
+.present-box iframe{flex:1;width:100%;border:none;}
+.present-hint{background:var(--gray-100);color:var(--gray-600);font-size:.75rem;padding:6px 16px;text-align:center;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -85,6 +95,29 @@ const ICONS = {
   home: '<span class="icon-inline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>',
   close: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
 };
+
+function getFileIcon(mimeType, name) {
+  mimeType = mimeType || '';
+  name = (name || '').toLowerCase();
+  let type = null;
+
+  if (mimeType.includes('pdf') || name.endsWith('.pdf')) type = { color: '#dc3545', label: 'PDF' };
+  else if (mimeType.includes('wordprocessingml') || mimeType === 'application/msword' || name.endsWith('.docx') || name.endsWith('.doc')) type = { color: '#2b579a', label: 'DOC' };
+  else if (mimeType.includes('presentationml') || mimeType === 'application/vnd.ms-powerpoint' || name.endsWith('.pptx') || name.endsWith('.ppt')) type = { color: '#d24726', label: 'PPT' };
+  else if (mimeType.includes('spreadsheetml') || mimeType === 'application/vnd.ms-excel' || name.endsWith('.xlsx') || name.endsWith('.xls')) type = { color: '#217346', label: 'XLS' };
+  else if (mimeType.startsWith('image/')) type = { color: '#6f42c1', label: 'IMG' };
+  else if (mimeType.includes('zip') || name.endsWith('.zip')) type = { color: '#94a3b8', label: 'ZIP' };
+  else if (mimeType.startsWith('text/csv') || name.endsWith('.csv')) type = { color: '#217346', label: 'CSV' };
+
+  if (!type) {
+    return '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  }
+  return '<svg width="28" height="28" viewBox="0 0 24 24">' +
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="' + type.color + '"/>' +
+    '<polyline points="14 2 14 8 20 8" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1"/>' +
+    '<text x="12" y="18" font-size="6.5" font-weight="700" fill="#ffffff" text-anchor="middle" font-family="Arial, sans-serif">' + type.label + '</text>' +
+    '</svg>';
+}
 </script>
 
 <div class="wrap">
@@ -134,6 +167,20 @@ const ICONS = {
       <p id="uploadFileName" style="font-size:.85rem;color:var(--gray-600);"></p>
       <div class="progress-bar" style="display:block;"><div class="progress-fill" id="uploadProgressFill"></div></div>
     </div>
+  </div>
+</div>
+
+<!-- Inline Presentation Viewer -->
+<div class="present-overlay" id="presentOverlay">
+  <div class="present-box">
+    <div class="present-bar">
+      <span id="presentFileName"></span>
+      <button onclick="closePresentModal()" title="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <iframe id="presentFrame" src=""></iframe>
+    <div class="present-hint">Hover over the slide to use Google's Back / Next arrows, or use the arrow keys</div>
   </div>
 </div>
 
@@ -223,11 +270,13 @@ function renderContents(data) {
   });
   data.files.forEach(f => {
     html += `<div class="card">
-      <div class="card-icon">${ICONS.file}</div>
+      <div class="card-icon">${getFileIcon(f.mimeType, f.name)}</div>
       <div class="card-name">${escapeHtml(f.name)}</div>
       <div class="card-meta">${formatSize(f.size)} · ${formatDate(f.createdAt)}</div>
       <div class="card-actions">
-        <button class="btn btn-outline" onclick="window.open('${f.viewUrl}','_blank')">View</button>
+        ${isPresentable(f.mimeType, f.name)
+          ? `<button class="btn btn-outline" onclick="openPresentModal('${f.id}','${escapeHtml(f.name).replace(/'/g, "\\'")}')">Present</button>`
+          : `<button class="btn btn-outline" onclick="window.open('${f.viewUrl}','_blank')">View</button>`}
         <button class="btn btn-primary" onclick="window.open('${f.downloadUrl}','_blank')">Download</button>
         ${isAdmin ? `<button class="btn btn-danger" onclick="removeFile('${f.id}')">Delete</button>` : ''}
       </div>
@@ -318,6 +367,22 @@ async function removeFile(id) {
   if (data.error) { showNotification(data.error, 'error'); return; }
   showNotification('File deleted', 'success');
   loadFolder(currentFolderId);
+}
+
+// ===== Inline presentation viewer =====
+function isPresentable(mimeType, name) {
+  mimeType = mimeType || ''; name = (name || '').toLowerCase();
+  return mimeType.includes('presentationml') || mimeType === 'application/vnd.ms-powerpoint' ||
+         mimeType === 'application/vnd.google-apps.presentation' || name.endsWith('.pptx') || name.endsWith('.ppt');
+}
+function openPresentModal(fileId, fileName) {
+  document.getElementById('presentFileName').textContent = fileName;
+  document.getElementById('presentFrame').src = 'https://drive.google.com/file/d/' + fileId + '/preview';
+  document.getElementById('presentOverlay').classList.add('active');
+}
+function closePresentModal() {
+  document.getElementById('presentOverlay').classList.remove('active');
+  document.getElementById('presentFrame').src = '';
 }
 
 // ===== Helpers =====
