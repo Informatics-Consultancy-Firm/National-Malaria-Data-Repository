@@ -69,14 +69,28 @@ body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--
 .notification.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .notification.success{background:#d4edda;color:#155724;}
 .notification.error{background:#f8d7da;color:#721c24;}
+.icon-inline{display:inline-flex;vertical-align:-3px;margin-right:4px;}
+.icon-inline svg{display:block;}
 </style>
 </head>
 <body>
 
+<script>
+const ICONS = {
+  folder: '<span class="icon-inline"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></svg></span>',
+  folderBig: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></svg>',
+  file: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  upload: '<span class="icon-inline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>',
+  refresh: '<span class="icon-inline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>',
+  home: '<span class="icon-inline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>',
+  close: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+};
+</script>
+
 <div class="wrap">
   <div class="header">
     <div>
-      <h1>📁 NMDR Archive — Google Drive Files</h1>
+      <h1><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin-right:6px;"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></svg>NMDR Archive — Google Drive Files</h1>
       <p>Policy documents, strategic plans, campaign files and reports</p>
     </div>
     <span class="mode-badge" id="modeBadge">Loading…</span>
@@ -84,12 +98,12 @@ body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--
 
   <div class="toolbar" id="adminToolbar" style="display:none;">
     <button class="btn btn-gold" onclick="openCreateFolderModal()">+ New Folder</button>
-    <button class="btn btn-primary" onclick="triggerUpload()">⬆ Upload File</button>
+    <button class="btn btn-primary" onclick="triggerUpload()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload File</button>
     <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelected(this)">
   </div>
 
   <div class="toolbar">
-    <button class="btn btn-outline" onclick="loadFolder(currentFolderId)">🔄 Refresh</button>
+    <button class="btn btn-outline" onclick="loadFolder(currentFolderId)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh</button>
   </div>
 
   <div class="breadcrumb" id="breadcrumb"></div>
@@ -100,7 +114,7 @@ body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--
 <!-- Create Folder Modal -->
 <div class="modal-overlay" id="createFolderModal">
   <div class="modal">
-    <div class="modal-header"><h2>Create New Folder</h2><button class="modal-close" onclick="closeCreateFolderModal()">✕</button></div>
+    <div class="modal-header"><h2>Create New Folder</h2><button class="modal-close" onclick="closeCreateFolderModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="modal-body">
       <div class="form-group"><label>Folder Name</label><input type="text" id="newFolderName" placeholder="e.g., Q1 Reports"></div>
       <div class="form-group"><label>Description (optional)</label><input type="text" id="folderDescription" placeholder="Brief description"></div>
@@ -163,7 +177,7 @@ async function loadFolder(folderId) {
     const attemptedFolder = folderId;
     document.getElementById('content').innerHTML =
       '<div class="empty-state">Could not reach the archive. Check ARCHIVE_API is set to your deployed Apps Script URL.' +
-      '<br><br><button class="btn btn-gold" id="retryLoadBtn">🔄 Try Again</button></div>';
+      '<br><br><button class="btn btn-gold" id="retryLoadBtn">' + ICONS.refresh + 'Try Again</button></div>';
     document.getElementById('retryLoadBtn').addEventListener('click', function () { loadFolder(attemptedFolder); });
   }
 }
@@ -175,7 +189,7 @@ function openFolder(id, name) {
 
 function renderBreadcrumb(isRoot) {
   const el = document.getElementById('breadcrumb');
-  let html = `<span class="crumb" onclick="goToRoot()">🏠 Root</span>`;
+  let html = `<span class="crumb" onclick="goToRoot()">${ICONS.home}Root</span>`;
   pathStack.forEach((p, i) => {
     html += `<span class="crumb-sep">›</span><span class="crumb" onclick="goToCrumb(${i})">${escapeHtml(p.name)}</span>`;
   });
@@ -201,7 +215,7 @@ function renderContents(data) {
   let html = '<div class="grid">';
   data.folders.forEach(f => {
     html += `<div class="card card-folder" onclick="openFolder('${f.id}','${escapeHtml(f.name).replace(/'/g, "\\'")}')">
-      <div class="card-icon">📁</div>
+      <div class="card-icon">${ICONS.folderBig}</div>
       <div class="card-name">${escapeHtml(f.name)}</div>
       ${f.description ? `<div class="card-desc">${escapeHtml(f.description)}</div>` : ''}
       ${isAdmin ? `<div class="card-actions"><button class="btn btn-danger" onclick="event.stopPropagation();removeFolder('${f.id}')">Delete</button></div>` : ''}
@@ -209,7 +223,7 @@ function renderContents(data) {
   });
   data.files.forEach(f => {
     html += `<div class="card">
-      <div class="card-icon">📄</div>
+      <div class="card-icon">${ICONS.file}</div>
       <div class="card-name">${escapeHtml(f.name)}</div>
       <div class="card-meta">${formatSize(f.size)} · ${formatDate(f.createdAt)}</div>
       <div class="card-actions">
