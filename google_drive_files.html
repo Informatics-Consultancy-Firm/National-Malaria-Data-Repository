@@ -88,6 +88,10 @@ body{font-family:'Source Sans Pro',Arial,sans-serif;background:#fff;color:var(--
     <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelected(this)">
   </div>
 
+  <div class="toolbar">
+    <button class="btn btn-outline" onclick="loadFolder(currentFolderId)">🔄 Refresh</button>
+  </div>
+
   <div class="breadcrumb" id="breadcrumb"></div>
 
   <div id="content"><div class="loading">Loading folder contents…</div></div>
@@ -156,7 +160,11 @@ async function loadFolder(folderId) {
     renderBreadcrumb(data.isRoot);
     renderContents(data);
   } catch (err) {
-    document.getElementById('content').innerHTML = '<div class="empty-state">Could not reach the archive. Check ARCHIVE_API is set to your deployed Apps Script URL.</div>';
+    const attemptedFolder = folderId;
+    document.getElementById('content').innerHTML =
+      '<div class="empty-state">Could not reach the archive. Check ARCHIVE_API is set to your deployed Apps Script URL.' +
+      '<br><br><button class="btn btn-gold" id="retryLoadBtn">🔄 Try Again</button></div>';
+    document.getElementById('retryLoadBtn').addEventListener('click', function () { loadFolder(attemptedFolder); });
   }
 }
 
