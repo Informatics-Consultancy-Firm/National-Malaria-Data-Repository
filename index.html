@@ -819,6 +819,8 @@
                         <button class="nav-child nav-l3" data-tab="med-comp-u5">1.0.2.4.1 Under Five</button>
                         <button class="nav-child nav-l3" data-tab="med-comp-allages">1.0.2.4.2 All Ages</button>
                     </div>
+
+                    <button class="nav-child nav-l2" data-tab="me-reports">1.0.2.5 Reporting</button>
                 </div>
 
                 <button class="nav-child nav-l1-toggle" id="tesToggle" onclick="toggleNestedGroup('tesChildren','tesChevron','tesToggle',event)">
@@ -957,6 +959,7 @@
                     <button class="nav-child nav-l3" data-tab="dct-mocm-lab">5.0.5.4 MOCM (Lab)</button>
                     <button class="nav-child nav-l3" data-tab="dct-warehouse">5.0.5.5 Warehouse Assessment</button>
                     <button class="nav-child nav-l3" data-tab="dct-sbc">5.0.5.6 SBC Coaching (Form K)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-tes">5.0.5.7 TES Data Collection Tool</button>
                 </div>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
                 <button class="nav-child nav-l2" data-tab="gf-plan">5.0.7 GF Implementation Plan</button>
@@ -1221,6 +1224,7 @@
     <div id="med-ptr"         class="tab-content"><div id="med-ptr-wrap"         class="me-detail-wrap"></div></div>
     <div id="me-comp-u5"      class="tab-content"><div id="me-comp-u5-wrap"      class="me-detail-wrap"></div></div>
     <div id="me-comp-allages" class="tab-content"><div id="me-comp-allages-wrap" class="me-detail-wrap"></div></div>
+    <div id="me-reports" class="tab-content"><div class="iframe-pane"><iframe id="frame-me-reports" src="" data-src="me_reports.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- 1.0.1.1 HMIS (Monthly) — DATA EXTRACTION -->
     <div id="hmis-extraction" class="tab-content"><div class="iframe-pane"><iframe id="frame-hmis-extraction" src="" data-src="data_extraction.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1284,7 +1288,8 @@
     <div id="mpd" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpd" src="" data-src="mpd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-data" src="" data-src="survey_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-report" src="" data-src="survey_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="dct-sbd" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbd" src="" data-src="sbd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-sbd" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbd" src="" data-src="https://mohamedsillahkanu.github.io/SBD-final-final-version2.3/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-tes" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-tes" src="" data-src="https://mohamedsillahkanu.github.io/TES-v3/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-mocm-phu" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-phu" src="" data-src="mocm_phu.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-mocm-hospital" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-hospital" src="" data-src="mocm_hospital.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-mocm-lab" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-lab" src="" data-src="mocm_lab.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1809,14 +1814,14 @@ var ME_SUMMARY_TABS = ['me-summary-epi','me-summary-int','me-summary-stock'];
 var ME_DETAIL_TABS = ['med-suspected','med-tested','med-confirmed','med-treated',
                       'med-presumptive','med-comp-u5','med-comp-allages',
                       'med-reporting','med-testing','med-tpr','med-cfr','med-ptr',
-                      'me-comp-u5','me-comp-allages'];
+                      'me-comp-u5','me-comp-allages','me-reports'];
 var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-extraction','eidsr-dashboard'];
 var TES_TABS         = ['tes-data','tes-report','tes-dashboard'];
 var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles','int-vitamin-a','int-iptp','int-anc','int-mass-itn','int-sbd','int-irs'];
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
 var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
-var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc'];
+var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc','dct-tes'];
 var SNT_TABS         = ['snt-datasets','snt-codes','snt-outputs','snt-report','snt-manual','snt-intervention-targeting'];
 var MPR_TABS         = ['mpr-datasets','mpr-codes','mpr-outputs','mpr-report'];
 var currentTab       = 'welcome';
@@ -2083,7 +2088,7 @@ var pageLabelMap = {
     'med-reporting':'Key Indicators · Reporting Rate','med-testing':'Key Indicators · Testing Rate',
     'med-tpr':'Key Indicators · Test Positivity Rate','med-cfr':'Key Indicators · Confirmed & Treatment Rate',
     'med-comp-u5':'Comparative · Under Five','med-comp-allages':'Comparative · All Ages',
-    'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages',
+    'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages','me-reports':'M&E · Reporting',
     'hmis-extraction':'HMIS · Data Extraction','hmis-epi-dashboard':'HMIS · Epi Dashboard',
     'eidsr-extraction':'eIDSR · Data Extraction','eidsr-dashboard':'eIDSR · Dashboard',
     'tes-data':'TES · Data','tes-report':'TES · Report','tes-dashboard':'TES · Dashboard',
@@ -2097,7 +2102,7 @@ var pageLabelMap = {
     'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report',
     'dct-sbd':'Data Collection Apps · SBD','dct-mocm-phu':'Data Collection Apps · MOCM (PHU)',
     'dct-mocm-hospital':'Data Collection Apps · MOCM (Hospital)','dct-mocm-lab':'Data Collection Apps · MOCM (Lab)',
-    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)',
+    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)','dct-tes':'Data Collection Apps · TES Data Collection Tool',
     'analytics-training':'Analytics Learning','gf-plan':'GF Implementation Plan','partners-mapping':'NMCP Partners Mapping','world-malaria-day':'World Malaria Day',
     'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
