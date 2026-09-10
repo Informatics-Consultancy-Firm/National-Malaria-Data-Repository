@@ -1,109 +1,180 @@
-/* ══════════════════════════════════════════════════════════════════════════
-   AUTOMATIC MAIN MENU BUTTON
+/* NMDR Portal service worker
+   Offline first. Pages are served from cache so the portal opens with no
+   network. New versions arrive only when the user presses Update.
 
-   Every tool opens in the whole browser window rather than in an iframe, so each one
-   needs a way back to the portal. Rather than pasting a snippet into dozens of files,
-   this service worker adds it for them: it sits between the browser and the files, and
-   when a page is requested it inserts the button just before </body>.
+   Edit PRECACHE below to match the files sitting beside index.html.
+*/
 
-   Nothing in any tool file has to change, and no tool has to be edited again when one
-   is added.
+const APP_VERSION   = 'nmdr-2026-07-25c';
+const SHELL_CACHE   = 'nmdr-shell-' + APP_VERSION;
+const RUNTIME_CACHE = 'nmdr-runtime';
 
-   IT FAILS OPEN. Every step is wrapped so that if anything at all goes wrong, the
-   original response is passed through untouched. The worst case is a page with no
-   button, never a page that will not load.
+/* Files fetched and stored the moment the portal is first opened. */
+const PRECACHE = [
+  './',
+  './index.html',
+  './nmdr-offline.js',
+  './manifest.json',
+  './mohlogo.png',
+  './nmdr_info.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-192-maskable.png',
+  './icon-512-maskable.png',
+  './apple-touch-icon.png',
+  './favicon-32.png',
+  './sbd.html',
+  './mocm_phu.html',
+  './mocm_hospital.html',
+  './warehouse.html'
+];
 
-   Two limits worth knowing:
-     - A service worker needs https or localhost. Opened straight from disk with a
-       file:// address it will not register, so tools opened that way only show the
-       button if it is already built into the file.
-     - A PDF is rendered by the browser's own viewer and cannot carry a button, so PDFs
-       are left alone and the portal opens them in a new tab instead.
-   ══════════════════════════════════════════════════════════════════════════ */
-const SW_VERSION = 'mainmenu-v1';
+/* Cross origin hosts whose files are safe to keep for offline use.
+   Everything else cross origin (DHIS2, Apps Script) always goes to the
+   network and is never stored. */
+const CACHEABLE_HOSTS = [
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'cdn.jsdelivr.net',
+  'cdnjs.cloudflare.com',
+  'unpkg.com'
+];
 
-/* The button, as a string, because it is injected into someone else's document. */
-const MENU_SNIPPET = `
-<script>
-(function(){var K='__nmcpHomeBtn';if(window[K])return;window[K]=1;
-var q=new URLSearchParams(location.search),h=q.get('home')||'index.html';
-if(/^[a-z]+:/i.test(h)||h.indexOf('//')===0)h='index.html';
-function go(){var e=function(k){var v=q.get(k);return v?'&'+k+'='+encodeURIComponent(v):'';};
-location.href=h+(h.indexOf('?')>=0?'&':'?')+'back=1'+e('tab')+e('role');}
-window.nmcpGoHome=go;
-function build(){if(document.getElementById('nmcpHomeBtn'))return;
-var s=document.createElement('style');s.textContent='#nmcpHomeBtn{position:fixed;top:14px;right:16px;z-index:99999;display:inline-flex;align-items:center;gap:7px;background:#2c6793;color:#fff;border:none;border-radius:9px;padding:9px 16px;font:600 13px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.28)}#nmcpHomeBtn:hover{background:#1f4a6a}#nmcpHomeBtn:focus-visible{outline:3px solid #ffc107;outline-offset:2px}@media print{#nmcpHomeBtn{display:none}}@media (max-width:600px){#nmcpHomeBtn{top:10px;right:10px;padding:8px 12px;font-size:12px}}';
-document.head.appendChild(s);
-var b=document.createElement('button');b.id='nmcpHomeBtn';b.type='button';
-b.title='Back to the main menu (Alt+H)';b.setAttribute('aria-label','Back to the main menu');
-b.innerHTML='<span aria-hidden="true">&#8962;</span> Main menu';
-b.addEventListener('click',go);document.body.appendChild(b);}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
-document.addEventListener('keydown',function(e){if(e.altKey&&(e.key==='h'||e.key==='H')){e.preventDefault();go();}});
-})();
-<\/script>
-`;
+/* ---------------------------------------------------------------- install */
 
-self.addEventListener('install', (e) => { self.skipWaiting(); });
-
-self.addEventListener('activate', (e) => {
-  // Take over pages that are already open, so the first tool click works without a reload.
-  e.waitUntil(self.clients.claim());
-});
-
-/* Which requests should get the button. Only a page the user navigated to, on this site,
-   that is not the portal itself. */
-function shouldInject(request) {
-  try {
-    if (request.method !== 'GET') return false;
-    if (request.mode !== 'navigate') return false;          // not sub-resources
-    const url = new URL(request.url);
-    if (url.origin !== self.location.origin) return false;  // never another site
-    const path = url.pathname.toLowerCase();
-    if (path.endsWith('.pdf')) return false;                // the pdf viewer cannot take it
-    const file = path.split('/').pop() || '';
-    // the portal already has its own Main menu button in the sidebar
-    if (file === '' || file === 'index.html' || file === 'index.htm') return false;
-    // only pages: a file with no extension is treated as a page too
-    return file.endsWith('.html') || file.endsWith('.htm') || !file.includes('.');
-  } catch (err) {
-    return false;
-  }
-}
-
-self.addEventListener('fetch', (event) => {
-  if (!shouldInject(event.request)) return;                 // leave everything else alone
-
-  event.respondWith((async () => {
-    let response;
-    try {
-      response = await fetch(event.request);
-    } catch (err) {
-      throw err;                                            // offline: let the browser say so
-    }
-    try {
-      if (!response.ok) return response;
-      const type = response.headers.get('content-type') || '';
-      // Only touch html. Anything else, including a pdf served without a .pdf path, passes through.
-      if (!type.toLowerCase().includes('text/html')) return response;
-
-      const html = await response.clone().text();
-      if (html.includes('__nmcpHomeBtn')) return response;   // already has one, do not add a second
-
-      const i = html.toLowerCase().lastIndexOf('</body>');
-      const out = (i >= 0)
-        ? html.slice(0, i) + MENU_SNIPPET + html.slice(i)
-        : html + MENU_SNIPPET;                               // no body tag: append at the end
-
-      const headers = new Headers(response.headers);
-      headers.delete('content-length');                      // the body is longer now
-      return new Response(out, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      });
-    } catch (err) {
-      return response;                                       // anything unexpected: serve as is
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(SHELL_CACHE);
+    // One at a time so a single missing file cannot fail the whole install.
+    for (const url of PRECACHE) {
+      try {
+        const res = await fetch(new Request(url, { cache: 'reload' }));
+        if (res.ok) await cache.put(url, res);
+      } catch (e) { /* file not present yet, runtime caching will pick it up */ }
     }
   })());
 });
+
+/* --------------------------------------------------------------- activate */
+
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(
+      names
+        .filter(n => n.startsWith('nmdr-shell-') && n !== SHELL_CACHE)
+        .map(n => caches.delete(n))
+    );
+    await self.clients.claim();
+  })());
+});
+
+/* ------------------------------------------------------------------ fetch */
+
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+  const sameOrigin = url.origin === self.location.origin;
+
+  if (!sameOrigin && !CACHEABLE_HOSTS.includes(url.hostname)) {
+    return; // DHIS2, Apps Script and any other API: straight to the network
+  }
+
+  event.respondWith(cacheFirst(req, sameOrigin));
+});
+
+async function cacheFirst(req, sameOrigin) {
+  const shell = await caches.open(SHELL_CACHE);
+  const hit = await shell.match(req, { ignoreSearch: sameOrigin });
+  if (hit) return hit;
+
+  const runtime = await caches.open(RUNTIME_CACHE);
+  const runtimeHit = await runtime.match(req);
+  if (runtimeHit) return runtimeHit;
+
+  try {
+    const res = await fetch(req);
+    if (res && (res.ok || res.type === 'opaque')) {
+      runtime.put(req, res.clone());
+    }
+    return res;
+  } catch (e) {
+    if (req.mode === 'navigate') {
+      const fallback = await shell.match('./index.html');
+      if (fallback) return fallback;
+    }
+    return new Response(
+      'Offline and this file has not been saved to the device yet.',
+      { status: 503, headers: { 'Content-Type': 'text/plain' } }
+    );
+  }
+}
+
+/* --------------------------------------------------------------- messages */
+
+self.addEventListener('message', event => {
+  const data = event.data || {};
+  const reply = msg => {
+    if (event.ports && event.ports[0]) event.ports[0].postMessage(msg);
+  };
+
+  if (data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
+  if (data.type === 'GET_VERSION') {
+    reply({ type: 'VERSION', version: APP_VERSION });
+    return;
+  }
+
+  if (data.type === 'REFRESH_CONTENT') {
+    // Always reply, including on failure, or the page waits for the timeout.
+    event.waitUntil(
+      refreshContent().then(reply, function (err) {
+        reply({ type: 'REFRESH_DONE', updated: 0, failed: [], error: String(err && err.message || err) });
+      })
+    );
+  }
+});
+
+/* Re-download every same origin file already held, plus the precache list,
+   bypassing the browser HTTP cache. This is what the Update button runs. */
+async function refreshContent() {
+  const shell   = await caches.open(SHELL_CACHE);
+  const runtime = await caches.open(RUNTIME_CACHE);
+
+  const targets = new Map(); // url -> cache holding it
+
+  for (const url of PRECACHE) {
+    targets.set(new URL(url, self.location).href, shell);
+  }
+  for (const cache of [shell, runtime]) {
+    for (const req of await cache.keys()) {
+      if (new URL(req.url).origin === self.location.origin) {
+        targets.set(req.url, cache);
+      }
+    }
+  }
+
+  let updated = 0;
+  const failed = [];
+
+  for (const [url, cache] of targets) {
+    try {
+      const res = await fetch(new Request(url, { cache: 'reload' }));
+      if (res.ok) {
+        await cache.put(url, res);
+        updated++;
+      } else {
+        failed.push(url + ' (' + res.status + ')');
+      }
+    } catch (e) {
+      failed.push(url);
+    }
+  }
+
+  return { type: 'REFRESH_DONE', updated, failed, version: APP_VERSION };
+}
