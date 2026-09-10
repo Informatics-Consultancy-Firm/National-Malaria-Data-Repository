@@ -743,7 +743,7 @@
             </button>
             <div class="nav-group-children open" id="children-welcome">
                 <button class="nav-child nav-l2" data-tab="architecture">NMDR Architecture &amp; Data Flow</button>
-                <button class="nav-child nav-l2" data-tab="use-cases">NMDR Use Cases &mdash; WHO AFRO</button>
+                <button class="nav-child nav-l2" data-tab="use-cases">NMDR Navigation</button>
             </div>
         </div>
 
@@ -959,6 +959,9 @@
                     <button class="nav-child nav-l3" data-tab="dct-sbc">5.0.5.6 SBC Coaching (Form K)</button>
                 </div>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
+                <button class="nav-child nav-l2" data-tab="gf-plan">5.0.7 GF Implementation Plan</button>
+                <button class="nav-child nav-l2" data-tab="partners-mapping">5.0.8 NMCP Partners Mapping</button>
+                <button class="nav-child nav-l2" data-tab="world-malaria-day">5.0.9 World Malaria Day</button>
                 <button class="nav-child nav-l2" data-tab="population-estimate">5.0.7 Population</button>
                 <button class="nav-child nav-l2" data-tab="performance-framework">5.0.8 Performance Framework</button>
                 <button class="nav-child nav-l2" data-tab="archive">5.0.9 Google Drive Files</button>
@@ -1160,31 +1163,15 @@
                 <span class="tag">Ministry of Health</span>
                 <span>Government of Sierra Leone &mdash; NMDR Data Infrastructure</span>
             </div>
-            <div class="nmdr-info-body">
-                <div class="nmdr-moh-logo">
-                    <img src="mohlogo.png" alt="Ministry of Health Sierra Leone">
-                    <div class="nmdr-moh-label">Ministry of Health<br>Sierra Leone</div>
-                </div>
-                <div class="nmdr-divider"></div>
-                <div class="nmdr-diagram-wrap">
-                    <img src="nmdr_info.png" alt="NMDR DHIS2 Architecture">
-                </div>
+            <div style="padding:16px;">
+                <img src="nmdr_architecture.jpg" alt="SLNMDR Architecture and Data Flow" style="width:100%;height:auto;display:block;border-radius:8px;">
             </div>
         </div>
     </div>
 
-    <!-- Use Cases — moved out of Welcome, now its own sub-page -->
+    <!-- Navigation — moved out of Welcome, now its own sub-page -->
     <div id="use-cases" class="tab-content">
-        <div class="section-label" style="margin-top:4px">NMDR Use Cases &mdash; WHO AFRO</div>
-        <div class="slides-container">
-            <div class="slides-header">NMDR Use Cases &mdash; WHO AFRO Presentation</div>
-            <div class="slides-ratio-wrap">
-                <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQFJZ7rG2K0i1Fpmu49KuUV3yifUdQ2MuVXOlbBCKcenHVUnWeri8xSyaix8OzE0w/pubembed?start=false&loop=false&delayms=3000" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" loading="lazy"></iframe>
-            </div>
-        </div>
-        <div class="disclaimer-banner">
-            <p><strong>DISCLAIMER:</strong> This platform fully follows WHO AFRO recommendations for the NMDR use cases. The modules have been reorganised and restructured solely to enhance clarity, usability, and user experience. The core objectives, goals, and intent of the WHO AFRO NMDR use cases remain fully intact and unchanged.</p>
-        </div>
+        <div class="iframe-pane"><iframe id="frame-use-cases" src="" data-src="navigation.html" loading="lazy" allow="fullscreen"></iframe></div>
     </div>
 
     <!-- M&E — DQA tab -->
@@ -1304,6 +1291,17 @@
     <div id="dct-warehouse" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-warehouse" src="" data-src="warehouse.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-sbc" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbc" src="" data-src="form_k.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="gf-plan" class="tab-content"><div class="iframe-pane"><iframe id="frame-gf-plan" src="" data-src="gf_plan.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="partners-mapping" class="tab-content"><div class="iframe-pane"><iframe id="frame-partners-mapping" src="" data-src="partners.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="world-malaria-day" class="tab-content">
+        <div class="section-label" style="margin-top:4px">World Malaria Day</div>
+        <div class="slides-container">
+            <div class="slides-header">World Malaria Day</div>
+            <div class="slides-ratio-wrap">
+                <iframe src="https://www.youtube.com/embed/BQsabfkaLSo" title="World Malaria Day" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
     <div id="population-estimate" class="tab-content"><div class="iframe-pane"><iframe id="frame-population-estimate" src="" data-src="https://informatics-consultancy-firm.github.io/population-estimate/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="performance-framework" class="tab-content"><div class="iframe-pane"><iframe id="frame-performance-framework" src="" data-src="https://informatics-consultancy-firm.github.io/nmcp-pf-2027-2030/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="archive" class="tab-content"><div class="iframe-pane"><iframe id="frame-archive" src="" data-src="google_drive_files.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1827,7 +1825,7 @@ var hashOpenedOnLoad = false;
 var roleAccess = {
     national: ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'analytics-training','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5']
+               'analytics-training','gf-plan','partners-mapping','world-malaria-day','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
                .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS).concat(SNT_TABS).concat(MPR_TABS),
@@ -1842,7 +1840,7 @@ var roleAccess = {
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
     admin:    ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'analytics-training','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5',
+               'analytics-training','gf-plan','partners-mapping','world-malaria-day','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5',
                'admin-dashboard']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
@@ -2075,7 +2073,7 @@ function renderMeDqaPage(host, result){
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
 var pageLabelMap = {
-    'welcome':'Welcome','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Use Cases — WHO AFRO','me-dqa':'M&E · DQA',
+    'welcome':'Welcome','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','me-dqa':'M&E · DQA',
     'me-summary-epi':'Detailed · Malaria Epi (Summary)',
     'me-summary-int':'Detailed · Intervention (Summary)',
     'me-summary-stock':'Detailed · Stock (Summary)',
@@ -2100,7 +2098,7 @@ var pageLabelMap = {
     'dct-sbd':'Data Collection Apps · SBD','dct-mocm-phu':'Data Collection Apps · MOCM (PHU)',
     'dct-mocm-hospital':'Data Collection Apps · MOCM (Hospital)','dct-mocm-lab':'Data Collection Apps · MOCM (Lab)',
     'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)',
-    'analytics-training':'Analytics Learning',
+    'analytics-training':'Analytics Learning','gf-plan':'GF Implementation Plan','partners-mapping':'NMCP Partners Mapping','world-malaria-day':'World Malaria Day',
     'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
     'dmat-suspected':'D-MAT · Suspected','dmat-tested':'D-MAT · Tested','dmat-confirmed':'D-MAT · Confirmed Cases',
