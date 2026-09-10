@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NMCP Malaria Partners Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Arial&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#2c6793; --navy-dk:#1f4a6a; --navy-lt:#e8f0f7;
+  --teal:#04879c; --teal-dk:#035d6c;
+  --bg:#eef3f8; --paper:#ffffff;
+  --ink:#1c2a38; --muted:#5c6b7a; --border:#c7d4e1;
+  --active:#1e7a34; --active-bg:#e5f4e9;
+  --new:#375d99; --new-bg:#e8edf7;
+  --closed:#a63b3b; --closed-bg:#f8e9e9;
+  --inactive:#71778a; --inactive-bg:#eceef2;
+  --confirm:#a4780c; --confirm-bg:#fbf0dc;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;background:var(--bg);}
+body{
+  font-family:Arial,'Segoe UI',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  padding-bottom:60px;
+}
+h1,h2,h3,.brand,.card-name,.drawer-name{font-family:'Oswald',Arial,sans-serif;}
+
+/* ===== HEADER ===== */
+.topbar{
+  background:linear-gradient(120deg,var(--navy) 0%,var(--navy-dk) 100%);
+  color:#fff; padding:22px 28px 26px;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:20px; flex-wrap:wrap;
+  border-bottom:5px solid var(--teal);
+}
+.brand-block{display:flex; flex-direction:column; gap:4px;}
+.brand-eyebrow{font-size:12px; letter-spacing:.3px; opacity:.8;}
+.brand{font-size:28px; font-weight:700; letter-spacing:.3px; line-height:1.1;}
+.brand-sub{font-size:13px; opacity:.85;}
+.header-right{display:flex; align-items:flex-end; gap:18px; flex-wrap:wrap;}
+.header-count{text-align:right;}
+.header-count .num{font-family:'Oswald',sans-serif; font-size:38px; font-weight:700; color:#bfe3ec; line-height:1;}
+.header-count .lbl{font-size:12px; opacity:.85; margin-top:2px;}
+.sheet-btn{
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.35); color:#fff;
+  font-size:12.5px; font-weight:700; padding:9px 16px; border-radius:7px; cursor:pointer;
+  display:flex; align-items:center; gap:7px; white-space:nowrap;
+}
+.sheet-btn:hover{background:rgba(255,255,255,.26);}
+.sync-line{font-size:11.5px; opacity:.85; margin-top:4px; display:flex; align-items:center; gap:6px;}
+.sync-dot{width:7px; height:7px; border-radius:50%; background:#8fd694; display:inline-block;}
+.sync-dot.offline{background:#e0a24a;}
+.refresh-link{background:none; border:none; color:#bfe3ec; text-decoration:underline; font-size:11.5px; cursor:pointer; padding:0;}
+
+/* ===== TOOLBAR ===== */
+.toolbar{
+  position:sticky; top:0; z-index:40;
+  background:var(--paper); border-bottom:1px solid var(--border);
+  padding:14px 28px; box-shadow:0 2px 10px rgba(0,30,60,.06);
+}
+.search-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.search-box{
+  flex:1 1 260px; position:relative;
+}
+.search-box input{
+  width:100%; padding:10px 14px 10px 36px; font-size:14px;
+  border:1px solid var(--border); border-radius:8px; background:var(--bg);
+  color:var(--ink); font-family:Arial,sans-serif;
+}
+.search-box input:focus{outline:2px solid var(--navy); outline-offset:-1px; background:#fff;}
+.search-box::before{
+  content:"⌕"; position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  color:var(--muted); font-size:16px; font-weight:700;
+}
+select{
+  padding:9px 12px; font-size:13px; border:1px solid var(--border); border-radius:8px;
+  background:#fff; color:var(--ink); font-family:Arial,sans-serif; cursor:pointer;
+}
+select:focus{outline:2px solid var(--navy);}
+.view-toggle{display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+.view-toggle button{
+  border:none; background:#fff; padding:9px 14px; font-size:13px; cursor:pointer; color:var(--muted);
+  font-family:Arial,sans-serif; font-weight:600;
+}
+.view-toggle button.active{background:var(--navy); color:#fff;}
+
+.chip-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center;}
+.chip{
+  border:1px solid var(--border); background:#fff; border-radius:20px; padding:6px 13px;
+  font-size:12.5px; font-weight:600; cursor:pointer; color:var(--muted);
+  display:flex; align-items:center; gap:6px; user-select:none;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.chip .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+.chip.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+.chip .count{opacity:.75; font-weight:400;}
+.chip-sep{width:1px; height:20px; background:var(--border); margin:0 4px;}
+.reset-link{font-size:12.5px; color:var(--navy); font-weight:600; cursor:pointer; text-decoration:underline; background:none; border:none;}
+
+/* ===== MAIN ===== */
+.main{padding:22px 28px;}
+.result-line{font-size:13px; color:var(--muted); margin-bottom:14px;}
+.result-line strong{color:var(--ink);}
+
+/* CARD GRID */
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px;
+}
+.pcard{
+  background:var(--paper); border:1px solid var(--navy); border-radius:2px;
+  position:relative; padding:16px 16px 14px; cursor:pointer;
+  box-shadow:3px 3px 0 rgba(0,64,128,.10);
+  transition:transform .1s, box-shadow .1s;
+}
+.pcard::before{
+  content:""; position:absolute; inset:5px; border:1px solid var(--border); border-radius:1px; pointer-events:none;
+}
+.pcard:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0 rgba(0,64,128,.16);}
+.pcard-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+.pcard-no{font-size:11px; color:var(--muted); font-weight:700; letter-spacing:.4px;}
+.status-tag{
+  font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; text-transform:none;
+  white-space:nowrap;
+}
+.card-name{font-size:16.5px; font-weight:600; margin:8px 0 4px; line-height:1.25; color:var(--navy-dk);}
+.card-type{font-size:11.5px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.3px; margin-bottom:10px;}
+.card-row{font-size:12.5px; color:var(--ink); display:flex; gap:7px; margin-bottom:5px; align-items:flex-start;}
+.card-row .ic{color:var(--navy); flex:0 0 14px;}
+.card-nocontact{font-size:12px; color:var(--confirm-dk,#8a6100); background:var(--confirm-bg); border:1px dashed var(--confirm); border-radius:6px; padding:6px 9px; margin-top:8px;}
+.card-footer{display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);}
+.nextstep-tag{font-size:10.5px; font-weight:700; color:var(--navy); background:var(--navy-lt); padding:3px 9px; border-radius:20px;}
+.district-tag{font-size:10.5px; color:var(--muted); font-weight:600;}
+
+/* TABLE VIEW */
+.table-wrap{background:#fff; border:1px solid var(--border); border-radius:8px; overflow:auto;}
+table{width:100%; border-collapse:collapse; font-size:13px; min-width:900px;}
+thead th{
+  background:var(--navy); color:#fff; text-align:left; padding:10px 12px; font-size:11.5px;
+  font-weight:700; letter-spacing:.3px; position:sticky; top:0; cursor:pointer; white-space:nowrap;
+}
+thead th:hover{background:var(--navy-dk);}
+tbody tr{border-bottom:1px solid var(--border); cursor:pointer;}
+tbody tr:hover{background:var(--navy-lt);}
+tbody td{padding:9px 12px; vertical-align:top;}
+td.name-cell{font-weight:700; color:var(--navy-dk); max-width:220px;}
+.empty-cell{color:#b7bfc8;}
+
+.no-results{text-align:center; padding:60px 20px; color:var(--muted);}
+.no-results .big{font-size:34px; margin-bottom:8px;}
+
+/* ===== MAP VIEW ===== */
+.map-note{font-size:12.5px; color:var(--muted); margin-bottom:14px; max-width:760px; line-height:1.5;}
+.map-section{display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;}
+.map-svg-wrap{
+  flex:1 1 480px; min-width:320px; background:#f6fafd; border:1px solid var(--border); border-radius:10px;
+  padding:10px; position:relative;
+}
+.map-svg-wrap svg{width:100%; height:auto; display:block;}
+.dpath{stroke:#fff; stroke-width:1.1; cursor:pointer; transition:opacity .12s, stroke-width .12s;}
+.dpath:hover{opacity:.82; stroke-width:2;}
+.dlabel-text{font-family:Arial,sans-serif; font-size:8.5px; font-weight:700; fill:#12202e; text-anchor:middle; pointer-events:none; paint-order:stroke; stroke:#fff; stroke-width:2.4px; stroke-linejoin:round;}
+.dcount-badge{font-family:'Oswald',sans-serif; font-size:9.5px; font-weight:700; fill:#12202e; text-anchor:middle; pointer-events:none;}
+.map-legend{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:11px; color:var(--muted); flex-wrap:wrap;}
+.map-legend .swatch{width:14px; height:14px; border-radius:3px; border:1px solid var(--border);}
+.map-tooltip{
+  position:fixed; z-index:150; background:#fff; border:1px solid var(--navy); border-radius:8px;
+  padding:10px 12px; font-size:12.5px; max-width:240px; box-shadow:0 6px 18px rgba(0,30,60,.2);
+  pointer-events:none; opacity:0; transition:opacity .1s;
+}
+.map-tooltip.show{opacity:1;}
+.map-tooltip .tt-title{font-family:'Oswald',sans-serif; font-weight:700; font-size:13.5px; color:var(--navy-dk); margin-bottom:6px;}
+.map-tooltip .tt-item{padding:2px 0; color:var(--ink); font-size:12px;}
+.map-tooltip .tt-more{color:var(--muted); font-size:11.5px; margin-top:3px;}
+.map-tooltip .tt-empty{color:var(--muted); font-size:12px;}
+.national-box{
+  flex:0 0 260px; background:#fff; border:1px solid var(--navy); border-radius:6px;
+  max-height:520px; display:flex; flex-direction:column;
+}
+.national-head{
+  background:var(--navy); color:#fff; padding:12px 14px; font-family:'Oswald',sans-serif;
+  font-size:14px; font-weight:600; letter-spacing:.2px; border-radius:6px 6px 0 0;
+}
+.national-head span{font-family:Arial,sans-serif; font-size:11px; font-weight:400; opacity:.85; display:block; margin-top:2px;}
+.national-list{overflow-y:auto; padding:10px 12px; flex:1;}
+.national-item{
+  padding:8px 6px; border-bottom:1px solid var(--border); font-size:12.5px; cursor:pointer;
+  display:flex; align-items:center; gap:8px;
+}
+.national-item:hover{background:var(--navy-lt);}
+.national-item .ndot{width:7px; height:7px; border-radius:50%; flex:0 0 7px;}
+.district-popover{
+  margin-top:14px; background:#fff; border:1px solid var(--navy); border-radius:6px; padding:16px 18px;
+}
+.district-popover h4{font-family:'Oswald',sans-serif; font-size:15px; color:var(--navy-dk); margin-bottom:10px;}
+.district-popover .dp-item{padding:6px 0; border-bottom:1px solid var(--border); font-size:13px; cursor:pointer; display:flex; justify-content:space-between; gap:10px;}
+.district-popover .dp-item:hover{color:var(--navy);}
+.district-popover .dp-empty{color:var(--muted); font-size:13px;}
+
+/* ===== PASSWORD MODAL ===== */
+.pw-modal{
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:201;
+  background:#fff; border-radius:10px; padding:22px 24px; width:min(340px,90vw);
+  box-shadow:0 12px 40px rgba(0,20,40,.3); display:none;
+}
+.pw-modal.open{display:block;}
+.pw-head{font-size:14px; font-weight:700; color:var(--navy-dk); margin-bottom:12px;}
+.pw-modal input{
+  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:7px; font-size:14px; margin-bottom:8px;
+}
+.pw-error{color:var(--closed); font-size:12px; margin-bottom:8px;}
+.pw-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:6px;}
+.pw-cancel{background:none; border:1px solid var(--border); border-radius:7px; padding:8px 14px; font-size:13px; cursor:pointer; color:var(--muted);}
+.pw-submit{background:var(--navy); border:none; border-radius:7px; padding:8px 16px; font-size:13px; cursor:pointer; color:#fff; font-weight:700;}
+.pw-submit:hover{background:var(--navy-dk);}
+
+/* ===== DRAWER ===== */
+.overlay{
+  position:fixed; inset:0; background:rgba(10,25,45,.45); z-index:100; opacity:0; pointer-events:none;
+  transition:opacity .18s;
+}
+.overlay.open{opacity:1; pointer-events:auto;}
+.drawer{
+  position:fixed; top:0; right:0; height:100vh; width:min(460px,100%);
+  background:var(--bg); z-index:101; transform:translateX(100%);
+  transition:transform .22s ease; box-shadow:-6px 0 24px rgba(0,0,0,.18);
+  display:flex; flex-direction:column;
+}
+.drawer.open{transform:translateX(0);}
+.drawer-head{
+  background:var(--navy); color:#fff; padding:20px 22px 18px; position:relative; border-bottom:4px solid var(--teal);
+}
+.drawer-close{
+  position:absolute; top:14px; right:14px; background:rgba(255,255,255,.15); border:none; color:#fff;
+  width:30px; height:30px; border-radius:6px; font-size:16px; cursor:pointer;
+}
+.drawer-close:hover{background:rgba(255,255,255,.28);}
+.drawer-no{font-size:11.5px; opacity:.8; font-weight:700; letter-spacing:.4px;}
+.drawer-name{font-size:21px; font-weight:600; margin:6px 0 10px; line-height:1.25; padding-right:34px;}
+.drawer-tags{display:flex; gap:8px; flex-wrap:wrap;}
+.drawer-body{padding:20px 22px; overflow-y:auto; flex:1;}
+.dsection{margin-bottom:22px;}
+.dsection-title{font-size:11.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:6px;}
+.drow{display:flex; gap:10px; font-size:13.5px; margin-bottom:9px; align-items:flex-start;}
+.drow .ic{flex:0 0 16px; color:var(--navy); font-size:14px; margin-top:1px;}
+.chips-line{display:flex; gap:6px; flex-wrap:wrap;}
+.chip-static{font-size:11.5px; background:var(--navy-lt); color:var(--navy-dk); padding:4px 10px; border-radius:20px; font-weight:600;}
+.contact-card{
+  background:#fff; border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px;
+}
+.contact-name{font-weight:700; font-size:14px; color:var(--navy-dk);}
+.contact-desig{font-size:12px; color:var(--muted); margin-bottom:8px;}
+.contact-line{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; padding:4px 0;}
+.contact-line a{color:var(--navy); text-decoration:none; font-weight:600;}
+.contact-line a:hover{text-decoration:underline;}
+.copy-btn{
+  border:1px solid var(--border); background:#fff; border-radius:5px; font-size:10.5px; padding:3px 8px;
+  cursor:pointer; color:var(--muted); font-weight:700;
+}
+.copy-btn:hover{background:var(--navy-lt); color:var(--navy);}
+.no-contact-block{
+  border:1px dashed var(--confirm); background:var(--confirm-bg); border-radius:8px; padding:14px;
+  font-size:13px; color:#7a5900; line-height:1.5;
+}
+.toast{
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(10px); z-index:200;
+  background:var(--navy-dk); color:#fff; padding:9px 18px; border-radius:20px; font-size:12.5px;
+  opacity:0; pointer-events:none; transition:opacity .18s, transform .18s;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+@media (max-width:640px){
+  .topbar{padding:18px 16px 20px;}
+  .toolbar,.main{padding-left:16px; padding-right:16px;}
+  .brand{font-size:22px;}
+  .header-count .num{font-size:28px;}
+  table{min-width:700px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand-block">
+    <div class="brand-eyebrow">National Malaria Control Programme &middot; Sierra Leone</div>
+    <div class="brand">Malaria Partners Directory</div>
+    <div class="brand-sub">Find any partner, contact or district of operation in seconds</div>
+  </div>
+  <div class="header-right">
+    <div class="header-count">
+      <div class="num" id="totalCount">0</div>
+      <div class="lbl">partners mapped</div>
+      <div class="sync-line"><span class="sync-dot" id="syncDot"></span><span id="syncText">Loading…</span> &middot; <button class="refresh-link" id="refreshBtn">Refresh</button></div>
+    </div>
+    <button class="sheet-btn" id="openSheetBtn">&#128196; Open Google Sheet</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="search-row">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search by organisation, contact, phone, email, district...">
+    </div>
+    <select id="typeSelect"><option value="">All organisation types</option></select>
+    <select id="districtSelect"><option value="">All districts</option></select>
+    <select id="sortSelect">
+      <option value="name">Sort: Name (A–Z)</option>
+      <option value="status">Sort: Status</option>
+      <option value="type">Sort: Org type</option>
+      <option value="no">Sort: List No.</option>
+    </select>
+    <div class="view-toggle">
+      <button id="viewCardsBtn" class="active">Cards</button>
+      <button id="viewTableBtn">Table</button>
+      <button id="viewMapBtn">Map</button>
+    </div>
+  </div>
+  <div class="chip-row" id="statusChips"></div>
+</div>
+
+<div class="main">
+  <div class="result-line" id="resultLine"></div>
+  <div id="cardsView" class="grid"></div>
+  <div id="tableView" class="table-wrap" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="no">No.</th>
+          <th data-sort="name">Organisation</th>
+          <th data-sort="type">Type</th>
+          <th data-sort="status">Status</th>
+          <th data-sort="nextStep">Next step</th>
+          <th>Primary contact</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>District(s)</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <div id="mapView" style="display:none;">
+    <div class="map-note">Actual district boundaries from the NMCP/GIS shapefile. Darker fill means more partners work in that district — click any district to see who.</div>
+    <div class="map-section">
+      <div class="map-svg-wrap">
+        <div id="mapSvgWrap"></div>
+        <div class="map-legend">
+          <span>Fewer partners</span>
+          <span class="swatch" style="background:#eef3f8"></span>
+          <span class="swatch" style="background:#9ec1d9"></span>
+          <span class="swatch" style="background:#4a83a8"></span>
+          <span class="swatch" style="background:#1f4a6a"></span>
+          <span>More partners</span>
+        </div>
+      </div>
+      <div class="national-box">
+        <div class="national-head">National <span>&middot; operates in all districts</span></div>
+        <div class="national-list" id="nationalList"></div>
+      </div>
+    </div>
+  </div>
+  <div class="map-tooltip" id="mapTooltip"></div>
+  <div class="no-results" id="noResults" style="display:none;">
+    <div class="big">No matches</div>
+    <div>Try a different name, contact, district or filter.</div>
+  </div>
+</div>
+
+<div class="overlay" id="pwOverlay"></div>
+<div class="pw-modal" id="pwModal">
+  <div class="pw-head">Enter password to open the Google Sheet</div>
+  <input type="password" id="pwInput" placeholder="Password">
+  <div class="pw-error" id="pwError" style="display:none;">Incorrect password.</div>
+  <div class="pw-actions">
+    <button class="pw-cancel" id="pwCancel">Cancel</button>
+    <button class="pw-submit" id="pwSubmit">Open sheet</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <button class="drawer-close" id="drawerClose">&times;</button>
+    <div class="drawer-no" id="drawerNo"></div>
+    <div class="drawer-name" id="drawerName"></div>
+    <div class="drawer-tags" id="drawerTags"></div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  // Paste the Web App URL you get after deploying the Code.gs script (see setup notes) here:
+  SHEET_API_URL: "",
+  SHEET_EDIT_URL: "https://docs.google.com/spreadsheets/d/1udt13dC5PJk4IIEgZ5-ZOT7C9ngggltl/edit?gid=442609854#gid=442609854",
+  ADMIN_PASSWORD: "admin123"
+};
+const DISTRICT_GEO = {"viewBox": [0, 0, 560, 574], "paths": {"Kailahun": "M536.6,280.4 L544.7,283.8 L544.2,287.6 L546.0,291.1 L544.2,293.8 L545.5,295.4 L544.7,299.8 L542.0,305.3 L542.8,310.6 L540.7,317.4 L537.4,319.6 L541.4,330.1 L540.4,335.0 L537.6,335.3 L531.6,343.4 L527.2,340.5 L523.8,343.7 L514.8,341.9 L505.9,344.2 L501.1,347.7 L492.7,361.4 L487.4,362.8 L487.1,409.8 L478.2,411.6 L477.6,413.7 L471.6,416.1 L466.1,425.5 L461.8,428.9 L462.5,429.9 L458.9,432.6 L457.5,431.4 L457.6,434.2 L454.5,438.2 L451.2,438.3 L445.7,433.1 L433.5,431.8 L430.2,422.5 L434.2,412.4 L431.2,411.2 L430.7,412.8 L427.9,412.1 L424.5,405.3 L421.4,405.6 L419.1,402.2 L414.3,392.2 L411.1,392.8 L410.7,391.2 L415.2,382.7 L416.2,376.6 L420.4,371.5 L426.2,357.9 L424.6,355.2 L427.8,354.0 L437.7,341.2 L437.8,334.3 L440.3,332.1 L443.6,321.6 L441.2,318.1 L434.6,318.5 L441.3,310.3 L440.4,304.5 L443.6,300.5 L445.5,300.6 L444.8,298.5 L446.5,297.2 L463.4,296.7 L466.5,291.6 L471.0,291.7 L479.4,287.4 L481.3,291.6 L479.3,294.9 L481.2,300.3 L474.4,304.2 L470.4,320.2 L473.4,319.1 L473.8,314.2 L477.9,307.8 L484.2,310.3 L490.4,310.1 L493.4,315.3 L498.6,315.5 L523.5,290.8 L526.3,282.7 L530.7,284.4 L536.6,280.4 Z", "Kenema": "M337.8,272.8 L350.2,273.0 L351.6,275.9 L357.2,273.8 L359.0,281.8 L365.5,276.9 L368.2,276.3 L370.2,278.8 L372.9,279.0 L375.2,287.5 L377.7,290.5 L374.3,293.6 L374.4,299.0 L377.4,305.8 L376.1,305.5 L375.8,307.2 L378.5,310.7 L384.4,305.5 L392.1,307.1 L394.3,309.7 L400.6,308.6 L403.1,309.9 L405.5,308.4 L407.5,310.8 L409.3,310.6 L427.3,301.3 L436.8,303.5 L443.6,300.5 L440.2,305.0 L441.3,310.3 L434.6,318.5 L441.2,318.1 L443.6,321.6 L440.3,332.1 L437.8,334.3 L437.7,341.2 L427.8,354.0 L424.6,355.2 L426.2,357.9 L420.4,371.5 L416.2,376.6 L415.2,382.7 L410.7,392.0 L414.3,392.2 L419.1,402.2 L421.4,405.6 L424.5,405.3 L427.9,412.1 L430.7,412.8 L431.2,411.2 L434.2,412.4 L430.2,422.5 L433.5,431.8 L446.2,433.3 L451.2,438.3 L455.0,437.9 L455.1,440.7 L453.0,442.4 L450.1,441.7 L448.5,447.5 L431.9,459.0 L429.6,456.3 L416.5,468.8 L414.6,467.8 L415.8,468.6 L412.3,469.8 L412.4,471.5 L407.8,475.6 L400.4,478.0 L393.1,486.7 L374.3,480.5 L357.0,469.0 L354.0,453.9 L354.9,449.9 L356.6,450.5 L357.0,449.1 L355.0,447.8 L363.8,441.5 L356.4,441.3 L354.4,438.7 L353.3,431.2 L348.4,435.9 L339.5,450.7 L329.2,450.8 L332.6,437.2 L328.2,432.8 L328.0,429.5 L332.2,425.6 L333.6,420.8 L337.1,421.9 L338.5,424.4 L343.7,422.8 L345.8,418.4 L345.5,414.4 L347.5,413.6 L347.9,411.0 L343.7,401.4 L339.2,403.8 L336.1,408.7 L331.9,408.0 L333.8,405.5 L333.3,399.7 L335.8,394.5 L339.9,392.3 L339.9,387.2 L343.8,384.6 L350.9,386.3 L349.9,381.3 L353.6,380.1 L356.3,377.0 L350.3,367.1 L352.1,365.4 L359.4,365.7 L359.6,353.3 L357.7,347.2 L347.6,345.7 L347.5,341.1 L351.3,335.6 L347.9,331.8 L348.1,329.6 L341.5,328.2 L337.4,322.5 L334.5,311.9 L330.5,308.0 L325.6,307.1 L322.5,304.4 L321.2,293.7 L314.8,287.1 L314.5,283.4 L316.2,282.9 L314.9,278.1 L316.6,276.6 L321.6,276.9 L324.9,274.6 L332.0,275.3 L337.8,272.8 Z", "Kono": "M404.9,179.7 L417.4,182.1 L433.4,191.5 L430.1,195.4 L433.5,200.4 L436.3,197.4 L440.2,202.0 L444.0,200.8 L446.9,203.9 L452.1,204.6 L456.5,202.8 L461.0,204.8 L475.4,204.5 L474.7,199.9 L471.6,198.9 L474.6,190.1 L481.0,188.5 L484.4,185.4 L492.9,184.7 L489.8,194.8 L492.5,212.0 L495.5,220.4 L495.2,227.6 L498.7,227.7 L502.4,231.3 L503.7,238.7 L506.6,238.7 L504.8,239.6 L506.5,241.8 L505.9,243.8 L510.1,246.8 L509.8,249.0 L510.7,248.3 L512.0,250.9 L509.9,253.7 L510.8,255.0 L507.0,259.2 L492.6,264.2 L492.8,268.6 L490.9,269.0 L489.0,273.0 L485.7,274.0 L483.5,280.5 L484.7,282.9 L482.6,283.1 L480.8,289.7 L479.4,287.4 L471.0,291.7 L466.5,291.6 L463.4,296.7 L446.5,297.2 L444.8,298.5 L445.5,300.6 L440.9,300.8 L436.8,303.5 L427.3,301.3 L409.3,310.6 L407.5,310.8 L405.5,308.4 L403.1,309.9 L400.6,308.6 L394.3,309.7 L392.1,307.1 L384.4,305.5 L378.5,310.7 L375.8,307.2 L376.1,305.5 L377.4,305.8 L374.4,299.0 L374.3,293.6 L377.7,290.5 L375.2,287.5 L372.9,279.0 L370.2,278.8 L368.2,276.3 L365.5,276.9 L359.0,281.8 L358.7,276.8 L355.5,272.2 L359.2,268.2 L356.4,258.1 L356.8,253.2 L359.7,252.3 L357.2,246.7 L358.7,232.7 L364.7,228.1 L366.3,218.7 L371.0,217.3 L374.8,209.7 L373.2,209.1 L376.8,205.3 L385.9,203.9 L389.8,206.5 L392.9,203.1 L392.6,200.2 L396.5,196.7 L394.3,191.2 L396.8,185.9 L404.9,179.7 Z", "Bombali": "M263.2,97.5 L262.4,101.9 L263.7,100.6 L266.3,102.8 L263.2,105.7 L265.2,110.3 L266.8,111.1 L265.3,107.8 L266.7,108.1 L274.5,114.2 L270.6,115.6 L275.9,122.4 L273.7,129.0 L276.7,131.4 L272.9,134.6 L273.5,138.4 L267.2,139.3 L271.6,145.7 L266.6,146.5 L268.2,146.5 L272.5,152.2 L278.7,151.9 L278.6,155.6 L274.3,160.0 L274.9,162.8 L272.1,165.1 L270.7,171.4 L272.2,173.7 L274.6,174.1 L275.8,178.2 L284.7,182.9 L278.0,190.6 L274.3,187.8 L271.4,193.1 L267.0,193.8 L265.7,197.6 L262.8,197.9 L265.5,201.3 L266.3,214.3 L263.3,217.7 L264.2,230.5 L260.1,236.7 L244.7,244.7 L241.6,249.5 L238.2,248.0 L236.5,249.8 L235.4,247.4 L232.4,248.5 L232.5,245.4 L230.6,245.4 L230.4,249.4 L225.0,250.6 L221.5,253.4 L220.6,256.3 L214.0,257.9 L212.7,260.5 L210.5,259.6 L211.5,261.2 L209.6,264.1 L208.3,264.5 L207.9,262.6 L201.1,263.6 L200.4,261.8 L202.4,259.4 L200.4,255.8 L197.3,254.6 L200.4,246.4 L198.7,244.8 L201.7,245.1 L198.7,238.9 L197.2,238.2 L196.7,242.9 L194.3,244.1 L196.1,237.1 L192.7,238.1 L189.7,235.2 L188.1,240.2 L185.1,240.3 L178.7,234.6 L177.9,231.1 L180.3,228.5 L183.9,229.5 L185.8,228.1 L187.5,223.9 L181.1,210.2 L187.5,209.1 L188.2,211.9 L190.7,211.5 L193.8,209.4 L193.0,206.5 L194.4,202.8 L197.1,201.1 L184.3,198.5 L182.8,191.7 L179.3,188.0 L180.2,185.7 L175.7,183.0 L174.9,180.6 L178.1,180.7 L181.6,175.8 L184.2,175.2 L187.5,178.1 L196.3,175.8 L202.0,171.9 L201.8,169.2 L205.2,167.1 L205.4,164.0 L211.1,159.5 L212.3,154.5 L216.9,150.6 L203.2,149.7 L198.6,146.2 L197.5,145.1 L202.0,142.1 L200.3,141.1 L202.3,137.3 L197.7,134.7 L197.3,132.6 L202.3,131.2 L206.0,127.5 L206.3,130.9 L209.9,134.1 L221.0,136.5 L226.6,130.6 L225.4,129.2 L226.3,125.5 L233.4,127.6 L238.6,126.7 L240.5,127.9 L241.1,126.5 L244.0,127.6 L243.7,122.6 L246.6,120.1 L246.3,114.4 L249.9,100.6 L251.8,98.4 L263.2,97.5 Z", "Falaba": "M286.4,16.0 L379.6,15.9 L385.8,21.6 L387.9,21.5 L390.1,25.0 L391.1,38.7 L393.9,41.2 L402.8,44.1 L417.1,60.4 L413.6,67.2 L420.6,68.0 L431.7,81.5 L434.0,87.0 L439.1,90.0 L439.0,94.2 L445.3,101.4 L442.9,105.3 L445.3,108.8 L445.5,113.2 L455.4,121.0 L466.4,125.9 L465.3,131.9 L469.9,133.4 L470.8,132.4 L479.2,138.1 L478.5,141.0 L482.0,143.9 L478.1,153.8 L478.5,157.6 L471.1,164.7 L469.0,169.1 L467.4,169.0 L469.3,171.4 L466.6,172.9 L465.5,179.7 L470.6,180.0 L474.1,177.7 L480.5,178.2 L492.0,183.9 L484.4,185.4 L481.0,188.5 L474.6,190.1 L471.6,198.9 L474.7,199.9 L475.4,204.5 L461.0,204.8 L456.5,202.8 L453.3,204.6 L448.7,204.2 L444.0,200.8 L440.2,202.0 L436.1,197.4 L433.5,200.4 L430.1,195.4 L433.4,191.5 L417.4,182.1 L416.1,182.8 L408.6,179.3 L402.3,181.2 L396.8,185.9 L393.9,191.3 L392.2,189.5 L391.4,183.7 L396.7,183.9 L401.9,178.4 L386.9,161.2 L381.6,170.2 L378.8,166.4 L374.2,165.6 L374.6,154.6 L360.6,157.2 L358.7,159.2 L350.8,159.2 L350.7,161.4 L345.1,161.3 L350.5,147.5 L339.6,137.9 L340.2,132.4 L337.1,126.7 L324.1,127.1 L323.0,125.2 L325.1,120.6 L323.5,120.3 L323.7,116.3 L320.5,109.9 L324.0,104.3 L324.4,100.5 L331.4,100.8 L337.8,96.4 L351.2,108.6 L359.5,105.8 L360.9,98.3 L353.5,92.4 L358.2,86.1 L357.2,82.3 L355.6,79.8 L352.4,79.6 L352.9,78.1 L342.3,77.6 L339.9,80.2 L329.0,79.6 L328.3,75.0 L326.2,74.9 L313.7,78.6 L312.3,78.2 L311.6,74.1 L306.6,74.4 L307.8,67.1 L297.8,59.9 L299.7,54.8 L297.9,50.0 L295.4,46.9 L292.9,47.3 L291.2,49.8 L286.2,44.7 L284.9,35.1 L286.1,29.3 L284.3,22.5 L286.4,16.0 Z", "Koinadugu": "M281.3,14.0 L286.0,14.7 L286.4,16.0 L284.3,22.5 L286.1,29.3 L284.9,35.1 L286.2,44.7 L291.2,49.8 L292.9,47.3 L295.4,46.9 L297.9,50.0 L299.7,54.8 L297.8,59.9 L307.8,67.1 L306.6,74.4 L311.6,74.1 L312.3,78.2 L313.7,78.6 L326.2,74.9 L328.3,75.0 L329.0,79.6 L339.9,80.2 L342.3,77.6 L352.9,78.1 L352.4,79.6 L355.6,79.8 L357.2,82.3 L358.2,86.1 L353.5,92.4 L360.9,98.3 L359.5,105.8 L351.2,108.6 L337.8,96.4 L331.4,100.8 L324.4,100.5 L324.0,104.3 L320.5,109.9 L323.7,116.3 L323.5,120.3 L325.1,120.6 L323.0,125.2 L324.1,127.1 L337.1,126.7 L340.2,132.4 L339.6,137.9 L350.5,147.5 L345.1,161.3 L350.7,161.4 L350.8,159.2 L358.7,159.2 L360.6,157.2 L374.6,154.6 L374.2,165.6 L378.8,166.4 L381.6,170.2 L386.9,161.2 L401.9,178.4 L396.7,183.9 L390.9,184.7 L392.2,189.5 L396.4,194.5 L396.0,198.0 L392.6,200.2 L392.6,203.5 L389.6,206.6 L385.9,203.9 L376.8,205.3 L373.2,209.1 L374.8,209.7 L371.0,217.3 L366.3,218.7 L364.7,228.1 L358.7,232.7 L357.1,243.4 L359.7,252.3 L358.5,252.8 L354.9,252.5 L352.2,247.8 L350.8,239.5 L340.7,217.4 L336.6,220.6 L333.4,219.5 L331.5,220.9 L321.2,219.6 L320.2,217.6 L321.6,217.6 L323.5,211.6 L327.0,207.4 L329.1,206.7 L329.2,208.9 L331.7,209.9 L333.0,205.4 L334.9,206.7 L338.0,195.6 L340.5,195.3 L341.8,190.4 L339.4,186.6 L340.9,170.7 L338.0,161.6 L332.7,160.1 L323.2,166.0 L319.8,164.7 L315.5,172.3 L305.1,183.3 L303.9,178.9 L301.0,176.2 L292.6,172.8 L294.6,158.6 L292.5,141.3 L288.1,145.5 L286.6,149.5 L278.7,149.6 L277.9,152.2 L272.5,152.2 L268.2,146.5 L266.6,146.5 L271.6,145.7 L267.2,139.3 L273.5,138.4 L272.9,134.6 L276.7,131.4 L273.7,129.0 L275.9,122.4 L270.6,115.6 L274.5,114.2 L266.7,108.1 L265.3,107.8 L266.8,111.1 L265.2,110.3 L263.2,105.7 L266.3,102.8 L263.7,100.6 L262.4,101.9 L263.2,97.5 L251.8,98.4 L248.4,105.3 L237.9,95.7 L232.9,96.0 L232.4,92.3 L230.7,90.5 L228.8,91.6 L219.3,88.4 L222.9,86.1 L224.1,81.9 L227.5,78.8 L235.4,75.2 L237.5,75.9 L238.3,73.8 L241.9,74.6 L241.9,72.5 L258.1,68.2 L263.6,68.6 L265.2,66.4 L262.1,45.1 L263.2,36.5 L259.5,34.2 L261.9,30.7 L258.9,25.6 L260.9,16.3 L276.7,16.0 L281.3,14.0 Z", "Tonkolili": "M292.5,141.3 L294.6,158.6 L292.6,172.8 L301.0,176.2 L303.9,178.9 L305.1,183.3 L315.5,172.3 L319.8,164.7 L323.2,166.0 L332.7,160.1 L336.9,160.6 L339.7,163.9 L340.8,177.9 L339.4,186.6 L341.8,190.4 L340.5,195.3 L338.0,195.6 L334.9,206.7 L333.0,205.4 L331.7,209.9 L329.2,208.9 L329.1,206.7 L327.0,207.4 L323.5,211.6 L321.6,217.6 L320.2,217.6 L321.2,219.6 L331.5,220.9 L333.4,219.5 L336.6,220.6 L340.7,217.4 L350.8,239.5 L352.2,247.8 L356.8,253.2 L356.5,259.4 L359.2,268.2 L355.8,271.7 L356.3,273.4 L351.6,275.9 L350.2,273.0 L344.6,272.1 L332.0,275.3 L324.9,274.6 L320.2,277.3 L316.6,276.6 L314.9,278.1 L316.1,283.3 L308.8,285.8 L298.7,286.5 L290.4,284.4 L290.9,289.9 L288.4,295.2 L283.9,300.4 L277.1,301.1 L273.3,306.9 L269.6,306.3 L266.5,308.1 L258.0,306.1 L255.1,308.2 L244.2,303.8 L243.7,300.7 L238.1,306.6 L237.0,304.6 L235.5,305.4 L231.2,313.5 L233.6,318.0 L236.8,317.3 L237.4,328.1 L236.2,325.8 L233.0,325.9 L228.6,321.0 L219.9,316.0 L219.6,313.3 L214.0,309.9 L212.9,306.0 L202.7,309.0 L199.8,307.3 L195.7,308.2 L191.5,313.4 L185.9,311.3 L182.7,307.7 L178.1,307.5 L173.4,313.9 L167.3,314.2 L161.8,318.4 L158.7,318.0 L157.2,319.5 L149.0,318.6 L139.3,315.2 L137.1,309.6 L130.1,307.2 L128.6,303.6 L126.2,303.4 L127.1,300.9 L134.7,294.8 L137.7,282.0 L141.0,284.6 L144.0,291.2 L147.4,293.5 L149.3,289.7 L164.9,283.3 L174.3,282.0 L184.2,273.8 L186.5,274.2 L190.5,271.3 L192.2,268.2 L186.0,262.6 L185.5,257.9 L182.2,258.4 L174.7,255.3 L172.8,251.6 L175.0,251.3 L176.8,244.7 L179.3,247.3 L184.1,244.6 L184.5,242.6 L187.5,244.4 L186.2,241.8 L189.7,235.2 L192.7,238.1 L195.1,236.7 L196.4,237.7 L194.3,244.1 L196.7,242.9 L197.7,237.7 L201.7,244.6 L198.7,244.8 L200.4,246.4 L197.4,252.4 L197.3,254.6 L200.4,255.8 L202.4,259.4 L200.4,261.8 L201.0,263.5 L208.1,262.6 L208.7,264.6 L211.4,261.3 L210.5,259.6 L212.7,260.5 L214.0,257.9 L220.6,256.3 L221.5,253.4 L225.0,250.6 L230.4,249.4 L230.6,245.4 L232.5,245.4 L232.4,248.5 L235.4,247.4 L236.5,249.8 L238.2,248.0 L241.6,249.5 L244.7,244.7 L260.1,236.7 L264.2,230.5 L263.3,217.7 L266.3,214.3 L265.5,201.3 L262.8,197.9 L265.7,197.6 L267.0,193.8 L271.4,193.1 L274.3,187.8 L278.0,190.6 L284.7,182.9 L275.8,178.2 L274.6,174.1 L272.2,173.7 L270.7,171.4 L271.4,166.6 L274.9,162.8 L274.3,160.0 L275.9,157.5 L278.6,155.6 L278.7,149.6 L286.6,149.5 L288.1,145.5 L292.5,141.3 Z", "Kambia": "M40.3,210.0 L39.4,209.9 L40.4,209.7 L40.3,210.0 Z M33.4,209.3 L32.3,209.2 L32.1,208.5 L33.4,209.3 Z M28.1,206.6 L33.1,211.2 L28.2,212.9 L26.3,209.2 L28.1,206.6 Z M42.7,210.9 L43.9,206.8 L47.3,205.9 L43.7,210.4 L42.7,210.9 Z M135.1,85.7 L146.8,89.9 L149.7,93.3 L150.0,91.1 L151.6,91.1 L159.7,100.7 L168.9,105.7 L173.0,114.9 L172.2,119.3 L176.3,119.9 L178.0,122.1 L177.0,125.8 L178.5,130.2 L177.2,130.9 L174.8,128.8 L170.8,134.6 L171.6,137.4 L174.9,139.8 L174.7,141.8 L171.4,141.5 L168.6,137.0 L166.3,148.1 L163.2,145.5 L157.5,144.2 L157.0,148.6 L155.1,149.6 L151.9,144.4 L149.6,152.8 L146.5,152.6 L147.6,149.5 L145.4,148.6 L144.2,149.0 L144.5,153.3 L138.4,154.7 L137.5,152.0 L135.7,151.7 L132.7,156.5 L130.1,155.9 L127.3,159.8 L129.0,163.1 L126.0,169.8 L127.1,173.2 L121.6,173.9 L115.5,181.9 L114.9,188.2 L110.2,191.6 L112.6,196.0 L106.3,192.9 L100.9,187.2 L96.1,190.3 L94.1,189.9 L91.3,198.7 L91.9,201.3 L86.1,202.7 L79.9,208.1 L82.9,211.9 L83.1,219.8 L81.5,220.5 L74.3,221.8 L65.4,218.5 L58.0,220.3 L44.1,219.6 L41.3,218.1 L43.6,216.2 L39.8,213.0 L44.0,211.0 L48.4,205.1 L43.1,206.2 L40.2,209.1 L36.4,209.0 L33.2,207.9 L26.8,199.9 L24.8,202.2 L23.0,197.3 L22.7,201.5 L17.6,200.4 L16.2,195.8 L17.3,192.8 L14.0,184.4 L16.5,182.2 L32.8,175.6 L36.6,175.5 L42.8,183.6 L50.5,183.9 L53.1,179.2 L58.7,177.8 L68.0,171.0 L72.1,163.2 L75.5,160.3 L74.5,151.4 L76.7,147.3 L75.9,143.4 L80.0,142.2 L83.9,146.8 L87.9,144.5 L88.9,140.9 L91.4,142.0 L92.6,140.9 L94.5,143.1 L105.2,139.4 L107.5,131.6 L112.2,131.4 L110.6,123.2 L112.5,122.0 L119.1,123.9 L119.6,120.0 L121.3,118.9 L123.2,120.5 L124.3,111.4 L130.1,101.8 L128.4,97.3 L132.9,95.6 L132.0,92.7 L135.1,85.7 Z", "Karene": "M258.9,25.6 L261.9,30.7 L259.5,34.2 L263.2,36.5 L262.1,45.1 L265.2,66.4 L263.6,68.6 L258.1,68.2 L246.9,70.8 L241.9,72.5 L241.9,74.6 L238.3,73.8 L237.5,75.9 L235.4,75.2 L227.5,78.8 L224.1,81.9 L222.9,86.1 L219.3,88.4 L228.8,91.6 L230.7,90.5 L232.9,96.0 L237.9,95.7 L248.4,105.3 L245.8,118.1 L246.6,120.1 L243.7,122.6 L244.6,126.8 L235.0,127.7 L226.3,125.5 L225.4,129.2 L226.6,130.6 L221.0,136.5 L209.9,134.1 L206.3,130.9 L206.0,127.5 L202.3,131.2 L197.3,132.6 L197.7,134.7 L202.3,137.3 L200.3,141.1 L202.0,142.1 L197.5,145.1 L198.6,146.2 L203.2,149.7 L216.9,150.6 L212.3,154.5 L211.1,159.5 L205.4,164.0 L205.2,167.1 L201.8,169.2 L202.0,171.9 L196.3,175.8 L187.5,178.1 L184.2,175.2 L181.6,175.8 L178.1,180.7 L174.9,180.6 L175.7,183.0 L180.2,185.7 L179.3,188.0 L182.8,191.7 L184.3,198.5 L197.1,201.1 L194.4,202.8 L193.0,206.5 L193.8,209.4 L190.7,211.5 L188.2,211.9 L187.5,209.1 L181.1,210.2 L187.0,222.0 L187.1,225.6 L183.9,229.5 L180.3,228.5 L178.2,229.9 L179.1,235.0 L176.4,237.5 L170.4,236.0 L162.0,240.9 L155.6,239.4 L152.1,244.2 L144.9,245.4 L144.7,240.7 L146.8,238.3 L145.1,236.0 L142.1,235.4 L144.6,233.9 L144.1,227.3 L147.5,224.1 L148.0,217.2 L146.7,213.8 L140.7,212.4 L134.4,215.3 L129.1,211.7 L126.0,213.2 L122.8,219.1 L119.1,216.0 L119.8,212.7 L118.3,209.9 L121.8,204.7 L124.8,204.2 L131.8,197.7 L135.3,191.5 L131.6,189.7 L127.5,192.6 L125.2,190.2 L121.7,193.2 L119.4,187.6 L115.4,191.6 L114.1,190.5 L115.5,189.3 L113.8,189.0 L115.3,187.0 L114.6,183.5 L119.2,176.5 L121.6,173.9 L127.1,173.2 L126.0,169.8 L129.0,163.1 L127.3,159.8 L130.1,155.9 L132.7,156.5 L135.7,151.7 L137.5,152.0 L138.4,154.7 L144.5,153.3 L144.2,149.0 L145.4,148.6 L147.6,149.5 L146.5,152.6 L149.6,152.8 L151.9,144.4 L155.1,149.6 L157.0,148.6 L157.5,144.2 L163.2,145.5 L166.3,148.1 L167.7,137.5 L168.9,137.2 L171.4,141.5 L174.5,142.0 L174.9,139.8 L171.3,137.0 L170.9,134.1 L174.8,128.8 L177.2,130.9 L178.7,129.6 L177.0,125.8 L177.9,121.6 L172.2,119.3 L173.0,114.9 L168.9,105.7 L159.7,100.7 L151.6,91.1 L150.0,91.1 L149.4,93.2 L146.8,89.9 L141.5,88.9 L140.2,86.7 L141.2,80.4 L140.1,76.0 L141.1,75.0 L142.8,76.6 L144.5,68.1 L150.1,64.5 L150.3,66.7 L152.4,67.3 L150.6,62.3 L151.3,60.9 L154.7,60.7 L152.4,59.3 L155.8,49.1 L157.4,49.1 L157.6,45.9 L156.0,43.8 L162.2,41.3 L169.5,34.2 L179.2,34.4 L183.5,37.3 L193.7,31.3 L204.6,28.0 L205.2,31.8 L207.4,33.4 L221.1,39.0 L229.9,33.3 L257.6,20.8 L260.9,16.1 L258.9,25.6 Z", "Port Loko": "M46.8,274.5 L45.9,273.3 L47.7,272.5 L47.5,273.1 L46.8,274.5 Z M78.8,271.4 L81.3,273.0 L79.7,274.8 L77.4,275.9 L75.0,274.3 L74.9,271.8 L78.8,271.4 Z M49.1,269.3 L48.2,270.7 L47.9,269.7 L49.1,269.3 Z M71.1,266.6 L74.5,269.3 L66.2,268.8 L71.1,266.6 Z M48.7,263.9 L49.0,264.2 L48.6,264.5 L48.7,263.9 Z M100.9,187.2 L112.6,196.0 L110.2,191.6 L112.9,189.4 L112.9,189.4 L113.9,189.0 L115.5,189.3 L114.1,190.7 L115.6,191.6 L118.9,187.5 L121.7,193.2 L125.2,190.2 L127.5,192.6 L131.6,189.7 L134.8,191.0 L134.4,194.7 L131.8,197.7 L124.8,204.2 L121.8,204.7 L118.3,209.9 L119.8,212.7 L119.3,216.6 L122.8,219.1 L126.0,213.2 L129.1,211.7 L134.4,215.3 L140.7,212.4 L146.7,213.8 L148.0,217.2 L147.5,224.1 L144.1,227.3 L144.6,233.9 L142.1,235.4 L145.1,236.0 L146.8,238.3 L144.7,240.7 L144.9,245.4 L152.1,244.2 L155.6,239.4 L162.4,240.9 L170.2,236.1 L176.4,237.5 L179.1,235.0 L186.9,240.7 L186.4,242.2 L188.0,243.2 L186.8,244.7 L184.5,242.6 L184.1,244.6 L179.3,247.3 L176.8,244.7 L175.0,251.3 L172.8,251.6 L173.6,253.9 L182.2,258.4 L185.5,257.9 L186.0,262.6 L192.2,268.3 L190.2,271.6 L186.5,274.2 L184.2,273.8 L177.5,280.4 L170.8,283.1 L164.9,283.3 L149.3,289.7 L147.4,293.5 L144.0,291.2 L141.0,284.6 L137.7,282.0 L134.7,294.8 L127.1,300.9 L127.2,303.0 L124.8,305.4 L124.1,304.2 L120.5,305.5 L117.1,304.6 L117.1,307.3 L112.8,308.1 L104.6,300.6 L101.2,301.2 L100.1,299.6 L97.7,299.6 L98.3,303.8 L95.8,304.0 L96.3,306.4 L93.3,307.6 L94.4,310.8 L91.7,311.0 L90.8,313.2 L92.0,315.2 L90.0,316.4 L88.3,314.8 L86.6,318.8 L88.3,320.4 L79.6,324.2 L83.3,317.3 L81.0,311.8 L82.2,305.4 L67.0,305.1 L64.1,302.1 L61.2,304.4 L56.2,302.3 L53.8,297.2 L56.3,296.9 L54.7,294.2 L52.5,295.9 L44.7,292.6 L44.2,290.5 L48.7,287.3 L49.2,284.0 L53.2,283.8 L56.9,281.3 L59.1,276.5 L63.8,278.7 L60.5,275.3 L63.9,270.0 L67.3,272.0 L72.1,270.0 L74.2,276.1 L78.2,277.5 L77.5,276.4 L83.1,273.2 L82.5,272.0 L75.2,267.1 L77.1,264.9 L68.8,263.4 L64.7,264.5 L63.9,263.2 L56.6,268.5 L55.5,266.7 L52.1,266.5 L51.2,262.9 L49.4,262.5 L45.3,269.2 L43.3,277.1 L41.8,278.4 L38.5,276.6 L24.9,251.8 L26.1,240.9 L24.3,225.9 L31.5,217.0 L40.2,220.6 L42.0,218.6 L58.0,220.3 L65.4,218.5 L74.3,221.8 L83.1,219.8 L82.9,211.9 L79.9,208.1 L86.1,202.7 L91.9,201.3 L91.3,198.7 L94.1,189.9 L96.1,190.3 L100.9,187.2 Z M33.5,264.6 L33.5,265.2 L33.4,264.9 L33.3,264.9 L33.3,264.8 L33.5,264.7 L33.5,264.6 Z", "Bo": "M314.5,283.4 L321.2,293.7 L322.5,304.4 L325.6,307.1 L330.5,308.0 L334.5,311.9 L337.4,322.5 L341.5,328.2 L348.1,329.6 L347.9,331.8 L351.3,335.6 L347.5,341.1 L347.6,345.7 L357.7,347.2 L359.6,353.3 L359.4,365.7 L352.1,365.4 L350.3,367.1 L356.3,377.0 L353.6,380.1 L349.9,381.3 L350.9,386.3 L343.8,384.6 L339.9,387.2 L339.9,392.3 L335.8,394.5 L333.3,399.7 L333.8,405.5 L331.9,408.0 L336.1,408.7 L339.2,403.8 L343.7,401.4 L347.9,409.0 L347.7,413.0 L345.5,414.4 L345.8,418.4 L343.7,422.8 L341.0,424.3 L338.5,424.4 L337.1,421.9 L333.6,420.8 L331.0,426.9 L328.6,428.6 L322.6,427.3 L316.4,435.9 L312.7,436.2 L310.5,434.3 L301.1,435.0 L296.7,441.2 L296.7,443.8 L292.8,447.8 L292.9,450.0 L288.3,443.3 L292.9,434.8 L292.2,429.2 L288.0,429.7 L287.5,434.2 L283.5,440.5 L279.4,443.4 L278.4,441.9 L271.1,445.5 L269.7,447.7 L274.3,453.1 L267.2,451.7 L265.5,453.4 L268.0,457.3 L267.2,460.8 L263.1,462.0 L260.6,460.2 L264.2,456.8 L259.8,453.4 L257.7,452.3 L248.9,453.1 L245.4,450.4 L245.8,447.0 L250.9,440.8 L243.5,441.7 L241.8,435.5 L243.0,434.0 L247.3,434.2 L247.7,431.2 L246.1,431.8 L245.7,430.0 L242.3,428.7 L239.2,430.7 L234.3,424.7 L229.0,424.8 L224.9,426.8 L222.5,425.4 L224.0,420.3 L219.0,411.6 L219.0,407.8 L220.4,407.0 L218.7,402.6 L219.2,397.8 L217.3,395.6 L220.5,384.4 L218.2,377.8 L221.0,374.1 L233.3,374.7 L241.4,367.6 L258.5,369.8 L260.7,371.3 L263.7,364.8 L262.6,362.0 L257.7,358.6 L260.9,351.3 L264.5,345.7 L268.8,345.1 L271.5,342.5 L275.2,343.0 L277.1,338.7 L277.8,330.4 L277.4,326.8 L275.2,325.2 L276.8,323.0 L275.4,321.3 L276.8,319.4 L281.3,319.6 L281.6,316.7 L279.6,309.3 L274.8,311.1 L273.7,306.5 L276.7,301.5 L283.9,300.4 L288.4,295.2 L290.9,289.9 L290.4,284.4 L298.8,286.5 L308.8,285.8 L314.5,283.4 Z", "Bonthe": "M155.4,470.7 L154.6,470.6 L155.1,470.1 L155.4,470.7 Z M158.5,469.6 L157.3,470.6 L156.7,467.8 L157.4,468.9 L158.5,469.6 Z M160.3,455.4 L159.4,456.3 L159.7,454.4 L160.3,455.4 Z M161.5,450.9 L162.6,452.4 L160.9,454.7 L159.3,451.8 L161.5,450.9 Z M70.7,442.5 L73.6,443.5 L72.5,446.9 L66.9,443.8 L70.7,442.5 Z M66.8,440.4 L66.5,441.9 L65.3,441.9 L65.2,440.8 L66.8,440.4 Z M75.5,435.0 L75.4,435.7 L75.1,435.7 L75.5,435.0 Z M145.4,434.5 L145.1,435.5 L144.6,434.5 L145.4,434.5 Z M69.1,435.0 L67.4,435.0 L67.2,434.5 L68.8,433.4 L69.1,435.0 Z M121.8,433.5 L140.1,434.3 L142.3,437.2 L140.3,438.8 L143.4,437.9 L149.5,439.7 L156.4,446.3 L154.7,450.2 L152.6,448.6 L157.3,457.0 L150.1,464.1 L150.0,477.8 L143.5,477.5 L144.2,471.0 L141.4,467.1 L134.8,463.3 L106.6,453.4 L75.1,445.9 L76.8,444.3 L86.0,446.0 L81.7,441.9 L90.2,437.6 L99.2,436.5 L101.0,437.7 L104.7,435.8 L116.1,436.3 L121.8,433.5 Z M63.9,430.7 L59.3,434.1 L60.5,437.6 L56.0,437.0 L56.6,433.2 L57.4,434.3 L63.9,430.7 Z M57.9,427.7 L55.6,428.2 L58.1,427.4 L57.9,427.7 Z M152.4,420.4 L152.1,423.8 L148.3,424.2 L149.8,421.4 L152.4,420.4 Z M182.5,404.5 L190.8,405.2 L191.1,411.7 L199.3,424.1 L205.6,425.7 L210.4,429.5 L215.0,428.5 L221.1,429.9 L228.2,425.0 L234.3,424.7 L239.2,430.7 L242.3,428.7 L245.7,430.0 L246.1,431.8 L247.7,431.2 L247.3,434.2 L243.0,434.0 L241.8,435.5 L243.5,441.7 L250.9,440.8 L245.8,447.0 L245.4,450.4 L248.9,453.1 L257.7,452.3 L264.2,456.8 L260.6,460.2 L262.8,464.9 L260.8,469.3 L264.0,473.0 L262.5,476.1 L264.4,477.4 L262.6,485.4 L260.1,487.3 L261.5,488.4 L261.6,495.7 L264.2,498.1 L260.7,509.9 L258.0,508.4 L256.5,509.4 L254.4,506.8 L250.0,513.2 L174.3,484.3 L151.5,478.9 L159.4,475.1 L170.6,474.6 L166.1,471.2 L161.5,471.8 L157.2,467.5 L165.5,454.9 L167.7,453.2 L176.5,452.0 L173.9,449.0 L161.8,448.9 L159.4,438.4 L155.6,435.6 L155.6,432.8 L153.6,434.5 L148.9,431.9 L146.4,428.2 L147.5,426.1 L152.2,424.6 L157.5,415.1 L155.8,414.5 L158.1,410.7 L162.0,418.8 L164.9,413.7 L171.5,411.4 L173.7,413.2 L174.7,410.3 L182.5,404.5 Z", "Moyamba": "M69.5,385.7 L70.9,385.8 L69.2,386.0 L69.5,385.7 Z M97.7,299.6 L101.2,301.2 L104.6,300.6 L111.1,307.6 L115.2,308.6 L117.1,307.3 L117.1,304.6 L120.5,305.5 L124.1,304.2 L124.8,305.4 L125.7,303.5 L128.6,303.6 L130.1,307.2 L137.1,309.6 L139.3,315.2 L149.0,318.6 L157.2,319.5 L158.7,318.0 L161.8,318.4 L167.3,314.2 L173.4,313.9 L178.1,307.5 L182.7,307.7 L185.9,311.3 L191.5,313.4 L195.7,308.2 L199.8,307.3 L202.7,309.0 L212.9,306.0 L214.0,309.9 L219.6,313.3 L219.9,316.0 L228.6,321.0 L233.0,325.9 L236.2,325.8 L237.4,328.1 L236.8,317.3 L233.6,318.0 L231.2,313.5 L235.5,305.4 L237.0,304.6 L238.1,306.6 L243.7,300.7 L244.2,303.8 L255.1,308.2 L258.0,306.1 L266.5,308.1 L269.6,306.3 L273.9,306.7 L275.0,311.4 L280.2,309.9 L281.6,316.7 L281.3,319.6 L276.8,319.4 L275.4,321.3 L276.8,323.0 L275.2,325.2 L277.4,326.8 L277.8,331.0 L275.2,343.0 L271.5,342.5 L268.8,345.1 L264.5,345.7 L257.7,358.0 L263.7,364.8 L260.7,371.3 L258.5,369.8 L241.4,367.6 L233.3,374.7 L227.1,373.5 L221.0,374.1 L219.1,376.0 L218.3,379.5 L220.5,384.4 L217.3,395.6 L219.2,397.8 L218.7,402.6 L220.4,407.0 L219.0,407.8 L219.0,411.6 L224.0,420.3 L222.5,425.1 L224.5,427.2 L222.0,429.5 L210.4,429.5 L205.6,425.7 L199.3,424.1 L191.1,411.7 L190.8,405.2 L181.6,404.1 L177.8,409.0 L174.7,410.3 L173.7,413.2 L171.5,411.4 L164.9,413.7 L162.0,418.8 L158.7,414.2 L158.4,410.5 L155.8,414.5 L139.8,425.9 L123.6,422.1 L117.7,422.8 L110.7,414.6 L105.8,412.6 L104.0,405.0 L101.8,407.4 L94.0,403.6 L84.7,393.7 L80.6,392.8 L74.6,385.0 L81.0,383.4 L84.8,379.9 L84.9,380.4 L87.3,379.6 L88.8,380.1 L93.8,380.8 L94.4,380.7 L88.7,377.1 L85.2,367.0 L84.2,362.8 L85.8,353.5 L83.3,353.9 L77.4,342.6 L69.0,332.9 L69.6,328.0 L73.0,322.9 L76.0,325.9 L78.8,323.0 L79.6,324.2 L83.2,323.5 L84.6,320.9 L88.3,320.4 L86.6,318.8 L88.3,314.8 L90.0,316.4 L91.9,315.3 L91.0,312.3 L94.4,310.8 L93.3,307.6 L96.3,306.4 L95.8,304.0 L98.3,303.8 L97.7,299.6 Z", "Pujehun": "M331.9,436.3 L329.2,450.8 L339.0,451.0 L348.4,435.9 L353.3,431.2 L354.4,438.7 L356.4,441.3 L363.8,441.5 L355.0,447.8 L357.0,449.1 L356.6,450.5 L354.9,449.9 L354.0,453.9 L357.0,469.0 L374.3,480.5 L393.1,486.8 L393.2,489.7 L386.5,495.2 L386.2,500.3 L379.4,503.5 L377.3,502.5 L373.9,506.2 L370.2,504.7 L368.0,511.5 L366.6,512.4 L367.5,511.1 L363.8,509.8 L363.6,514.0 L359.4,519.3 L360.6,520.9 L356.4,522.4 L359.7,527.1 L360.0,532.9 L354.2,532.8 L352.8,534.2 L354.6,537.9 L353.6,543.6 L348.9,546.7 L348.5,549.5 L345.2,549.7 L345.5,552.1 L342.7,552.1 L344.9,557.8 L341.5,557.4 L337.9,560.5 L331.1,560.7 L313.9,552.6 L302.2,540.2 L289.6,532.5 L280.0,527.3 L251.8,514.2 L250.5,513.2 L254.4,506.8 L256.5,509.4 L261.4,509.3 L264.2,498.1 L261.6,495.7 L261.5,488.4 L260.1,487.3 L262.6,485.4 L264.4,477.4 L262.5,476.1 L264.0,473.0 L260.8,469.3 L262.8,464.9 L261.5,461.2 L267.2,460.8 L268.0,457.3 L265.5,453.4 L267.2,451.7 L274.3,453.1 L269.7,447.7 L271.7,444.9 L278.4,441.9 L279.4,443.4 L283.5,440.5 L287.5,434.2 L288.0,429.7 L289.9,428.9 L292.2,429.2 L292.9,434.8 L288.3,443.3 L292.9,450.0 L299.9,435.8 L310.5,434.3 L312.7,436.2 L316.4,435.9 L322.6,427.3 L328.6,428.6 L327.7,431.8 L331.9,436.3 Z M253.0,511.8 L253.0,511.8 L253.9,511.3 L253.9,511.3 L253.9,511.3 L253.9,511.3 L254.0,511.2 L254.0,511.2 L254.0,511.0 L254.3,510.8 L254.0,511.0 L253.9,511.3 L253.0,511.8 Z M252.7,513.2 L252.7,513.2 L252.7,513.1 L252.7,513.2 Z M252.6,513.7 L252.6,513.7 L252.7,513.4 L252.6,513.7 Z M252.6,513.9 L252.5,514.2 L252.6,513.9 L252.6,513.9 Z", "Western Area Rural": "M27.4,350.3 L29.2,351.6 L25.4,352.3 L27.4,350.3 Z M34.4,345.3 L31.6,349.8 L29.4,349.9 L33.0,345.3 L34.4,345.3 Z M28.7,284.4 L36.5,294.4 L36.5,296.6 L39.6,299.0 L43.2,299.2 L44.6,295.9 L48.4,296.9 L48.9,298.9 L49.5,296.9 L51.5,296.7 L53.7,302.8 L57.3,305.8 L56.4,303.7 L61.2,304.4 L64.1,302.1 L67.0,305.1 L81.7,304.9 L81.0,311.8 L83.3,317.3 L79.9,323.1 L76.0,325.9 L73.0,322.9 L69.6,328.0 L67.1,328.6 L56.4,327.9 L49.0,334.3 L38.7,339.4 L40.2,331.5 L37.0,324.0 L37.7,320.4 L39.9,319.3 L35.1,319.9 L31.8,310.6 L26.9,308.8 L18.7,295.6 L16.4,295.1 L16.5,292.6 L18.8,291.8 L25.3,292.2 L24.7,289.3 L28.5,288.8 L28.7,284.4 Z", "Western Area Urban": "M15.5,282.4 L19.9,282.6 L18.2,283.8 L18.8,284.2 L18.5,286.3 L19.1,287.1 L20.8,281.9 L23.2,284.2 L24.4,282.6 L32.2,283.1 L32.3,284.7 L35.3,284.7 L45.7,295.9 L42.2,299.5 L37.1,297.3 L36.5,294.4 L28.7,284.4 L28.5,288.8 L24.7,289.3 L25.3,292.2 L18.8,291.8 L18.3,286.4 L15.5,282.4 Z M30.6,284.4 L30.6,284.4 L30.6,284.4 L30.6,284.4 Z M52.3,270.0 L57.2,269.9 L57.8,272.8 L52.9,274.8 L52.3,270.0 Z"}, "labels": {"Kailahun": [459.6, 359.7], "Kenema": [385.4, 378.5], "Kono": [432.6, 245.2], "Bombali": [228.9, 181.8], "Falaba": [383.4, 111.6], "Koinadugu": [307.1, 133.5], "Tonkolili": [305.2, 232.8], "Kambia": [104.5, 154.0], "Karene": [190.0, 130.8], "Port Loko": [102.3, 255.9], "Bo": [294.6, 372.7], "Bonthe": [212.8, 458.5], "Moyamba": [173.7, 363.8], "Pujehun": [325.7, 492.4], "Western Area Rural": [40, 345], "Western Area Urban": [8, 275]}};
+const FALLBACK_DATA = [{"no": "1", "name": "Aberdeen Women Center", "type": "Hospital", "status": "Active", "nextStep": "Engage", "officeAddress": "Aberdeen", "contacts": [{"name": "", "designation": "Clinical Director", "phones": [], "emails": []}], "district": "", "chiefdom": "", "intervention": "Case management, vector control,", "districts": []}, {"no": "2", "name": "Sustainable Health System (funded through PMI Insights)", "type": "NGO", "status": "Not sure", "nextStep": "", "officeAddress": "Freetown", "contacts": [{"name": "Dr. Sulaiman Lakoh", "designation": "Director", "phones": ["077-624737"], "emails": ["mc.sierraleone@emergency.it"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "3", "name": "Breakthrough ACTION", "type": "INGO", "status": "Closed", "nextStep": "", "officeAddress": "Aberdeen, Freetown", "contacts": [{"name": "James Fofanah", "designation": "Chief of party", "phones": ["23276894824", "078-287492"], "emails": []}, {"name": "Umu H. Jalloh", "designation": "Sr. Program officer", "phones": ["23276836634"], "emails": []}, {"name": "Admay Gebeh-Mustapha", "designation": "Duputy Chief of party", "phones": ["23278168388"], "emails": []}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "6", "name": "IS Global/COMAHS ICARIA&MULTIPLY", "type": "Research/Educational Institution", "status": "Active", "nextStep": "Ok", "officeAddress": "c/o COMAHS New England Ville; 2 Bai Shebora Kamal 2 Avenue-Makeni", "contacts": [{"name": "Dr. Augustin E. Fombah", "designation": "Reasearch Coordinator", "phones": ["076-610925"], "emails": ["augustin.fombah@isglobalorg"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "7", "name": "CHAI", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "Freetown", "contacts": [{"name": "Victor Olayemi", "designation": "Manager", "phones": ["079-724291"], "emails": ["volayemi@clintonhealthacess.org"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "9", "name": "FOCUS 1000", "type": "Local NGO", "status": "Active", "nextStep": "Ok", "officeAddress": "7e Conteh Drive, Tengbeh Town-Freetown", "contacts": [{"name": "Alhaji Mohamed Jalloh", "designation": "CEO", "phones": ["079-060592"], "emails": ["mbjalloh@focus1000.org"]}], "district": "Bombali, Koinadugu,Falaba &Karene", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Bo", "Bombali", "Falaba", "Karene", "Koinadugu"]}, {"no": "2", "name": "Praise Foundation", "type": "Local NGO", "status": "To confirm", "nextStep": "To confirm", "officeAddress": "209 New Gerihun Rd. Bo", "contacts": [{"name": "Martin Moriwai", "designation": "Director", "phones": ["078-351270"], "emails": ["martinmoriwai1964@gmail.com"]}], "district": "Bo and Pujehun", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Bo", "Pujehun"]}, {"no": "3", "name": "Pikin-To-Pikin Movement", "type": "Local NGO", "status": "To confirm", "nextStep": "To confirm", "officeAddress": "13 Macdonald St. Freetown", "contacts": [{"name": "Abdulai Swaray", "designation": "Director", "phones": ["076-646220"], "emails": ["ptpsecretaria@gmail.com"]}], "district": "Bo and Pujehun", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Bo", "Pujehun"]}, {"no": "4", "name": "Caritas- Kenema", "type": "Local NGO", "status": "Active", "nextStep": "Engage", "officeAddress": "4, Reservation Rd, Kenema", "contacts": [{"name": "Fr. Alfrec Bockarie", "designation": "Director", "phones": ["076-210246"], "emails": ["caritasinkenema2019@gmail.com"]}], "district": "Kenema and Kailahun", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Kailahun", "Kenema"]}, {"no": "13", "name": "TYPE-SL", "type": "Local NGO", "status": "Not active", "nextStep": "", "officeAddress": "34 Cannieshire drive, Grafton. Freetown", "contacts": [{"name": "Madam Isatu Sesay", "designation": "Director", "phones": ["079-720754"], "emails": ["cripinilakohsesay82@gmailcom"]}], "district": "Kambia and Port Loko", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Kambia", "Port Loko"]}, {"no": "14", "name": "AMNET", "type": "Local NGO", "status": "Not active", "nextStep": "", "officeAddress": "16 Gbendeva St. Bo", "contacts": [{"name": "Brima Conteh", "designation": "CEO", "phones": ["075-045594"], "emails": ["brimaconteh@amnetonline.com"]}], "district": "Western Urban and Western Rural", "chiefdom": "All Zones", "intervention": "", "districts": ["Western Area Rural", "Western Area Urban"]}, {"no": "15", "name": "ComDI", "type": "", "status": "Not active", "nextStep": "", "officeAddress": "209 New Gerihun Rd. Bo", "contacts": [{"name": "Fr. Samuel Tucker", "designation": "Director", "phones": ["076-540721"], "emails": ["comdisierraleone@gmail.com"]}], "district": "Kono and Tonkolili", "chiefdom": "All chiefdoms", "intervention": "", "districts": ["Kono", "Tonkolili"]}, {"no": "16", "name": "World Health Organisation", "type": "Multi-Lateral", "status": "Active", "nextStep": "Ok", "officeAddress": "21A&B Riverside Drive, off Kingharman Road Brookfields-Freetown", "contacts": [{"name": "National Professional Officer", "designation": "", "phones": ["23277608042"], "emails": ["gandal@sl.afro.who.int"]}], "district": "All districts", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "17", "name": "UNICEF", "type": "Multi-Lateral", "status": "Active", "nextStep": "Ok", "officeAddress": "Central Medical Stores Compound, New England-Freetown", "contacts": [{"name": "Dr. Mustapha(to be updated)", "designation": "Health Specialist", "phones": ["23276354434"], "emails": ["mmustapha@unicef.org"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "18", "name": "World Vision Sierra Leone", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "35, Wilkinson Road-Freetown", "contacts": [{"name": "Saffa Koroma", "designation": "Health Coordinator", "phones": ["23276659305"], "emails": ["saffa_koroma@wvi.org"]}], "district": "Kono, Koinadugu, Bo and Pujehun", "chiefdom": "N//A", "intervention": "", "districts": ["Bo", "Koinadugu", "Kono", "Pujehun"]}, {"no": "19", "name": "Pharmacy Board of Sierra Leone (PBSL)", "type": "MDA/MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "CMS compound-New England, Freetown", "contacts": [{"name": "James Komeh", "designation": "Registrar", "phones": [], "emails": ["pharmpbsl@hotmail.com", "infopharmpbsl@yahoo.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "20", "name": "Sierra Leone Red Cross Society", "type": "NGO", "status": "Active", "nextStep": "Ok", "officeAddress": "6, Liverpool St. Freetown", "contacts": [{"name": "Sylvester B. Fomba", "designation": "Q A Officer", "phones": ["088-654-833"], "emails": []}], "district": "Nationwide", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "3", "name": "MSF Belgium", "type": "INGO", "status": "Active", "nextStep": "Engage", "officeAddress": "Sir Samuel Lewis Rd, Aberdeen", "contacts": [{"name": "", "designation": "Medical Director", "phones": [], "emails": ["sierraleonemedco@oca.msf.org"]}], "district": "", "chiefdom": "N//A", "intervention": "", "districts": []}, {"no": "22", "name": "Community Health Workers' Hub-Primary Healthcare Directorate", "type": "MDA/MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "Youyi Building-Freetown", "contacts": [{"name": "Elizabeth Musa", "designation": "CHW Coordinator", "phones": ["23278424265"], "emails": ["elizabethmusa22@yahoo.com"]}, {"name": "Zainab Bangura", "designation": "CHW Coordinator", "phones": ["078-508-116"], "emails": ["zainabbangura026@gmail.com"]}], "district": "Nationwide", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "23", "name": "USG DoS", "type": "US GOV.", "status": "Active", "nextStep": "Ok", "officeAddress": "US Embassy-Freetown", "contacts": [{"name": "David Schnabel", "designation": "Resident Advisor", "phones": ["099-905-979"], "emails": ["DSchnabel@usaid.gov"]}], "district": "Naational", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "24", "name": "PMI Evolve", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "41 W1 Derek Drive, Off Spur Road, Freetown", "contacts": [{"name": "Laurent Iyikirenga", "designation": "Chief of Party", "phones": ["079-991-330"], "emails": []}], "district": "Bo, Bombali, Port Loko, Pujehun and Moyamba", "chiefdom": "", "intervention": "", "districts": ["Bo", "Bombali", "Moyamba", "Port Loko", "Pujehun"]}, {"no": "25", "name": "CHISU", "type": "INGO", "status": "Not active", "nextStep": "", "officeAddress": "CMS compound-New England, Freetown", "contacts": [{"name": "Samuel Saidu", "designation": "ssaidu.contractor@rti.org", "phones": [], "emails": []}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "26", "name": "PSI", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "1, Fadika Drive, Hill Station", "contacts": [{"name": "Dr. Joseph Mugasa", "designation": "Chief of Party", "phones": ["076-562056"], "emails": ["jmugasa@psi.or.tz"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "27", "name": "China CDC", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "Lumley Beach", "contacts": [{"name": "Dr. Wang Chao", "designation": "Medical Director", "phones": ["030-488-947"], "emails": ["wangchao@icdc.cn"]}], "district": "Port Loko., Lungi, Tonkolili, Kenema, WAR &WAU", "chiefdom": "N/R", "intervention": "", "districts": ["Kenema", "Port Loko", "Tonkolili"]}, {"no": "28", "name": "United Methodist Church on Relief (UMCOR)", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "35 Lightfoot Boston Street", "contacts": [{"name": "Alpha T. Lamin Boima", "designation": "Health Coordinator", "phones": ["23276697522"], "emails": ["princelboima@yahoo.com"]}], "district": "W/Area, Bo, Bombali, Kono, Moyamba and Tonkolili", "chiefdom": "N/A", "intervention": "", "districts": ["Bo", "Bombali", "Kono", "Moyamba", "Tonkolili"]}, {"no": "29", "name": "International Logistics Solution (ILS)", "type": "INGO", "status": "Active", "nextStep": "Ok", "officeAddress": "Ecowas Street, Freetown", "contacts": [{"name": "Mr. Samuel Johnson", "designation": "Operations Manager", "phones": ["23276260245"], "emails": ["johnson@ils-supplies.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "4", "name": "Christian Health Association Sierra Leone (CHASL)", "type": "LNGO", "status": "Active", "nextStep": "Engage", "officeAddress": "CCSL Compound, Kingharman Road. Freetown.", "contacts": [{"name": "Martha B. Kama Sourie", "designation": "Programme Manager", "phones": ["76678662"], "emails": ["chasl1975@gmail.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "31", "name": "Peace Corps Sierra Leone", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "Hill station-Freetown", "contacts": [{"name": "Aleye Horn Kennedy", "designation": "APCD/Health", "phones": ["76678662"], "emails": ["ahornkennedy@peacecorps.gov"]}, {"name": "Lonny J. Born", "designation": "APCD/Health", "phones": [], "emails": ["lborn@peacecorps.gov"]}, {"name": "Lansana D. Sesay", "designation": "APCD/Health", "phones": [], "emails": ["lsesay@peacecorps.gov"]}], "district": "Port Loko, Kambia, Moyamba", "chiefdom": "N/A", "intervention": "", "districts": ["Kambia", "Moyamba", "Port Loko"]}, {"no": "32", "name": "GHSC-PSM( Chemonics)", "type": "INGO", "status": "Not active", "nextStep": "", "officeAddress": "14 Cantonement Road, off Kingharman Road-Freetown", "contacts": [{"name": "Marie Kolipha-Kamara", "designation": "Chief of Party", "phones": ["23276948146"], "emails": ["mkolipha-kamara@ghsc-psm.org"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "5", "name": "Connex Sierra Leone", "type": "Private Service Provider", "status": "Active", "nextStep": "Engage", "officeAddress": "Aberdeen Road-Freetown", "contacts": [{"name": "Michealla Bowen", "designation": "HR Manager/Administrator", "phones": [], "emails": ["michealla.bowen@connex.sl.com"]}], "district": "National", "chiefdom": "NMCP to engage for private sector", "intervention": "", "districts": ["National (all districts)"]}, {"no": "34", "name": "Health Education Programme-", "type": "MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "CMS compound-New England, Freetown", "contacts": [{"name": "Harold Thomas", "designation": "Programme Manager", "phones": ["076-602-460"], "emails": ["haroldthomas@yahoo.com"]}, {"name": "Christiana Roberts", "designation": "Snr. Health Education Officer", "phones": ["076-268-102"], "emails": ["chrisrob888@gmail.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "35", "name": "Sierra Leone Traders Union", "type": "CSO", "status": "Active", "nextStep": "Engage", "officeAddress": "1, Goderich St. Freetown", "contacts": [{"name": "Ibrahim Baba", "designation": "Programme Manager", "phones": ["076-602-460", "076-268-102"], "emails": ["haroldthomas@yahoo.com", "chrisrob888@gmail.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "36", "name": "Sierra Leone Market Women\u2019s Association", "type": "CSO", "status": "Active", "nextStep": "Engage", "officeAddress": "11a Old Railway Line Tengbeh Town.", "contacts": [{"name": "Marie Bob. Kandeh", "designation": "Chairlady", "phones": ["23276803392"], "emails": []}, {"name": "Haja Rabiatu Conteh", "designation": "Secretary", "phones": ["23230210632"], "emails": []}], "district": "Nationwide", "chiefdom": "N/A", "intervention": "", "districts": ["National (all districts)"]}, {"no": "38", "name": "Miral Health Care", "type": "Private Service Provider", "status": "Active", "nextStep": "Engage", "officeAddress": "5, Lamina Sankoh St. Freetown", "contacts": [{"name": "", "designation": "Afam Okafor", "phones": ["23276221475", "078-654-060"], "emails": ["famnyokafor2000@yahoo.com"]}], "district": "National", "chiefdom": "N/A", "intervention": "", "districts": ["National (all districts)"]}, {"no": "39", "name": "Country Coordinating Mechanism- Global Fund", "type": "Multi-Lateral", "status": "Active", "nextStep": "Ok", "officeAddress": "Adelaide Street, Freetown", "contacts": [{"name": "Lyntton Tucker", "designation": "Coordinator", "phones": ["23276632030"], "emails": ["ccmsierraleonesecretariat@yahoo.com"]}], "district": "National", "chiefdom": "N/A", "intervention": "", "districts": ["National (all districts)"]}, {"no": "40", "name": "Health for All Coalition", "type": "CSO", "status": "Active", "nextStep": "Ok", "officeAddress": "Fort street, Freetown", "contacts": [{"name": "Charles Mambu", "designation": "Executive Director", "phones": ["23276880885"], "emails": []}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "41", "name": "Health Alert", "type": "CSO", "status": "Active", "nextStep": "Ok", "officeAddress": "10 Dundas Street, Freetown", "contacts": [{"name": "Victor Lansana Koroma", "designation": "Executive Director", "phones": ["23276758511"], "emails": []}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "42", "name": "ICAP", "type": "INGO", "status": "Active", "nextStep": "Engage", "officeAddress": "8 Kosia Williams Drive, Aberdeen", "contacts": [{"name": "Dr. Mamre Awa Toure", "designation": "Director", "phones": ["23276834461"], "emails": ["bs3096@cumc.columbia.edu"]}, {"name": "Bockarie Sesay", "designation": "Snr. M & E Officer", "phones": [], "emails": []}], "district": "National", "chiefdom": "N/A", "intervention": "", "districts": ["National (all districts)"]}, {"no": "43", "name": "Emergency Hospital", "type": "INGO", "status": "Active", "nextStep": "Engage", "officeAddress": "Peninisular Road, Goderich", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "44", "name": "National Laboratory Services", "type": "MDA/MoH", "status": "Active", "nextStep": "Engage", "officeAddress": "Cockerill", "contacts": [{"name": "Doris Harding", "designation": "Programme Manager", "phones": ["23277020235"], "emails": ["dorisharding@yahoo.com"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "45", "name": "Traditional Healers Association", "type": "CBO", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [{"name": "Abdul Bangura", "designation": "Country Director", "phones": ["076-394-801"], "emails": []}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "46", "name": "eHealth Africa", "type": "INGO", "status": "Active", "nextStep": "Engage", "officeAddress": "Freetown", "contacts": [{"name": "Monjama Armah", "designation": "Asst. Manager", "phones": ["099-307-939"], "emails": ["monjama.armah@sl.ehealthafrica.org"]}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "47", "name": "Medical Impact-SL", "type": "NGO", "status": "Active", "nextStep": "Ok", "officeAddress": "Freetown", "contacts": [{"name": "", "designation": "Country Coordinator", "phones": ["078-525- 414"], "emails": ["alieu.sesay@medical-impact.org"]}], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "48", "name": "Partners in Health (PIH)", "type": "NGO", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "49", "name": "Orange SL", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "50", "name": "Africell SL", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "51", "name": "Qcell SL", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "52", "name": "Action Against Hunger", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "53", "name": "Informatic Consultancy Firm (ICF)", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [{"name": "Mohamed Sillah Kanu", "designation": "CEO", "phones": ["099725620"], "emails": []}], "district": "National", "chiefdom": "", "intervention": "", "districts": ["National (all districts)"]}, {"no": "54", "name": "REACH Malaria/CRS", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "55", "name": "JHPEIGO", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "56", "name": "Child Fund", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "57", "name": "Reproductive Health", "type": "MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "58", "name": "Rotary", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "59", "name": "Last Mile Health", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "60", "name": "Nutrition Programme", "type": "MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "61", "name": "34 Military Hopsital", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "62", "name": "EPI", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "63", "name": "Child Health", "type": "MoH", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "64", "name": "Polic Hospital", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "65", "name": "SORA Technolgy", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "66", "name": "Choithram Hospital", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "67", "name": "SierraRutile", "type": "Mining Companies", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "68", "name": "LeoneRock", "type": "Mining Companies", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "69", "name": "UNFPA", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "70", "name": "Mariestopes", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "71", "name": "Directorate of Environmental Health", "type": "", "status": "Active", "nextStep": "Ok", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "72", "name": "Envrionmental Protection Agency(EPA)", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "73", "name": "National Petroleum (NP)", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "74", "name": "Medical and Dental Council", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "75", "name": "Private Pharmacy Owner Association", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "76", "name": "Private Hospital/Clinics Association", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "77", "name": "JICA", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "78", "name": "Njala University", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "79", "name": "Sierra Leone Nurses and Midwifrey Council", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "80", "name": "Sierra Leone Community Health Association", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "81", "name": "Sierra Leone Laboratory Association", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "82", "name": "Parliamentary Committee on Health", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "83", "name": "Local Councils", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "84", "name": "Sierra Leone Standard Bureau", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "85", "name": "National Revenue Authority", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "86", "name": "Sierra Leone Port Authority", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "87", "name": "Electricity Distribution & Supply Authorty(EDSA)", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "88", "name": "Lebanese Community Committee", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "89", "name": "Foreign Embassies", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "90", "name": "Inter-Religious Council", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "91", "name": "Sierra Leone Entertaiment Industry", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "92", "name": "Sierra Leone Influencers", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "93", "name": "Minstry of Educatation", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "94", "name": "Sierra Leone Chamber of Comerce", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "95", "name": "Sierra Leone Commercial Banks Association (SLACB)", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}, {"no": "96", "name": "Minstry of Finance", "type": "", "status": "New", "nextStep": "Engage", "officeAddress": "", "contacts": [], "district": "", "chiefdom": "", "intervention": "", "districts": []}];
+</script>
+<script>
+(function(){
+"use strict";
+
+const STATUS_COLORS = {
+  "Active":       {c:"var(--active)",  bg:"var(--active-bg)"},
+  "New":          {c:"var(--new)",     bg:"var(--new-bg)"},
+  "Closed":       {c:"var(--closed)",  bg:"var(--closed-bg)"},
+  "Not active":   {c:"var(--inactive)",bg:"var(--inactive-bg)"},
+  "To confirm":   {c:"var(--confirm)", bg:"var(--confirm-bg)"},
+  "Not sure":     {c:"var(--confirm)", bg:"var(--confirm-bg)"},
+  "Unknown":      {c:"var(--inactive)",bg:"var(--inactive-bg)"}
+};
+const STATUS_ORDER = ["Active","New","To confirm","Not sure","Not active","Closed","Unknown"];
+
+const NATIONAL_TAG = "National (all districts)";
+const DISTRICT_LIST = ["Kailahun","Kenema","Kono","Bombali","Falaba","Karene","Koinadugu",
+  "Port Loko","Tonkolili","Bo","Bonthe","Moyamba","Pujehun",
+  "Western Area Rural","Western Area Urban","Kambia"];
+
+// Real district boundaries come from DISTRICT_GEO (embedded from the NMCP
+// shapefile): { viewBox:[x,y,w,h], paths:{DistrictName:"M...Z"}, labels:{DistrictName:[x,y]} }
+
+// Partners pinned to the top of the National legend list, in order, before
+// the rest are shown alphabetically.
+const PINNED_NATIONAL = ["Informatic Consultancy Firm (ICF)", "Informatics Consultancy Firm"];
+
+let DATA = (typeof FALLBACK_DATA !== "undefined") ? FALLBACK_DATA : [];
+
+let state = {
+  q: "",
+  statuses: new Set(),
+  type: "",
+  district: "",
+  sort: "name",
+  view: "cards"
+};
+
+function esc(s){
+  if(!s) return "";
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ===================== LIVE GOOGLE SHEET SYNC ===================== */
+
+function isEmail(s){ return s.indexOf('@') !== -1; }
+function isPhoneLike(s){
+  const digits = s.replace(/[^0-9]/g,'');
+  return digits.length >= 6 && s.indexOf('@') === -1;
+}
+function splitMulti(s){
+  if(!s) return [];
+  return String(s).split(/\n+/).map(x=>x.trim()).filter(Boolean);
+}
+function splitTokens(s){
+  if(!s) return [];
+  return String(s).split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);
+}
+function normalizeDistricts(raw){
+  if(!raw) return [];
+  const low = String(raw).toLowerCase();
+  const tags = new Set();
+  if(/na+tional|nationwide|all district/.test(low)) tags.add(NATIONAL_TAG);
+  DISTRICT_LIST.forEach(d=>{ if(low.indexOf(d.toLowerCase()) !== -1) tags.add(d); });
+  if(low.indexOf('western urban') !== -1) tags.add('Western Area Urban');
+  if(low.indexOf('western rural') !== -1) tags.add('Western Area Rural');
+  if(low.indexOf('lungi') !== -1) tags.add('Port Loko');
+  if(tags.size===0 && raw.trim()) tags.add(raw.trim());
+  return [...tags].sort();
+}
+
+// Consolidates raw sheet rows (fixed keys, see Code.gs) into the same partner
+// object shape used throughout the app.
+function consolidateRows(rows){
+  const partners = [];
+  let current = null;
+
+  rows.forEach(row=>{
+    const no = (row.no||'').toString().trim();
+    const name = (row.name||'').toString().trim();
+    const otype = (row.otype||'').toString().trim();
+    const status = (row.status||'').toString().trim() || 'Unknown';
+    const nextstep = (row.nextstep||'').toString().trim();
+    let officeaddr = (row.officeaddr||'').toString().trim();
+    const contactname = (row.contactname||'').toString().trim();
+    const designation = (row.designation||'').toString().trim();
+    const addr = (row.addr||'').toString().trim();
+    const phone = (row.phone||'').toString().trim();
+    const email = (row.email||'').toString().trim();
+    const district = (row.district||'').toString().trim();
+    const chiefdom = (row.chiefdom||'').toString().trim();
+    const intervention = (row.intervention||'').toString().trim();
+
+    const names = splitMulti(contactname);
+    const desigs = splitMulti(designation);
+    let phones = [], emails = [], addrs = [];
+    [addr, phone, email].forEach(field=>{
+      splitTokens(field).forEach(tok=>{
+        if(isEmail(tok)) emails.push(tok);
+        else if(isPhoneLike(tok)) phones.push(tok);
+        else addrs.push(tok);
+      });
+    });
+
+    let contactsThisRow = [];
+    if(names.length > 1){
+      const n = names.length;
+      for(let i=0;i<n;i++){
+        contactsThisRow.push({
+          name: names[i]||'',
+          designation: desigs[i] || (desigs.length===1?desigs[0]:''),
+          phones: phones[i]!==undefined ? [phones[i]] : [],
+          emails: emails[i]!==undefined ? [emails[i]] : []
+        });
+      }
+      if(phones.length > n) contactsThisRow[0].phones = contactsThisRow[0].phones.concat(phones.slice(n));
+      if(emails.length > n) contactsThisRow[0].emails = contactsThisRow[0].emails.concat(emails.slice(n));
+    } else if(names.length || desigs.length || phones.length || emails.length){
+      contactsThisRow.push({
+        name: names[0]||'', designation: desigs[0]||'', phones, emails
+      });
+    }
+
+    if(name){
+      if(current) partners.push(current);
+      current = {
+        no, name: name.replace(/\s+/g,' ').trim(), type: otype, status, nextStep: nextstep,
+        officeAddress: officeaddr.replace(/\s+/g,' ').trim() || (addrs[0]||''),
+        contacts: contactsThisRow, district, chiefdom, intervention
+      };
+    } else {
+      if(!current) return;
+      current.contacts = current.contacts.concat(contactsThisRow);
+      if(!current.district && district) current.district = district;
+      if(!current.chiefdom && chiefdom) current.chiefdom = chiefdom;
+      if(!current.intervention && intervention) current.intervention = intervention;
+      if(!current.officeAddress && (officeaddr||addrs.length)) current.officeAddress = officeaddr || addrs[0];
+    }
+  });
+  if(current) partners.push(current);
+
+  partners.forEach(p=>{
+    p.contacts = p.contacts.filter(c=>c.name||c.designation||c.phones.length||c.emails.length);
+    p.contacts.forEach(c=>{
+      c.name = c.name.replace(/\s+/g,' ').trim();
+      c.designation = c.designation.replace(/\s+/g,' ').trim();
+    });
+    p.districts = normalizeDistricts(p.district);
+  });
+  return partners;
+}
+
+function setSyncStatus(mode, text){
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncText');
+  dot.classList.toggle('offline', mode!=='live');
+  label.textContent = text;
+}
+
+function loadLiveData(){
+  if(!CONFIG.SHEET_API_URL){
+    setSyncStatus('offline', 'Showing saved snapshot (no live sheet connected)');
+    return;
+  }
+  setSyncStatus('offline', 'Syncing…');
+  fetch(CONFIG.SHEET_API_URL + (CONFIG.SHEET_API_URL.indexOf('?')>-1?'&':'?') + 'gid=442609854&t=' + Date.now())
+    .then(r=>r.json())
+    .then(resp=>{
+      if(!resp || !resp.rows || !resp.rows.length) throw new Error('empty');
+      DATA = consolidateRows(resp.rows);
+      const t = new Date();
+      setSyncStatus('live', 'Live from Google Sheet · synced ' + t.toLocaleTimeString());
+      populateSelects();
+      render();
+    })
+    .catch(()=>{
+      DATA = FALLBACK_DATA;
+      setSyncStatus('offline', 'Could not reach the sheet — showing saved snapshot');
+      populateSelects();
+      render();
+    });
+}
+
+/* ===================== HELPERS ===================== */
+
+function primaryContact(p){ return (p.contacts && p.contacts.length) ? p.contacts[0] : null; }
+function allPhones(p){ return (p.contacts||[]).flatMap(c=>c.phones||[]); }
+function allEmails(p){ return (p.contacts||[]).flatMap(c=>c.emails||[]); }
+
+function searchableText(p){
+  return [
+    p.name, p.type, p.status, p.nextStep, p.officeAddress, p.district, p.chiefdom, p.intervention,
+    ...(p.districts||[]),
+    ...(p.contacts||[]).flatMap(c=>[c.name,c.designation,...(c.phones||[]),...(c.emails||[])])
+  ].join(" ").toLowerCase();
+}
+
+function populateSelects(){
+  const typeSel = document.getElementById('typeSelect');
+  typeSel.innerHTML = '<option value="">All organisation types</option>';
+  [...new Set(DATA.map(p=>p.type).filter(Boolean))].sort().forEach(t=>{
+    const o=document.createElement('option'); o.value=t; o.textContent=t; typeSel.appendChild(o);
+  });
+
+  const distSel = document.getElementById('districtSelect');
+  distSel.innerHTML = '<option value="">All districts</option>';
+  [...new Set(DATA.flatMap(p=>p.districts||[]))].sort().forEach(d=>{
+    const o=document.createElement('option'); o.value=d; o.textContent=d; distSel.appendChild(o);
+  });
+
+  const statusChips = document.getElementById('statusChips');
+  statusChips.innerHTML = '';
+  STATUS_ORDER.forEach(s=>{
+    const count = DATA.filter(p=>p.status===s).length;
+    if(count===0) return;
+    const col = STATUS_COLORS[s] || STATUS_COLORS.Unknown;
+    const chip = document.createElement('div');
+    chip.className='chip'; chip.dataset.status=s;
+    chip.innerHTML = `<span class="dot" style="background:${col.c}"></span>${esc(s)} <span class="count">${count}</span>`;
+    chip.addEventListener('click', ()=>{
+      if(state.statuses.has(s)) state.statuses.delete(s); else state.statuses.add(s);
+      render();
+    });
+    statusChips.appendChild(chip);
+  });
+  const sep = document.createElement('span'); sep.className='chip-sep';
+  const resetBtn = document.createElement('button');
+  resetBtn.className='reset-link'; resetBtn.textContent='Reset all filters';
+  resetBtn.addEventListener('click', ()=>{
+    state.q=""; state.statuses.clear(); state.type=""; state.district="";
+    document.getElementById('searchInput').value="";
+    document.getElementById('typeSelect').value="";
+    document.getElementById('districtSelect').value="";
+    render();
+  });
+  statusChips.appendChild(sep);
+  statusChips.appendChild(resetBtn);
+}
+
+function matches(p){
+  if(state.statuses.size && !state.statuses.has(p.status)) return false;
+  if(state.type && p.type !== state.type) return false;
+  if(state.district && !(p.districts||[]).includes(state.district)) return false;
+  if(state.q){
+    const q = state.q.toLowerCase();
+    if(!searchableText(p).includes(q)) return false;
+  }
+  return true;
+}
+
+function sortList(list){
+  const arr = [...list];
+  if(state.sort==="name") arr.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(state.sort==="status") arr.sort((a,b)=> STATUS_ORDER.indexOf(a.status)-STATUS_ORDER.indexOf(b.status) || a.name.localeCompare(b.name));
+  else if(state.sort==="type") arr.sort((a,b)=> (a.type||"").localeCompare(b.type||"") || a.name.localeCompare(b.name));
+  else if(state.sort==="no") arr.sort((a,b)=> (parseInt(a.no)||9999)-(parseInt(b.no)||9999));
+  return arr;
+}
+
+function statusTag(status){
+  const col = STATUS_COLORS[status] || STATUS_COLORS.Unknown;
+  return `<span class="status-tag" style="color:${col.c};background:${col.bg}">${esc(status)}</span>`;
+}
+
+// Interpolates from pale blue (few partners) to dark navy (many partners)
+function shadeBlue(t){
+  const stops = [
+    {p:0,   c:[190,225,240]},
+    {p:0.5, c:[74,131,168]},
+    {p:1,   c:[31,74,106]}
+  ];
+  let a = stops[0], b = stops[stops.length-1];
+  for(let i=0;i<stops.length-1;i++){
+    if(t >= stops[i].p && t <= stops[i+1].p){ a = stops[i]; b = stops[i+1]; break; }
+  }
+  const span = (b.p-a.p) || 1;
+  const f = (t-a.p)/span;
+  const rgb = a.c.map((v,i)=> Math.round(v + (b.c[i]-v)*f));
+  return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+}
+
+/* ===================== CARDS / TABLE ===================== */
+
+function renderCards(list){
+  const grid = document.getElementById('cardsView');
+  grid.innerHTML = list.map(p=>{
+    const c = primaryContact(p);
+    const extraContacts = (p.contacts||[]).length - 1;
+    let contactHtml;
+    if(c){
+      contactHtml = `<div class="card-row"><span class="ic">&#9679;</span>${esc(c.name||c.designation||'Contact on file')}${c.designation && c.name ? ' &middot; '+esc(c.designation):''}</div>`;
+      if(extraContacts>0) contactHtml += `<div class="card-row"><span class="ic"></span><span style="color:var(--muted)">+${extraContacts} more contact${extraContacts>1?'s':''}</span></div>`;
+    } else {
+      contactHtml = `<div class="card-nocontact">No contact on file &mdash; needs follow-up</div>`;
+    }
+    const districtStr = (p.districts&&p.districts.length) ? p.districts.slice(0,2).join(', ') + (p.districts.length>2?` +${p.districts.length-2}`:'') : '';
+    return `<div class="pcard" data-no="${esc(p.no)}" data-name="${esc(p.name)}">
+      <div class="pcard-top">
+        <span class="pcard-no">#${esc(p.no||'—')}</span>
+        ${statusTag(p.status)}
+      </div>
+      <div class="card-name">${esc(p.name)}</div>
+      <div class="card-type">${esc(p.type||'Type not specified')}</div>
+      ${contactHtml}
+      <div class="card-footer">
+        <span class="nextstep-tag">${esc(p.nextStep||'—')}</span>
+        <span class="district-tag">${esc(districtStr)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.pcard').forEach(el=>{
+    el.addEventListener('click', ()=> openDrawer(el.dataset.no, el.dataset.name));
+  });
+}
+
+function renderTable(list){
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = list.map(p=>{
+    const c = primaryContact(p);
+    const phones = allPhones(p), emails = allEmails(p);
+    const districtStr = (p.districts||[]).join(', ');
+    return `<tr data-no="${esc(p.no)}" data-name="${esc(p.name)}">
+      <td>${esc(p.no||'—')}</td>
+      <td class="name-cell">${esc(p.name)}</td>
+      <td>${esc(p.type)||'<span class="empty-cell">—</span>'}</td>
+      <td>${statusTag(p.status)}</td>
+      <td>${esc(p.nextStep)||'<span class="empty-cell">—</span>'}</td>
+      <td>${c && (c.name||c.designation) ? esc(c.name||c.designation) : '<span class="empty-cell">—</span>'}</td>
+      <td>${phones[0]?esc(phones[0]):'<span class="empty-cell">—</span>'}</td>
+      <td>${emails[0]?esc(emails[0]):'<span class="empty-cell">—</span>'}</td>
+      <td>${districtStr?esc(districtStr):'<span class="empty-cell">—</span>'}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('tr').forEach(el=>{
+    el.addEventListener('click', ()=> openDrawer(el.dataset.no, el.dataset.name));
+  });
+}
+
+/* ===================== MAP VIEW ===================== */
+
+function renderMap(){
+  const wrap = document.getElementById('mapSvgWrap');
+  if(typeof DISTRICT_GEO === 'undefined'){ wrap.innerHTML = '<p style="padding:20px;color:var(--muted)">Map data not available.</p>'; return; }
+
+  const counts = {};
+  DISTRICT_LIST.forEach(d=>{ counts[d] = DATA.filter(p=>(p.districts||[]).includes(d)).length; });
+  const maxCount = Math.max(1, ...Object.values(counts));
+
+  const vb = DISTRICT_GEO.viewBox;
+  let shapes = '';
+  DISTRICT_LIST.forEach(d=>{
+    const path = DISTRICT_GEO.paths[d];
+    if(!path) return;
+    const n = counts[d];
+    const t = n/maxCount;
+    const fill = n===0 ? '#eef3f8' : shadeBlue(t);
+    shapes += `<path class="dpath" data-district="${esc(d)}" d="${path}" fill="${fill}" fill-rule="evenodd"><title>${esc(d)} — ${n} partner${n===1?'':'s'}</title></path>`;
+  });
+  let labels = '';
+  DISTRICT_LIST.forEach(d=>{
+    const pos = DISTRICT_GEO.labels[d];
+    if(!pos) return;
+    const n = counts[d];
+    labels += `<text class="dlabel-text" x="${pos[0]}" y="${pos[1]}">${esc(d)}</text>`;
+    labels += `<text class="dcount-badge" x="${pos[0]}" y="${pos[1]+10}">(${n})</text>`;
+  });
+
+  wrap.innerHTML = `<svg viewBox="${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}" xmlns="http://www.w3.org/2000/svg">${shapes}${labels}</svg>`;
+  const tooltip = document.getElementById('mapTooltip');
+  wrap.querySelectorAll('.dpath').forEach(el=>{
+    el.addEventListener('click', ()=> showDistrictPopover(el.dataset.district));
+    el.addEventListener('mouseenter', ()=> showMapTooltip(el.dataset.district));
+    el.addEventListener('mousemove', e=> positionMapTooltip(e));
+    el.addEventListener('mouseleave', hideMapTooltip);
+  });
+
+  const nationalPartners = DATA.filter(p=>(p.districts||[]).includes(NATIONAL_TAG))
+    .sort((a,b)=>{
+      const ap = PINNED_NATIONAL.some(n=>a.name.indexOf(n)!==-1) ? 0 : 1;
+      const bp = PINNED_NATIONAL.some(n=>b.name.indexOf(n)!==-1) ? 0 : 1;
+      if(ap!==bp) return ap-bp;
+      return a.name.localeCompare(b.name);
+    });
+  const nlist = document.getElementById('nationalList');
+  if(nationalPartners.length){
+    nlist.innerHTML = nationalPartners.map(p=>{
+      const col = STATUS_COLORS[p.status] || STATUS_COLORS.Unknown;
+      return `<div class="national-item" data-no="${esc(p.no)}" data-name="${esc(p.name)}">
+        <span class="ndot" style="background:${col.c}"></span>${esc(p.name)}
+      </div>`;
+    }).join('');
+  } else {
+    nlist.innerHTML = '<div style="padding:16px 6px;color:var(--muted);font-size:12.5px;">ALL — no partner is currently marked as operating nationwide.</div>';
+  }
+  nlist.querySelectorAll('.national-item').forEach(el=>{
+    el.addEventListener('click', ()=> openDrawer(el.dataset.no, el.dataset.name));
+  });
+
+  const existingPop = document.getElementById('districtPopover');
+  if(existingPop) existingPop.remove();
+}
+
+function showDistrictPopover(districtName){
+  const existing = document.getElementById('districtPopover');
+  if(existing) existing.remove();
+  const list = DATA.filter(p=>(p.districts||[]).includes(districtName)).sort((a,b)=>a.name.localeCompare(b.name));
+  const pop = document.createElement('div');
+  pop.className='district-popover'; pop.id='districtPopover';
+  pop.innerHTML = `<h4>${esc(districtName)} &middot; ${list.length} partner${list.length===1?'':'s'}</h4>` +
+    (list.length
+      ? list.map(p=>`<div class="dp-item" data-no="${esc(p.no)}" data-name="${esc(p.name)}"><span>${esc(p.name)}</span>${statusTag(p.status)}</div>`).join('')
+      : `<div class="dp-empty">No partner currently mapped to this district.</div>`);
+  document.getElementById('mapView').appendChild(pop);
+  pop.querySelectorAll('.dp-item').forEach(el=>{
+    el.addEventListener('click', ()=> openDrawer(el.dataset.no, el.dataset.name));
+  });
+  pop.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function showMapTooltip(districtName){
+  const tooltip = document.getElementById('mapTooltip');
+  const list = DATA.filter(p=>(p.districts||[]).includes(districtName)).sort((a,b)=>a.name.localeCompare(b.name));
+  const MAX_SHOWN = 8;
+  let html = `<div class="tt-title">${esc(districtName)} &middot; ${list.length} partner${list.length===1?'':'s'}</div>`;
+  if(list.length){
+    html += list.slice(0, MAX_SHOWN).map(p=>`<div class="tt-item">${esc(p.name)}</div>`).join('');
+    if(list.length > MAX_SHOWN) html += `<div class="tt-more">+${list.length - MAX_SHOWN} more — click for full list</div>`;
+  } else {
+    html += `<div class="tt-empty">No partner currently mapped here.</div>`;
+  }
+  tooltip.innerHTML = html;
+  tooltip.classList.add('show');
+}
+function positionMapTooltip(e){
+  const tooltip = document.getElementById('mapTooltip');
+  const pad = 16;
+  let left = e.clientX + pad;
+  let top = e.clientY + pad;
+  const rect = tooltip.getBoundingClientRect();
+  if(left + rect.width > window.innerWidth - 10) left = e.clientX - rect.width - pad;
+  if(top + rect.height > window.innerHeight - 10) top = e.clientY - rect.height - pad;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+function hideMapTooltip(){
+  document.getElementById('mapTooltip').classList.remove('show');
+}
+
+/* ===================== RENDER SWITCH ===================== */
+
+function render(){
+  document.getElementById('totalCount').textContent = DATA.length;
+  const filtered = sortList(DATA.filter(matches));
+
+  document.querySelectorAll('.chip[data-status]').forEach(chip=>{
+    chip.classList.toggle('active', state.statuses.has(chip.dataset.status));
+  });
+
+  const resultLine = document.getElementById('resultLine');
+  resultLine.innerHTML = `Showing <strong>${filtered.length}</strong> of <strong>${DATA.length}</strong> partners`;
+
+  document.getElementById('cardsView').style.display = 'none';
+  document.getElementById('tableView').style.display = 'none';
+  document.getElementById('mapView').style.display = 'none';
+  document.getElementById('noResults').style.display = 'none';
+  resultLine.style.display = 'block';
+
+  if(state.view === 'map'){
+    document.getElementById('mapView').style.display = 'block';
+    resultLine.style.display = 'none';
+    renderMap();
+    return;
+  }
+
+  if(!filtered.length){
+    document.getElementById('noResults').style.display = 'block';
+    return;
+  }
+  if(state.view==='cards'){
+    document.getElementById('cardsView').style.display = 'grid';
+    renderCards(filtered);
+  } else {
+    document.getElementById('tableView').style.display = 'block';
+    renderTable(filtered);
+  }
+}
+
+/* ===================== DRAWER ===================== */
+
+function findPartner(no, name){
+  return DATA.find(p => p.no===no && p.name===name) || DATA.find(p=>p.name===name);
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 1600);
+}
+function copyText(text){
+  navigator.clipboard?.writeText(text).then(()=>toast('Copied: '+text)).catch(()=>toast('Could not copy'));
+}
+window.copyText = copyText;
+
+function openDrawer(no, name){
+  const p = findPartner(no, name);
+  if(!p) return;
+  document.getElementById('drawerNo').textContent = 'RECORD #' + (p.no||'—');
+  document.getElementById('drawerName').textContent = p.name;
+  document.getElementById('drawerTags').innerHTML =
+    statusTag(p.status) +
+    `<span class="chip-static">${esc(p.type||'Type unknown')}</span>` +
+    (p.nextStep ? `<span class="chip-static">Next step: ${esc(p.nextStep)}</span>` : '');
+
+  let body = '';
+  body += `<div class="dsection"><div class="dsection-title">Location</div>`;
+  body += `<div class="drow"><span class="ic">&#128205;</span><span>${esc(p.officeAddress) || 'Office address not on file'}</span></div>`;
+  if(p.districts && p.districts.length){
+    body += `<div class="drow"><span class="ic">&#128506;</span><div class="chips-line">${p.districts.map(d=>`<span class="chip-static">${esc(d)}</span>`).join('')}</div></div>`;
+  }
+  if(p.chiefdom){
+    body += `<div class="drow"><span class="ic">&#9642;</span><span>Chiefdom(s): ${esc(p.chiefdom)}</span></div>`;
+  }
+  if(p.intervention){
+    body += `<div class="drow"><span class="ic">&#128204;</span><span>Intervention area: ${esc(p.intervention)}</span></div>`;
+  }
+  body += `</div>`;
+
+  body += `<div class="dsection"><div class="dsection-title">Contacts</div>`;
+  if(p.contacts && p.contacts.length){
+    p.contacts.forEach(c=>{
+      body += `<div class="contact-card">`;
+      body += `<div class="contact-name">${esc(c.name)||'Name not on file'}</div>`;
+      if(c.designation) body += `<div class="contact-desig">${esc(c.designation)}</div>`;
+      (c.phones||[]).forEach(ph=>{
+        body += `<div class="contact-line"><a href="tel:${esc(ph.replace(/[^\d+]/g,''))}">&#9742; ${esc(ph)}</a><button class="copy-btn" onclick="copyText('${esc(ph)}')">Copy</button></div>`;
+      });
+      (c.emails||[]).forEach(em=>{
+        body += `<div class="contact-line"><a href="mailto:${esc(em)}">&#9993; ${esc(em)}</a><button class="copy-btn" onclick="copyText('${esc(em)}')">Copy</button></div>`;
+      });
+      if(!(c.phones&&c.phones.length) && !(c.emails&&c.emails.length)){
+        body += `<div style="font-size:12px;color:var(--muted)">No phone or email on file for this contact.</div>`;
+      }
+      body += `</div>`;
+    });
+  } else {
+    body += `<div class="no-contact-block">No contact person is on file for this partner yet. Next step: <strong>${esc(p.nextStep||'confirm and engage')}</strong>.</div>`;
+  }
+  body += `</div>`;
+
+  document.getElementById('drawerBody').innerHTML = body;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+/* ===================== PASSWORD-GATED SHEET BUTTON ===================== */
+
+function openPasswordModal(){
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwError').style.display = 'none';
+  document.getElementById('pwModal').classList.add('open');
+  document.getElementById('pwOverlay').classList.add('open');
+  document.getElementById('pwInput').focus();
+}
+function closePasswordModal(){
+  document.getElementById('pwModal').classList.remove('open');
+  document.getElementById('pwOverlay').classList.remove('open');
+}
+function submitPassword(){
+  const val = document.getElementById('pwInput').value;
+  if(val === CONFIG.ADMIN_PASSWORD){
+    closePasswordModal();
+    window.open(CONFIG.SHEET_EDIT_URL, '_blank');
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+  }
+}
+
+/* ===================== INIT ===================== */
+
+function init(){
+  populateSelects();
+
+  document.getElementById('searchInput').addEventListener('input', e=>{ state.q = e.target.value; render(); });
+  document.getElementById('typeSelect').addEventListener('change', e=>{ state.type = e.target.value; render(); });
+  document.getElementById('districtSelect').addEventListener('change', e=>{ state.district = e.target.value; render(); });
+  document.getElementById('sortSelect').addEventListener('change', e=>{ state.sort = e.target.value; render(); });
+
+  function setView(v, btnId){
+    state.view = v;
+    ['viewCardsBtn','viewTableBtn','viewMapBtn'].forEach(id=>document.getElementById(id).classList.remove('active'));
+    document.getElementById(btnId).classList.add('active');
+    render();
+  }
+  document.getElementById('viewCardsBtn').addEventListener('click', ()=>setView('cards','viewCardsBtn'));
+  document.getElementById('viewTableBtn').addEventListener('click', ()=>setView('table','viewTableBtn'));
+  document.getElementById('viewMapBtn').addEventListener('click', ()=>setView('map','viewMapBtn'));
+
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  document.getElementById('overlay').addEventListener('click', closeDrawer);
+
+  document.getElementById('openSheetBtn').addEventListener('click', openPasswordModal);
+  document.getElementById('pwCancel').addEventListener('click', closePasswordModal);
+  document.getElementById('pwOverlay').addEventListener('click', closePasswordModal);
+  document.getElementById('pwSubmit').addEventListener('click', submitPassword);
+  document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') submitPassword(); });
+
+  document.getElementById('refreshBtn').addEventListener('click', loadLiveData);
+
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape'){ closeDrawer(); closePasswordModal(); }
+  });
+
+  document.querySelectorAll('th[data-sort]').forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const key = th.dataset.sort;
+      state.sort = key;
+      document.getElementById('sortSelect').value = ['name','status','type','no'].includes(key) ? key : 'name';
+      render();
+    });
+  });
+
+  render();
+  loadLiveData();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+})();
+
+</script>
+</body>
+</html>
