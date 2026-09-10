@@ -302,7 +302,7 @@
             flex-shrink: 0; overflow-y: auto;
             display: flex; flex-direction: column;
             box-shadow: 2px 0 15px rgba(0,0,0,0.15);
-            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), width 0.24s ease, min-width 0.24s ease, padding 0.24s ease;
             z-index: 960;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
@@ -313,8 +313,22 @@
         .brand-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; background: #fff; padding: 3px; flex-shrink: 0; }
         .brand-title { font-size: 13px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1.2; display: block; }
         .brand-sub   { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; display: block; }
-        .sidebar-close { display: none; width: 30px; height: 30px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; cursor: pointer; align-items: center; justify-content: center; color: white; flex-shrink: 0; margin-left: 8px; font-size: 18px; line-height: 1; }
+        .sidebar-close { display: flex; width: 30px; height: 30px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; cursor: pointer; align-items: center; justify-content: center; color: white; flex-shrink: 0; margin-left: 8px; font-size: 18px; line-height: 1; }
         .sidebar-close:hover { background: rgba(255,255,255,0.2); }
+        /* SIDEBAR COLLAPSE (desktop / tablet) */
+        .sidebar-reopen-btn {
+            display: none; position: fixed; top: 14px; left: 14px; z-index: 970;
+            width: 40px; height: 40px; border-radius: 9px;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            border: 1px solid rgba(255,255,255,0.25); color: #fff; cursor: pointer;
+            align-items: center; justify-content: center;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.28);
+        }
+        .sidebar-reopen-btn:hover { background: linear-gradient(135deg, var(--blue-dk) 0%, var(--blue) 100%); }
+        @media (min-width: 769px) {
+            body.sidebar-collapsed .sidebar { width: 0; min-width: 0; padding: 0; overflow: hidden; box-shadow: none; border: none; }
+            body.sidebar-collapsed .sidebar-reopen-btn { display: flex; }
+        }
         .nav-scroll { flex: 1; padding: 10px 0; overflow-y: auto; }
         .nav-section-label { padding: 16px 18px 5px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; }
         .nav-item { width: 100%; background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 14px 16px; text-align: left; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 10px; }
@@ -348,6 +362,10 @@
             border-left: 3px solid rgba(255,193,7,0.6) !important; font-weight:700 !important;
         }
         .sidebar-footer { padding: 12px 14px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); }
+        .med-preload-status { margin-bottom: 10px; }
+        .med-preload-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+        .med-preload-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.3s ease; }
+        #medPreloadText { font-size: 10.5px; color: rgba(255,255,255,0.55); display: block; }
         .home-btn {
             width: 100%; background: rgba(255,255,255,0.10);
             border: 1px solid rgba(255,255,255,0.20); color: #fff;
@@ -397,6 +415,37 @@
         .tab-content { display: none; animation: fadeIn 0.25s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PAGE VIEW — tool pages open "as ordinary pages" with a Main Menu back bar,
+           instead of an iframe sitting inside the sidebar layout */
+        .page-view {
+            display: none; position: fixed; inset: 0; z-index: 990;
+            background: var(--bg); flex-direction: column;
+        }
+        .page-view.open { display: flex; }
+        /* Lock the portal behind it while a tool is open full screen — otherwise the
+           background page and the tool's own content can both scroll at once. */
+        body.page-view-active { overflow: hidden; height: 100vh; height: 100dvh; }
+        body.page-view-active .main { overflow: hidden; }
+        .page-bar {
+            flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px; background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .page-menu-btn {
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.28); color: #fff;
+            padding: 8px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; font-family: inherit; flex-shrink: 0;
+        }
+        .page-menu-btn:hover { background: rgba(255,193,7,0.22); border-color: rgba(255,193,7,0.5); }
+        .page-label { flex: 1 1 auto; min-width: 0; color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .page-host { flex: 1 1 auto; position: relative; overflow: hidden; }
+        .page-host iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
+        @media (max-width: 768px) {
+            .page-bar { padding: 10px 12px; }
+            .page-menu-btn { padding: 7px 11px; font-size: 12px; }
+            .page-label { font-size: 12px; }
+        }
 
         /* WELCOME */
         .hero { background: var(--white); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--blue); }
@@ -654,6 +703,23 @@
 
 <!-- OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR REOPEN (desktop/tablet, shown only when collapsed) -->
+<button class="sidebar-reopen-btn" id="sidebarReopenBtn" aria-label="Open menu" title="Open menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+</button>
+
+<!-- PAGE VIEW — a tool opens here full screen, with a Main Menu back bar -->
+<div class="page-view" id="pageView">
+    <div class="page-bar">
+        <button class="page-menu-btn" id="pageMenuBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Main Menu
+        </button>
+        <span class="page-label" id="pageLabel"></span>
+    </div>
+    <div class="page-host" id="pageHost"></div>
+</div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -944,18 +1010,22 @@
                     <svg id="sntChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div id="sntChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
-                    <button class="nav-child nav-l3" data-tab="snt-data">7.0.1.1 Data</button>
-                    <button class="nav-child nav-l3" data-tab="snt-report">7.0.1.2 Report</button>
-                    <button class="nav-child nav-l3" data-tab="snt-dashboard">7.0.1.3 Dashboard</button>
+                    <button class="nav-child nav-l3" data-tab="snt-datasets">7.0.1.1 Datasets</button>
+                    <button class="nav-child nav-l3" data-tab="snt-codes">7.0.1.2 Codes</button>
+                    <button class="nav-child nav-l3" data-tab="snt-outputs">7.0.1.3 Outputs</button>
+                    <button class="nav-child nav-l3" data-tab="snt-report">7.0.1.4 Report</button>
+                    <button class="nav-child nav-l3" data-tab="snt-manual">7.0.1.5 SNT Manual</button>
+                    <button class="nav-child nav-l3" data-tab="snt-intervention-targeting">7.0.1.6 Intervention Targeting</button>
                 </div>
                 <button class="nav-child nav-l2-toggle" id="mprToggle" onclick="toggleNestedGroup('mprChildren','mprChevron','mprToggle',event)">
                     <span>7.0.2 MPR 2021&#8211;2023</span>
                     <svg id="mprChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div id="mprChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
-                    <button class="nav-child nav-l3" data-tab="mpr-data">7.0.2.1 Data</button>
-                    <button class="nav-child nav-l3" data-tab="mpr-report">7.0.2.2 Report</button>
-                    <button class="nav-child nav-l3" data-tab="mpr-dashboard">7.0.2.3 Dashboard</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-datasets">7.0.2.1 Datasets</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-codes">7.0.2.2 Codes</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-outputs">7.0.2.3 Outputs</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-report">7.0.2.4 Report</button>
                 </div>
                 <button class="nav-child nav-l2-toggle" id="otherAnalysisToggle" onclick="toggleNestedGroup('otherAnalysisChildren','otherAnalysisChevron','otherAnalysisToggle',event)">
                     <span>7.0.3 Other Analysis</span>
@@ -992,6 +1062,10 @@
     </div>
 
     <div class="sidebar-footer">
+        <div id="medPreloadStatus" class="med-preload-status" style="display:none;">
+            <div class="med-preload-bar"><div class="med-preload-fill" id="medPreloadFill"></div></div>
+            <span id="medPreloadText">Loading dashboards…</span>
+        </div>
         <!-- Home leaves the programme entirely and returns to the directorate menu.
              Logout only drops back to this programme's role sign in, so before this there
              was no way out of the portal without reloading the page. -->
@@ -1390,12 +1464,16 @@
     <div id="dmat-eidsr" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-eidsr" src="" data-src="dmat_eidsr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- SNT / MPR / OTHER -->
-    <div id="snt-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-data" src="" data-src="snt_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="snt-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-report" src="" data-src="snt_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="snt-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-dashboard" src="" data-src="snt_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="mpr-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-data" src="" data-src="mpr_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="mpr-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-report" src="" data-src="mpr_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="mpr-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-dashboard" src="" data-src="mpr_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-datasets" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-datasets" src="" data-src="snt.html?tab=datasets" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-codes" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-codes" src="" data-src="snt.html?tab=codes" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-outputs" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-outputs" src="" data-src="snt.html?tab=outputs" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-report" src="" data-src="snt.html?tab=report" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-manual" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-manual" src="" data-src="snt.html?tab=manual" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-intervention-targeting" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-intervention-targeting" src="" data-src="snt.html?tab=intervention-targeting" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-datasets" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-datasets" src="" data-src="mpr.html?tab=datasets" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-codes" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-codes" src="" data-src="mpr.html?tab=codes" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-outputs" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-outputs" src="" data-src="mpr.html?tab=outputs" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-report" src="" data-src="mpr.html?tab=report" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-allages" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-allages" src="" data-src="other_trend_allages.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-u5" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-u5" src="" data-src="other_trend_u5.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
@@ -1828,16 +1906,28 @@ function endSplash(){
    button available at all times, and it is why no tool file needs anything added to it.
    PDFs and external sites are embedded the same way, or opened in a new tab by their own
    link, so there is nothing to inject anywhere. */
+
+// slug -> title, so each HMIS extraction tool gets its own shareable #hmis-<slug> link,
+// same as every other tab in the portal.
+var HMIS_TOOLS = {
+    'opd': 'OPD — Outpatient Department',
+    'suspected': 'Suspected — Fever Suspected Malaria',
+    'testing': 'Tested — Malaria Testing',
+    'confirmed': 'Confirmed — Confirmed Malaria Cases',
+    'confirmed_and_treated': 'Confirmed and Treated',
+    'presumptive': 'Presumptive Treatment',
+    'confirmed_not_treated': 'Confirmed Not Treated',
+    'treated': 'Treated — All Malaria Cases Treated',
+    'all': 'All HMIS Data Elements'
+};
+
 function openHmisFrame(src, title) {
-    document.getElementById('hmisFrameTitle').textContent = title;
-    document.getElementById('hmisFrameEmbed').src = src;
-    var pane = document.getElementById('hmisFramePane');
-    pane.style.display = 'block';
-    setTimeout(function(){ pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var slug = src.replace(/\.html$/, '');
+    showPageView(src, title, currentTab || 'welcome', navScrollEl ? navScrollEl.scrollTop : 0, 'hmis-' + slug);
 }
 function closeHmisFrame() {
-    document.getElementById('hmisFramePane').style.display = 'none';
-    document.getElementById('hmisFrameEmbed').src = '';
+    closeToolPage();
 }
 
 /* ROLE-BASED ACCESS CONTROL */
@@ -1868,8 +1958,10 @@ var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir
 var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
 var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc'];
-var SNT_TABS         = ['snt-data','snt-report','snt-dashboard'];
-var MPR_TABS         = ['mpr-data','mpr-report','mpr-dashboard'];
+var SNT_TABS         = ['snt-datasets','snt-codes','snt-outputs','snt-report','snt-manual','snt-intervention-targeting'];
+var MPR_TABS         = ['mpr-datasets','mpr-codes','mpr-outputs','mpr-report'];
+var currentTab       = 'welcome';
+var hashOpenedOnLoad = false;
 
 var roleAccess = {
     national: ['welcome','architecture','use-cases','me-dqa','me-detailed',
@@ -1931,6 +2023,13 @@ function enableTabsForRole(role) {
         var label = group.previousElementSibling;
         if (label && label.classList.contains('nav-section-label')) label.style.display = visible ? '' : 'none';
     });
+
+    // First successful login this page load: if the URL was opened with a #tool link
+    // (shared or bookmarked), jump straight into that tool now that a role is set.
+    if (!hashOpenedOnLoad) {
+        hashOpenedOnLoad = true;
+        openFromHash(location.hash);
+    }
 }
 
 document.querySelectorAll('.role-btn').forEach(function(btn){
@@ -1978,6 +2077,35 @@ function dvDecodeSrcdoc(dataUrl) {
 }
 
 let meDqaLoaded = false;
+// Shared fetch — used by the inline (behind-the-overlay) render, the full page view, and
+// the background preload, so the DQA report is only ever requested from Drive once.
+var meDqaCache = null, meDqaPromise = null;
+function fetchMeDqaData(){
+    if (meDqaPromise) return meDqaPromise;
+    meDqaPromise = fetch(DV_GAS+'?action=getDashboard')
+        .then(function(r){ return r.json(); })
+        .then(function(resp){
+            if (!resp.ok) return { ok:false, error: resp.error || 'No DQA report yet — admin must publish first.' };
+            var images = resp.images||{}, meta = resp.meta||{}, titles = meta.titles||{};
+            var dqaUrl = images['dqa_report.html']||'';
+            if (!dqaUrl) return { ok:false, error: 'No DQA report saved yet — admin must run and publish the DQA tool.' };
+            try {
+                var html = dvDecodeSrcdoc(dqaUrl);
+                var period = titles.dqaPeriod || meta.period || '';
+                return {
+                    ok:true, html:html,
+                    title: titles.dqaTitle || 'DQA Report',
+                    subtitle: 'Period: ' + period + (meta.ts ? ' · Updated: ' + meta.ts : ''),
+                    metaPill: period + (meta.ts ? ' · ' + meta.ts : ''),
+                    facilities: titles.dqaFacilities || '', avgScore: titles.dqaAvgScore || '', highPriority: titles.dqaHighPriority || ''
+                };
+            } catch(e){ return { ok:false, error: 'Failed to render DQA report: ' + e.message }; }
+        })
+        .catch(function(err){ return { ok:false, error: 'Network error: ' + err.message }; })
+        .then(function(result){ meDqaCache = result; medPreloadDone++; updateMedPreloadUI(); return result; });
+    return meDqaPromise;
+}
+
 function loadMeDqa() {
     if (meDqaLoaded) return;
     meDqaLoaded = true;
@@ -1988,33 +2116,100 @@ function loadMeDqa() {
     function doneP(){if(progEl)progEl.style.display='none';if(statEl)statEl.style.display='none';}
     function showErr(m){if(emptyEl)emptyEl.innerHTML='<p style="color:#dc3545;font-size:13px;font-weight:700;">&#9888; '+m+'</p>';doneP();}
     setP(15,'Loading dashboard…');
-    fetch(DV_GAS+'?action=getDashboard')
-        .then(r=>{setP(50,'Parsing response…');return r.json();})
-        .then(resp=>{
-            if(!resp.ok){showErr(resp.error||'No DQA report yet — admin must publish first.');return;}
-            const images=resp.images||{},meta=resp.meta||{},titles=meta.titles||{};
-            const dqaUrl=images['dqa_report.html']||'';
-            if(!dqaUrl){showErr('No DQA report saved yet — admin must run and publish the DQA tool.');return;}
-            setP(80,'Rendering report…');
-            try{
-                const html=dvDecodeSrcdoc(dqaUrl);
-                if(emptyEl)emptyEl.style.display='none';
-                if(frameEl)frameEl.style.display='block';
-                if(ifEl)ifEl.srcdoc=html;
-                const t=titles.dqaTitle||'DQA Report',p=titles.dqaPeriod||meta.period||'';
-                document.getElementById('meDqaTitle').textContent=t;
-                document.getElementById('meDqaSubtitle').textContent='Period: '+p+(meta.ts?' · Updated: '+meta.ts:'');
-                document.getElementById('meDqaMetaPill').textContent=p+(meta.ts?' · '+meta.ts:'');
-                if(titles.dqaFacilities||titles.dqaAvgScore||titles.dqaHighPriority){
-                    document.getElementById('meDqaStats').style.display='flex';
-                    if(titles.dqaFacilities)document.getElementById('meDqaStatFac').innerHTML='&#127968; '+titles.dqaFacilities;
-                    if(titles.dqaAvgScore)document.getElementById('meDqaStatScore').innerHTML='&#11088; Avg: '+titles.dqaAvgScore;
-                    if(titles.dqaHighPriority)document.getElementById('meDqaStatHigh').innerHTML='&#9888; '+titles.dqaHighPriority;
-                }
-                doneP();
-            }catch(e){showErr('Failed to render DQA report: '+e.message);}
-        })
-        .catch(err=>showErr('Network error: '+err.message));
+    fetchMeDqaData().then(function(result){
+        setP(80,'Rendering report…');
+        if (!result.ok) { showErr(result.error); return; }
+        if (emptyEl) emptyEl.style.display='none';
+        if (frameEl) frameEl.style.display='block';
+        if (ifEl) ifEl.srcdoc = result.html;
+        document.getElementById('meDqaTitle').textContent = result.title;
+        document.getElementById('meDqaSubtitle').textContent = result.subtitle;
+        document.getElementById('meDqaMetaPill').textContent = result.metaPill;
+        if (result.facilities || result.avgScore || result.highPriority) {
+            document.getElementById('meDqaStats').style.display = 'flex';
+            if (result.facilities) document.getElementById('meDqaStatFac').innerHTML = '&#127968; ' + result.facilities;
+            if (result.avgScore) document.getElementById('meDqaStatScore').innerHTML = '&#11088; Avg: ' + result.avgScore;
+            if (result.highPriority) document.getElementById('meDqaStatHigh').innerHTML = '&#9888; ' + result.highPriority;
+        }
+        doneP();
+    });
+}
+
+// Full page view for the DQA report — same Main Menu back button and #me-dqa deep link as
+// every other tool, built from the same cached fetch as the inline version above.
+function openMeDqaPage(){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed['me-dqa']) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    activateTab('me-dqa'); // sync nav highlight (also warms the inline copy, harmlessly, behind the overlay)
+
+    pageReturnTab = returnTab;
+    pageReturnScroll = returnScroll;
+
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    var label = pageLabelMap['me-dqa'] || 'Data Quality Assessment';
+    document.getElementById('pageLabel').textContent = label;
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+    try { history.pushState({ nmdrPage: 'me-dqa', nmdrReturn: pageReturnTab }, '', '#me-dqa'); } catch(e){}
+
+    if (meDqaCache) {
+        renderMeDqaPage(host, meDqaCache);
+    } else {
+        host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:14px;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);">Loading dashboard…</p></div>';
+        fetchMeDqaData().then(function(result){
+            if (document.getElementById('pageView').classList.contains('open') && document.getElementById('pageLabel').textContent === label) {
+                renderMeDqaPage(host, result);
+            }
+        });
+    }
+}
+
+function renderMeDqaPage(host, result){
+    host.innerHTML = '';
+    if (!result.ok) {
+        host.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;';
+
+    var header = document.createElement('div');
+    header.style.cssText = 'flex:0 0 auto;background:#2b5f8a;color:#fff;padding:12px 20px;';
+    var titleEl = document.createElement('div'); titleEl.style.cssText = 'font-size:14px;font-weight:700;'; titleEl.textContent = result.title;
+    var subEl = document.createElement('div'); subEl.style.cssText = 'font-size:12px;opacity:0.85;margin-top:2px;'; subEl.textContent = result.subtitle;
+    header.appendChild(titleEl); header.appendChild(subEl);
+    if (result.facilities || result.avgScore || result.highPriority) {
+        var statsRow = document.createElement('div');
+        statsRow.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;';
+        [['facilities','&#127968; '],['avgScore','&#11088; Avg: '],['highPriority','&#9888; ']].forEach(function(pair){
+            var val = result[pair[0]];
+            if (!val) return;
+            var span = document.createElement('span');
+            span.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.85);';
+            span.innerHTML = pair[1] + val;
+            statsRow.appendChild(span);
+        });
+        header.appendChild(statsRow);
+    }
+
+    var body = document.createElement('div');
+    body.style.cssText = 'flex:1 1 auto;position:relative;';
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;display:block;';
+    iframe.srcdoc = result.html;
+    body.appendChild(iframe);
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+    host.appendChild(wrap);
 }
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
@@ -2053,8 +2248,9 @@ var pageLabelMap = {
     'dmat-tpr':'D-MAT · Test Positivity Rate',
     'dmat-comparative':'D-MAT · Comparative Analysis','dmat-u5':'D-MAT · Under 5','dmat-allages':'D-MAT · All Ages',
     'dmat-eidsr':'D-MAT · eIDSR',
-    'snt-data':'SNT 2015–2025 · Data','snt-report':'SNT 2015–2025 · Report','snt-dashboard':'SNT 2015–2025 · Dashboard',
-    'mpr-data':'MPR 2021–2023 · Data','mpr-report':'MPR 2021–2023 · Report','mpr-dashboard':'MPR 2021–2023 · Dashboard',
+    'snt-datasets':'SNT 2015–2025 · Datasets','snt-codes':'SNT 2015–2025 · Codes','snt-outputs':'SNT 2015–2025 · Outputs',
+    'snt-report':'SNT 2015–2025 · Report','snt-manual':'SNT 2015–2025 · SNT Manual','snt-intervention-targeting':'SNT 2015–2025 · Intervention Targeting',
+    'mpr-datasets':'MPR 2021–2023 · Datasets','mpr-codes':'MPR 2021–2023 · Codes','mpr-outputs':'MPR 2021–2023 · Outputs','mpr-report':'MPR 2021–2023 · Report',
     'other-trend-allages':'Other Analysis · Trend Analysis (All Ages)',
     'other-trend-u5':'Other Analysis · Trend Analysis (Under 5)',
     'ento-data':'Vector Control · Entomology · Data','ento-report':'Vector Control · Entomology · Report',
@@ -2072,6 +2268,7 @@ function activateTab(tabId) {
         roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
         if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
     }
+    currentTab = tabId;
     document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
     var el = document.getElementById(tabId);
     if (el) el.classList.add('active');
@@ -2117,8 +2314,181 @@ function activateTab(tabId) {
     }
 }
 
-document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ activateTab(this.getAttribute('data-tab')); }); });
-document.querySelectorAll('.nav-child[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ activateTab(this.getAttribute('data-tab')); }); });
+document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ handleNavClick(this.getAttribute('data-tab')); }); });
+document.querySelectorAll('.nav-child[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ handleNavClick(this.getAttribute('data-tab')); }); });
+
+// PAGE VIEW — file-backed tool tabs open full screen with a Main Menu back bar
+// instead of switching inline, so they read as an ordinary page with a real back
+// button that returns you to exactly where you left off (scroll position included).
+var pageReturnTab = 'welcome', pageReturnScroll = 0;
+
+function isFileBackedTab(tabId){
+    var iframe = document.getElementById('frame-'+tabId);
+    return !!(iframe && iframe.hasAttribute('data-src') && tabId !== 'me-dqa' && !(MED_DRIVE_KEYS && MED_DRIVE_KEYS[tabId]));
+}
+
+function handleNavClick(tabId){
+    if (isFileBackedTab(tabId)) { openToolPage(tabId); }
+    else if (tabId === 'me-dqa') { openMeDqaPage(); }
+    else if (MED_DRIVE_KEYS && MED_DRIVE_KEYS[tabId]) { openMedDashboardPage(tabId); }
+    else { activateTab(tabId); }
+}
+
+// Google Drive dashboards (MED_DRIVE_KEYS) get the same full-page, Main Menu-back-button
+// treatment as every other tool, and the same #tabId deep link. Content comes from the
+// shared preload cache (see fetchMedTab) so opening one that already finished background
+// loading is instant; one still in flight shows its own small loading state until it lands.
+function openMedDashboardPage(tabId){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    activateTab(tabId); // sync nav highlight / open groups (also warms the cache, harmlessly, behind the overlay)
+
+    pageReturnTab = returnTab;
+    pageReturnScroll = returnScroll;
+
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    document.getElementById('pageLabel').textContent = pageLabelMap[tabId] || tabId;
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+    try { history.pushState({ nmdrPage: tabId, nmdrReturn: pageReturnTab }, '', '#' + tabId); } catch(e){}
+
+    var cached = medTabCache[tabId];
+    if (cached) {
+        renderMedPageResult(host, cached);
+    } else {
+        host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:14px;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);">Loading dashboard…</p></div>';
+        fetchMedTab(tabId).then(function(result){
+            // only paint if this same dashboard is still the one on screen
+            if (document.getElementById('pageView').classList.contains('open') && (pageLabelMap[tabId] || tabId) === document.getElementById('pageLabel').textContent) {
+                renderMedPageResult(host, result);
+            }
+        });
+    }
+}
+
+function renderMedPageResult(host, result){
+    host.innerHTML = '';
+    if (!result.ok) {
+        host.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;display:block;';
+    iframe.srcdoc = result.html;
+    host.appendChild(iframe);
+}
+
+function openToolPage(tabId){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var iframeSrcEl = document.getElementById('frame-'+tabId);
+    var src = iframeSrcEl ? iframeSrcEl.getAttribute('data-src') : null;
+    if (!src) { activateTab(tabId); return; }
+
+    // remember exactly where we left, so Main Menu / back returns there
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    // reflect the nav highlight / open groups underneath, without showing the tab-content
+    activateTab(tabId);
+
+    if (tabId === 'archive' && src) src += (src.indexOf('?') === -1 ? '?' : '&') + 'role=' + encodeURIComponent(currentUserRole || '');
+
+    showPageView(src, pageLabelMap[tabId] || tabId, returnTab, returnScroll, tabId);
+}
+
+// Shared full-screen "page view" — builds a fresh borderless frame that fills the
+// entire viewport below the Main Menu bar, so nothing ever shows as a boxed iframe
+// with its own scrollbar sitting inside the normal scrolling page.
+function showPageView(src, label, returnTab, returnScroll, historyTab){
+    pageReturnTab = returnTab || currentTab || 'welcome';
+    pageReturnScroll = (typeof returnScroll === 'number') ? returnScroll : 0;
+
+    // build a fresh frame per open — a reused frame pollutes its own history
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    var frame = document.createElement('iframe');
+    frame.src = src;
+    frame.setAttribute('allow', 'fullscreen');
+    frame.setAttribute('loading', 'eager');
+    host.appendChild(frame);
+
+    document.getElementById('pageLabel').textContent = label || '';
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+
+    try { history.pushState({ nmdrPage: historyTab || 'external', nmdrReturn: pageReturnTab }, '', historyTab ? ('#' + historyTab) : (location.pathname + location.search)); } catch(e){}
+}
+
+function closeToolPage(pushHistory){
+    document.getElementById('pageView').classList.remove('open');
+    document.body.classList.remove('page-view-active');
+    document.getElementById('pageHost').innerHTML = '';
+
+    var back = pageReturnTab || 'welcome';
+    activateTab(back);
+    var navScrollEl = document.querySelector('.nav-scroll');
+    if (navScrollEl) navScrollEl.scrollTop = pageReturnScroll;
+
+    if (pushHistory !== false) {
+        try {
+            var url = (back === 'welcome') ? (location.pathname + location.search) : ('#' + back);
+            history.pushState({ nmdrPage: null, nmdrLanded: back }, '', url);
+        } catch(e){}
+    }
+}
+
+document.getElementById('pageMenuBtn').addEventListener('click', function(){ closeToolPage(); });
+
+// Deep link — resolves a URL hash (#dct-sbd, #hmis-opd, #snt-datasets, ...) to the tool it
+// names, so the same link works as a standalone page in any browser tab, once a role is
+// selected. Returns true if it recognised and opened something.
+function openFromHash(hash){
+    if (!hash) return false;
+    try { hash = decodeURIComponent(hash); } catch(e){}
+    hash = hash.replace(/^#/, '').replace(/\/+$/, '');
+    if (!hash) return false;
+    // exact tab id takes priority — covers file-backed tools, the DQA report, and
+    // MED_DRIVE_KEYS dashboards, including ones like "hmis-epi-dashboard" that happen to
+    // start with "hmis-"
+    if (hash === 'me-dqa') { openMeDqaPage(); return true; }
+    if (MED_DRIVE_KEYS && MED_DRIVE_KEYS[hash]) { openMedDashboardPage(hash); return true; }
+    if (document.getElementById(hash) && document.getElementById('frame-' + hash)) {
+        openToolPage(hash);
+        return true;
+    }
+    // otherwise, try it as an HMIS extraction-card slug (#hmis-<slug>)
+    if (hash.indexOf('hmis-') === 0) {
+        var slug = hash.slice(5);
+        var title = HMIS_TOOLS[slug];
+        if (!title) return false;
+        openHmisFrame(slug + '.html', title);
+        return true;
+    }
+    return false;
+}
+
+window.addEventListener('popstate', function(e){
+    var pageViewEl = document.getElementById('pageView');
+    if (pageViewEl.classList.contains('open')) {
+        // browser Back while a tool page is open — return to where we left, no new history entry
+        closeToolPage(false);
+    } else if (e.state && e.state.nmdrPage && e.state.nmdrPage !== 'external') {
+        openFromHash(e.state.nmdrPage);
+    }
+});
 
 function openGroup(groupId){
     var c=document.getElementById('children-'+groupId),b=document.querySelector('[data-group="'+groupId+'"]');
@@ -2145,24 +2515,89 @@ var MED_DRIVE_KEYS = {
     'me-summary-epi':'malaria_epi.html','me-summary-int':'intervention.html','me-summary-stock':'stock.html'
 };
 
-function loadMedTab(tabId){
-    var wrap=document.getElementById(tabId+'-wrap');
-    if(!wrap)return;
-    var driveKey=MED_DRIVE_KEYS[tabId];
-    if(!driveKey)return;
-    wrap.innerHTML='<div style="padding:60px 20px;text-align:center;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);margin-top:14px;">Loading dashboard…</p></div>';
-    fetch(DV_GAS+'?action=getFileByName&filename='+encodeURIComponent(driveKey)+'&t='+Date.now())
-        .then(function(r){return r.json();})
+// Every Drive dashboard is fetched once, in the background, starting as soon as the portal
+// loads — not when its tab is opened. The tab itself never shows on its own; clicking it just
+// renders whatever is already sitting in the cache (or waits on the same in-flight request if
+// it hasn't landed yet). medTabPromises holds one shared promise per tab so background preload
+// and an impatient click never trigger two fetches for the same file.
+var medTabCache    = {};   // tabId -> { ok:true, html } | { ok:false, error }
+var medTabPromises = {};   // tabId -> Promise (resolves, never rejects — errors are captured in the value)
+var medPreloadTotal = 0, medPreloadDone = 0;
+
+function fetchMedTab(tabId){
+    if (medTabPromises[tabId]) return medTabPromises[tabId];
+    var driveKey = MED_DRIVE_KEYS[tabId];
+    var p = fetch(DV_GAS+'?action=getFileByName&filename='+encodeURIComponent(driveKey)+'&t='+Date.now())
+        .then(function(r){ return r.json(); })
         .then(function(resp){
-            if(!resp.ok){wrap.innerHTML='<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">File not found: <strong>'+driveKey+'</strong></p></div>';return;}
-            try{
-                var html=dvDecodeSrcdoc(resp.content);
-                var iframe=document.createElement('iframe');
-                iframe.style.cssText='width:100%;height:85vh;border:none;display:block;border-radius:10px;';
-                iframe.srcdoc=html;wrap.innerHTML='';wrap.appendChild(iframe);
-            }catch(e){wrap.innerHTML='<p style="color:#dc3545;padding:20px;">Error rendering: '+e.message+'</p>';}
+            if (!resp.ok) return { ok:false, error:'File not found: ' + driveKey };
+            try { return { ok:true, html: dvDecodeSrcdoc(resp.content) }; }
+            catch(e){ return { ok:false, error:'Error rendering: ' + e.message }; }
         })
-        .catch(function(err){wrap.innerHTML='<p style="color:#dc3545;padding:20px;">Network error: '+err.message+'</p>';});
+        .catch(function(err){ return { ok:false, error:'Network error: ' + err.message }; })
+        .then(function(result){
+            medTabCache[tabId] = result;
+            medPreloadDone++;
+            updateMedPreloadUI();
+            return result;
+        });
+    medTabPromises[tabId] = p;
+    return p;
+}
+
+function renderMedTabResult(tabId, result){
+    var wrap = document.getElementById(tabId+'-wrap');
+    if (!wrap) return;
+    if (!result.ok) {
+        wrap.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;height:85vh;border:none;display:block;border-radius:10px;';
+    iframe.srcdoc = result.html;
+    wrap.innerHTML = '';
+    wrap.appendChild(iframe);
+}
+
+function loadMedTab(tabId){
+    var wrap = document.getElementById(tabId+'-wrap');
+    if (!wrap) return;
+    if (medTabCache[tabId]) { renderMedTabResult(tabId, medTabCache[tabId]); return; }
+    wrap.innerHTML = '<div style="padding:60px 20px;text-align:center;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);margin-top:14px;">Loading dashboard…</p></div>';
+    fetchMedTab(tabId).then(function(result){
+        // only render if this tab is still the one on screen when it lands
+        var el = document.getElementById(tabId);
+        if (el && el.classList.contains('active')) renderMedTabResult(tabId, result);
+    });
+}
+
+function updateMedPreloadUI(){
+    var box = document.getElementById('medPreloadStatus');
+    if (!box || medPreloadTotal === 0) return;
+    var pct = Math.round((medPreloadDone / medPreloadTotal) * 100);
+    var fill = document.getElementById('medPreloadFill');
+    var text = document.getElementById('medPreloadText');
+    if (fill) fill.style.width = pct + '%';
+    if (medPreloadDone < medPreloadTotal) {
+        box.style.display = 'block';
+        if (text) text.textContent = 'Loading dashboards… ' + medPreloadDone + '/' + medPreloadTotal + ' (' + pct + '%)';
+    } else {
+        if (text) text.textContent = 'Dashboards ready (' + medPreloadTotal + '/' + medPreloadTotal + ')';
+        setTimeout(function(){ box.style.display = 'none'; }, 2500);
+    }
+}
+
+// Kicks off every Drive dashboard fetch in parallel, in the background, right when the
+// portal loads — none of them are shown until their tab is actually clicked.
+function preloadAllMedTabs(){
+    var keys = Object.keys(MED_DRIVE_KEYS);
+    medPreloadTotal = keys.length + 1; // +1 for the DQA report, which follows the same pattern
+    medPreloadDone = 0;
+    var box = document.getElementById('medPreloadStatus');
+    if (box) box.style.display = 'block';
+    updateMedPreloadUI();
+    keys.forEach(function(tabId){ fetchMedTab(tabId); });
+    fetchMeDqaData();
 }
 
 function toggleGroup(groupId){
@@ -2178,7 +2613,24 @@ var hamburgerBtn=document.getElementById('hamburgerBtn'),sidebar=document.getEle
 function openDrawer(){sidebar.classList.add('open');sidebarOverlay.classList.add('visible');hamburgerBtn.classList.add('open');document.body.style.overflow='hidden';}
 function closeDrawer(){sidebar.classList.remove('open');sidebarOverlay.classList.remove('visible');hamburgerBtn.classList.remove('open');document.body.style.overflow='';}
 hamburgerBtn.addEventListener('click',function(){sidebar.classList.contains('open')?closeDrawer():openDrawer();});
-document.getElementById('sidebarCloseBtn').addEventListener('click',closeDrawer);
+
+// SIDEBAR COLLAPSE (desktop/tablet) — reuses the same close-X for both mobile drawer and desktop collapse
+function collapseSidebar(){
+    document.body.classList.add('sidebar-collapsed');
+    try{localStorage.setItem('nmdrSidebarCollapsed','1');}catch(e){}
+}
+function expandSidebar(){
+    document.body.classList.remove('sidebar-collapsed');
+    try{localStorage.setItem('nmdrSidebarCollapsed','0');}catch(e){}
+}
+document.getElementById('sidebarCloseBtn').addEventListener('click',function(){
+    if (window.matchMedia('(max-width:768px)').matches) { closeDrawer(); }
+    else { collapseSidebar(); }
+});
+document.getElementById('sidebarReopenBtn').addEventListener('click',expandSidebar);
+try{
+    if (window.matchMedia('(min-width:769px)').matches && localStorage.getItem('nmdrSidebarCollapsed')==='1') collapseSidebar();
+}catch(e){}
 sidebarOverlay.addEventListener('click',closeDrawer);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
 
@@ -2262,6 +2714,10 @@ window.addEventListener('message',function(e){
     }
     if(e.data.type==='pipeline_done')dvShowUpdateBar();
 });
+
+// Every Drive dashboard starts fetching the moment the portal loads, quietly in the
+// background — nothing is shown until its own tab is clicked (see loadMedTab / fetchMedTab).
+preloadAllMedTabs();
 </script>
 </body>
 </html>
