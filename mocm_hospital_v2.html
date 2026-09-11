@@ -303,6 +303,13 @@ var MODULES = [
    pres:"form-h-hospital-presentation.pdf", video:"form-h-hospital-video.mp4",
    assessment:"form-h-hospital-assessment.html", data:"form_h_hospital.html"},
 
+  /* The laboratory tool (MOCM Lab, the file mocm_hospital.html). It keeps its
+     own sheet and dashboard and is not collated by the scorecard below. */
+  {letter:"L", accent:"#17a2b8", title:"Clinical Laboratory Coaching and Mentorship",
+   desc:"Laboratory readiness, microscopes and supplies, internal quality control and EQA, observed blood film and RDT practice, slide rechecking and the national laboratory indicators.",
+   pres:"form-l-hospital-presentation.pdf", video:"form-l-hospital-video.mp4",
+   assessment:"form-l-hospital-assessment.html", data:"mocm_hospital.html"},
+
   /* The scorecard runs through the same four sub-modules as every other module.
      Form A carries no score, so it is not part of what this collates. */
   {letter:"SC", accent:"#0b3d68", title:"Hospital Scorecard",
@@ -340,6 +347,7 @@ var FORM_CREDENTIALS = {
   "D": { username: "supervisor", password: "mocm2026" },
   "E": { username: "supervisor", password: "mocm2026" },
   "H": { username: "supervisor", password: "mocm2026" },
+  "L": { username: "supervisor", password: "mocm2026" },
   "SC": { username: "supervisor", password: "mocm2026" }
 };
 
