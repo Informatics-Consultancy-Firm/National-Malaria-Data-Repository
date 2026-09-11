@@ -16,11 +16,10 @@ html{ background:var(--bg); }
 body{
   font-family:'Agency FB','AgencyFB','Arial Narrow',Arial,sans-serif;
   background:var(--white); color:var(--text-dark); font-size:15px; line-height:1.5;
-  max-width:480px; margin:0 auto; height:100vh; height:100dvh;
+  width:100%; margin:0; height:100vh; height:100dvh;
   display:flex; flex-direction:column; position:relative; overflow:hidden;
   /* vertical lines framing the app, connecting header to footer */
   border-left:3px solid var(--gold); border-right:3px solid var(--gold);
-  box-shadow:0 0 24px rgba(0,0,0,.08);
 }
 
 /* ---- header ---- */
@@ -286,6 +285,48 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
 /* and a tablet or desktop, where the form should not stretch to the full width */
 @media (min-width: 900px) {
   .wrap, .container, #sections-container { max-width: 820px; margin-left: auto; margin-right: auto; }
+}
+
+/* ==================== PHONE, TABLET OR COMPUTER ====================
+   No fixed phone size. The header, tab bar, progress strip and footer run the
+   full width of whatever screen the tool is opened on; the questions sit in a
+   centred column that widens with the screen, up to 980px on a computer so a
+   line of text never runs across a whole monitor.
+   ================================================================== */
+.step-scroll, .progress-wrap, .tool-status {
+  padding-left: max(16px, calc((100% - 980px) / 2));
+  padding-right: max(16px, calc((100% - 980px) / 2));
+}
+.app-header .logos { max-width: 980px; margin-left: auto; margin-right: auto; }
+
+/* tablet and up: answers side by side instead of one long stack */
+@media (min-width: 700px) {
+  .choice-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  #hrHost { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  #hrHost .hr-card { margin-bottom: 0; }
+  .recheck-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+  .recheck-row .member-header { grid-column: 1 / -1; }
+}
+
+/* tablet and computer: a larger header and type to match the bigger screen */
+@media (min-width: 768px) {
+  .app-header { padding: 18px 24px 14px; }
+  .app-header img { height: 54px; }
+  .app-header .org { font-size: 11.5px; }
+  .app-header .title { font-size: 20px; }
+  .progress-text { font-size: 12px; }
+  .step-scroll { padding-top: 24px; }
+  .section-head { font-size: 13.5px; padding: 14px 18px; }
+  .section-body { padding: 16px 18px; }
+  .question-text { font-size: 16px; }
+  .summary-head { font-size: 14px; }
+  .app-footer .footer-title { font-size: 12.5px; }
+  .app-footer .footer-org { font-size: 10.5px; }
+}
+
+/* a computer: the dashboard gets room for its charts */
+@media (min-width: 900px) {
+  #dashModal .modal-content { max-width: 820px; }
 }
 </style>
 <script>
@@ -923,7 +964,7 @@ function renderCascade(kind){
 function createSignaturePad(canvasId){
   const canvas=document.getElementById(canvasId); if(!canvas) return;
   const ctx=canvas.getContext('2d'); let drawing=false;
-  function coords(e){ const r=canvas.getBoundingClientRect(); const sx=canvas.width/r.width, sy=canvas.height/r.height; const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY; return {x:(cx-r.left)*sx,y:(cy-r.top)*sy}; }
+  function coords(e){ const r=canvas.getBoundingClientRect(); const sx=canvas.width/2/r.width, sy=canvas.height/2/r.height; const cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY; return {x:(cx-r.left)*sx,y:(cy-r.top)*sy}; }
   function start(e){ drawing=true; const c=coords(e); ctx.beginPath(); ctx.moveTo(c.x,c.y); ctx.lineTo(c.x,c.y); ctx.stroke(); e.preventDefault(); }
   function move(e){ if(!drawing) return; const c=coords(e); ctx.lineTo(c.x,c.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(c.x,c.y); e.preventDefault(); }
   function stop(){ if(!drawing) return; drawing=false; ctx.beginPath(); sessionStorage.setItem(canvasId,canvas.toDataURL()); }
@@ -1983,7 +2024,7 @@ function draftEsc(v){
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-var BUILD = "2026-07-31a";     // shown in the DRAFTS panel, so you can tell a stale phone
+var BUILD = "2026-09-11a";     // shown in the DRAFTS panel, so you can tell a stale phone
 var PAGE_RELOADS_FOR_NEW = true;   // how this form clears itself for the next facility
 var DRAFTS_KEY = "mocm_drafts_" + FORM_MARK;
 
