@@ -4,17 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <base target="_self">
-    <title>National Malaria Data Repository (NMDR)</title>
-
-    <!-- INSTALLABLE APP -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1f4a6a">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="NMDR">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>National Malaria Control Programme (NMCP)</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,6 +31,190 @@
         }
 
         img, iframe, canvas, svg, video { max-width: 100%; }
+
+
+        /* Placeholder programme portal: reuses the NMDR classes, so only the
+           full screen wrapper and the not configured styling are defined here. */
+        .pp-shell {
+            position: fixed; inset: 0; z-index: 10002; display: none;
+            background: var(--bg, #f5f7f9);
+        }
+        .pp-shell.open { display: flex; }
+        .pp-shell .main { height: 100vh; overflow-y: auto; }
+        .pp-shell .sidebar { height: 100vh; }
+        .pp-shell .topbar { display: none; }
+        @media (max-width: 900px) {
+            .pp-shell { display: none; }
+            .pp-shell.open { display: block; }
+            .pp-shell .topbar { display: flex; }
+            .pp-shell .sidebar { position: fixed; transform: translateX(-100%); z-index: 10003; }
+            .pp-shell .sidebar.open { transform: translateX(0); }
+            .pp-shell .sidebar-overlay.open { display: block; z-index: 10002; }
+        }
+        .pp-soon {
+            background: #fff8e6; border: 1px solid #e6c86a; border-left: 4px solid #8a6a00;
+            border-radius: 10px; padding: 16px 18px; margin-bottom: 18px;
+            font-size: 13px; color: #6b5200; line-height: 1.65;
+        }
+
+        /* Placeholder programme portal, modelled on the NMDR layout */
+        .ph-modal {
+            position: fixed; inset: 0; background: #f5f7f9; z-index: 10002;
+            display: none; overflow-y: auto; padding: 0;
+        }
+        .ph-top {
+            background: var(--blue); color: #fff; padding: 14px 22px;
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+        }
+        .ph-top .ph-abbr { font-size: 19px; font-weight: 800; letter-spacing: .5px; }
+        .ph-top .ph-name { font-size: 12px; opacity: .85; }
+        .ph-top .ph-spacer { flex: 1; }
+        .ph-back {
+            background: rgba(255,255,255,.15); border: none; color: #fff;
+            font-size: 12px; font-weight: 600; padding: 8px 14px;
+            border-radius: 8px; cursor: pointer;
+        }
+        .ph-back:hover { background: rgba(255,255,255,.28); }
+        .ph-body { max-width: 1080px; margin: 0 auto; padding: 22px 18px 40px; }
+        .ph-banner {
+            background: #fff8e6; border: 1px solid #e6c86a; border-left: 4px solid #8a6a00;
+            border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;
+            font-size: 13px; color: #6b5200; line-height: 1.6;
+        }
+        .ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+        .ph-mod {
+            background: #fff; border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 16px 14px; opacity: .95;
+        }
+        .ph-mod .ph-mod-no { font-size: 10.5px; font-weight: 700; color: var(--blue); letter-spacing: .4px; }
+        .ph-mod .ph-mod-title { font-size: 14px; font-weight: 700; color: var(--blue-dk, #1a3a5c); margin: 3px 0 6px; }
+        .ph-mod .ph-mod-desc { font-size: 11.5px; color: #5b6b7a; line-height: 1.5; }
+        .ph-mod .ph-mod-tag {
+            display: inline-block; margin-top: 9px; font-size: 9.5px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .4px; background: #f1f4f6;
+            color: #9aa7b2; padding: 2px 8px; border-radius: 10px;
+        }
+
+        /* Back to the programme grid, from the role sign in */
+        .prog-back-btn {
+            margin-top: 18px; background: none; border: none;
+            color: var(--blue); font-size: 13px; font-weight: 600;
+            cursor: pointer; padding: 8px 14px; border-radius: 8px;
+        }
+        .prog-back-btn:hover { background: var(--blue-lt); }
+
+        /* SPLASH SCREEN, shown for 10 seconds before the directorate page */
+        .splash {
+            position: fixed; inset: 0; z-index: 10010;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 18px; color: #fff; text-align: center; padding: 24px;
+            transition: opacity .5s ease;
+        }
+        .splash.hide { opacity: 0; pointer-events: none; }
+        .splash-logos {
+            display: flex; align-items: center; justify-content: center;
+            gap: 30px; flex-wrap: wrap; margin-bottom: 4px;
+        }
+        .splash-logos img {
+            height: 96px; width: auto; background: #fff; border-radius: 14px;
+            padding: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.22);
+        }
+        .splash h1 { font-size: 27px; font-weight: 800; margin: 0; letter-spacing: .2px; }
+        .splash h2 { font-size: 16px; font-weight: 500; margin: 0; opacity: .92; }
+        .splash .splash-by { font-size: 12px; opacity: .8; margin-top: 2px; }
+        .splash-barwrap {
+            width: min(340px, 80vw); height: 5px; background: rgba(255,255,255,.25);
+            border-radius: 3px; overflow: hidden; margin-top: 10px;
+        }
+        .splash-bar { height: 100%; width: 0; background: #fff; border-radius: 3px; }
+        .splash-skip {
+            margin-top: 6px; background: rgba(255,255,255,.16); border: none; color: #fff;
+            font-size: 12px; font-weight: 600; padding: 8px 18px; border-radius: 8px; cursor: pointer;
+        }
+        .splash-skip:hover { background: rgba(255,255,255,.3); }
+
+        /* The two logos across the top of the landing card: MoH left, ICF right */
+        .brand-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 22px; margin-bottom: 24px;
+        }
+        .brand-row img { height: 124px; width: auto; max-width: 34%; object-fit: contain; }
+        .brand-row .brand-mid { flex: 1; text-align: center; }
+
+        /* PROGRAMME LANDING, the first page: a 3 x 3 grid of programme cards */
+        .prog-modal {
+            position: fixed; inset: 0;
+            /* Same blue gradient as the portal sidebar, so the landing page and the
+               portal read as one product rather than two. */
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            z-index: 10001;              /* above the role modal, so it comes first */
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+        }
+        .prog-card-wrap {
+            background: white; border-radius: 20px;
+            padding: 42px 48px; max-width: 900px; width: 96%;
+            text-align: center; box-shadow: 0 18px 48px rgba(0,0,0,0.28);
+            border: none; max-height: 94vh; overflow-y: auto;
+        }
+        .prog-card-wrap h1 { color: var(--blue); margin-bottom: 4px; font-size: 27px; font-weight: 700; }
+        .prog-card-wrap h2 { color: var(--blue); margin-bottom: 6px; font-size: 16px; font-weight: 500; }
+        .prog-card-wrap p  { color: #5b6b7a; font-size: 13px; margin-bottom: 22px; }
+        /* three columns, three rows */
+        .prog-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 22px; margin-bottom: 6px;
+        }
+        .prog-tile {
+            border: 2px solid var(--border); border-radius: 14px;
+            padding: 20px 12px 16px; background: #fff; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 7px;
+            transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+            min-height: 96px; justify-content: center;
+        }
+        /* Five directorates across a single row. The card grows to suit, and the tiles are
+           given room to breathe rather than being squeezed together. */
+        .prog-card-wrap.wide { max-width: 1480px; }
+        .prog-grid.one-row { grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        .prog-grid.one-row .prog-tile { min-height: 150px; padding: 20px 12px 16px;
+        }
+        .prog-tile .prog-abbr { font-size: 21px; font-weight: 800; letter-spacing: .5px; }
+        .prog-tile .prog-name { font-size: 11px; color: #5b6b7a; line-height: 1.35; }
+        .prog-tile .prog-flag {
+            font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .4px; padding: 2px 8px; border-radius: 10px;
+        }
+        /* the one programme that is wired up */
+        .prog-tile.ready { border-color: var(--blue); }
+        .prog-tile.ready .prog-abbr { color: var(--blue); }
+        .prog-tile.ready .prog-flag { background: #e8f2fa; color: var(--blue); }
+        .prog-tile.ready:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,.13); }
+        /* the eight not yet configured: visible and readable, but clearly not live */
+        .prog-tile.soon { cursor: not-allowed; background: #fbfcfd; }
+        .prog-tile.soon .prog-abbr { color: #9aa7b2; }
+        .prog-tile.soon .prog-name { color: #9aa7b2; }
+        .prog-tile.soon .prog-flag { background: #f1f4f6; color: #9aa7b2; }
+        .prog-note { font-size: 11.5px; color: #5b6b7a; margin-top: 16px; }
+        /* The wide card is 1480px, so five across only has to give way below that. */
+        @media (max-width: 1560px) {
+            .prog-grid.one-row { grid-template-columns: repeat(5, 1fr); gap: 14px; }
+            .prog-grid.one-row .prog-tile { padding: 16px 8px 13px; }
+        }
+        @media (max-width: 1180px) {
+            .prog-grid.one-row { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        }
+        @media (max-width: 860px) {
+            .prog-grid { grid-template-columns: repeat(2, 1fr); }
+            .prog-grid.one-row { grid-template-columns: repeat(2, 1fr); }
+            .prog-card-wrap { padding: 24px 18px; }
+        }
+        @media (max-width: 600px) {
+            .prog-grid.one-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 460px) {
+            .prog-grid { grid-template-columns: 1fr; }
+        }
 
         /* ROLE MODAL */
         .role-modal {
@@ -76,18 +250,6 @@
         .role-btn.district  { background: #2c6e5c; color: white; }
         .role-btn.chiefdom  { background: #b4652c; color: white; }
         .role-btn.phu       { background: #6c7a89; color: white; }
-        .role-btn.datacollector { background: #2a6f7a; color: white; grid-column: 1 / -1; }
-        .role-btn.icfsl     { background: #2a6f7a; color: white; }
-        .role-btn.chai      { background: #5b4a8b; color: white; }
-        .role-btn.crs       { background: #8a3b3b; color: white; }
-        .role-btn.pmi       { background: #3d6b2f; color: white; }
-
-        /* Sign in: Ministry of Health / Partners tabs */
-        .login-tabs { display: flex; gap: 4px; background: var(--blue-lt); border-radius: 12px; padding: 4px; margin: 0 0 16px; }
-        .login-tab { flex: 1; border: none; background: transparent; color: var(--blue-dk); font-family: inherit; font-size: 14px; font-weight: 600; padding: 11px 12px; border-radius: 9px; cursor: pointer; transition: background 0.2s, color 0.2s; }
-        .login-tab:hover { background: rgba(44,103,147,0.08); }
-        .login-tab.active { background: var(--blue); color: white; box-shadow: 0 2px 8px rgba(31,74,106,0.25); }
-        .login-tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         .role-btn.admin-btn { background: #1a3a5c; color: white; width: 100%; font-size: 13px; padding: 12px; border-radius: 10px; }
         .role-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); filter: brightness(1.08); }
 
@@ -133,45 +295,41 @@
         .sidebar-overlay.visible { display: block; }
 
         /* SIDEBAR */
-        /* The sidebar is a three part column: header, the scrolling nav, footer.
-           The sidebar itself must NOT scroll. Only .nav-scroll does, otherwise
-           two nested scrollers fight each other and neither moves. */
         .sidebar {
             width: 260px;
             background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
-            position: sticky; top: 0;
-            height: 100vh; height: 100dvh;
-            max-height: 100vh; max-height: 100dvh;
-            flex-shrink: 0; overflow: hidden;
+            position: sticky; top: 0; height: 100vh;
+            flex-shrink: 0; overflow-y: auto;
             display: flex; flex-direction: column;
             box-shadow: 2px 0 15px rgba(0,0,0,0.15);
-            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), width 0.24s ease, min-width 0.24s ease, padding 0.24s ease;
             z-index: 960;
         }
-        .sidebar-header { flex: 0 0 auto; padding: 18px 20px; border-bottom: 2px solid rgba(255,255,255,0.1); flex-shrink: 0; display: flex; align-items: center; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+        .sidebar-header { padding: 18px 20px; border-bottom: 2px solid rgba(255,255,255,0.1); flex-shrink: 0; display: flex; align-items: center; }
         .sidebar-brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
         .brand-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
         .brand-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; background: #fff; padding: 3px; flex-shrink: 0; }
         .brand-title { font-size: 13px; font-weight: 700; color: white; letter-spacing: 0.5px; line-height: 1.2; display: block; }
         .brand-sub   { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; display: block; }
-        .sidebar-close { display: none; width: 30px; height: 30px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; cursor: pointer; align-items: center; justify-content: center; color: white; flex-shrink: 0; margin-left: 8px; font-size: 18px; line-height: 1; }
+        .sidebar-close { display: flex; width: 30px; height: 30px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; cursor: pointer; align-items: center; justify-content: center; color: white; flex-shrink: 0; margin-left: 8px; font-size: 18px; line-height: 1; }
         .sidebar-close:hover { background: rgba(255,255,255,0.2); }
-                /* flex:1 alone is not enough: a flex child defaults to min-height:auto and
-           refuses to shrink below its content, so the list grows past the sidebar
-           and nothing scrolls. min-height:0 is what makes the scroll work. */
-        .nav-scroll {
-            flex: 1 1 auto; min-height: 0; height: auto;
-            padding: 10px 0 18px;
-            overflow-y: auto; overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.28) transparent;
+        /* SIDEBAR COLLAPSE (desktop / tablet) */
+        .sidebar-reopen-btn {
+            display: none; position: fixed; top: 14px; left: 14px; z-index: 970;
+            width: 40px; height: 40px; border-radius: 9px;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            border: 1px solid rgba(255,255,255,0.25); color: #fff; cursor: pointer;
+            align-items: center; justify-content: center;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.28);
         }
-        .nav-scroll::-webkit-scrollbar { width: 6px; }
-        .nav-scroll::-webkit-scrollbar-track { background: transparent; }
-        .nav-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.28); border-radius: 3px; }
-        .nav-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.45); }
+        .sidebar-reopen-btn:hover { background: linear-gradient(135deg, var(--blue-dk) 0%, var(--blue) 100%); }
+        @media (min-width: 769px) {
+            body.sidebar-collapsed .sidebar { width: 0; min-width: 0; padding: 0; overflow: hidden; box-shadow: none; border: none; }
+            body.sidebar-collapsed .sidebar-reopen-btn { display: flex; }
+        }
+        .nav-scroll { flex: 1; padding: 10px 0; overflow-y: auto; }
         .nav-section-label { padding: 16px 18px 5px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; }
         .nav-item { width: 100%; background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 14px 16px; text-align: left; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 10px; }
         .nav-item:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.95); border-left-color: var(--gold); }
@@ -187,7 +345,7 @@
         .nav-chevron { width: 13px; height: 13px; transition: transform 0.2s; opacity: 0.5; flex-shrink: 0; stroke: currentColor; fill: none; }
         .nav-group-btn.open .nav-chevron { transform: rotate(180deg); opacity: 0.8; }
         .nav-group-children { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; background: rgba(0,0,0,0.18); }
-        .nav-group-children.open { max-height: 6000px; }
+        .nav-group-children.open { max-height: 2000px; }
         .nav-child { width: 100%; background: transparent; border: none; color: rgba(255,255,255,0.6); padding: 12px 16px 12px 24px; text-align: left; font-family: inherit; font-size: 12px; font-weight: 400; cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; display: block; }
         .nav-child:hover { color: rgba(255,255,255,0.95); background: rgba(255,255,255,0.08); border-left-color: rgba(255,193,7,0.5); }
         .nav-child.active { color: #fff !important; background: rgba(255,193,7,0.18) !important; border-left: 3px solid var(--gold) !important; font-weight: 700 !important; }
@@ -198,22 +356,26 @@
         .nav-l3-toggle { display:flex !important; align-items:center; justify-content:space-between; font-weight:600 !important; color:rgba(255,255,255,0.75) !important; padding: 10px 14px 10px 50px !important; font-size:11.5px !important; width:100%; background:transparent; border:none; cursor:pointer; font-family:inherit; border-left:3px solid transparent; }
         .nav-l4        { padding: 9px 14px 9px 64px !important; font-size:11px !important; }
         .nav-item.active { background: rgba(255,193,7,0.18) !important; color: white !important; border-left-color: var(--gold) !important; font-weight: 700 !important; }
+        .nav-group-btn.active { background: rgba(255,193,7,0.18) !important; color: white !important; border-left-color: var(--gold) !important; font-weight: 700 !important; }
         .nav-l1-toggle.active, .nav-l2-toggle.active, .nav-l3-toggle.active {
             color: #fff !important; background: rgba(255,193,7,0.12) !important;
             border-left: 3px solid rgba(255,193,7,0.6) !important; font-weight:700 !important;
         }
-        .sidebar-footer { flex: 0 0 auto; padding: 12px 14px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-footer { padding: 12px 14px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.08); }
+        .med-preload-status { margin-bottom: 10px; }
+        .med-preload-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+        .med-preload-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.3s ease; }
+        #medPreloadText { font-size: 10.5px; color: rgba(255,255,255,0.55); display: block; }
+        .home-btn {
+            width: 100%; background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.20); color: #fff;
+            padding: 9px 12px; border-radius: 8px; cursor: pointer;
+            font-size: 12.5px; font-weight: 600; margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .home-btn:hover { background: rgba(255,193,7,0.20); border-color: rgba(255,193,7,0.45); }
         .logout-btn { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.18s; font-family: inherit; }
         .logout-btn:hover { background: rgba(255,80,80,0.15); border-color: rgba(255,120,120,0.3); color: #ffaaaa; }
-        .install-btn { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.28); color: #fff; padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.18s; font-family: inherit; margin-bottom: 8px; }
-        .install-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.45); }
-        .install-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-        @media all and (display-mode: standalone) { .install-btn { display: none !important; } }
-        .update-btn { width: 100%; background: rgba(255,193,7,0.12); border: 1px solid rgba(255,193,7,0.35); color: var(--gold); padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.18s; font-family: inherit; margin-bottom: 8px; }
-        .update-btn:hover { background: rgba(255,193,7,0.2); border-color: rgba(255,193,7,0.55); }
-        .update-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-        .update-btn.is-busy { opacity: 0.6; cursor: progress; }
-        .update-btn .update-status { font-weight: 500; color: rgba(255,255,255,0.55); font-size: 11px; }
 
         /* MAIN */
         .main { flex: 1; padding: 28px 32px; overflow-y: auto; min-width: 0; }
@@ -225,11 +387,13 @@
             .nav-item, .nav-group-btn { font-size: 12px; padding: 10px 14px; }
             .nav-child { font-size: 11px; padding: 7px 14px 7px 36px; }
             .brand-title { font-size: 12px; }
+            /* TABLET VIEW — tool panes fit the visible viewport rather than a fixed 85vh */
+            .iframe-pane iframe { min-height: calc(100vh - 96px); min-height: calc(100dvh - 96px); }
         }
         @media (max-width: 768px) {
             body { display: block; }
             .topbar { display: flex; }
-            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); height: 100%; max-height: 100%; overflow: hidden; }
+            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); height: 100%; }
             .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.3); }
             .sidebar-close { display: flex; }
             .main { width: 100%; padding: 68px 10px 16px; min-height: 100vh; }
@@ -251,6 +415,37 @@
         .tab-content { display: none; animation: fadeIn 0.25s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PAGE VIEW — tool pages open "as ordinary pages" with a Main Menu back bar,
+           instead of an iframe sitting inside the sidebar layout */
+        .page-view {
+            display: none; position: fixed; inset: 0; z-index: 990;
+            background: var(--bg); flex-direction: column;
+        }
+        .page-view.open { display: flex; }
+        /* Lock the portal behind it while a tool is open full screen — otherwise the
+           background page and the tool's own content can both scroll at once. */
+        body.page-view-active { overflow: hidden; height: 100vh; height: 100dvh; }
+        body.page-view-active .main { overflow: hidden; }
+        .page-bar {
+            flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+            padding: 10px 16px; background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dk) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .page-menu-btn {
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.28); color: #fff;
+            padding: 8px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; font-family: inherit; flex-shrink: 0;
+        }
+        .page-menu-btn:hover { background: rgba(255,193,7,0.22); border-color: rgba(255,193,7,0.5); }
+        .page-label { flex: 1 1 auto; min-width: 0; color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .page-host { flex: 1 1 auto; position: relative; overflow: hidden; }
+        .page-host iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
+        @media (max-width: 768px) {
+            .page-bar { padding: 10px 12px; }
+            .page-menu-btn { padding: 7px 11px; font-size: 12px; }
+            .page-label { font-size: 12px; }
+        }
 
         /* WELCOME */
         .hero { background: var(--white); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--blue); }
@@ -359,6 +554,104 @@
 </head>
 <body>
 
+<!-- PROGRAMME LANDING, shown first -->
+<!-- SPLASH, 10 seconds, skippable -->
+<div id="splash" class="splash">
+    <div class="splash-logos">
+        <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL" onerror="this.style.display='none'">
+        <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone" onerror="this.style.display='none'">
+    </div>
+    <h1>Ministry of Health, Sierra Leone</h1>
+    <h2>Directorate Automated Analytic Pipelines</h2>
+    <div class="splash-by">Developed with Informatics Consultancy Firm &middot; Sierra Leone</div>
+    <div class="splash-barwrap"><div class="splash-bar" id="splashBar"></div></div>
+    <button class="splash-skip" onclick="endSplash()">Skip</button>
+</div>
+
+<div id="programModal" class="prog-modal">
+    <div class="prog-card-wrap">
+        <!-- MoH on the left, ICF on the right, title between them -->
+        <!-- ICF-SL on the left, Ministry of Health on the right. The ICF mark is the same
+             GitHub hosted image the extraction tools already use, so there is one source. -->
+        <div class="brand-row">
+            <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL"
+                 onerror="this.style.visibility='hidden'">
+            <div class="brand-mid">
+                <h1>Ministry of Health, Sierra Leone</h1>
+                <h2 id="progH2">Directorate Automated Analytic Pipelines</h2>
+            </div>
+            <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone"
+                 onerror="this.style.visibility='hidden'">
+        </div>
+        <p id="progSub">Choose a directorate to continue</p>
+        <div class="prog-grid" id="progGrid"></div>
+        <div class="prog-note" id="progNote"></div>
+        <button class="prog-back-btn" id="dirBackBtn" style="display:none;" onclick="showDirectorates()">&#8592; Back to directorates</button>
+    </div>
+</div>
+
+<!-- GENERIC PROGRAMME SIGN IN, used by every programme except NMDR -->
+<div id="progSignin" class="role-modal" style="display:none;">
+    <div class="role-card">
+        <div class="role-logo-row">
+            <div class="role-logo-box" style="background:transparent; padding:0;">
+                <img src="mohlogo.png" alt="Ministry of Health Sierra Leone" style="width:90px;height:auto;border-radius:50%;">
+            </div>
+        </div>
+        <h1 id="psTitle">Welcome</h1>
+        <h2>Sign in</h2>
+        <p id="psSub">Type the password to continue</p>
+        <div id="psPasswordArea" class="password-input" style="display:block;">
+            <input type="text"     id="psUsername" style="display:none" tabindex="-1" aria-hidden="true">
+            <input type="password" id="psPassword" placeholder="Password" autocomplete="current-password">
+            <button id="psSubmit" onclick="psVerify()">Sign in</button>
+            <div id="psError" class="access-denied" style="display:none;"></div>
+        </div>
+        <div id="psNote" style="font-size:12px;color:#8a6a00;background:#fff8e6;border:1px solid #e6c86a;border-radius:8px;padding:10px 12px;margin-top:14px;line-height:1.55;">
+            This programme is not configured yet, so it opens as a preview with no data behind it. Use the general password to look around.
+        </div>
+        <button class="prog-back-btn" onclick="backToProgrammes()">&#8592; Back to programmes</button>
+    </div>
+</div>
+
+<!-- PLACEHOLDER PROGRAMME PORTAL
+     Deliberately built from the SAME css classes as the NMDR shell (sidebar, nav-item,
+     nav-section-label, main, hero, section-label, cards-grid, card) so it looks identical.
+     Nothing is wired to DHIS2: every module says so when opened. -->
+<div id="progPortal" class="pp-shell">
+    <div class="topbar" id="ppTopbar">
+        <button class="topbar-hamburger" onclick="ppToggleNav()" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-brand">
+            <img src="mohlogo.png" alt="" class="topbar-logo-img">
+            <div class="topbar-labels">
+                <span class="topbar-title" id="ppTopTitle">Portal</span>
+                <span class="topbar-page" id="ppTopPage">Welcome</span>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="ppOverlay" onclick="ppToggleNav()"></div>
+    <aside class="sidebar" id="ppSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <img src="mohlogo.png" alt="" class="brand-logo-img">
+                <div>
+                    <span class="brand-title" id="ppBrand">Portal</span>
+                    <span class="brand-sub">Sierra Leone &middot; Ministry of Health</span>
+                </div>
+            </div>
+            <button class="sidebar-close" onclick="ppToggleNav()" aria-label="Close menu">&#10005;</button>
+        </div>
+        <div class="nav-scroll" id="ppNav"></div>
+        <div style="padding:12px 16px 16px;">
+            <button class="ph-back" style="width:100%;" onclick="backToProgrammes()">&#8592; Back to programmes</button>
+            <button class="ph-back" style="width:100%;margin-top:8px;" onclick="goMainMenu()">&#8962; Main menu</button>
+        </div>
+    </aside>
+    <main class="main" id="ppMain"></main>
+</div>
+
 <!-- ROLE MODAL -->
 <div id="roleModal" class="role-modal">
     <div class="role-card">
@@ -367,33 +660,16 @@
                 <img src="mohlogo.png" alt="Ministry of Health Sierra Leone" style="width:90px;height:auto;border-radius:50%;">
             </div>
         </div>
-        <h1>Welcome to NMDR</h1>
-        <h2>Who are you?</h2>
-        <p>Select your role to access the National Malaria Data Repository</p>
-        <div class="login-tabs" role="tablist" aria-label="Sign in as">
-            <button type="button" class="login-tab active" data-group="moh" role="tab" aria-selected="true" aria-controls="mohRoles">Ministry of Health</button>
-            <button type="button" class="login-tab" data-group="partners" role="tab" aria-selected="false" aria-controls="partnerRoles">Partners</button>
+        <h1>Welcome to NMCP</h1>
+        <h2>Sign in</h2>
+        <p>Type your password. The portal reads what you may open from the staff database.</p>
+        <div id="passwordArea" class="password-input" style="display:block">
+            <input type="text"     id="roleUsername" style="display:none" tabindex="-1" aria-hidden="true">
+            <input type="password" id="rolePassword" placeholder="Your password" autocomplete="current-password">
+            <button id="submitRolePassword">Sign in</button>
+            <div id="passwordError" class="access-denied"></div>
         </div>
-        <div class="role-buttons" id="mohRoles" role="tabpanel">
-            <button class="role-btn national" data-role="national">National Staff</button>
-            <button class="role-btn district"  data-role="district">District Staff</button>
-            <button class="role-btn chiefdom"  data-role="chiefdom">Chiefdom Supervisor</button>
-            <button class="role-btn phu"       data-role="phu">PHU Staff</button>
-            <button class="role-btn datacollector" data-role="datacollector">Data Collector</button>
-        </div>
-        <div class="role-buttons" id="partnerRoles" role="tabpanel" style="display:none;">
-            <button class="role-btn icfsl" data-role="icfsl">ICF-SL</button>
-            <button class="role-btn chai"  data-role="chai">CHAI</button>
-            <button class="role-btn crs"   data-role="crs">CRS</button>
-            <button class="role-btn pmi"   data-role="pmi">PMI Evolve</button>
-        </div>
-        <button class="role-btn admin-btn" data-role="admin" style="margin-top:4px">&#128274; Admin</button>
-        <div id="passwordArea" class="password-input">
-            <input type="text"     id="roleUsername" placeholder="Username" style="display:none">
-            <input type="password" id="rolePassword" placeholder="Enter password">
-            <button id="submitRolePassword">Verify and Access</button>
-            <div id="passwordError" class="access-denied">Incorrect credentials. Access denied.</div>
-        </div>
+        <button class="prog-back-btn" id="backToProgrammesBtn" onclick="backToProgrammes()">&#8592; Back to programmes</button>
     </div>
 </div>
 
@@ -405,7 +681,7 @@
     <div class="topbar-brand">
         <img src="mohlogo.png" alt="Ministry of Health Sierra Leone" class="topbar-logo-img">
         <div class="topbar-labels">
-            <span class="topbar-title">NMDR Portal</span>
+            <span class="topbar-title">NMCP Portal</span>
             <span class="topbar-page" id="topbarPage">Welcome</span>
         </div>
     </div>
@@ -414,13 +690,30 @@
 <!-- OVERLAY -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+<!-- SIDEBAR REOPEN (desktop/tablet, shown only when collapsed) -->
+<button class="sidebar-reopen-btn" id="sidebarReopenBtn" aria-label="Open menu" title="Open menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+</button>
+
+<!-- PAGE VIEW — a tool opens here full screen, with a Main Menu back bar -->
+<div class="page-view" id="pageView">
+    <div class="page-bar">
+        <button class="page-menu-btn" id="pageMenuBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Main Menu
+        </button>
+        <span class="page-label" id="pageLabel"></span>
+    </div>
+    <div class="page-host" id="pageHost"></div>
+</div>
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-brand">
             <img src="mohlogo.png" alt="Ministry of Health Sierra Leone" class="brand-logo-img">
             <div>
-                <span class="brand-title">NMDR Portal</span>
+                <span class="brand-title">NMCP Portal</span>
                 <span class="brand-sub">Sierra Leone &middot; NMCP</span>
             </div>
         </div>
@@ -428,10 +721,17 @@
     </div>
 
     <div class="nav-scroll">
-        <button class="nav-item active" data-tab="welcome" style="margin-top:6px;">
-            <svg class="nav-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Welcome
-        </button>
+        <div class="nav-group">
+            <button class="nav-group-btn open active" data-group="welcome" data-tab="welcome" style="margin-top:6px;">
+                <svg class="nav-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span class="nav-group-label">Welcome</span>
+                <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="nav-group-children open" id="children-welcome">
+                <button class="nav-child nav-l2" data-tab="architecture">NMDR Architecture &amp; Data Flow</button>
+                <button class="nav-child nav-l2" data-tab="use-cases">NMDR Navigation</button>
+            </div>
+        </div>
 
         <!-- 1.0 MALARIA SURVEILLANCE -->
         <div class="nav-section-label" style="margin-top:10px;">1.0 Malaria Surveillance</div>
@@ -505,6 +805,8 @@
                         <button class="nav-child nav-l3" data-tab="med-comp-u5">1.0.2.4.1 Under Five</button>
                         <button class="nav-child nav-l3" data-tab="med-comp-allages">1.0.2.4.2 All Ages</button>
                     </div>
+
+                    <button class="nav-child nav-l2" data-tab="me-reports">1.0.2.5 Reporting</button>
                 </div>
 
                 <button class="nav-child nav-l1-toggle" id="tesToggle" onclick="toggleNestedGroup('tesChildren','tesChevron','tesToggle',event)">
@@ -633,18 +935,25 @@
                     <button class="nav-child nav-l3" data-tab="survey-report">5.0.4.2 Report</button>
                 </div>
                 <button class="nav-child nav-l2-toggle" id="dctToggle" onclick="toggleNestedGroup('dctChildren','dctChevron','dctToggle',event)">
-                    <span>5.0.5 Data Collection Tools</span>
+                    <span>5.0.5 Data Collection Apps</span>
                     <svg id="dctChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div id="dctChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
                     <button class="nav-child nav-l3" data-tab="dct-sbd">5.0.5.1 SBD</button>
                     <button class="nav-child nav-l3" data-tab="dct-mocm-phu">5.0.5.2 MOCM (PHU)</button>
-                    <button class="nav-child nav-l3" data-tab="dct-mocm-lab">5.0.5.3 MOCM (Lab)</button>
-                    <button class="nav-child nav-l3" data-tab="dct-mocm-hospital">5.0.5.4 MOCM (Hospital)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-mocm-hospital">5.0.5.3 MOCM (Hospital)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-mocm-lab">5.0.5.4 MOCM (Lab)</button>
                     <button class="nav-child nav-l3" data-tab="dct-warehouse">5.0.5.5 Warehouse Assessment</button>
                     <button class="nav-child nav-l3" data-tab="dct-sbc">5.0.5.6 SBC Coaching (Form K)</button>
+                    <button class="nav-child nav-l3" data-tab="dct-tes">5.0.5.7 TES Data Collection Tool</button>
                 </div>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
+                <button class="nav-child nav-l2" data-tab="gf-plan">5.0.7 GF Implementation Plan</button>
+                <button class="nav-child nav-l2" data-tab="partners-mapping">5.0.8 NMCP Partners Mapping</button>
+                <button class="nav-child nav-l2" data-tab="world-malaria-day">5.0.9 World Malaria Day</button>
+                <button class="nav-child nav-l2" data-tab="population-estimate">5.0.7 Population</button>
+                <button class="nav-child nav-l2" data-tab="performance-framework">5.0.8 Performance Framework</button>
+                <button class="nav-child nav-l2" data-tab="archive">5.0.9 Google Drive Files</button>
             </div>
         </div>
 
@@ -675,6 +984,7 @@
                     <button class="nav-child nav-l3" data-tab="dmat-u5">6.0.11.1 Under 5</button>
                     <button class="nav-child nav-l3" data-tab="dmat-allages">6.0.11.2 All Ages</button>
                 </div>
+                <button class="nav-child nav-l2" data-tab="dmat-eidsr">6.0.12 eIDSR</button>
             </div>
         </div>
 
@@ -687,8 +997,28 @@
                 <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="nav-group-children" id="children-retro">
-                <button class="nav-child nav-l2" data-tab="snt">7.0.1 SNT 2015&#8211;2025</button>
-                <button class="nav-child nav-l2" data-tab="mpr">7.0.2 MPR 2021&#8211;2023</button>
+                <button class="nav-child nav-l2-toggle" id="sntToggle" onclick="toggleNestedGroup('sntChildren','sntChevron','sntToggle',event)">
+                    <span>7.0.1 SNT 2015&#8211;2025</span>
+                    <svg id="sntChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="sntChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
+                    <button class="nav-child nav-l3" data-tab="snt-datasets">7.0.1.1 Datasets</button>
+                    <button class="nav-child nav-l3" data-tab="snt-codes">7.0.1.2 Codes</button>
+                    <button class="nav-child nav-l3" data-tab="snt-outputs">7.0.1.3 Outputs</button>
+                    <button class="nav-child nav-l3" data-tab="snt-report">7.0.1.4 Report</button>
+                    <button class="nav-child nav-l3" data-tab="snt-manual">7.0.1.5 SNT Manual</button>
+                    <button class="nav-child nav-l3" data-tab="snt-intervention-targeting">7.0.1.6 Intervention Targeting</button>
+                </div>
+                <button class="nav-child nav-l2-toggle" id="mprToggle" onclick="toggleNestedGroup('mprChildren','mprChevron','mprToggle',event)">
+                    <span>7.0.2 MPR 2021&#8211;2023</span>
+                    <svg id="mprChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div id="mprChildren" style="overflow:hidden;max-height:0;transition:max-height .3s ease;">
+                    <button class="nav-child nav-l3" data-tab="mpr-datasets">7.0.2.1 Datasets</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-codes">7.0.2.2 Codes</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-outputs">7.0.2.3 Outputs</button>
+                    <button class="nav-child nav-l3" data-tab="mpr-report">7.0.2.4 Report</button>
+                </div>
                 <button class="nav-child nav-l2-toggle" id="otherAnalysisToggle" onclick="toggleNestedGroup('otherAnalysisChildren','otherAnalysisChevron','otherAnalysisToggle',event)">
                     <span>7.0.3 Other Analysis</span>
                     <svg id="otherAnalysisChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
@@ -712,6 +1042,7 @@
                 <button class="nav-child nav-l2" data-tab="finance-data">8.0.1 Data</button>
                 <button class="nav-child nav-l2" data-tab="finance-report">8.0.2 Report</button>
                 <button class="nav-child nav-l2" data-tab="finance-dashboard">8.0.3 Dashboard</button>
+                <button class="nav-child nav-l2" data-tab="nsp-costing">8.0.4 NSP Costing</button>
             </div>
         </div>
 
@@ -723,13 +1054,17 @@
     </div>
 
     <div class="sidebar-footer">
-        <button class="install-btn" id="nmdrInstall" type="button" title="Add NMDR to this device as an app">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Install app
-        </button>
-        <button class="update-btn" id="nmdrUpdate" type="button" title="Download the latest version of the portal and its tools">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-            Update<span class="update-status" id="nmdrUpdateStatus"></span>
+        <div class="signed-as" id="signedAs" style="display:none;font-size:11px;color:rgba(255,255,255,0.55);padding:0 2px 8px;line-height:1.35;"></div>
+        <div id="medPreloadStatus" class="med-preload-status" style="display:none;">
+            <div class="med-preload-bar"><div class="med-preload-fill" id="medPreloadFill"></div></div>
+            <span id="medPreloadText">Loading dashboards…</span>
+        </div>
+        <!-- Home leaves the programme entirely and returns to the directorate menu.
+             Logout only drops back to this programme's role sign in, so before this there
+             was no way out of the portal without reloading the page. -->
+        <button class="home-btn" id="portalHomeBtn" onclick="goMainMenu()" title="Back to the main menu (Alt+H)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+            Main menu
         </button>
         <button class="logout-btn" id="logoutBtn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -745,7 +1080,7 @@
     <div id="welcome" class="tab-content active">
         <div class="hero">
             <div class="hero-tag">Sierra Leone NMCP</div>
-            <h1>National Malaria Data Repository</h1>
+            <h1>National Malaria Control Programme</h1>
             <p>A centralized, integrated platform for malaria surveillance, programme monitoring, and data-driven decision making across Sierra Leone.</p>
         </div>
         <div class="section-label">About the Repository</div>
@@ -808,34 +1143,25 @@
             </div></div>
         </div>
 
+    </div>
+
+    <!-- Architecture — moved out of Welcome, now its own sub-page -->
+    <div id="architecture" class="tab-content">
         <div class="section-label" style="margin-top:4px;">NMDR Architecture &amp; Data Flow</div>
         <div class="nmdr-info-block">
             <div class="nmdr-info-header">
                 <span class="tag">Ministry of Health</span>
                 <span>Government of Sierra Leone &mdash; NMDR Data Infrastructure</span>
             </div>
-            <div class="nmdr-info-body">
-                <div class="nmdr-moh-logo">
-                    <img src="mohlogo.png" alt="Ministry of Health Sierra Leone">
-                    <div class="nmdr-moh-label">Ministry of Health<br>Sierra Leone</div>
-                </div>
-                <div class="nmdr-divider"></div>
-                <div class="nmdr-diagram-wrap">
-                    <img src="nmdr_info.png" alt="NMDR DHIS2 Architecture">
-                </div>
+            <div style="padding:16px;">
+                <img src="nmdr_architecture.jpg" alt="SLNMDR Architecture and Data Flow" style="width:100%;height:auto;display:block;border-radius:8px;">
             </div>
         </div>
+    </div>
 
-        <div class="section-label" style="margin-top:4px">NMDR Use Cases &mdash; WHO AFRO</div>
-        <div class="slides-container">
-            <div class="slides-header">NMDR Use Cases &mdash; WHO AFRO Presentation</div>
-            <div class="slides-ratio-wrap">
-                <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQFJZ7rG2K0i1Fpmu49KuUV3yifUdQ2MuVXOlbBCKcenHVUnWeri8xSyaix8OzE0w/pubembed?start=false&loop=false&delayms=3000" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" loading="lazy"></iframe>
-            </div>
-        </div>
-        <div class="disclaimer-banner">
-            <p><strong>DISCLAIMER:</strong> This platform fully follows WHO AFRO recommendations for the NMDR use cases. The modules have been reorganised and restructured solely to enhance clarity, usability, and user experience. The core objectives, goals, and intent of the WHO AFRO NMDR use cases remain fully intact and unchanged.</p>
-        </div>
+    <!-- Navigation — moved out of Welcome, now its own sub-page -->
+    <div id="use-cases" class="tab-content">
+        <div class="iframe-pane"><iframe id="frame-use-cases" src="" data-src="navigation.html" loading="lazy" allow="fullscreen"></iframe></div>
     </div>
 
     <!-- M&E — DQA tab -->
@@ -885,148 +1211,10 @@
     <div id="med-ptr"         class="tab-content"><div id="med-ptr-wrap"         class="me-detail-wrap"></div></div>
     <div id="me-comp-u5"      class="tab-content"><div id="me-comp-u5-wrap"      class="me-detail-wrap"></div></div>
     <div id="me-comp-allages" class="tab-content"><div id="me-comp-allages-wrap" class="me-detail-wrap"></div></div>
+    <div id="me-reports" class="tab-content"><div class="iframe-pane"><iframe id="frame-me-reports" src="" data-src="me_reports.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- 1.0.1.1 HMIS (Monthly) — DATA EXTRACTION -->
-    <div id="hmis-extraction" class="tab-content">
-        <div class="hero" style="border-left-color:#2c6793;margin-bottom:18px;">
-            <div class="hero-tag">1.0.1.1 HMIS (Monthly)</div>
-            <h1>Data Extraction</h1>
-            <p>Select a data element below to open the extraction tool. Each tool connects live to DHIS2 HMIS and supports facility/community disaggregation, choropleth maps, charts, and exports.</p>
-        </div>
-        <div class="section-label">HMIS Data Elements</div>
-
-        <div id="hmisCardGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px;">
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('opd.html','OPD — Outpatient Department')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#2c6793,#1f4a6a);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#e8f0f7;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2c6793" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#2c6793;text-transform:uppercase;margin-bottom:5px;">01</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">OPD</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Outpatient Department visits — all ages and disaggregations</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#2c6793;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('suspected.html','Suspected — Fever Suspected Malaria')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#2c7a4a,#1f5c35);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#e6f4ec;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2c7a4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 014 4v4a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M6 21v-2a6 6 0 0112 0v2"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#2c7a4a;text-transform:uppercase;margin-bottom:5px;">02</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Suspected</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Fever / suspected malaria cases by age group and facility type</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#2c7a4a;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('testing.html','Tested — Malaria Testing')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#6c4faa,#4b3480);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#ede8f7;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6c4faa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v11m0 0H5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 00-2-2h-4m-5 0h5"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6c4faa;text-transform:uppercase;margin-bottom:5px;">03</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Tested</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">RDT and microscopy testing volumes by age group and facility</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#6c4faa;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('confirmed.html','Confirmed — Confirmed Malaria Cases')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#c0392b,#922b21);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#fdecea;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#c0392b;text-transform:uppercase;margin-bottom:5px;">04</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Confirmed</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Laboratory-confirmed malaria cases, all ages and age-disaggregated</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#c0392b;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('confirmed_and_treated.html','Confirmed and Treated')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#d4850a,#a3620a);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#fef3e2;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4850a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#d4850a;text-transform:uppercase;margin-bottom:5px;">05</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Confirmed &amp; Treated</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Confirmed malaria cases that received ACT treatment</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#d4850a;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('presumptive.html','Presumptive Treatment')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#1a7a8a,#135e6b);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#e0f4f7;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a7a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3.322.89-4.5 2.31C10.822 3.89 9.26 3 7.5 3A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#1a7a8a;text-transform:uppercase;margin-bottom:5px;">06</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Presumptive Treatment</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Clinically-diagnosed malaria treated without lab confirmation</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#1a7a8a;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('confirmed_not_treated.html','Confirmed Not Treated')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#7b3f8a,#582c63);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#f3e8f7;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7b3f8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#7b3f8a;text-transform:uppercase;margin-bottom:5px;">07</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Confirmed Not Treated</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">Confirmed malaria cases that did not receive ACT treatment</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#7b3f8a;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('treated.html','Treated — All Malaria Cases Treated')" style="background:#fff;border-radius:12px;border:2px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,0.06);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:linear-gradient(90deg,#3a6b2a,#28501e);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:#e8f5e2;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3a6b2a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#3a6b2a;text-transform:uppercase;margin-bottom:5px;">08</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a2e3d;line-height:1.3;margin-bottom:6px;">Treated</div>
-                    <div style="font-size:12px;color:#6c7a89;line-height:1.5;">All malaria cases treated — confirmed and presumptive combined</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#3a6b2a;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-            <div class="hmis-launch-card" onclick="openHmisFrame('all.html','All HMIS Data Elements')" style="background:linear-gradient(135deg,#1f4a6a 0%,#2c6793 100%);border-radius:12px;border:2px solid #1f4a6a;box-shadow:0 3px 14px rgba(44,103,147,0.25);cursor:pointer;transition:all .25s;overflow:hidden;">
-                <div style="height:5px;background:var(--gold);"></div>
-                <div style="padding:22px 20px;">
-                    <div style="width:46px;height:46px;background:rgba(255,193,7,0.18);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    </div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#ffc107;text-transform:uppercase;margin-bottom:5px;">09</div>
-                    <div style="font-size:16px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:6px;">All Data Elements</div>
-                    <div style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.5;">Complete HMIS extraction — all malaria data elements combined</div>
-                    <div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#ffc107;">Open Tool <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="hmisFramePane" style="display:none;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);border:2px solid var(--blue);">
-            <div style="background:var(--blue);color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-                <span id="hmisFrameTitle" style="font-size:13px;font-weight:700;"></span>
-                <button onclick="closeHmisFrame()" style="background:rgba(255,255,255,0.12);border:none;color:#fff;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;line-height:1;">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Close
-                </button>
-            </div>
-            <iframe id="hmisFrameEmbed" src="" style="width:100%;min-height:85vh;border:none;display:block;"></iframe>
-        </div>
-    </div>
+    <div id="hmis-extraction" class="tab-content"><div class="iframe-pane"><iframe id="frame-hmis-extraction" src="" data-src="data_extraction.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <div id="hmis-epi-dashboard" class="tab-content"><div id="hmis-epi-dashboard-wrap" class="me-detail-wrap"></div></div>
 
@@ -1087,13 +1275,28 @@
     <div id="mpd" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpd" src="" data-src="mpd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-data" src="" data-src="survey_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="survey-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-survey-report" src="" data-src="survey_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="dct-sbd" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbd" src="" data-src="sbd.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-sbd" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbd" src="" data-src="https://mohamedsillahkanu.github.io/SBD-final-final-version2.3/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-tes" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-tes" src="" data-src="https://mohamedsillahkanu.github.io/TES-v3/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-mocm-phu" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-phu" src="" data-src="mocm_phu.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="dct-mocm-lab" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-lab" src="" data-src="mocm_hospital.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="dct-mocm-hospital" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-hospital" src="" data-src="mocm_hospital_v2.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-mocm-hospital" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-hospital" src="" data-src="mocm_hospital.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-mocm-lab" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-lab" src="" data-src="mocm_lab.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-warehouse" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-warehouse" src="" data-src="warehouse.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-sbc" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbc" src="" data-src="form_k.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="gf-plan" class="tab-content"><div class="iframe-pane"><iframe id="frame-gf-plan" src="" data-src="gf_plan.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="partners-mapping" class="tab-content"><div class="iframe-pane"><iframe id="frame-partners-mapping" src="" data-src="partners.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="world-malaria-day" class="tab-content">
+        <div class="section-label" style="margin-top:4px">World Malaria Day</div>
+        <div class="slides-container">
+            <div class="slides-header">World Malaria Day</div>
+            <div class="slides-ratio-wrap">
+                <iframe src="https://www.youtube.com/embed/BQsabfkaLSo" title="World Malaria Day" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+    <div id="population-estimate" class="tab-content"><div class="iframe-pane"><iframe id="frame-population-estimate" src="" data-src="https://informatics-consultancy-firm.github.io/population-estimate/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="performance-framework" class="tab-content"><div class="iframe-pane"><iframe id="frame-performance-framework" src="" data-src="https://informatics-consultancy-firm.github.io/nmcp-pf-2027-2030/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="archive" class="tab-content"><div class="iframe-pane"><iframe id="frame-archive" src="" data-src="google_drive_files.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- D-MAT (AUTOMATION) -->
     <div id="dmat-dqa" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-dqa" src="" data-src="dqa.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -1109,10 +1312,19 @@
     <div id="dmat-comparative" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-comparative" src="" data-src="dmat_comparative.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dmat-u5" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-u5" src="" data-src="dmat_u5.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dmat-allages" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-allages" src="" data-src="dmat_allages.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dmat-eidsr" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-eidsr" src="" data-src="dmat_eidsr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- SNT / MPR / OTHER -->
-    <div id="snt" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt" src="" data-src="snt.html" loading="lazy" allow="fullscreen"></iframe></div></div>
-    <div id="mpr" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr" src="" data-src="mpr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-datasets" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-datasets" src="" data-src="snt.html?tab=datasets" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-codes" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-codes" src="" data-src="snt.html?tab=codes" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-outputs" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-outputs" src="" data-src="snt.html?tab=outputs" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-report" src="" data-src="snt.html?tab=report" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-manual" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-manual" src="" data-src="snt.html?tab=manual" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="snt-intervention-targeting" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-intervention-targeting" src="" data-src="snt.html?tab=intervention-targeting" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-datasets" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-datasets" src="" data-src="mpr.html?tab=datasets" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-codes" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-codes" src="" data-src="mpr.html?tab=codes" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-outputs" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-outputs" src="" data-src="mpr.html?tab=outputs" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="mpr-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-mpr-report" src="" data-src="mpr.html?tab=report" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-allages" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-allages" src="" data-src="other_trend_allages.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="other-trend-u5" class="tab-content"><div class="iframe-pane"><iframe id="frame-other-trend-u5" src="" data-src="other_trend_u5.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
@@ -1120,6 +1332,7 @@
     <div id="finance-data" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-data" src="" data-src="finance_data.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="finance-report" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-report" src="" data-src="finance_report.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="finance-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-finance-dashboard" src="" data-src="finance_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="nsp-costing" class="tab-content"><div class="iframe-pane"><iframe id="frame-nsp-costing" src="" data-src="https://mohamedsillahkanu.github.io/sbd-costing-tool/" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- ADMIN DASHBOARD -->
     <div id="admin-dashboard" class="tab-content">
@@ -1163,17 +1376,646 @@
 </main>
 
 <script>
+/* PROGRAMME LANDING
+   The programme grid is the first page. Choosing NMDR hands over to the existing role
+   sign in; the other eight are not wired to anything yet, so they say so rather than
+   opening an empty screen. */
+/* The eight programmes that are not configured still get the same two step journey as
+   NMDR: a sign in page, then a portal shell. The difference is that the shell shows the
+   intended module structure and says plainly that nothing is wired up, rather than
+   pretending to hold data. The module list mirrors the NMDR sidebar groups so the shape
+   is recognisable. */
+/* Short label used in headings, where the bare code would read badly. */
+var PROG_SHORT = {NMDR:'NMCP'};
+var progLabel = function(c){ return PROG_SHORT[c] || c; };
+
+/* ── DIRECTORATES AND THEIR PROGRAMMES ───────────────────────
+   The landing page now has two levels: the five directorates, then the programmes that
+   sit under the one chosen. Only NMCP, under DPC, is configured and connected to DHIS2;
+   every other programme opens the same portal layout with nothing wired up behind it.
+   The internal key for NMCP stays NMDR, because that is what the existing role sign in
+   and portal are keyed on. */
+var DIRECTORATES = [
+  {code:'DPC',   name:'Directorate of Disease Prevention and Control',
+   progs:['NMDR','HIV','TB','NTD']},
+  {code:'RCH-N', name:'Directorate of Reproductive, Child Health and Nutrition',
+   progs:['EPI','CHP','FP','NUTRITION']},
+  {code:'DPHC',  name:'Directorate of Primary Health Care',
+   progs:['CHW','HE','EYE']},
+  {code:'DPS',   name:'Directorate of Pharmaceutical Services',
+   progs:['NMSA','LMIS']},
+  {code:'DHS',   name:'Directorate of Hospital Services',
+   progs:['HOSPITAL','NEMS','LAB']},
+];
+var PROG_NAMES = {
+    NMDR:'National Malaria Control Programme',
+    HIV:'National HIV and AIDS Programme',
+    TB:'National Tuberculosis Programme',
+    NTD:'Neglected Tropical Diseases Programme',
+    EPI:'Expanded Programme on Immunisation',
+    CHP:'Child Health Programme',
+    FP:'Family Planning',
+    NUTRITION:'Food and Nutrition',
+    CHW:'Community Health Workers',
+    HE:'Health Education and Promotion',
+    EYE:'Eye Health',
+    HOSPITAL:'Hospital Services',
+    NEMS:'National Emergency Medical Service',
+    LAB:'Laboratory Services',
+    NMSA:'National Medical Supplies Agency',
+    LMIS:'Logistics Management Information System',
+};
+/* Two modules specific to each programme, plus the shared five, so the shape of each
+   portal is recognisable rather than generic filler. */
+var PROG_MODULES = {
+    HIV:[['1.0','Testing and Positivity','Tests done, positives and yield by entry point and district.'],
+         ['2.0','Treatment and Retention','ART enrolment, retention and viral suppression.']],
+    TB:[['1.0','Case Notification','Notified cases by type, age, sex and district.'],
+         ['2.0','Treatment Outcomes','Cure, completion, loss to follow up and drug resistance.']],
+    NTD:[['1.0','Mass Drug Administration','Treatment rounds, coverage and geographic targeting.'],
+         ['2.0','Case Mapping and Surveillance','Case finding and endemicity mapping by chiefdom.']],
+    EPI:[['1.0','Immunisation Coverage','Penta, measles, BCG and vitamin A by antigen, age and district.'],
+         ['2.0','Cold Chain and Stock','Vaccine stock on hand, wastage and cold chain functionality.']],
+    CHP:[['1.0','Child Health Services','Growth monitoring, sick child visits and PMC by age group.'],
+         ['2.0','Newborn Care','Facility deliveries, newborn checks and early referrals.']],
+    FP:[['1.0','Method Uptake','New and continuing acceptors by method, age and district.'],
+         ['2.0','Commodity Availability','Stock on hand and stock outs by method and facility.']],
+    NUTRITION:[['1.0','Nutrition Surveillance','Wasting, stunting and underweight by age group and district.'],
+         ['2.0','Supplementation and Feeding','Vitamin A, micronutrients and therapeutic feeding.']],
+    CHW:[['1.0','Community Case Management','Cases seen and treated by CHWs, rolled up to the PHU.'],
+         ['2.0','CHW Coverage and Activity','Active CHWs, reporting rates and supervision visits.']],
+    HE:[['1.0','Campaign Reach','Sessions held, people reached and channels used by district.'],
+         ['2.0','Behavioural Indicators','Knowledge and practice measures from routine reporting.']],
+    EYE:[['1.0','Eye Care Services','Consultations, refractions and cataract surgery by facility.'],
+         ['2.0','Screening and Referral','School and community screening, and referral completion.']],
+    HOSPITAL:[['1.0','Admissions and Discharges','Bed occupancy, admissions, discharges and deaths by ward.'],
+         ['2.0','Referrals and Case Mix','Referrals in and out, and diagnosis mix by hospital.']],
+    NEMS:[['1.0','Ambulance Dispatch','Calls, dispatches and response times by district.'],
+         ['2.0','Referral Transport','Transfers completed, and time from call to facility arrival.']],
+    LAB:[['1.0','Test Volumes','Tests performed by type, facility and month.'],
+         ['2.0','Quality and Turnaround','Sample rejection, turnaround time and external quality assessment.']],
+    NMSA:[['1.0','Stock on Hand','Quantities held by commodity, warehouse and facility, with months of stock.'],
+         ['2.0','Distribution and Deliveries','Consignments dispatched, received and outstanding by district.']],
+    LMIS:[['1.0','Reporting and Completeness','Which facilities submitted a logistics report, and when.'],
+         ['2.0','Stock Status and Stock Outs','Stock out days, over and under stocking by commodity and facility.']],
+};
+/* Shared modules, mirroring the NMCP sidebar so the layout is familiar. */
+var PROG_SHARED = [
+    ['3.0','Data Quality Review','Completeness, timeliness, consistency and outlier detection, flag only.'],
+    ['4.0','Automation Tools','Scheduled extraction and analysis, in the shape of D-MAT.'],
+    ['5.0','Dashboards','District and national dashboards with age and location breakdowns.'],
+    ['6.0','Retrospective Analysis','Multi year trends and comparisons across districts.'],
+    ['7.0','Resources','Guidelines, protocols, templates and training material.']
+];
+var CONFIGURED = ['NMDR'];   // the only programme actually connected to DHIS2
+var currentDirectorate = null;
+
+function tileHtml(abbr, name, onclick, flag, small){
+    return '<div class="prog-tile ready" onclick="'+onclick+'" role="button" tabindex="0"'
+      + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();'+onclick+'}">'
+      + '<div class="prog-abbr"'+(small?' style="font-size:17px;"':'')+'>'+abbr+'</div>'
+      + '<div class="prog-name">'+name+'</div>'
+      + '<div class="prog-flag">'+flag+'</div></div>';
+}
+/* LEVEL 1: the directorates */
+function showDirectorates(){
+    currentDirectorate=null;
+    document.getElementById('progH2').textContent='Directorate Automated Analytic Pipelines';
+    document.getElementById('progSub').textContent='Choose a directorate to continue';
+    // five across one row, so the card widens for this level only
+    document.getElementById('progGrid').classList.add('one-row');
+    document.querySelector('.prog-card-wrap').classList.add('wide');
+    document.getElementById('progGrid').innerHTML=DIRECTORATES.map(function(d){
+        var n=d.progs.length;
+        var sub=n?(n+' programme'+(n>1?'s':'')):'No programmes listed yet';
+        return tileHtml(d.code, d.name+'<br><span style="color:#9aa7b2;">'+sub+'</span>',
+                        "openDirectorate('"+d.code+"')", n?'Open':'Empty', d.code.length>4);
+    }).join('');
+    document.getElementById('progNote').innerHTML='Five directorates. <strong>NMCP</strong>, under '
+      + '<strong>DPC</strong>, is fully configured and connected to DHIS2. The other programmes open '
+      + 'their pipeline layout so the intended structure is visible.';
+    document.getElementById('dirBackBtn').style.display='none';
+    document.getElementById('programModal').style.display='flex';
+    document.body.style.overflow='hidden';
+}
+/* LEVEL 2: the programmes under one directorate */
+function openDirectorate(code){
+    var d=DIRECTORATES.filter(function(x){return x.code===code;})[0];
+    if(!d)return;
+    currentDirectorate=code;
+    document.getElementById('progH2').textContent='Programmes';
+    document.getElementById('progSub').textContent=d.code+', '+d.name;
+    document.getElementById('progGrid').classList.remove('one-row');
+    document.querySelector('.prog-card-wrap').classList.remove('wide');
+    if(!d.progs.length){
+        document.getElementById('progGrid').innerHTML='';
+        document.getElementById('progNote').innerHTML='<strong>'+d.code+'</strong> has no programmes '
+          + 'listed yet. Once its programmes are confirmed they will appear here as its sub components, '
+          + 'each with the same pipeline layout as the others.';
+    } else {
+        document.getElementById('progGrid').innerHTML=d.progs.map(function(p){
+            var ready=CONFIGURED.indexOf(p)>=0;
+            return tileHtml(progLabel(p), PROG_NAMES[p]||p, "openProgramme('"+p+"')",
+                            ready?'Configured':'Open', progLabel(p).length>9);
+        }).join('');
+        document.getElementById('progNote').innerHTML=d.progs.filter(function(p){
+            return CONFIGURED.indexOf(p)>=0; }).length
+          ? '<strong>'+d.progs.filter(function(p){return CONFIGURED.indexOf(p)>=0;}).map(progLabel).join(', ')
+            + '</strong> is connected to DHIS2. The others open their pipeline layout with no data behind it.'
+          : 'None of these programmes is configured yet. Each opens its pipeline layout so the intended '
+            + 'structure is visible, and says on the page which modules are not yet connected.';
+    }
+    document.getElementById('dirBackBtn').style.display='inline-block';
+    document.body.style.overflow='hidden';
+}
+var currentProgramme = null;
+
+
+function openProgramme(code){
+    currentProgramme = code;
+    var pm=document.getElementById('programModal');
+    if(pm)pm.style.display='none';
+    document.body.style.overflow='hidden';
+
+    /* One time sign in: if this browser is already signed in, go straight in.
+       Only Logout asks for a password again. */
+    var ses = readSession();
+    if (ses){
+        if (code === 'NMDR'){ applySession(ses); return; }
+        saveSession({ kind: ses.kind, programme: code, person: ses.person });
+        openPlaceholderPortal('general');
+        return;
+    }
+
+    if(code==='NMDR'){
+        var rm=document.getElementById('roleModal');
+        if(rm)rm.style.display='flex';
+        return;
+    }
+    document.getElementById('psTitle').textContent='Welcome to '+progLabel(code);
+    document.getElementById('psSub').textContent='Select your role to continue to '+(PROG_NAMES[code]||code);
+    document.getElementById('progSignin').style.display='flex';
+}
+/* Sign in for the eight programmes that are not configured. It uses the SAME credentials
+   as NMDR (rolePasswords), so there is one set of passwords to remember, and it fails the
+   same way on a wrong password rather than waving people through. */
+var psRole = null;
+/* the role buttons were removed, this is kept only so an old call cannot throw */
+function psPickRole(role, btn){
+    psRole = role;
+    return;
+    psRole = role;
+    document.querySelectorAll('#progSignin .role-btn').forEach(function(b){b.style.outline='';});
+    if(btn)btn.style.outline='3px solid rgba(0,0,0,.18)';
+    var area=document.getElementById('psPasswordArea');
+    area.style.display='block';
+    var u=document.getElementById('psUsername');
+    u.style.display=(role==='admin')?'block':'none';
+    var pw=document.getElementById('psPassword');
+    pw.value='';
+    pw.placeholder=(role==='admin')?'Password':'Password for '+role+' staff';
+    document.getElementById('psError').style.display='none';
+    pw.focus();
+}
+function psVerify(){
+    var pw=document.getElementById('psPassword').value;
+    var err=document.getElementById('psError');
+    if(!pw){err.textContent='Type the password.';err.style.display='block';return;}
+    if(pw!==GENERAL_PASSWORD){
+        err.textContent='Wrong password. Access denied.';
+        err.style.display='block';
+        document.getElementById('psPassword').value='';
+        return;
+    }
+    err.style.display='none';
+    document.getElementById('psPassword').value='';
+    saveSession({ kind:'general', programme: currentProgramme || 'PHC' });
+    openPlaceholderPortal('general');
+}
+/* Enter submits, as on the NMDR sign in. */
+document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter')return;
+    var ps=document.getElementById('progSignin');
+    if(ps&&ps.style.display==='flex'&&document.getElementById('psPasswordArea').style.display==='block')psVerify();
+});
+
+var ROLE_LABEL={national:'National Staff',district:'District Staff',
+                chiefdom:'Chiefdom Supervisor',phu:'PHU Staff',admin:'Admin'};
+
+function ppToggleNav(){
+    document.getElementById('ppSidebar').classList.toggle('open');
+    document.getElementById('ppOverlay').classList.toggle('open');
+}
+/* Build the sidebar and the welcome page from the module list, using the same markup
+   NMDR uses so the result is visually identical. */
+function openPlaceholderPortal(role){
+    var code=currentProgramme||'PHC';
+    var name=PROG_NAMES[code]||code;
+    document.getElementById('progSignin').style.display='none';
+    document.getElementById('ppBrand').textContent=progLabel(code)+' Portal';
+    document.getElementById('ppTopTitle').textContent=progLabel(code)+' Portal';
+    document.getElementById('ppTopPage').textContent='Welcome';
+
+    var mods=(PROG_MODULES[code]||[]).concat(PROG_SHARED);
+    document.getElementById('ppNav').innerHTML=
+      '<button class="nav-item active" onclick="ppShow(\'welcome\',this)" style="margin-top:6px;">Welcome</button>'
+      + mods.map(function(m,ix){
+          return '<div class="nav-section-label" style="margin-top:10px;">'+m[0]+' '+m[1]+'</div>'
+               + '<button class="nav-item" onclick="ppShow('+ix+',this)">'+m[0]+'.1 '+m[1]+'</button>';
+        }).join('');
+
+    window.__ppMods=mods; window.__ppCode=code; window.__ppName=name;
+    window.__ppRole=ROLE_LABEL[role]||role;
+    ppShow('welcome',null);
+    document.getElementById('progPortal').classList.add('open');
+    document.body.style.overflow='hidden';
+}
+function ppShow(which,btn){
+    var code=window.__ppCode, name=window.__ppName, mods=window.__ppMods||[];
+    document.querySelectorAll('#ppNav .nav-item').forEach(function(b){b.classList.remove('active');});
+    if(btn)btn.classList.add('active');
+    var main=document.getElementById('ppMain');
+    if(which==='welcome'){
+        document.getElementById('ppTopPage').textContent='Welcome';
+        main.innerHTML=
+          '<div class="hero"><div class="hero-tag">Sierra Leone &middot; Ministry of Health</div>'
+          +'<h1>'+name+'</h1>'
+          +'<p>A centralised, integrated platform for '+name.toLowerCase()+' surveillance, programme '
+          +'monitoring and data driven decision making across Sierra Leone.</p></div>'
+          +'<div class="pp-soon"><strong>This repository is not configured yet.</strong> You are signed in as '
+          +window.__ppRole+'. The structure below mirrors NMCP so the intended layout is clear, but no module '
+          +'holds data and nothing is connected to DHIS2 yet.</div>'
+          +'<div class="section-label">Planned modules</div>'
+          +'<div class="cards-grid">'
+          + mods.map(function(m){
+              return '<div class="card"><div class="card-stripe"></div><div class="card-body">'
+                   + '<div class="card-icon-row"><div><div class="card-num">'+m[0]+'</div>'
+                   + '<div class="card-title">'+m[1]+'</div></div></div>'
+                   + '<div class="card-divider"></div>'
+                   + '<ul class="card-list"><li>'+m[2]+'</li>'
+                   + '<li><strong>Status:</strong> not configured</li></ul>'
+                   + '</div></div>';
+            }).join('')
+          +'</div>';
+        return;
+    }
+    var m=mods[which]||['','Module',''];
+    document.getElementById('ppTopPage').textContent=m[1];
+    main.innerHTML=
+      '<div class="hero"><div class="hero-tag">'+code+' &middot; '+m[0]+'</div><h1>'+m[1]+'</h1>'
+      +'<p>'+m[2]+'</p></div>'
+      +'<div class="pp-soon"><strong>'+m[1]+' is not configured yet.</strong> When '+code+' is brought on '
+      +'board this page will hold the extraction tools, dashboards and exports for this module, in the same '
+      +'shape as the equivalent NMCP page.</div>'
+      +'<div class="section-label">What will appear here</div>'
+      +'<div class="cards-grid">'
+      +'<div class="card"><div class="card-stripe"></div><div class="card-body"><div class="card-icon-row">'
+      +'<div><div class="card-num">1</div><div class="card-title">Data extraction</div></div></div>'
+      +'<div class="card-divider"></div><ul class="card-list">'
+      +'<li>Pulls straight from DHIS2 analytics, by facility and month</li>'
+      +'<li>Age and location breakdowns, facility and community kept separate</li>'
+      +'<li>Outliers flagged, never altered</li></ul></div></div>'
+      +'<div class="card"><div class="card-stripe"></div><div class="card-body"><div class="card-icon-row">'
+      +'<div><div class="card-num">2</div><div class="card-title">Dashboards</div></div></div>'
+      +'<div class="card-divider"></div><ul class="card-list">'
+      +'<li>District and national views, with a national row on every district table</li>'
+      +'<li>Trends across years and comparisons between districts</li></ul></div></div>'
+      +'<div class="card"><div class="card-stripe"></div><div class="card-body"><div class="card-icon-row">'
+      +'<div><div class="card-num">3</div><div class="card-title">Exports</div></div></div>'
+      +'<div class="card-divider"></div><ul class="card-list">'
+      +'<li>Excel and CSV, with the methodology written into the workbook</li>'
+      +'<li>Run log and fetch audit for anyone checking the numbers</li></ul></div></div>'
+      +'</div>';
+}
+/* Leave whichever programme is open and return to the directorate menu. This resets the
+   signed in role, so re-entering a programme asks for the password again rather than
+   leaving an open session behind. */
+function goMainMenu(){
+    try{
+        currentUserRole=null; selectedRole=null;
+        document.querySelectorAll('iframe[data-src]').forEach(function(f){ f.src=''; });
+        var pa=document.getElementById('passwordArea'); if(pa)pa.style.display='block';
+        var pw=document.getElementById('rolePassword'); if(pw)pw.value='';
+        var pe=document.getElementById('passwordError'); if(pe)pe.style.display='none';
+        var rm=document.getElementById('roleModal'); if(rm)rm.style.display='none';
+        var pp=document.getElementById('progPortal'); if(pp)pp.classList.remove('open');
+        var ps=document.getElementById('progSignin'); if(ps)ps.style.display='none';
+    }catch(e){}
+    showDirectorates();
+    window.scrollTo(0,0);
+}
+/* Alt+H anywhere in the portal does the same, matching the tools. */
+document.addEventListener('keydown',function(e){
+    if(e.altKey && (e.key==='h'||e.key==='H')){
+        var grid=document.getElementById('programModal');
+        if(grid && getComputedStyle(grid).display!=='none')return;   // already on the menu
+        e.preventDefault(); goMainMenu();
+    }
+});
+function backToProgrammes(){
+    /* Going back must not leave a half finished sign in behind: clear the chosen role,
+       the typed password and any error, so returning to NMDR starts clean. */
+    if(typeof selectedRole!=='undefined')selectedRole=null;
+    var pwArea=document.getElementById('passwordArea');
+    if(pwArea)pwArea.style.display='block';
+    var pw=document.getElementById('rolePassword');
+    if(pw)pw.value='';
+    var user=document.getElementById('roleUsername');
+    if(user){user.value='';user.style.display='none';}
+    var err=document.getElementById('passwordError');
+    if(err)err.style.display='none';
+    document.querySelectorAll('.role-btn').forEach(function(b){b.classList.remove('selected','active');});
+    var rm=document.getElementById('roleModal');
+    if(rm)rm.style.display='none';
+    var ps=document.getElementById('progSignin');
+    if(ps)ps.style.display='none';
+    var pp=document.getElementById('progPortal');
+    if(pp)pp.classList.remove('open');
+    var psa=document.getElementById('psPasswordArea');
+    if(psa)psa.style.display='block';
+    var psp=document.getElementById('psPassword');
+    if(psp)psp.value='';
+    var pse=document.getElementById('psError');
+    if(pse)pse.style.display='none';
+    psRole=null;
+    document.querySelectorAll('#progSignin .role-btn').forEach(function(b){b.style.outline='';});
+    currentProgramme=null;
+    var pm=document.getElementById('programModal');
+    if(pm)pm.style.display='flex';
+    // return to the directorate the programme came from, not the top level
+    if(currentDirectorate)openDirectorate(currentDirectorate); else showDirectorates();
+    document.body.style.overflow='hidden';
+}
+/* SPLASH: ten seconds, with a progress bar so the wait is visible rather than a frozen
+   screen, and a Skip button for anyone who does not want to wait. endSplash is guarded so
+   pressing Skip and the timer firing cannot both run it. */
+var SPLASH_MS=10000, splashDone=false, splashTimer=null;
+function endSplash(){
+    if(splashDone)return; splashDone=true;
+    if(splashTimer)clearTimeout(splashTimer);
+    var sp=document.getElementById('splash');
+    if(!sp)return;
+    sp.classList.add('hide');
+    setTimeout(function(){ sp.style.display='none'; }, 520);
+}
+/* Puts a remembered sign in back to work, without asking for the password. */
+function applySession(ses){
+    if (!ses) return false;
+    var pm=document.getElementById('programModal'); if(pm)pm.style.display='none';
+    var rm=document.getElementById('roleModal');    if(rm)rm.style.display='none';
+    var ps=document.getElementById('progSignin');   if(ps)ps.style.display='none';
+
+    if (ses.kind === 'staff' && ses.person && ses.person.tabs && ses.person.tabs.length){
+        staffAccount = ses.person;
+        roleAccess.staffaccount = ses.person.tabs.slice();
+        enableTabsForRole('staffaccount');
+        paintSignedAs();
+        refreshStaffTabs(ses.person);
+    } else {
+        staffAccount = null;
+        roleAccess.staffaccount = allTabIds();
+        enableTabsForRole('staffaccount');
+        paintSignedAs();
+    }
+    return true;
+}
+
+/* A staff member's tabs are checked against the database in the background, so
+   access the administrator changes lands on the next visit. If the record is
+   gone or has no tabs left, the session ends and the password is asked for. */
+function refreshStaffTabs(person){
+    loadStaffAccess(function(err, people){
+        if (err || !people) return;
+        var hit = null;
+        for (var i = 0; i < people.length; i++){
+            if ((person.id && people[i].id === person.id) || people[i].password === person.password){ hit = people[i]; break; }
+        }
+        if (!hit || !hit.tabs.length){
+            clearSession();
+            window.location.reload();
+            return;
+        }
+        if (hit.tabs.join(';') !== person.tabs.join(';')){
+            staffAccount = hit;
+            roleAccess.staffaccount = hit.tabs.slice();
+            saveSession({ kind:'staff', programme:'NMDR', person: hit });
+            if (currentUserRole === 'staffaccount') enableTabsForRole('staffaccount');
+            paintSignedAs();
+        }
+    });
+}
+
+(function(){
+    var rm=document.getElementById('roleModal');
+    if(rm)rm.style.display='none';
+    showDirectorates();                 // ready behind the splash, so there is no flash of blank
+
+    /* already signed in on this browser: no splash, no menu. The portal itself
+       is opened by bootSession at the end of the script, once roleAccess and
+       the rest of the sign in machinery exist. */
+    var already = false;
+    try { already = !!localStorage.getItem('nmdrSignIn'); } catch(e){}
+    if (already){
+        var sp=document.getElementById('splash');
+        if(sp){ sp.style.display='none'; splashDone=true; }
+        var pmx=document.getElementById('programModal');
+        if(pmx)pmx.style.display='none';
+        return;
+    }
+    var bar=document.getElementById('splashBar');
+    if(bar){
+        bar.style.transition='width '+SPLASH_MS+'ms linear';
+        requestAnimationFrame(function(){ bar.style.width='100%'; });
+    }
+    splashTimer=setTimeout(endSplash, SPLASH_MS);
+})();
+
 /* HMIS EXTRACTION CARD HELPERS */
+
+/* Tools are embedded in the page rather than navigated to, so the portal stays the top
+   document throughout. That is what keeps the sidebar, the role rules and the Main menu
+   button available at all times, and it is why no tool file needs anything added to it.
+   PDFs and external sites are embedded the same way, or opened in a new tab by their own
+   link, so there is nothing to inject anywhere. */
+
+// slug -> title, so each HMIS extraction tool gets its own shareable #hmis-<slug> link,
+// same as every other tab in the portal.
+var HMIS_TOOLS = {
+    'opd': 'OPD — Outpatient Department',
+    'suspected': 'Suspected — Fever Suspected Malaria',
+    'testing': 'Tested — Malaria Testing',
+    'confirmed': 'Confirmed — Confirmed Malaria Cases',
+    'confirmed_and_treated': 'Confirmed and Treated',
+    'presumptive': 'Presumptive Treatment',
+    'confirmed_not_treated': 'Confirmed Not Treated',
+    'treated': 'Treated — All Malaria Cases Treated',
+    'all': 'All HMIS Data Elements'
+};
+
 function openHmisFrame(src, title) {
-    document.getElementById('hmisFrameTitle').textContent = title;
-    document.getElementById('hmisFrameEmbed').src = src;
-    var pane = document.getElementById('hmisFramePane');
-    pane.style.display = 'block';
-    setTimeout(function(){ pane.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var slug = src.replace(/\.html$/, '');
+    showPageView(src, title, currentTab || 'welcome', navScrollEl ? navScrollEl.scrollTop : 0, 'hmis-' + slug);
 }
 function closeHmisFrame() {
-    document.getElementById('hmisFramePane').style.display = 'none';
-    document.getElementById('hmisFrameEmbed').src = '';
+    closeToolPage();
+}
+
+/* ================= SIGN IN FROM THE STAFF DATABASE =================
+   One password box, for NMCP and for every other programme.
+
+   NMCP: the password is looked up in the staff records and the portal opens
+   exactly the tabs ticked for that person in the Access column.
+   Other programmes: they are not configured yet, so the general password
+   below opens the preview portal.
+   The general password also opens NMCP with every tab, for the
+   administrator and for anyone whose record is not set up yet.
+
+   Three sources are tried in order, first one that answers wins:
+     1. the Staff sheet, read as CSV through the Google visualisation
+        endpoint, which needs the sheet shared as anyone with the link
+     2. the Apps Script staff backend, which serves the same rows
+     3. access.csv sitting beside this file, for a copy with no internet */
+
+var GENERAL_PASSWORD = 'admin123';
+
+var SHEET_ID   = '149sx4bAtGEBIYRbz4L-IykcKCzc_TIWcRZVMexa1JqI';
+var SHEET_GID  = '1102751883';
+var SHEET_CSV  = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&gid=' + SHEET_GID;
+var STAFF_API  = 'https://script.google.com/macros/s/AKfycbwiRa_gyUNUPJyHh5LF7-XP9WrMy5XyyDiDyWkt5DS0PEu4Zth-KRSm7oOwavX5Nj6_/exec';
+var ACCESS_CSV = 'access.csv';
+
+var staffAccount = null;     /* the person signed in, when it is a staff password */
+
+function parseCsv(text){
+  var rows = [], row = [], cell = '', quoted = false;
+  text = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  for (var i = 0; i < text.length; i++){
+    var c = text[i];
+    if (quoted){
+      if (c === '"'){
+        if (text[i+1] === '"'){ cell += '"'; i++; }
+        else quoted = false;
+      } else cell += c;
+    } else if (c === '"'){ quoted = true; }
+    else if (c === ','){ row.push(cell); cell = ''; }
+    else if (c === '\n'){ row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(v){ return String(v).trim() !== ''; }); });
+}
+
+/* reads either shape: the sheet's Access column or access.csv's Tabs column */
+function rowsToPeople(text){
+  var rows = parseCsv(text);
+  if (rows.length < 2) return [];
+  var head = rows[0].map(function(h){ return String(h).trim().toLowerCase(); });
+  function at(n){ return head.indexOf(n); }
+  var iId = at('id'), iName = at('name'), iPhone = at('telephone'),
+      iPlace = at('place of work'), iLevel = at('level'),
+      iPass = at('password'), iDel = at('deleted'),
+      iTabs = at('tabs') > -1 ? at('tabs') : at('access');
+  if (iPass < 0 || iTabs < 0) return [];
+
+  var out = [];
+  for (var i = 1; i < rows.length; i++){
+    var r = rows[i];
+    function v(ix){ return ix > -1 ? String(r[ix] == null ? '' : r[ix]).trim() : ''; }
+    /* the sheet carries a stray second heading row, so skip any row that repeats
+       the headings, and skip anything marked deleted or holding no password */
+    if (v(iId).toLowerCase() === 'id' || v(iName).toLowerCase() === 'name') continue;
+    if (v(iDel).toLowerCase() === 'yes') continue;
+    if (!v(iPass)) continue;
+    out.push({
+      id: v(iId), name: v(iName), phone: v(iPhone), place: v(iPlace), level: v(iLevel),
+      password: v(iPass),
+      tabs: v(iTabs).split(';').map(function(t){ return t.trim(); }).filter(function(t){ return t; })
+    });
+  }
+  return out;
+}
+
+function loadStaffAccess(done){
+  var sources = [
+    { name: 'the staff sheet',  url: SHEET_CSV + '&t=' + Date.now() },
+    { name: 'the staff server', url: STAFF_API + '?action=accesscsv&t=' + Date.now() },
+    { name: 'access.csv',       url: ACCESS_CSV + '?t=' + Date.now() }
+  ];
+  var tried = [];
+  function step(i){
+    if (i >= sources.length){ done(new Error(tried.join(' ')), null, null); return; }
+    fetch(sources[i].url, { cache: 'no-store' })
+      .then(function(r){ if (!r.ok) throw new Error('status ' + r.status); return r.text(); })
+      .then(function(text){
+        var people = rowsToPeople(text);
+        if (!people.length){ tried.push(sources[i].name + ' holds no password yet.'); step(i + 1); return; }
+        done(null, people, sources[i].name);
+      })
+      .catch(function(){ tried.push(sources[i].name + ' could not be read.'); step(i + 1); });
+  }
+  step(0);
+}
+
+/* the tab list the general password opens: everything in the sidebar */
+function allTabIds(){
+  var out = [];
+  document.querySelectorAll('[data-tab]').forEach(function(b){
+    var t = b.getAttribute('data-tab');
+    if (t && out.indexOf(t) === -1) out.push(t);
+  });
+  return out;
+}
+
+function signInAllTabs(){
+  staffAccount = null;
+  roleAccess.staffaccount = allTabIds();
+  saveSession({ kind: 'general', programme: 'NMDR' });
+  enableTabsForRole('staffaccount');
+  paintSignedAs();
+}
+
+function signInStaffMember(p){
+  staffAccount = p;
+  roleAccess.staffaccount = p.tabs.slice();
+  saveSession({ kind: 'staff', programme: 'NMDR', person: p });
+  enableTabsForRole('staffaccount');
+  paintSignedAs();
+}
+
+function paintSignedAs(){
+  var el = document.getElementById('signedAs');
+  if (!el) return;
+  if (staffAccount){
+    var clean = function(t){ return String(t || '').replace(/[<>]/g, ''); };
+    el.innerHTML = 'Signed in as <b>' + clean(staffAccount.name) + '</b><br>' +
+                   clean(staffAccount.place) + (staffAccount.level ? ' &middot; ' + clean(staffAccount.level) : '');
+    el.style.display = 'block';
+  } else {
+    el.innerHTML = 'Signed in with the <b>general password</b><br>every tab is open';
+    el.style.display = 'block';
+  }
+}
+
+/* ================= ONE TIME SIGN IN =================
+   The sign in is remembered, so a reload, a closed tab or the Update button
+   comes straight back in. Only Logout asks for the password again. Main menu
+   and Back to programmes keep the session, they only change where you are. */
+
+var SESSION_KEY = 'nmdrSignIn';
+
+function saveSession(obj){
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(obj)); } catch (e) {}
+}
+function readSession(){
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+  catch (e) { return null; }
+}
+function clearSession(){
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+}
+function signedIn(){
+  return !!readSession();
 }
 
 /* ROLE-BASED ACCESS CONTROL */
@@ -1185,62 +2027,53 @@ var rolePasswords = {
     district: 'District@2026',
     chiefdom: 'Chiefdom@2026',
     phu:      'Phu@2026',
-    datacollector: 'ds@2026',
-    icfsl:    'ICF@2026',
-    chai:     'CHAI@2026!',
-    crs:      'CRS@2026$',
-    pmi:      'PMI@2026#',
     admin:    'admin'
 };
-
-/* Partner sign ins. Partners see only the Welcome page and the 5.0.5 Data Collection Tools. */
-var PARTNER_NAMES = { icfsl: 'ICF-SL', chai: 'CHAI', crs: 'CRS', pmi: 'PMI Evolve' };
 
 var DMAT_TABS = ['dmat-dqa','dmat-reporting','dmat-suspected','dmat-tested',
                  'dmat-confirmed','dmat-treated','dmat-confirmed-not-treated',
                  'dmat-presumptive','dmat-total-treated','dmat-tpr',
-                 'dmat-comparative','dmat-u5','dmat-allages'];
+                 'dmat-comparative','dmat-u5','dmat-allages','dmat-eidsr'];
 var ME_SUMMARY_TABS = ['me-summary-epi','me-summary-int','me-summary-stock'];
 var ME_DETAIL_TABS = ['med-suspected','med-tested','med-confirmed','med-treated',
                       'med-presumptive','med-comp-u5','med-comp-allages',
                       'med-reporting','med-testing','med-tpr','med-cfr','med-ptr',
-                      'me-comp-u5','me-comp-allages'];
+                      'me-comp-u5','me-comp-allages','me-reports'];
 var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-extraction','eidsr-dashboard'];
 var TES_TABS         = ['tes-data','tes-report','tes-dashboard'];
 var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles','int-vitamin-a','int-iptp','int-anc','int-mass-itn','int-sbd','int-irs'];
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
-var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard'];
+var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
-var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-lab','dct-mocm-hospital','dct-warehouse','dct-sbc'];
+var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc','dct-tes'];
+var SNT_TABS         = ['snt-datasets','snt-codes','snt-outputs','snt-report','snt-manual','snt-intervention-targeting'];
+var MPR_TABS         = ['mpr-datasets','mpr-codes','mpr-outputs','mpr-report'];
+var currentTab       = 'welcome';
+var hashOpenedOnLoad = false;
 
 var roleAccess = {
-    national: ['welcome','me-dqa','me-detailed',
+    national: ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'analytics-training','snt','mpr','other-trend-allages','other-trend-u5']
+               'analytics-training','gf-plan','partners-mapping','world-malaria-day','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
-               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS),
-    district: ['welcome','me-dqa','me-detailed']
+               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS).concat(SNT_TABS).concat(MPR_TABS),
+    district: ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(DMAT_TABS),
-    chiefdom: ['welcome','me-dqa','me-detailed']
+    chiefdom: ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
-    phu:      ['welcome','me-dqa','me-detailed']
+    phu:      ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
-    datacollector: ['welcome'].concat(DCT_TABS),
-    icfsl:    ['welcome'].concat(DCT_TABS),
-    chai:     ['welcome'].concat(DCT_TABS),
-    crs:      ['welcome'].concat(DCT_TABS),
-    pmi:      ['welcome'].concat(DCT_TABS),
-    admin:    ['welcome','me-dqa','me-detailed',
+    admin:    ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
-               'analytics-training','snt','mpr','other-trend-allages','other-trend-u5',
+               'analytics-training','gf-plan','partners-mapping','world-malaria-day','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5',
                'admin-dashboard']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS).concat(DMAT_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS).concat(SCM_TABS).concat(INT_TABS)
-               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS)
+               .concat(ENTO_TABS).concat(FINANCE_TABS).concat(DCT_TABS).concat(SNT_TABS).concat(MPR_TABS)
 };
 
 function enableTabsForRole(role) {
@@ -1249,7 +2082,7 @@ function enableTabsForRole(role) {
     (roleAccess[role] || []).forEach(function(t){ allowed[t] = true; });
     document.getElementById('roleModal').style.display = 'none';
     document.body.style.overflow = 'auto';
-    var showAdmin = (role === 'admin');
+    var showAdmin = (role === 'admin') || !!allowed['admin-dashboard'];
     document.getElementById('adminTabBtn').style.display  = showAdmin ? 'flex' : 'none';
     document.getElementById('adminSection').style.display = showAdmin ? 'block' : 'none';
 
@@ -1269,11 +2102,7 @@ function enableTabsForRole(role) {
         var visible = hasAllowed(wrap);
         wrap.style.display = visible ? '' : 'none';
         var toggle = wrap.previousElementSibling;
-        // setProperty with important, because .nav-l2-toggle carries display:flex !important
-        if (toggle && toggle.tagName === 'BUTTON') {
-            if (visible) toggle.style.removeProperty('display');
-            else toggle.style.setProperty('display', 'none', 'important');
-        }
+        if (toggle && toggle.tagName === 'BUTTON') toggle.style.display = visible ? '' : 'none';
     });
 
     document.querySelectorAll('.nav-group').forEach(function(group){
@@ -1283,21 +2112,11 @@ function enableTabsForRole(role) {
         if (label && label.classList.contains('nav-section-label')) label.style.display = visible ? '' : 'none';
     });
 
-    /* Data collectors and partners only have this one group, so open it for them.
-       The else branch matters because logging out reopens the modal without
-       reloading the page, so the next role must not inherit an open dropdown. */
-    var dct    = document.getElementById('dctChildren');
-    var chev   = document.getElementById('dctChevron');
-    var dctBtn = document.getElementById('dctToggle');
-    if (role === 'datacollector' || PARTNER_NAMES[role]) {
-        openGroup('resources');
-        if (dct)    dct.style.maxHeight = '2000px';
-        if (chev)   chev.style.transform = 'rotate(180deg)';
-        if (dctBtn) dctBtn.classList.add('active');
-    } else {
-        if (dct)    dct.style.maxHeight = '0px';
-        if (chev)   chev.style.transform = '';
-        if (dctBtn) dctBtn.classList.remove('active');
+    // First successful login this page load: if the URL was opened with a #tool link
+    // (shared or bookmarked), jump straight into that tool now that a role is set.
+    if (!hashOpenedOnLoad) {
+        hashOpenedOnLoad = true;
+        openFromHash(location.hash);
     }
 }
 
@@ -1313,79 +2132,64 @@ document.querySelectorAll('.role-btn').forEach(function(btn){
         pwEl.value               = '';
         usernameEl.style.display = (selectedRole === 'admin') ? 'block' : 'none';
         usernameEl.value         = '';
-        pwEl.placeholder         = (selectedRole === 'admin') ? 'Password'
-                                   : (selectedRole === 'datacollector') ? 'Password for data collectors'
-                                   : PARTNER_NAMES[selectedRole] ? 'Password for ' + PARTNER_NAMES[selectedRole]
-                                   : 'Password for ' + selectedRole + ' staff';
+        pwEl.placeholder         = (selectedRole === 'admin') ? 'Password' : 'Password for ' + selectedRole + ' staff';
     });
 });
 
 function verifyPassword() {
-    if (!selectedRole) return;
     var pw    = document.getElementById('rolePassword').value;
-    var user  = document.getElementById('roleUsername').value;
     var errEl = document.getElementById('passwordError');
-    var ok    = (selectedRole === 'admin') ? (user === 'admin' && pw === 'admin') : (pw === rolePasswords[selectedRole]);
-    if (ok) {
-        saveSession(selectedRole);
-        enableTabsForRole(selectedRole);
-    } else {
-        errEl.textContent   = 'Incorrect credentials. Access denied.';
+
+    if (!pw){
+        errEl.textContent   = 'Type your password.';
         errEl.style.display = 'block';
-        document.getElementById('rolePassword').value = '';
+        return;
     }
+
+    /* the general password opens every tab */
+    if (pw === GENERAL_PASSWORD){
+        errEl.style.display = 'none';
+        document.getElementById('rolePassword').value = '';
+        signInAllTabs();
+        return;
+    }
+
+    errEl.textContent   = 'Checking the staff database...';
+    errEl.style.display = 'block';
+
+    loadStaffAccess(function(err, people){
+        if (err || !people){
+            errEl.innerHTML = 'The staff database could not be read, so only the general password can be checked. ' +
+                              'If you are working without internet, access.csv must sit in the same folder as this page.';
+            return;
+        }
+        var hit = null;
+        for (var i = 0; i < people.length; i++){
+            if (people[i].password === pw){ hit = people[i]; break; }
+        }
+        if (!hit){
+            errEl.textContent = 'That password is not in the staff database. Access denied.';
+            document.getElementById('rolePassword').value = '';
+            return;
+        }
+        if (!hit.tabs.length){
+            errEl.textContent = hit.name + ', your account carries no tabs yet. Ask the administrator to tick what you may open.';
+            return;
+        }
+        errEl.style.display = 'none';
+        document.getElementById('rolePassword').value = '';
+        signInStaffMember(hit);
+    });
 }
 
 document.getElementById('submitRolePassword').addEventListener('click', verifyPassword);
-document.getElementById('rolePassword').addEventListener('keypress', function(e){ if(e.key==='Enter') verifyPassword(); });
-
-/* Ministry of Health / Partners tabs. Switching clears any half finished sign in so a
-   password typed for one role is never checked against another. */
-function nmcpLoginTab(group) {
-    document.querySelectorAll('#roleModal .login-tab').forEach(function(t){
-        var on = t.getAttribute('data-group') === group;
-        t.classList.toggle('active', on);
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
-    document.getElementById('mohRoles').style.display     = (group === 'moh')      ? '' : 'none';
-    document.getElementById('partnerRoles').style.display = (group === 'partners') ? '' : 'none';
-    selectedRole = null;
-    document.getElementById('passwordArea').style.display  = 'none';
-    document.getElementById('passwordError').style.display = 'none';
-    document.getElementById('rolePassword').value = '';
-    var u = document.getElementById('roleUsername');
-    u.value = ''; u.style.display = 'none';
-}
-document.querySelectorAll('#roleModal .login-tab').forEach(function(t){
-    t.addEventListener('click', function(){ nmcpLoginTab(this.getAttribute('data-group')); });
+document.getElementById('rolePassword').addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); verifyPassword(); }
 });
-
-/* SESSION
-   The signed in role is remembered so a reload, a closed tab, or the Update
-   button does not send the user back to the login screen. Only Logout clears
-   it. Wrapped in try/catch because storage can be blocked in private mode,
-   in which case the portal simply falls back to asking for the password. */
-var NMDR_SESSION_KEY = 'nmdrRole';
-
-function saveSession(role) {
-    try { localStorage.setItem(NMDR_SESSION_KEY, role); } catch (e) {}
-}
-
-function clearSession() {
-    try { localStorage.removeItem(NMDR_SESSION_KEY); } catch (e) {}
-}
-
-function restoreSession() {
-    var role = null;
-    try { role = localStorage.getItem(NMDR_SESSION_KEY); } catch (e) {}
-    if (!role || !roleAccess[role]) return false;
-    selectedRole    = role;
-    currentUserRole = role;
-    enableTabsForRole(role);
-    return true;
-}
-
-restoreSession();
+document.getElementById('psPassword').addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); psVerify(); }
+});
+document.getElementById('rolePassword').addEventListener('keypress', function(e){ if(e.key==='Enter') verifyPassword(); });
 
 /* DASHBOARD ENDPOINT + DQA LOADER */
 const DV_GAS = 'https://script.google.com/macros/s/AKfycbyTprTce5ft5gxSwY7jOku2GNeKMG8V-X1BrY0jB3QDPyuVWXwFPNr_CH80BRfcLcwD/exec';
@@ -1398,6 +2202,35 @@ function dvDecodeSrcdoc(dataUrl) {
 }
 
 let meDqaLoaded = false;
+// Shared fetch — used by the inline (behind-the-overlay) render, the full page view, and
+// the background preload, so the DQA report is only ever requested from Drive once.
+var meDqaCache = null, meDqaPromise = null;
+function fetchMeDqaData(){
+    if (meDqaPromise) return meDqaPromise;
+    meDqaPromise = fetch(DV_GAS+'?action=getDashboard')
+        .then(function(r){ return r.json(); })
+        .then(function(resp){
+            if (!resp.ok) return { ok:false, error: resp.error || 'No DQA report yet — admin must publish first.' };
+            var images = resp.images||{}, meta = resp.meta||{}, titles = meta.titles||{};
+            var dqaUrl = images['dqa_report.html']||'';
+            if (!dqaUrl) return { ok:false, error: 'No DQA report saved yet — admin must run and publish the DQA tool.' };
+            try {
+                var html = dvDecodeSrcdoc(dqaUrl);
+                var period = titles.dqaPeriod || meta.period || '';
+                return {
+                    ok:true, html:html,
+                    title: titles.dqaTitle || 'DQA Report',
+                    subtitle: 'Period: ' + period + (meta.ts ? ' · Updated: ' + meta.ts : ''),
+                    metaPill: period + (meta.ts ? ' · ' + meta.ts : ''),
+                    facilities: titles.dqaFacilities || '', avgScore: titles.dqaAvgScore || '', highPriority: titles.dqaHighPriority || ''
+                };
+            } catch(e){ return { ok:false, error: 'Failed to render DQA report: ' + e.message }; }
+        })
+        .catch(function(err){ return { ok:false, error: 'Network error: ' + err.message }; })
+        .then(function(result){ meDqaCache = result; medPreloadDone++; updateMedPreloadUI(); return result; });
+    return meDqaPromise;
+}
+
 function loadMeDqa() {
     if (meDqaLoaded) return;
     meDqaLoaded = true;
@@ -1408,38 +2241,105 @@ function loadMeDqa() {
     function doneP(){if(progEl)progEl.style.display='none';if(statEl)statEl.style.display='none';}
     function showErr(m){if(emptyEl)emptyEl.innerHTML='<p style="color:#dc3545;font-size:13px;font-weight:700;">&#9888; '+m+'</p>';doneP();}
     setP(15,'Loading dashboard…');
-    fetch(DV_GAS+'?action=getDashboard')
-        .then(r=>{setP(50,'Parsing response…');return r.json();})
-        .then(resp=>{
-            if(!resp.ok){showErr(resp.error||'No DQA report yet — admin must publish first.');return;}
-            const images=resp.images||{},meta=resp.meta||{},titles=meta.titles||{};
-            const dqaUrl=images['dqa_report.html']||'';
-            if(!dqaUrl){showErr('No DQA report saved yet — admin must run and publish the DQA tool.');return;}
-            setP(80,'Rendering report…');
-            try{
-                const html=dvDecodeSrcdoc(dqaUrl);
-                if(emptyEl)emptyEl.style.display='none';
-                if(frameEl)frameEl.style.display='block';
-                if(ifEl)ifEl.srcdoc=html;
-                const t=titles.dqaTitle||'DQA Report',p=titles.dqaPeriod||meta.period||'';
-                document.getElementById('meDqaTitle').textContent=t;
-                document.getElementById('meDqaSubtitle').textContent='Period: '+p+(meta.ts?' · Updated: '+meta.ts:'');
-                document.getElementById('meDqaMetaPill').textContent=p+(meta.ts?' · '+meta.ts:'');
-                if(titles.dqaFacilities||titles.dqaAvgScore||titles.dqaHighPriority){
-                    document.getElementById('meDqaStats').style.display='flex';
-                    if(titles.dqaFacilities)document.getElementById('meDqaStatFac').innerHTML='&#127968; '+titles.dqaFacilities;
-                    if(titles.dqaAvgScore)document.getElementById('meDqaStatScore').innerHTML='&#11088; Avg: '+titles.dqaAvgScore;
-                    if(titles.dqaHighPriority)document.getElementById('meDqaStatHigh').innerHTML='&#9888; '+titles.dqaHighPriority;
-                }
-                doneP();
-            }catch(e){showErr('Failed to render DQA report: '+e.message);}
-        })
-        .catch(err=>showErr('Network error: '+err.message));
+    fetchMeDqaData().then(function(result){
+        setP(80,'Rendering report…');
+        if (!result.ok) { showErr(result.error); return; }
+        if (emptyEl) emptyEl.style.display='none';
+        if (frameEl) frameEl.style.display='block';
+        if (ifEl) ifEl.srcdoc = result.html;
+        document.getElementById('meDqaTitle').textContent = result.title;
+        document.getElementById('meDqaSubtitle').textContent = result.subtitle;
+        document.getElementById('meDqaMetaPill').textContent = result.metaPill;
+        if (result.facilities || result.avgScore || result.highPriority) {
+            document.getElementById('meDqaStats').style.display = 'flex';
+            if (result.facilities) document.getElementById('meDqaStatFac').innerHTML = '&#127968; ' + result.facilities;
+            if (result.avgScore) document.getElementById('meDqaStatScore').innerHTML = '&#11088; Avg: ' + result.avgScore;
+            if (result.highPriority) document.getElementById('meDqaStatHigh').innerHTML = '&#9888; ' + result.highPriority;
+        }
+        doneP();
+    });
+}
+
+// Full page view for the DQA report — same Main Menu back button and #me-dqa deep link as
+// every other tool, built from the same cached fetch as the inline version above.
+function openMeDqaPage(){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed['me-dqa']) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    activateTab('me-dqa'); // sync nav highlight (also warms the inline copy, harmlessly, behind the overlay)
+
+    pageReturnTab = returnTab;
+    pageReturnScroll = returnScroll;
+
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    var label = pageLabelMap['me-dqa'] || 'Data Quality Assessment';
+    document.getElementById('pageLabel').textContent = label;
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+    try { history.pushState({ nmdrPage: 'me-dqa', nmdrReturn: pageReturnTab }, '', '#me-dqa'); } catch(e){}
+
+    if (meDqaCache) {
+        renderMeDqaPage(host, meDqaCache);
+    } else {
+        host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:14px;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);">Loading dashboard…</p></div>';
+        fetchMeDqaData().then(function(result){
+            if (document.getElementById('pageView').classList.contains('open') && document.getElementById('pageLabel').textContent === label) {
+                renderMeDqaPage(host, result);
+            }
+        });
+    }
+}
+
+function renderMeDqaPage(host, result){
+    host.innerHTML = '';
+    if (!result.ok) {
+        host.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;';
+
+    var header = document.createElement('div');
+    header.style.cssText = 'flex:0 0 auto;background:#2b5f8a;color:#fff;padding:12px 20px;';
+    var titleEl = document.createElement('div'); titleEl.style.cssText = 'font-size:14px;font-weight:700;'; titleEl.textContent = result.title;
+    var subEl = document.createElement('div'); subEl.style.cssText = 'font-size:12px;opacity:0.85;margin-top:2px;'; subEl.textContent = result.subtitle;
+    header.appendChild(titleEl); header.appendChild(subEl);
+    if (result.facilities || result.avgScore || result.highPriority) {
+        var statsRow = document.createElement('div');
+        statsRow.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;';
+        [['facilities','&#127968; '],['avgScore','&#11088; Avg: '],['highPriority','&#9888; ']].forEach(function(pair){
+            var val = result[pair[0]];
+            if (!val) return;
+            var span = document.createElement('span');
+            span.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.85);';
+            span.innerHTML = pair[1] + val;
+            statsRow.appendChild(span);
+        });
+        header.appendChild(statsRow);
+    }
+
+    var body = document.createElement('div');
+    body.style.cssText = 'flex:1 1 auto;position:relative;';
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;display:block;';
+    iframe.srcdoc = result.html;
+    body.appendChild(iframe);
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+    host.appendChild(wrap);
 }
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
 var pageLabelMap = {
-    'welcome':'Welcome','me-dqa':'M&E · DQA',
+    'welcome':'Welcome','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','me-dqa':'M&E · DQA',
     'me-summary-epi':'Detailed · Malaria Epi (Summary)',
     'me-summary-int':'Detailed · Intervention (Summary)',
     'me-summary-stock':'Detailed · Stock (Summary)',
@@ -1449,7 +2349,7 @@ var pageLabelMap = {
     'med-reporting':'Key Indicators · Reporting Rate','med-testing':'Key Indicators · Testing Rate',
     'med-tpr':'Key Indicators · Test Positivity Rate','med-cfr':'Key Indicators · Confirmed & Treatment Rate',
     'med-comp-u5':'Comparative · Under Five','med-comp-allages':'Comparative · All Ages',
-    'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages',
+    'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages','me-reports':'M&E · Reporting',
     'hmis-extraction':'HMIS · Data Extraction','hmis-epi-dashboard':'HMIS · Epi Dashboard',
     'eidsr-extraction':'eIDSR · Data Extraction','eidsr-dashboard':'eIDSR · Dashboard',
     'tes-data':'TES · Data','tes-report':'TES · Report','tes-dashboard':'TES · Dashboard',
@@ -1460,20 +2360,28 @@ var pageLabelMap = {
     'int-vitamin-a':'Routine · Vitamin A','int-iptp':'Routine · IPTp','int-anc':'Routine · ANC',
     'int-mass-itn':'3.0 Interventions · Mass ITN','int-sbd':'3.0 Interventions · SBD','int-irs':'3.0 Interventions · IRS',
     'user-guide':'User Guide','bulletins':'Monthly Bulletin','mpd':'Malaria Programme Docs',
-    'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report','dct-sbd':'Data Collection · SBD','dct-mocm-phu':'Data Collection · MOCM (PHU)','dct-mocm-lab':'Data Collection · MOCM (Lab)','dct-mocm-hospital':'Data Collection · MOCM (Hospital)','dct-warehouse':'Data Collection · Warehouse Assessment','dct-sbc':'Data Collection · SBC Coaching (Form K)','analytics-training':'Analytics Learning',
+    'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report',
+    'dct-sbd':'Data Collection Apps · SBD','dct-mocm-phu':'Data Collection Apps · MOCM (PHU)',
+    'dct-mocm-hospital':'Data Collection Apps · MOCM (Hospital)','dct-mocm-lab':'Data Collection Apps · MOCM (Lab)',
+    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)','dct-tes':'Data Collection Apps · TES Data Collection Tool',
+    'analytics-training':'Analytics Learning','gf-plan':'GF Implementation Plan','partners-mapping':'NMCP Partners Mapping','world-malaria-day':'World Malaria Day',
+    'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
     'dmat-suspected':'D-MAT · Suspected','dmat-tested':'D-MAT · Tested','dmat-confirmed':'D-MAT · Confirmed Cases',
     'dmat-treated':'D-MAT · Confirmed and Treated','dmat-confirmed-not-treated':'D-MAT · Confirmed and Not Treated',
     'dmat-presumptive':'D-MAT · Presumptive Treatment','dmat-total-treated':'D-MAT · Total Treated',
     'dmat-tpr':'D-MAT · Test Positivity Rate',
     'dmat-comparative':'D-MAT · Comparative Analysis','dmat-u5':'D-MAT · Under 5','dmat-allages':'D-MAT · All Ages',
-    'snt':'SNT 2015–2025','mpr':'MPR 2021–2023',
+    'dmat-eidsr':'D-MAT · eIDSR',
+    'snt-datasets':'SNT 2015–2025 · Datasets','snt-codes':'SNT 2015–2025 · Codes','snt-outputs':'SNT 2015–2025 · Outputs',
+    'snt-report':'SNT 2015–2025 · Report','snt-manual':'SNT 2015–2025 · SNT Manual','snt-intervention-targeting':'SNT 2015–2025 · Intervention Targeting',
+    'mpr-datasets':'MPR 2021–2023 · Datasets','mpr-codes':'MPR 2021–2023 · Codes','mpr-outputs':'MPR 2021–2023 · Outputs','mpr-report':'MPR 2021–2023 · Report',
     'other-trend-allages':'Other Analysis · Trend Analysis (All Ages)',
     'other-trend-u5':'Other Analysis · Trend Analysis (Under 5)',
     'ento-data':'Vector Control · Entomology · Data','ento-report':'Vector Control · Entomology · Report',
     'ento-dashboard':'Vector Control · Entomology · Dashboard',
     'ir-data':'Vector Control · IR · Data','ir-report':'Vector Control · IR · Report','ir-dashboard':'Vector Control · IR · Dashboard',
-    'finance-data':'Finance · Data','finance-report':'Finance · Report','finance-dashboard':'Finance · Dashboard',
+    'finance-data':'Finance · Data','finance-report':'Finance · Report','finance-dashboard':'Finance · Dashboard','nsp-costing':'Finance · NSP Costing',
     'admin-dashboard':'Admin Dashboard'
 };
 
@@ -1485,10 +2393,11 @@ function activateTab(tabId) {
         roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
         if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
     }
+    currentTab = tabId;
     document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
     var el = document.getElementById(tabId);
     if (el) el.classList.add('active');
-    document.querySelectorAll('.nav-item[data-tab], .nav-child[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.nav-item[data-tab], .nav-group-btn[data-tab], .nav-child[data-tab]').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('[data-tab="'+tabId+'"]').forEach(function(b){ b.classList.add('active'); });
 
     if (tabId === 'me-dqa') {
@@ -1499,6 +2408,7 @@ function activateTab(tabId) {
         var iframe = document.getElementById('frame-'+tabId);
         if (iframe) {
             var dataSrc = iframe.getAttribute('data-src');
+            if (tabId === 'archive' && dataSrc) dataSrc += '?role=' + encodeURIComponent(currentUserRole || '');
             if (dataSrc && !iframe.src.endsWith(dataSrc)) iframe.src = dataSrc;
         }
     }
@@ -1529,54 +2439,193 @@ function activateTab(tabId) {
     }
 }
 
-document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ activateTab(this.getAttribute('data-tab')); }); });
-document.querySelectorAll('.nav-child[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ activateTab(this.getAttribute('data-tab')); }); });
+document.querySelectorAll('.nav-item[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ handleNavClick(this.getAttribute('data-tab')); }); });
+document.querySelectorAll('.nav-child[data-tab]').forEach(function(btn){ btn.addEventListener('click',function(){ handleNavClick(this.getAttribute('data-tab')); }); });
+
+// PAGE VIEW — file-backed tool tabs open full screen with a Main Menu back bar
+// instead of switching inline, so they read as an ordinary page with a real back
+// button that returns you to exactly where you left off (scroll position included).
+var pageReturnTab = 'welcome', pageReturnScroll = 0;
+
+function isFileBackedTab(tabId){
+    var iframe = document.getElementById('frame-'+tabId);
+    return !!(iframe && iframe.hasAttribute('data-src') && tabId !== 'me-dqa' && !(MED_DRIVE_KEYS && MED_DRIVE_KEYS[tabId]));
+}
+
+function handleNavClick(tabId){
+    if (isFileBackedTab(tabId)) { openToolPage(tabId); }
+    else if (tabId === 'me-dqa') { openMeDqaPage(); }
+    else if (MED_DRIVE_KEYS && MED_DRIVE_KEYS[tabId]) { openMedDashboardPage(tabId); }
+    else { activateTab(tabId); }
+}
+
+// Google Drive dashboards (MED_DRIVE_KEYS) get the same full-page, Main Menu-back-button
+// treatment as every other tool, and the same #tabId deep link. Content comes from the
+// shared preload cache (see fetchMedTab) so opening one that already finished background
+// loading is instant; one still in flight shows its own small loading state until it lands.
+function openMedDashboardPage(tabId){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    activateTab(tabId); // sync nav highlight / open groups (also warms the cache, harmlessly, behind the overlay)
+
+    pageReturnTab = returnTab;
+    pageReturnScroll = returnScroll;
+
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    document.getElementById('pageLabel').textContent = pageLabelMap[tabId] || tabId;
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+    try { history.pushState({ nmdrPage: tabId, nmdrReturn: pageReturnTab }, '', '#' + tabId); } catch(e){}
+
+    var cached = medTabCache[tabId];
+    if (cached) {
+        renderMedPageResult(host, cached);
+    } else {
+        host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:14px;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);">Loading dashboard…</p></div>';
+        fetchMedTab(tabId).then(function(result){
+            // only paint if this same dashboard is still the one on screen
+            if (document.getElementById('pageView').classList.contains('open') && (pageLabelMap[tabId] || tabId) === document.getElementById('pageLabel').textContent) {
+                renderMedPageResult(host, result);
+            }
+        });
+    }
+}
+
+function renderMedPageResult(host, result){
+    host.innerHTML = '';
+    if (!result.ok) {
+        host.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;display:block;';
+    iframe.srcdoc = result.html;
+    host.appendChild(iframe);
+}
+
+function openToolPage(tabId){
+    if (currentUserRole) {
+        var allowed = {};
+        roleAccess[currentUserRole].forEach(function(t){ allowed[t]=true; });
+        if (!allowed[tabId]) { alert('Access restricted. This role does not have permission for this section.'); return; }
+    }
+    var iframeSrcEl = document.getElementById('frame-'+tabId);
+    var src = iframeSrcEl ? iframeSrcEl.getAttribute('data-src') : null;
+    if (!src) { activateTab(tabId); return; }
+
+    // remember exactly where we left, so Main Menu / back returns there
+    var returnTab = currentTab || 'welcome';
+    var navScrollEl = document.querySelector('.nav-scroll');
+    var returnScroll = navScrollEl ? navScrollEl.scrollTop : 0;
+
+    // reflect the nav highlight / open groups underneath, without showing the tab-content
+    activateTab(tabId);
+
+    if (tabId === 'archive' && src) src += (src.indexOf('?') === -1 ? '?' : '&') + 'role=' + encodeURIComponent(currentUserRole || '');
+
+    showPageView(src, pageLabelMap[tabId] || tabId, returnTab, returnScroll, tabId);
+}
+
+// Shared full-screen "page view" — builds a fresh borderless frame that fills the
+// entire viewport below the Main Menu bar, so nothing ever shows as a boxed iframe
+// with its own scrollbar sitting inside the normal scrolling page.
+function showPageView(src, label, returnTab, returnScroll, historyTab){
+    pageReturnTab = returnTab || currentTab || 'welcome';
+    pageReturnScroll = (typeof returnScroll === 'number') ? returnScroll : 0;
+
+    // build a fresh frame per open — a reused frame pollutes its own history
+    var host = document.getElementById('pageHost');
+    host.innerHTML = '';
+    var frame = document.createElement('iframe');
+    frame.src = src;
+    frame.setAttribute('allow', 'fullscreen');
+    frame.setAttribute('loading', 'eager');
+    host.appendChild(frame);
+
+    document.getElementById('pageLabel').textContent = label || '';
+    document.getElementById('pageView').classList.add('open');
+    document.body.classList.add('page-view-active');
+
+    try { history.pushState({ nmdrPage: historyTab || 'external', nmdrReturn: pageReturnTab }, '', historyTab ? ('#' + historyTab) : (location.pathname + location.search)); } catch(e){}
+}
+
+function closeToolPage(pushHistory){
+    document.getElementById('pageView').classList.remove('open');
+    document.body.classList.remove('page-view-active');
+    document.getElementById('pageHost').innerHTML = '';
+
+    var back = pageReturnTab || 'welcome';
+    activateTab(back);
+    var navScrollEl = document.querySelector('.nav-scroll');
+    if (navScrollEl) navScrollEl.scrollTop = pageReturnScroll;
+
+    if (pushHistory !== false) {
+        try {
+            var url = (back === 'welcome') ? (location.pathname + location.search) : ('#' + back);
+            history.pushState({ nmdrPage: null, nmdrLanded: back }, '', url);
+        } catch(e){}
+    }
+}
+
+document.getElementById('pageMenuBtn').addEventListener('click', function(){ closeToolPage(); });
+
+// Deep link — resolves a URL hash (#dct-sbd, #hmis-opd, #snt-datasets, ...) to the tool it
+// names, so the same link works as a standalone page in any browser tab, once a role is
+// selected. Returns true if it recognised and opened something.
+function openFromHash(hash){
+    if (!hash) return false;
+    try { hash = decodeURIComponent(hash); } catch(e){}
+    hash = hash.replace(/^#/, '').replace(/\/+$/, '');
+    if (!hash) return false;
+    // exact tab id takes priority — covers file-backed tools, the DQA report, and
+    // MED_DRIVE_KEYS dashboards, including ones like "hmis-epi-dashboard" that happen to
+    // start with "hmis-"
+    if (hash === 'me-dqa') { openMeDqaPage(); return true; }
+    if (MED_DRIVE_KEYS && MED_DRIVE_KEYS[hash]) { openMedDashboardPage(hash); return true; }
+    if (document.getElementById(hash) && document.getElementById('frame-' + hash)) {
+        openToolPage(hash);
+        return true;
+    }
+    // otherwise, try it as an HMIS extraction-card slug (#hmis-<slug>)
+    if (hash.indexOf('hmis-') === 0) {
+        var slug = hash.slice(5);
+        var title = HMIS_TOOLS[slug];
+        if (!title) return false;
+        openHmisFrame(slug + '.html', title);
+        return true;
+    }
+    return false;
+}
+
+window.addEventListener('popstate', function(e){
+    var pageViewEl = document.getElementById('pageView');
+    if (pageViewEl.classList.contains('open')) {
+        // browser Back while a tool page is open — return to where we left, no new history entry
+        closeToolPage(false);
+    } else if (e.state && e.state.nmdrPage && e.state.nmdrPage !== 'external') {
+        openFromHash(e.state.nmdrPage);
+    }
+});
 
 function openGroup(groupId){
     var c=document.getElementById('children-'+groupId),b=document.querySelector('[data-group="'+groupId+'"]');
     if(c)c.classList.add('open');if(b)b.classList.add('open');
 }
-/* Nested groups animate on max-height. A fixed ceiling clips a long list and,
-   worse, clips a parent when a child group opens inside it. So a group opens to
-   its own measured height, then goes to none once the animation is done, and
-   every ancestor is released at the same time. */
-function _navIsOpen(c){
-    var m=c.style.maxHeight;
-    return m!=='' && m!=='0' && m!=='0px';
-}
-function _navRelease(c){
-    if(!c) return;
-    c.style.maxHeight='none';
-}
-function _navReleaseAncestors(el){
-    var p=el.parentElement;
-    while(p){
-        if(p.classList && (p.classList.contains('nav-group-children') ||
-            (p.id && /Children$/.test(p.id)))){
-            if(_navIsOpen(p) || p.classList.contains('open')) _navRelease(p);
-        }
-        if(p.classList && p.classList.contains('nav-scroll')) break;
-        p=p.parentElement;
-    }
-}
-/* if the element cannot be measured yet, fall back to a generous ceiling rather
-   than opening to zero and looking broken */
-function _navHeight(c){ var h=c.scrollHeight; return (h && h>0) ? h+'px' : '6000px'; }
-function _navOpen(c){
-    c.style.maxHeight=_navHeight(c);
-    setTimeout(function(){ if(_navIsOpen(c)){ _navRelease(c); _navReleaseAncestors(c); } },320);
-    _navReleaseAncestors(c);
-}
-function _navClose(c){
-    if(c.style.maxHeight==='none'){ c.style.maxHeight=_navHeight(c); void c.offsetHeight; }
-    c.style.maxHeight='0';
-}
 function toggleNestedGroup(childrenId,chevronId,toggleId,e){
     if(e)e.stopPropagation();
     var c=document.getElementById(childrenId),ch=document.getElementById(chevronId),t=toggleId?document.getElementById(toggleId):null;
     if(!c)return;
-    if(_navIsOpen(c)){ _navClose(c); if(ch)ch.style.transform=''; if(t)t.classList.remove('active'); }
-    else{ _navOpen(c); if(ch)ch.style.transform='rotate(180deg)'; if(t)t.classList.add('active'); }
+    var isOpen=c.style.maxHeight!=='0px'&&c.style.maxHeight!==''&&c.style.maxHeight!=='0';
+    if(isOpen){c.style.maxHeight='0';if(ch)ch.style.transform='';if(t)t.classList.remove('active');}
+    else{c.style.maxHeight='2000px';if(ch)ch.style.transform='rotate(180deg)';if(t)t.classList.add('active');}
 }
 
 var MED_DRIVE_KEYS = {
@@ -1591,24 +2640,89 @@ var MED_DRIVE_KEYS = {
     'me-summary-epi':'malaria_epi.html','me-summary-int':'intervention.html','me-summary-stock':'stock.html'
 };
 
-function loadMedTab(tabId){
-    var wrap=document.getElementById(tabId+'-wrap');
-    if(!wrap)return;
-    var driveKey=MED_DRIVE_KEYS[tabId];
-    if(!driveKey)return;
-    wrap.innerHTML='<div style="padding:60px 20px;text-align:center;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);margin-top:14px;">Loading dashboard…</p></div>';
-    fetch(DV_GAS+'?action=getFileByName&filename='+encodeURIComponent(driveKey)+'&t='+Date.now())
-        .then(function(r){return r.json();})
+// Every Drive dashboard is fetched once, in the background, starting as soon as the portal
+// loads — not when its tab is opened. The tab itself never shows on its own; clicking it just
+// renders whatever is already sitting in the cache (or waits on the same in-flight request if
+// it hasn't landed yet). medTabPromises holds one shared promise per tab so background preload
+// and an impatient click never trigger two fetches for the same file.
+var medTabCache    = {};   // tabId -> { ok:true, html } | { ok:false, error }
+var medTabPromises = {};   // tabId -> Promise (resolves, never rejects — errors are captured in the value)
+var medPreloadTotal = 0, medPreloadDone = 0;
+
+function fetchMedTab(tabId){
+    if (medTabPromises[tabId]) return medTabPromises[tabId];
+    var driveKey = MED_DRIVE_KEYS[tabId];
+    var p = fetch(DV_GAS+'?action=getFileByName&filename='+encodeURIComponent(driveKey)+'&t='+Date.now())
+        .then(function(r){ return r.json(); })
         .then(function(resp){
-            if(!resp.ok){wrap.innerHTML='<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">File not found: <strong>'+driveKey+'</strong></p></div>';return;}
-            try{
-                var html=dvDecodeSrcdoc(resp.content);
-                var iframe=document.createElement('iframe');
-                iframe.style.cssText='width:100%;height:85vh;border:none;display:block;border-radius:10px;';
-                iframe.srcdoc=html;wrap.innerHTML='';wrap.appendChild(iframe);
-            }catch(e){wrap.innerHTML='<p style="color:#dc3545;padding:20px;">Error rendering: '+e.message+'</p>';}
+            if (!resp.ok) return { ok:false, error:'File not found: ' + driveKey };
+            try { return { ok:true, html: dvDecodeSrcdoc(resp.content) }; }
+            catch(e){ return { ok:false, error:'Error rendering: ' + e.message }; }
         })
-        .catch(function(err){wrap.innerHTML='<p style="color:#dc3545;padding:20px;">Network error: '+err.message+'</p>';});
+        .catch(function(err){ return { ok:false, error:'Network error: ' + err.message }; })
+        .then(function(result){
+            medTabCache[tabId] = result;
+            medPreloadDone++;
+            updateMedPreloadUI();
+            return result;
+        });
+    medTabPromises[tabId] = p;
+    return p;
+}
+
+function renderMedTabResult(tabId, result){
+    var wrap = document.getElementById(tabId+'-wrap');
+    if (!wrap) return;
+    if (!result.ok) {
+        wrap.innerHTML = '<div style="padding:60px 20px;text-align:center;color:var(--muted);"><p style="font-size:13px;">'+result.error+'</p></div>';
+        return;
+    }
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'width:100%;height:85vh;border:none;display:block;border-radius:10px;';
+    iframe.srcdoc = result.html;
+    wrap.innerHTML = '';
+    wrap.appendChild(iframe);
+}
+
+function loadMedTab(tabId){
+    var wrap = document.getElementById(tabId+'-wrap');
+    if (!wrap) return;
+    if (medTabCache[tabId]) { renderMedTabResult(tabId, medTabCache[tabId]); return; }
+    wrap.innerHTML = '<div style="padding:60px 20px;text-align:center;"><div class="dv-loader"></div><p style="font-size:13px;color:var(--muted);margin-top:14px;">Loading dashboard…</p></div>';
+    fetchMedTab(tabId).then(function(result){
+        // only render if this tab is still the one on screen when it lands
+        var el = document.getElementById(tabId);
+        if (el && el.classList.contains('active')) renderMedTabResult(tabId, result);
+    });
+}
+
+function updateMedPreloadUI(){
+    var box = document.getElementById('medPreloadStatus');
+    if (!box || medPreloadTotal === 0) return;
+    var pct = Math.round((medPreloadDone / medPreloadTotal) * 100);
+    var fill = document.getElementById('medPreloadFill');
+    var text = document.getElementById('medPreloadText');
+    if (fill) fill.style.width = pct + '%';
+    if (medPreloadDone < medPreloadTotal) {
+        box.style.display = 'block';
+        if (text) text.textContent = 'Loading dashboards… ' + medPreloadDone + '/' + medPreloadTotal + ' (' + pct + '%)';
+    } else {
+        if (text) text.textContent = 'Dashboards ready (' + medPreloadTotal + '/' + medPreloadTotal + ')';
+        setTimeout(function(){ box.style.display = 'none'; }, 2500);
+    }
+}
+
+// Kicks off every Drive dashboard fetch in parallel, in the background, right when the
+// portal loads — none of them are shown until their tab is actually clicked.
+function preloadAllMedTabs(){
+    var keys = Object.keys(MED_DRIVE_KEYS);
+    medPreloadTotal = keys.length + 1; // +1 for the DQA report, which follows the same pattern
+    medPreloadDone = 0;
+    var box = document.getElementById('medPreloadStatus');
+    if (box) box.style.display = 'block';
+    updateMedPreloadUI();
+    keys.forEach(function(tabId){ fetchMedTab(tabId); });
+    fetchMeDqaData();
 }
 
 function toggleGroup(groupId){
@@ -1616,33 +2730,45 @@ function toggleGroup(groupId){
     if(!c||!b)return;
     var isOpen=c.classList.contains('open');
     c.classList.toggle('open',!isOpen);b.classList.toggle('open',!isOpen);
-    /* the class only sets a ceiling; release it so a long section is never clipped */
-    if(!isOpen){
-        c.style.maxHeight=_navHeight(c);
-        setTimeout(function(){ if(c.classList.contains('open')) c.style.maxHeight='none'; },320);
-    } else {
-        if(c.style.maxHeight==='none'){ c.style.maxHeight=_navHeight(c); void c.offsetHeight; }
-        c.style.maxHeight='';
-    }
 }
-document.querySelectorAll('.nav-group-btn[data-group]').forEach(function(btn){ btn.addEventListener('click',function(){ toggleGroup(this.getAttribute('data-group')); }); });
+document.querySelectorAll('.nav-group-btn[data-group]').forEach(function(btn){ btn.addEventListener('click',function(){ toggleGroup(this.getAttribute('data-group')); var t=this.getAttribute('data-tab'); if(t) activateTab(t); }); });
 
 /* HAMBURGER / DRAWER */
 var hamburgerBtn=document.getElementById('hamburgerBtn'),sidebar=document.getElementById('sidebar'),sidebarOverlay=document.getElementById('sidebarOverlay');
 function openDrawer(){sidebar.classList.add('open');sidebarOverlay.classList.add('visible');hamburgerBtn.classList.add('open');document.body.style.overflow='hidden';}
 function closeDrawer(){sidebar.classList.remove('open');sidebarOverlay.classList.remove('visible');hamburgerBtn.classList.remove('open');document.body.style.overflow='';}
 hamburgerBtn.addEventListener('click',function(){sidebar.classList.contains('open')?closeDrawer():openDrawer();});
-document.getElementById('sidebarCloseBtn').addEventListener('click',closeDrawer);
+
+// SIDEBAR COLLAPSE (desktop/tablet) — reuses the same close-X for both mobile drawer and desktop collapse
+function collapseSidebar(){
+    document.body.classList.add('sidebar-collapsed');
+    try{localStorage.setItem('nmdrSidebarCollapsed','1');}catch(e){}
+}
+function expandSidebar(){
+    document.body.classList.remove('sidebar-collapsed');
+    try{localStorage.setItem('nmdrSidebarCollapsed','0');}catch(e){}
+}
+document.getElementById('sidebarCloseBtn').addEventListener('click',function(){
+    if (window.matchMedia('(max-width:768px)').matches) { closeDrawer(); }
+    else { collapseSidebar(); }
+});
+document.getElementById('sidebarReopenBtn').addEventListener('click',expandSidebar);
+try{
+    if (window.matchMedia('(min-width:769px)').matches && localStorage.getItem('nmdrSidebarCollapsed')==='1') collapseSidebar();
+}catch(e){}
 sidebarOverlay.addEventListener('click',closeDrawer);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
 
 /* LOGOUT */
 document.getElementById('logoutBtn').addEventListener('click',function(){
     clearSession();
+    staffAccount=null;
+    delete roleAccess.staffaccount;
+    var sa=document.getElementById('signedAs'); if(sa){sa.innerHTML='';sa.style.display='none';}
     currentUserRole=null;selectedRole=null;meDqaLoaded=false;
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
     document.getElementById('welcome').classList.add('active');
-    document.querySelectorAll('.nav-item[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='welcome');});
+    document.querySelectorAll('.nav-item[data-tab], .nav-group-btn[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='welcome');});
     document.querySelectorAll('.nav-child[data-tab]').forEach(function(b){b.classList.remove('active');});
     updateTopbarPage('welcome');
     document.getElementById('adminTabBtn').style.display='none';
@@ -1655,10 +2781,9 @@ document.getElementById('logoutBtn').addEventListener('click',function(){
     document.getElementById('meDqaFrame').style.display='none';
     document.getElementById('meDqaStats').style.display='none';
     document.getElementById('meDqaIframe').srcdoc='';
-    document.getElementById('passwordArea').style.display='none';
+    document.getElementById('passwordArea').style.display='block';
     document.getElementById('rolePassword').value='';
     document.getElementById('passwordError').style.display='none';
-    nmcpLoginTab('moh');
     document.getElementById('roleModal').style.display='flex';
     document.body.style.overflow='hidden';
     closeHmisFrame();
@@ -1718,7 +2843,26 @@ window.addEventListener('message',function(e){
     }
     if(e.data.type==='pipeline_done')dvShowUpdateBar();
 });
+
+// Every Drive dashboard starts fetching the moment the portal loads, quietly in the
+// background — nothing is shown until its own tab is clicked (see loadMedTab / fetchMedTab).
+preloadAllMedTabs();
+
+/* ================= ONE TIME SIGN IN, ON LOAD =================
+   Runs last, so everything it needs is defined. A remembered sign in opens
+   the portal straight away and the password is never asked for again until
+   Logout. */
+(function bootSession(){
+    var ses = readSession();
+    if (!ses) return;
+    currentProgramme = ses.programme || 'NMDR';
+    if (currentProgramme === 'NMDR'){
+        applySession(ses);
+    } else {
+        openPlaceholderPortal('general');
+    }
+})();
+
 </script>
-<script src="nmdr-offline.js"></script>
 </body>
 </html>
