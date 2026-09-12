@@ -1994,6 +1994,20 @@ var GENERAL_PASSWORD = 'admin123';
 var SHEET_ID   = '149sx4bAtGEBIYRbz4L-IykcKCzc_TIWcRZVMexa1JqI';
 var SHEET_GID  = '1102751883';
 var SHEET_CSV  = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&gid=' + SHEET_GID;
+
+/* Reading the sheet straight from a web page usually fails, and not because
+   of anything wrong here: docs.google.com does not send the cross origin
+   header a browser insists on, so the browser throws the answer away. Sharing
+   the sheet as anyone with the link does not change that.
+
+   Two ways round it, and the portal uses whichever is available:
+     1. the Apps Script backend below, which does send that header. This is
+        tried first and is the one to rely on.
+     2. the sheet published to the web, which also sends it. In the sheet, File
+        then Share then Publish to web, pick the Staff tab and CSV, then paste
+        the address it gives you here. It looks like
+        https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=1102751883&single=true&output=csv */
+var SHEET_PUB  = '';
 var STAFF_API  = 'https://script.google.com/macros/s/AKfycbwiRa_gyUNUPJyHh5LF7-XP9WrMy5XyyDiDyWkt5DS0PEu4Zth-KRSm7oOwavX5Nj6_/exec';
 var ACCESS_CSV = 'access.csv';
 
@@ -2049,22 +2063,42 @@ function rowsToPeople(text){
 }
 
 function loadStaffAccess(done){
+  /* The Apps Script backend comes first: it is the one source a browser is
+     allowed to read. The published sheet is next if its address has been
+     pasted in above, then the sheet itself, then the file on the device. */
   var sources = [
-    { name: 'the staff sheet',  url: SHEET_CSV + '&t=' + Date.now() },
-    { name: 'the staff server', url: STAFF_API + '?action=accesscsv&t=' + Date.now() },
-    { name: 'access.csv',       url: ACCESS_CSV + '?t=' + Date.now() }
+    { name: 'the staff server', url: STAFF_API + '?action=accesscsv&t=' + Date.now() }
   ];
+  if (SHEET_PUB) sources.push({ name: 'the published sheet', url: SHEET_PUB + (SHEET_PUB.indexOf('?') > -1 ? '&' : '?') + 't=' + Date.now() });
+  sources.push({ name: 'the staff sheet',  url: SHEET_CSV + '&t=' + Date.now() });
+  sources.push({ name: 'access.csv',       url: ACCESS_CSV + '?t=' + Date.now() });
+
   var tried = [];
   function step(i){
     if (i >= sources.length){ done(new Error(tried.join(' ')), null, null); return; }
-    fetch(sources[i].url, { cache: 'no-store' })
-      .then(function(r){ if (!r.ok) throw new Error('status ' + r.status); return r.text(); })
+    var src = sources[i];
+    fetch(src.url, { cache: 'no-store' })
+      .then(function(r){
+        if (!r.ok) throw new Error('answered ' + r.status);
+        return r.text();
+      })
       .then(function(text){
         var people = rowsToPeople(text);
-        if (!people.length){ tried.push(sources[i].name + ' holds no password yet.'); step(i + 1); return; }
-        done(null, people, sources[i].name);
+        if (!people.length){
+          /* read fine, but there is nothing in it to sign in with */
+          var why = (String(text).toLowerCase().indexOf('password') === -1)
+                    ? 'answered, but with no Password column'
+                    : 'answered, but no record carries a password yet';
+          tried.push(src.name + ': ' + why + '.');
+          step(i + 1);
+          return;
+        }
+        done(null, people, src.name);
       })
-      .catch(function(){ tried.push(sources[i].name + ' could not be read.'); step(i + 1); });
+      .catch(function(e){
+        tried.push(src.name + ': ' + ((e && e.message) ? e.message : 'could not be read') + '.');
+        step(i + 1);
+      });
   }
   step(0);
 }
@@ -2271,8 +2305,13 @@ function verifyPassword() {
 
     loadStaffAccess(function(err, people){
         if (err || !people){
-            errEl.innerHTML = 'The staff database could not be read, so only the general password can be checked. ' +
-                              'If you are working without internet, access.csv must sit in the same folder as this page.';
+            /* name each source and what it said, so the cause is visible
+               rather than guessed at */
+            var detail = (err && err.message) ? err.message : '';
+            errEl.innerHTML = 'No staff password could be checked, so only the general password works for now.' +
+                              (detail ? '<br><br><span style="font-size:11.5px;opacity:.85;">' + detail.replace(/[<>]/g, '') + '</span>' : '') +
+                              '<br><br><span style="font-size:11.5px;opacity:.85;">Every record needs a password in the sheet, ' +
+                              'the Apps Script needs redeploying after a change, and access.csv must sit beside this page for use without internet.</span>';
             return;
         }
         var hit = null;
