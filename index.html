@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -146,8 +146,9 @@
             display: flex; align-items: center; justify-content: space-between;
             gap: 22px; margin-bottom: 24px;
         }
-        .brand-row img { height: 124px; width: auto; max-width: 34%; object-fit: contain; }
-        .brand-row .brand-mid { flex: 1; text-align: center; }
+        .brand-row img { height: 124px; width: auto; max-width: 34%; object-fit: contain; flex: 0 0 auto; }
+        .brand-row .brand-mid { flex: 1 1 auto; min-width: 0; text-align: center; }
+        .brand-row .brand-mid h1, .brand-row .brand-mid h2 { overflow-wrap: break-word; }
 
         /* PROGRAMME LANDING, the first page: a 3 x 3 grid of programme cards */
         .prog-modal {
@@ -221,6 +222,42 @@
         }
         @media (max-width: 460px) {
             .prog-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== PHONE: the landing card =====
+           On a narrow screen the two logos and the title cannot sit side by
+           side at full size: the title ends up one word per line and the
+           second logo is pushed off the card. The logos shrink to a size that
+           still reads, the title takes the room it needs, and nothing
+           overflows. */
+        @media (max-width: 760px) {
+            .brand-row {
+                gap: 12px; margin-bottom: 16px; align-items: center;
+            }
+            .brand-row img { height: 56px; max-width: 26%; }
+            .prog-card-wrap h1 { font-size: 19px; line-height: 1.25; margin-bottom: 2px; }
+            .prog-card-wrap h2 { font-size: 13px; line-height: 1.35; }
+            .prog-card-wrap p  { font-size: 12.5px; margin-bottom: 16px; }
+        }
+        @media (max-width: 560px) {
+            .prog-modal { padding: 10px; align-items: flex-start; }
+            .prog-card-wrap { padding: 18px 14px; width: 100%; border-radius: 16px; max-height: none; }
+            .brand-row { gap: 10px; margin-bottom: 14px; }
+            .brand-row img { height: 46px; max-width: 24%; }
+            .prog-card-wrap h1 { font-size: 17px; }
+            .prog-card-wrap h2 { font-size: 12.5px; }
+            .prog-grid { gap: 12px; }
+            .prog-tile { padding: 14px 10px 12px; min-height: 84px; gap: 5px; }
+            .prog-tile .prog-abbr { font-size: 19px; }
+            .prog-tile .prog-name { font-size: 11.5px; }
+            .prog-note { font-size: 11px; margin-top: 12px; }
+            .prog-back-btn { font-size: 12.5px; }
+        }
+        @media (max-width: 390px) {
+            .brand-row img { height: 40px; max-width: 23%; }
+            .prog-card-wrap h1 { font-size: 15.5px; }
+            .prog-card-wrap h2 { font-size: 12px; }
+            .prog-card-wrap { padding: 16px 12px; }
         }
 
         /* ROLE MODAL */
