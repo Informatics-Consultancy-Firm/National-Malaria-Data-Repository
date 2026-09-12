@@ -59,6 +59,42 @@
     toast('NMDR installed. You can now open it from your home screen.');
   });
 
+  /* ------------------------------------------------------- keep the files */
+
+  /* Ask the device to treat the saved files as permanent. Without this the
+     phone is free to delete them when storage runs low, which would leave a
+     field worker with nothing offline. Chrome grants this to installed apps.
+     Safari does not support it, hence the guard. */
+  function keepFiles() {
+    if (!navigator.storage || !navigator.storage.persist) return;
+    navigator.storage.persisted().then(function (already) {
+      if (already) { console.log(LOG, 'files are marked permanent'); return; }
+      return navigator.storage.persist().then(function (granted) {
+        console.log(LOG, granted ? 'files marked permanent' : 'device may clear files when storage runs low');
+      });
+    }).catch(function () {});
+  }
+  keepFiles();
+
+  /* How much is on the device now, for the message after Update. */
+  function savedSummary() {
+    if (!window.caches || !caches.keys) return Promise.resolve('');
+    return caches.keys().then(function (names) {
+      return Promise.all(names.map(function (n) {
+        return caches.open(n).then(function (c) { return c.keys(); });
+      }));
+    }).then(function (lists) {
+      var files = lists.reduce(function (t, l) { return t + l.length; }, 0);
+      if (!navigator.storage || !navigator.storage.estimate) return files + ' files saved on this device.';
+      return navigator.storage.estimate().then(function (e) {
+        var mb = e && e.usage ? Math.round(e.usage / 104857.6) / 10 : 0;
+        return files + ' files saved on this device' + (mb ? ' (' + mb + ' MB).' : '.');
+      });
+      // Note: saved script results are counted in the totals above; Update
+      // never re-runs a script, so a result only changes when you run it again.
+    }).catch(function () { return ''; });
+  }
+
   /* ------------------------------------------------------------- register */
 
   if (!blocked) {
@@ -97,7 +133,9 @@
     // Confirm the previous press worked, now that the reload has happened.
     if (get(UPDATED_FLAG)) {
       del(UPDATED_FLAG);
-      toast('Portal updated.');
+      savedSummary().then(function (extra) {
+        toast('Portal updated. ' + extra + ' It will open without internet.');
+      });
     }
   }
 
@@ -190,7 +228,9 @@
 
     setStatus('downloading');
 
-    return send(target, { type: 'REFRESH_CONTENT' }, 120000).then(function (res) {
+    // Generous: the worker now re-downloads every page plus the files each page
+    // pulls in, which is slow on a weak connection but only happens on request.
+    return send(target, { type: 'REFRESH_CONTENT' }, 600000).then(function (res) {
       if (!res || res.type !== 'REFRESH_DONE') throw new Error('bad reply');
 
       console.log(LOG, 'refreshed ' + res.updated + ' file(s)', res);

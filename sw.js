@@ -5,9 +5,12 @@
    Edit PRECACHE below to match the files sitting beside index.html.
 */
 
-const APP_VERSION   = 'nmdr-2026-09-11b';
+const APP_VERSION   = 'nmdr-2026-09-11d';
 const SHELL_CACHE   = 'nmdr-shell-' + APP_VERSION;
 const RUNTIME_CACHE = 'nmdr-runtime';
+/* Holds the last answer from each script or data service, for example a TPR
+   run. Survives new versions and is only overwritten by a fresh run. */
+const RESULT_CACHE  = 'nmdr-results';
 
 /* Files fetched and stored the moment the portal is first opened. */
 const PRECACHE = [
@@ -106,6 +109,11 @@ const PRECACHE = [
   './warehouse.html'
 ];
 
+/* Parameters that only exist to defeat the browser cache. They are dropped when
+   a result is filed, otherwise every run would be stored under a new name and
+   nothing would ever be found again offline. */
+const NOISE_PARAMS = ['t', '_', 'ts', 'r', 'rand', 'random', 'nocache', 'cachebust', 'cb', 'v'];
+
 /* Cross origin hosts whose files are safe to keep for offline use.
    Everything else cross origin (DHIS2, Apps Script) always goes to the
    network and is never stored. */
@@ -125,16 +133,101 @@ const CACHEABLE_HOSTS = [
   'maxcdn.bootstrapcdn.com'
 ];
 
+/* Files a page pulls in: its stylesheets, scripts, images, CSVs and fonts.
+   These are read straight out of the page text, so a tool page is fully usable
+   offline before anyone has ever opened it. Only this site and the library
+   hosts above are followed, so DHIS2 and Apps Script are never touched. */
+const ASSET_EXT = /\.(css|js|mjs|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|csv|tsv|json|geojson|topojson|txt|xlsx?|pdf|mp3|mp4|webm)$/i;
+
+function followable(href, base) {
+  let u;
+  try { u = new URL(href, base || self.location); } catch (e) { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;   // data:, blob:, mailto:
+  if (u.origin === self.location.origin) return u.href;
+  return CACHEABLE_HOSTS.includes(u.hostname) ? u.href : null;
+}
+
+/* Pull every referenced file out of one page or stylesheet. Paths are resolved
+   against the file they were found in, not the site root, so a stylesheet in a
+   subfolder still points at the right images. */
+function assetsIn(text, isCss, base) {
+  const found = new Set();
+  const add = raw => {
+    if (!raw) return;
+    const href = raw.trim().replace(/^['"]|['"]$/g, '');
+    if (!href || href.startsWith('#')) return;
+    const abs = followable(href, base);
+    if (!abs) return;
+    const path = abs.split('?')[0].split('#')[0];
+    // Keep real files, plus font and stylesheet links that carry no extension
+    if (ASSET_EXT.test(path) || /fonts\.googleapis\.com|fonts\.gstatic\.com/.test(abs)) found.add(abs);
+  };
+
+  if (isCss) {
+    let m;
+    const url = /url\(\s*([^)]+?)\s*\)/gi;
+    while ((m = url.exec(text))) add(m[1]);
+    const imp = /@import\s+(?:url\(\s*)?['"]?([^'")\s;]+)/gi;
+    while ((m = imp.exec(text))) add(m[1]);
+    return [...found];
+  }
+
+  let m;
+  const attr = /\s(?:src|href)\s*=\s*["']([^"']+)["']/gi;
+  while ((m = attr.exec(text))) add(m[1]);
+  const style = /url\(\s*['"]?([^'")]+)/gi;
+  while ((m = style.exec(text))) add(m[1]);
+  // fetch('data/foo.csv') and similar inside page scripts
+  const inJs = /["'`]([^"'`\s<>]+\.(?:csv|tsv|json|geojson|topojson|png|jpe?g|svg|webp|js|css|xlsx?))["'`]/gi;
+  while ((m = inJs.exec(text))) add(m[1]);
+  return [...found];
+}
+
+/* Save a file, then follow what it references. Depth 2 covers page -> stylesheet -> font. */
+async function cacheWithAssets(url, cache, seen, depth) {
+  if (seen.has(url)) return 0;
+  seen.add(url);
+
+  let res;
+  try {
+    res = await fetch(new Request(url, { cache: 'reload', mode: 'cors', credentials: 'omit' }));
+  } catch (e) {
+    try { res = await fetch(new Request(url, { cache: 'reload', mode: 'no-cors' })); }
+    catch (e2) { return 0; }
+  }
+  if (!res || (!res.ok && res.type !== 'opaque')) return 0;
+
+  const type = res.headers.get('Content-Type') || '';
+  const isHtml = /html/i.test(type) || /\.html?$/i.test(url.split('?')[0]);
+  const isCss  = /css/i.test(type)  || /\.css$/i.test(url.split('?')[0]);
+
+  let text = null;
+  if (depth > 0 && (isHtml || isCss) && res.type !== 'opaque') {
+    try { text = await res.clone().text(); } catch (e) { text = null; }
+  }
+
+  await cache.put(url, res);
+  let saved = 1;
+
+  if (text) {
+    const links = assetsIn(text, isCss, url).filter(u => !seen.has(u));
+    const counts = [];
+    await inBatches(links, async u => { counts.push(await cacheWithAssets(u, cache, seen, depth - 1)); });
+    saved += counts.reduce((a, b) => a + b, 0);
+  }
+  return saved;
+}
+
 /* ---------------------------------------------------------------- install */
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL_CACHE);
+    const seen = new Set();
     // Each file on its own so a single missing file cannot fail the whole install.
     await inBatches(PRECACHE, async url => {
       try {
-        const res = await fetch(new Request(url, { cache: 'reload' }));
-        if (res.ok) await cache.put(url, res);
+        await cacheWithAssets(new URL(url, self.location).href, cache, seen, 2);
       } catch (e) { /* file not present yet, runtime caching will pick it up */ }
     });
   })());
@@ -170,8 +263,13 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
 
+  // Apps Script, DHIS2 and any other data service: always ask the network
+  // first, so a run is always live, but keep the answer. If the same run is
+  // asked for later with no connection, the last answer is served instead of
+  // an error. A new run simply replaces it.
   if (!sameOrigin && !CACHEABLE_HOSTS.includes(url.hostname)) {
-    return; // DHIS2, Apps Script and any other API: straight to the network
+    event.respondWith(networkFirstKeepLast(req));
+    return;
   }
 
   event.respondWith(cacheFirst(req, sameOrigin));
@@ -209,6 +307,47 @@ async function cacheFirst(req, sameOrigin) {
   }
 }
 
+/* ------------------------------------------------------- script results */
+
+/* The name a result is filed under: the same request minus the noise. */
+function resultKey(rawUrl) {
+  const u = new URL(rawUrl);
+  NOISE_PARAMS.forEach(p => u.searchParams.delete(p));
+  u.hash = '';
+  return u.href;
+}
+
+async function networkFirstKeepLast(req) {
+  const cache = await caches.open(RESULT_CACHE);
+  const key = resultKey(req.url);
+
+  try {
+    const res = await fetch(req);
+
+    // Only a real answer replaces the stored one. An error page or a login
+    // redirect must never overwrite a good result.
+    if (res && res.ok && res.type !== 'opaque') {
+      const size = parseInt(res.headers.get('Content-Length') || '0', 10);
+      if (size <= 20971520) {           // skip anything over 20 MB
+        try { await cache.put(key, res.clone()); } catch (e) { /* quota */ }
+      }
+    }
+    return res;
+  } catch (e) {
+    const last = await cache.match(key);
+    if (last) {
+      // Marked so a page can tell the difference if it wants to.
+      const headers = new Headers(last.headers);
+      headers.set('X-NMDR-From-Cache', '1');
+      return new Response(await last.blob(), { status: last.status, statusText: last.statusText, headers });
+    }
+    return new Response(
+      JSON.stringify({ error: 'offline', message: 'No connection and this has not been run on this device yet.' }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
 /* --------------------------------------------------------------- messages */
 
 self.addEventListener('message', event => {
@@ -226,6 +365,7 @@ self.addEventListener('message', event => {
     reply({ type: 'VERSION', version: APP_VERSION });
     return;
   }
+
 
   if (data.type === 'REFRESH_CONTENT') {
     // Always reply, including on failure, or the page waits for the timeout.
@@ -258,16 +398,13 @@ async function refreshContent() {
 
   let updated = 0;
   const failed = [];
+  const seen = new Set();
 
   await inBatches([...targets], async ([url, cache]) => {
+    if (seen.has(url)) return;   // already fetched as part of a page above
     try {
-      const res = await fetch(new Request(url, { cache: 'reload' }));
-      if (res.ok) {
-        await cache.put(url, res);
-        updated++;
-      } else {
-        failed.push(url + ' (' + res.status + ')');
-      }
+      const n = await cacheWithAssets(url, cache, seen, 2);
+      if (n) updated += n; else failed.push(url);
     } catch (e) {
       failed.push(url);
     }
