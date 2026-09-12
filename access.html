@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Staff Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#004080;
+  --navy-dark:#002d5a;
+  --gold:#ffc107;
+  --ink:#1f2733;
+  --muted:#6b7683;
+  --line:#d9dee5;
+  --bg:#eef1f5;
+  --white:#ffffff;
+  --danger:#b3261e;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Roboto',Arial,Helvetica,sans-serif;
+  font-size:15px;
+  line-height:1.45;
+  padding-bottom:40px;
+}
+h1,h2,h3,.tab,.pill,.btn,.lvl{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.4px}
+
+header{
+  background:var(--navy);
+  border-bottom:5px solid var(--gold);
+  padding:14px 16px 12px;
+}
+header h1{
+  margin:0;
+  color:var(--white);
+  font-size:22px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+header p{margin:2px 0 0;color:#bcd2e8;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+
+/* two logo brand bar: NMCP left, ICF right */
+.brandbar{
+  max-width:1080px;margin:0 auto;
+  display:flex;align-items:center;gap:14px;
+}
+.brandbar .logo{
+  height:54px;width:auto;flex:0 0 auto;
+  background:var(--white);padding:5px;border-radius:3px;
+  object-fit:contain;
+}
+.brandtext{flex:1 1 auto;min-width:0;text-align:center}
+
+.tabs{display:flex;background:var(--navy-dark)}
+.tab{
+  flex:1;
+  padding:12px 8px;
+  text-align:center;
+  color:#c9d8e8;
+  font-size:15px;
+  text-transform:uppercase;
+  cursor:pointer;
+  border:0;
+  background:none;
+  border-bottom:4px solid transparent;
+}
+.tab.on{color:var(--white);border-bottom-color:var(--gold);background:rgba(255,255,255,.06)}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+.panel{display:none}
+.panel.on{display:block}
+
+/* double border card, ICF style */
+.card{
+  background:var(--white);
+  border:2px solid var(--navy);
+  outline:1px solid var(--navy);
+  outline-offset:3px;
+  padding:16px;
+  margin:6px 2px 22px;
+}
+.card h2{
+  margin:0 0 14px;
+  font-size:17px;
+  text-transform:uppercase;
+  color:var(--navy);
+  border-bottom:2px solid var(--gold);
+  padding-bottom:7px;
+}
+
+label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);margin:0 0 5px}
+input,select,textarea{
+  width:100%;
+  padding:11px 10px;
+  border:1px solid var(--line);
+  border-radius:3px;
+  font-family:inherit;
+  font-size:15px;
+  background:#fbfcfd;
+  color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,64,128,.15);background:var(--white)}
+textarea{resize:vertical;min-height:64px}
+.field{margin-bottom:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row .field{flex:1 1 220px;margin-bottom:14px}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+.req{color:var(--danger)}
+
+/* inline wrong entry notice */
+.err{display:none;margin-top:5px;font-size:12.5px;color:var(--danger);font-weight:500}
+.err.on{display:block}
+input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(179,38,30,.14)}
+
+/* show password tick box */
+.chk{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);cursor:pointer}
+.chk input[type="checkbox"]{width:18px;height:18px;flex:0 0 auto;margin:0;padding:0}
+
+.photo-box{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.preview{
+  width:118px;height:140px;flex:0 0 auto;
+  border:2px dashed var(--line);
+  background:#f4f6f9 center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:11px;text-align:center;padding:6px;
+}
+.preview.has{border-style:solid;border-color:var(--navy)}
+.photo-actions{flex:1 1 200px;display:flex;flex-direction:column;gap:9px}
+
+.btn{
+  display:inline-block;
+  padding:11px 18px;
+  border:0;border-radius:3px;
+  background:var(--navy);color:var(--white);
+  font-size:15px;text-transform:uppercase;
+  cursor:pointer;
+}
+.btn:hover{background:var(--navy-dark)}
+.btn.gold{background:var(--gold);color:#3a2d00;font-weight:600}
+.btn.gold:hover{background:#e9ae00}
+.btn.ghost{background:var(--white);color:var(--navy);border:1px solid var(--navy)}
+.btn.ghost:hover{background:#eaf1f8}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.block{width:100%}
+.form-foot{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+
+.msg{
+  margin:0 0 14px;padding:11px 12px;border-left:5px solid var(--gold);
+  background:#fff8e1;font-size:14px;display:none;
+}
+.msg.on{display:block}
+.msg.bad{border-left-color:var(--danger);background:#fdeceb}
+.msg.ok{border-left-color:#2e7d32;background:#eaf5ea}
+.msg.ok b{color:#1b5e20}
+.msg.wait{border-left-color:var(--navy);background:#eef4fa}
+.btn.busy{opacity:.6;cursor:progress}
+
+/* dashboard */
+.offices{display:flex;gap:8px;flex-wrap:wrap;margin:0 2px 18px}
+.pill{
+  padding:9px 15px;border:1px solid var(--navy);background:var(--white);
+  color:var(--navy);font-size:14px;text-transform:uppercase;cursor:pointer;border-radius:3px;
+}
+.pill.on{background:var(--navy);color:var(--white)}
+.pill span{font-family:'Roboto',sans-serif;font-size:12px;opacity:.75;margin-left:6px}
+.pill:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+.band{
+  display:flex;align-items:center;gap:10px;
+  margin:22px 2px 12px;
+}
+.band .lvl{
+  background:var(--navy);color:var(--white);padding:5px 12px;font-size:14px;text-transform:uppercase;
+}
+.band hr{flex:1;border:0;border-top:2px solid var(--gold);margin:0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px;padding:0 2px}
+.staff{
+  background:var(--white);
+  border:2px solid var(--navy);
+  outline:1px solid var(--navy);
+  outline-offset:3px;
+  overflow:hidden;
+}
+.staff .img{width:100%;aspect-ratio:4/5;background:#dde3ea center/cover no-repeat;display:block;border-bottom:4px solid var(--gold)}
+.staff .body{padding:11px 12px 13px}
+.staff .nm{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:var(--navy);text-transform:uppercase;line-height:1.2}
+.staff .dg{font-size:13px;font-weight:500;margin-top:2px}
+.staff dl{margin:9px 0 0;font-size:12.5px;color:var(--muted)}
+.staff dl div{display:flex;gap:6px;margin-bottom:3px}
+.staff dt{flex:0 0 58px;font-weight:700;color:var(--navy);text-transform:uppercase;font-size:11px;padding-top:1px}
+.staff dd{margin:0;flex:1;word-break:break-word}
+.staff .tag{
+  display:inline-block;margin-top:10px;background:var(--gold);color:#3a2d00;
+  font-family:'Oswald',sans-serif;font-size:12px;padding:3px 9px;text-transform:uppercase;
+}
+.staff .rm{
+  display:block;width:100%;margin-top:11px;padding:7px;
+  background:var(--white);border:1px solid var(--line);color:var(--muted);
+  font-size:12px;text-transform:uppercase;cursor:pointer;border-radius:3px;
+}
+.staff .rm:hover{border-color:var(--danger);color:var(--danger)}
+
+.syncbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--white);border:1px solid var(--line);border-left:5px solid var(--navy);
+  padding:10px 12px;margin:0 2px 16px;
+}
+.syncbar .st{flex:1 1 180px;font-size:13px;color:var(--muted);min-width:0}
+.syncbar .st b{color:var(--navy)}
+.syncbar .btn{padding:9px 14px;font-size:14px}
+
+.staff .src{
+  display:inline-block;margin:10px 0 0 6px;
+  font-family:'Oswald',sans-serif;font-size:11px;padding:3px 8px;text-transform:uppercase;
+  border:1px solid var(--line);color:var(--muted);
+}
+.staff .src.drive{border-color:var(--navy);color:var(--navy)}
+.staff .src.wait{border-color:#a06d00;color:#a06d00;background:#fff8e1}
+
+/* password gate before a record is removed */
+.shade{
+  position:fixed;inset:0;background:rgba(0,20,45,.62);
+  display:none;align-items:center;justify-content:center;padding:18px;z-index:60;
+}
+.shade.on{display:flex}
+.gate{
+  width:100%;max-width:380px;background:var(--white);
+  border:2px solid var(--navy);outline:1px solid var(--navy);outline-offset:3px;padding:18px;
+}
+.gate h3{
+  margin:0 0 12px;font-size:17px;text-transform:uppercase;color:var(--navy);
+  border-bottom:2px solid var(--gold);padding-bottom:7px;
+}
+.gate p{margin:0 0 12px;font-size:14px}
+.gate p b{color:var(--navy)}
+.gate .form-foot{margin-top:14px}
+
+/* ---------- access control, one staff member at a time ---------- */
+.gate.wide{max-width:640px;max-height:86vh;overflow-y:auto}
+.who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding-bottom:10px;border-bottom:2px solid var(--gold)}
+.who .wn{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--navy);text-transform:uppercase;line-height:1.15}
+.who .wm{font-size:12.5px;color:var(--muted)}
+.accnote{font-size:13px;color:var(--muted);margin:0 0 12px}
+.accnote b{color:var(--navy)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tools .btn{padding:8px 13px;font-size:13px}
+.tree .sec{margin:0 0 14px;border:1px solid var(--line);border-left:4px solid var(--navy)}
+.tree .sech{display:flex;gap:10px;align-items:center;background:#f3f6fa;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tree .sech .st{flex:1 1 auto;min-width:0;font-family:'Oswald',sans-serif;font-size:14px;text-transform:uppercase;color:var(--navy)}
+.tree .sech .sn{font-size:12px;color:var(--muted);white-space:nowrap}
+.tree .subh{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 4px}
+.tree .body{padding:6px 10px 10px}
+.tick{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink);margin:0;padding:4px 0;cursor:pointer}
+.tick input[type="checkbox"]{width:17px;height:17px;flex:0 0 auto;margin:2px 0 0;padding:0}
+.tick span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.tickall{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);cursor:pointer;background:none;border:0;padding:0;font-family:'Oswald',sans-serif}
+.tickall:hover{color:var(--gold)}
+.dirty{display:inline-block;background:#fff8e1;border:1px solid var(--gold);color:#7a5d00;font-family:'Oswald',sans-serif;font-size:11px;padding:3px 8px;text-transform:uppercase;margin-left:6px}
+
+/* the access button on a dashboard card, under Remove */
+.staff .ac{
+  display:block;width:100%;margin-top:6px;padding:7px;
+  background:var(--white);border:1px solid var(--navy);color:var(--navy);
+  font-family:'Oswald',sans-serif;font-size:12px;text-transform:uppercase;cursor:pointer;border-radius:3px;
+}
+.staff .ac:hover{background:#eaf1f8}
+.staff .ac b{font-family:'Roboto',sans-serif;font-size:11px;font-weight:700}
+.staff .ac.none{color:var(--muted);border-color:var(--line)}
+.staff .fp{
+  display:block;width:100%;margin-top:6px;padding:7px;
+  background:var(--white);border:1px dashed var(--line);color:var(--muted);
+  font-family:'Oswald',sans-serif;font-size:12px;text-transform:uppercase;cursor:pointer;border-radius:3px;
+}
+.staff .fp:hover{border-color:var(--navy);border-style:solid;color:var(--navy)}
+
+}
+
+.empty{
+  border:2px dashed var(--line);background:var(--white);
+  padding:34px 18px;text-align:center;color:var(--muted);margin:0 2px;
+}
+.empty strong{display:block;font-family:'Oswald',sans-serif;font-size:18px;color:var(--navy);text-transform:uppercase;margin-bottom:6px}
+
+@media (max-width:520px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  header h1{font-size:19px}
+  .brandbar{gap:9px}
+  .brandbar .logo{height:40px;padding:4px}
+}
+@media (max-width:360px){
+  .brandbar .logo{height:34px}
+  header h1{font-size:16px}
+  header p{font-size:10px;letter-spacing:.5px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .staff{transition:transform .15s ease}
+  .staff:hover{transform:translateY(-2px)}
+}
+</style>
+
+<style id="fitCss">
+/* device fit: keeps the page inside the screen and stops iOS zooming on focus */
+html,body{max-width:100%;overflow-x:hidden}
+*{min-width:0}
+input,select,textarea{font-size:16px !important}
+img,svg,canvas,iframe,video,pre,table{max-width:100%}
+.staff .nm,.staff dd,.card h2,.hint,.msg{overflow-wrap:anywhere}
+
+/* phones */
+@media (max-width:600px){
+  .wrap{padding:12px 10px}
+  .card{padding:12px;outline-offset:2px;margin:4px 2px 18px}
+  .row{gap:0}
+  .row .field{flex:1 1 100%}
+  .preview{width:104px;height:126px}
+  .photo-actions{flex:1 1 100%}
+  .btn{padding:13px 16px}
+  .form-foot .btn{flex:1 1 100%}
+  .offices{
+    flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .offices::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;padding:10px 14px}
+  .band{margin:18px 2px 10px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .staff{outline-offset:2px}
+  .staff .body{padding:9px 10px 11px}
+  .staff .nm{font-size:15px}
+  .staff dt{flex:0 0 50px}
+}
+@media (max-width:360px){
+  body{font-size:14px}
+  .grid{grid-template-columns:1fr}
+}
+
+/* desktop: hold the content in the middle instead of stretching */
+@media (min-width:900px){
+  .wrap{max-width:1080px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brandbar">
+    <img class="logo" src="NMCP.png" alt="National Malaria Control Programme"
+         onerror="this.style.display='none'">
+    <div class="brandtext">
+      <h1>Staff Directory</h1>
+      <p>Registration and office dashboard</p>
+    </div>
+    <img class="logo" src="ICF-SL.jpg" alt="Informatics Consultancy Firm Sierra Leone"
+         onerror="this.style.display='none'">
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab on" id="tabForm" onclick="show('form')">Register staff</button>
+  <button class="tab" id="tabDash" onclick="show('dash')">Dashboard</button>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ FORM ============ -->
+  <section class="panel on" id="panelForm">
+    <div class="msg" id="msg"></div>
+
+    <div class="card">
+      <h2>Staff details</h2>
+
+      <div class="field">
+        <label>Photo <span class="req">*</span></label>
+        <div class="photo-box">
+          <div class="preview" id="preview">No photo yet</div>
+          <div class="photo-actions">
+            <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+            <input type="file" id="fileIn" accept="image/*" hidden>
+            <button class="btn gold" type="button" onclick="document.getElementById('camIn').click()">Take photo</button>
+            <button class="btn ghost" type="button" onclick="document.getElementById('fileIn').click()">Choose from gallery</button>
+            <button class="btn ghost" type="button" id="clearPhoto" onclick="clearPhoto()" style="display:none">Remove photo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fName">Full name <span class="req">*</span></label>
+        <input id="fName" type="text" autocomplete="name" placeholder="e.g. Aminata Kamara">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="fPhone">Telephone <span class="req">*</span></label>
+          <input id="fPhone" type="tel" inputmode="numeric" maxlength="9" placeholder="e.g. 076123456">
+          <div class="err" id="ePhone"></div>
+          <div class="hint">Exactly 9 digits. Digits only, no plus sign, spaces or dashes.</div>
+        </div>
+        <div class="field">
+          <label for="fDesig">Designation <span class="req">*</span></label>
+          <input id="fDesig" type="text" placeholder="e.g. M&amp;E Officer">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fEmail">Email address <span class="req">*</span></label>
+        <input id="fEmail" type="email" inputmode="email" autocomplete="email" placeholder="e.g. name@moh.gov.sl">
+        <div class="err" id="eEmail"></div>
+        <div class="hint">Used to send the password back if it is forgotten, so it must be an address the staff member can open.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="fPlace">Place of work <span class="req">*</span></label>
+          <select id="fPlace" onchange="togglePlaceOther()">
+            <option value="">Select office</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fLevel">Level <span class="req">*</span></label>
+          <select id="fLevel">
+            <option value="">Select level</option>
+          </select>
+          <div class="hint">Grade 14 is the highest level, Grade 1 the lowest.</div>
+        </div>
+      </div>
+
+      <div class="field" id="otherPlaceWrap" style="display:none">
+        <label for="fPlaceOther">Name the directorate or office <span class="req">*</span></label>
+        <input id="fPlaceOther" type="text" placeholder="e.g. Directorate of Policy Planning and Information">
+        <div class="err" id="ePlaceOther"></div>
+        <div class="hint">Type it once and it joins the list, so the next person can pick it.</div>
+      </div>
+
+      <div class="field">
+        <label for="fAddr">Address <span class="req">*</span></label>
+        <textarea id="fAddr" placeholder="House number, street, area, town"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="fPass">Create password <span class="req">*</span></label>
+          <input id="fPass" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+          <div class="err" id="ePass"></div>
+          <div class="hint">The staff member types their own password here, at least 6 characters.</div>
+        </div>
+        <div class="field">
+          <label for="fPass2">Confirm password <span class="req">*</span></label>
+          <input id="fPass2" type="password" autocomplete="new-password" placeholder="Type the same password again">
+          <div class="err" id="ePass2"></div>
+          <div class="hint">Both boxes must hold the same password.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="chk" for="showPass">
+          <input type="checkbox" id="showPass" onchange="togglePass()">
+          Show password
+        </label>
+      </div>
+
+      <div class="form-foot">
+        <button class="btn" type="button" onclick="saveStaff()">Save staff</button>
+        <button class="btn ghost" type="button" onclick="resetForm(true)">Clear form</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section class="panel" id="panelDash">
+    <div class="syncbar">
+      <div class="st" id="syncStatus">Checking the server...</div>
+      <button class="btn ghost" type="button" onclick="syncNow(true)">Sync now</button>
+    </div>
+    <div class="offices" id="offices"></div>
+    <div id="dashBody"></div>
+  </section>
+
+</div>
+
+<!-- ============ ACCESS CONTROL FOR ONE STAFF MEMBER ============ -->
+<div class="shade" id="accShade">
+  <div class="gate wide" role="dialog" aria-modal="true" aria-labelledby="accTitle">
+
+    <div id="accGateStep">
+      <h3 id="accTitle">Access control</h3>
+      <p>Setting what <b id="accWho">this staff member</b> may open in the NMDR portal is for the administrator only.</p>
+      <div class="field">
+        <label for="accPass">Administrator password <span class="req">*</span></label>
+        <input id="accPass" type="password" autocomplete="off" placeholder="Type the administrator password">
+        <div class="err" id="eAccPass"></div>
+      </div>
+      <div class="form-foot">
+        <button class="btn" type="button" onclick="unlockAccess()">Unlock</button>
+        <button class="btn ghost" type="button" onclick="closeAccess()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="accTreeStep" style="display:none"></div>
+
+  </div>
+</div>
+
+<!-- ============ FORGOTTEN PASSWORD ============ -->
+<div class="shade" id="fpShade">
+  <div class="gate" role="dialog" aria-modal="true" aria-labelledby="fpTitle">
+    <h3 id="fpTitle">Forgotten password</h3>
+    <p>Type the email address <b id="fpWho">this staff member</b> gave when registering. If it matches, the password is emailed to that address.</p>
+    <div class="field">
+      <label for="fpEmail">Email address <span class="req">*</span></label>
+      <input id="fpEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com">
+      <div class="err" id="eFpEmail"></div>
+    </div>
+    <div class="msg" id="fpMsg"></div>
+    <div class="form-foot">
+      <button class="btn" type="button" id="fpSend" onclick="sendForgot()">Send the password</button>
+      <button class="btn ghost" type="button" onclick="closeForgot()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PASSWORD GATE FOR REMOVING A RECORD ============ -->
+<div class="shade" id="rmShade">
+  <div class="gate" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+    <h3 id="rmTitle">Password needed</h3>
+    <p>Removing <b id="rmWho">this record</b> from this device and from the server cannot be undone.</p>
+    <div class="field">
+      <label for="rmPass">Removal password <span class="req">*</span></label>
+      <input id="rmPass" type="password" autocomplete="off" placeholder="Type the removal password">
+      <div class="err" id="eRmPass"></div>
+    </div>
+    <div class="form-foot">
+      <button class="btn" type="button" onclick="confirmRemove()">Remove record</button>
+      <button class="btn ghost" type="button" onclick="closeRemove()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- config ---------- */
+/* Paste the Apps Script web app /exec URL here, from StaffDirectory.gs */
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiRa_gyUNUPJyHh5LF7-XP9WrMy5XyyDiDyWkt5DS0PEu4Zth-KRSm7oOwavX5Nj6_/exec';
+
+var OFFICES = ['NMCP','ICF','CHAI','DPPI','DPH','UNICEF'];
+var LEVELS = [];           /* rank 14 down to 1 */
+for (var g = 14; g >= 1; g--) LEVELS.push({ rank: g, label: 'Grade ' + g });
+
+var KEY = 'icf_staff_directory_v1';
+var staff = [];            /* records held on this device */
+var remote = [];           /* records read back from the server */
+var photoData = '';
+var currentOffice = 'ALL';
+var syncing = false;
+var pulled = false;
+
+/* password asked for before any record is removed */
+var REMOVE_PASSWORD = 'Mohamed@1995';
+var pendingRemove = '';
+
+/* ---------- storage (falls back to memory if blocked) ---------- */
+function load(){
+  try {
+    var raw = window.localStorage.getItem(KEY);
+    staff = raw ? JSON.parse(raw) : [];
+  } catch (e) { staff = []; }
+  if (!Array.isArray(staff)) staff = [];
+}
+function save(){
+  try { window.localStorage.setItem(KEY, JSON.stringify(staff)); return true; }
+  catch (e) { return false; }
+}
+
+/* ---------- place of work ---------- */
+/* The dropdown holds the standing offices plus any other directorate already
+   used on a record, so a name typed once is on the list from then on. */
+var OTHER = '__other';
+
+function placeOptions(){
+  var seen = {};
+  var out = [];
+  OFFICES.forEach(function(o){ if (!seen[o]) { seen[o] = true; out.push(o); } });
+  staff.concat(remote).forEach(function(r){
+    var pl = String(r && r.place ? r.place : '').trim();
+    if (pl && !seen[pl]) { seen[pl] = true; out.push(pl); }
+  });
+  return out;
+}
+
+function fillPlaces(){
+  var sel = document.getElementById('fPlace');
+  if (!sel) return;
+  var keep = sel.value;
+  var html = '<option value="">Select office</option>';
+  placeOptions().forEach(function(o){
+    html += '<option value="' + esc(o) + '">' + esc(o) + '</option>';
+  });
+  html += '<option value="' + OTHER + '">Other, name it below</option>';
+  sel.innerHTML = html;
+  sel.value = keep;
+  if (sel.value !== keep) sel.value = '';
+  togglePlaceOther();
+}
+
+function togglePlaceOther(){
+  var on = document.getElementById('fPlace').value === OTHER;
+  document.getElementById('otherPlaceWrap').style.display = on ? 'block' : 'none';
+  if (!on){
+    document.getElementById('fPlaceOther').value = '';
+    fieldErr('fPlaceOther', 'ePlaceOther', '');
+  } else {
+    setTimeout(function(){ document.getElementById('fPlaceOther').focus(); }, 40);
+  }
+}
+
+/* ---------- tabs ---------- */
+function show(which){
+  var panels = { form: 'panelForm', dash: 'panelDash' };
+  var tabs   = { form: 'tabForm',   dash: 'tabDash' };
+  for (var k in panels){
+    document.getElementById(panels[k]).classList.toggle('on', k === which);
+    document.getElementById(tabs[k]).classList.toggle('on', k === which);
+  }
+  if (which === 'dash'){
+    renderDash();
+    if (!pulled || pending().length) syncNow(false);
+  }
+  window.scrollTo(0,0);
+}
+
+/* ---------- photo ---------- */
+function handleFile(file){
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){ shrink(ev.target.result); };
+  reader.readAsDataURL(file);
+}
+function shrink(dataUrl){
+  var img = new Image();
+  img.onload = function(){
+    var maxW = 640, maxH = 800;
+    var w = img.width, h = img.height;
+    var s = Math.min(1, maxW / w, maxH / h);
+    var c = document.createElement('canvas');
+    c.width = Math.round(w * s);
+    c.height = Math.round(h * s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    photoData = c.toDataURL('image/jpeg', 0.72);
+    paintPreview();
+  };
+  img.onerror = function(){ note('That file could not be read as an image. Try another photo.', true); };
+  img.src = dataUrl;
+}
+function paintPreview(){
+  var p = document.getElementById('preview');
+  if (photoData){
+    p.style.backgroundImage = 'url(' + photoData + ')';
+    p.textContent = '';
+    p.classList.add('has');
+    document.getElementById('clearPhoto').style.display = 'inline-block';
+  } else {
+    p.style.backgroundImage = 'none';
+    p.textContent = 'No photo yet';
+    p.classList.remove('has');
+    document.getElementById('clearPhoto').style.display = 'none';
+  }
+}
+function clearPhoto(){
+  photoData = '';
+  document.getElementById('camIn').value = '';
+  document.getElementById('fileIn').value = '';
+  paintPreview();
+}
+
+/* ---------- messages ---------- */
+function note(text, bad){
+  var m = document.getElementById('msg');
+  m.textContent = text;
+  m.className = 'msg on' + (bad ? ' bad' : '');
+  window.scrollTo(0,0);
+  if (!bad) setTimeout(function(){ m.className = 'msg'; }, 4000);
+}
+
+/* ---------- inline field notices ---------- */
+function fieldErr(inputId, boxId, text){
+  var i = document.getElementById(inputId);
+  var b = document.getElementById(boxId);
+  if (text){
+    b.textContent = text;
+    b.className = 'err on';
+    i.classList.add('bad');
+  } else {
+    b.textContent = '';
+    b.className = 'err';
+    i.classList.remove('bad');
+  }
+}
+
+/* ---------- telephone: exactly 9 digits, digits only ---------- */
+function cleanPhone(){
+  var box = document.getElementById('fPhone');
+  var typed = box.value;
+  var digits = typed.replace(/[^0-9]/g, '').slice(0, 9);
+  if (digits !== typed){
+    box.value = digits;
+    fieldErr('fPhone', 'ePhone', 'Wrong entry. A telephone number here is digits only, no plus sign, spaces or dashes.');
+    return;
+  }
+  if (digits.length && digits.length !== 9){
+    fieldErr('fPhone', 'ePhone', 'A telephone number here is exactly 9 digits. You have ' + digits.length + '.');
+  } else {
+    fieldErr('fPhone', 'ePhone', '');
+  }
+}
+function phoneOk(){
+  var v = document.getElementById('fPhone').value.trim();
+  if (!/^[0-9]{9}$/.test(v)){
+    fieldErr('fPhone', 'ePhone', 'Wrong entry. A telephone number here is exactly 9 digits, digits only.');
+    return false;
+  }
+  fieldErr('fPhone', 'ePhone', '');
+  return true;
+}
+
+/* ---------- email ---------- */
+function emailOk(){
+  var v = document.getElementById('fEmail').value.trim();
+  if (!v){
+    fieldErr('fEmail', 'eEmail', 'Type the email address.');
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){
+    fieldErr('fEmail', 'eEmail', 'Wrong entry. That does not look like an email address.');
+    return false;
+  }
+  fieldErr('fEmail', 'eEmail', '');
+  return true;
+}
+
+/* ---------- password ---------- */
+function togglePass(){
+  var t = document.getElementById('showPass').checked ? 'text' : 'password';
+  document.getElementById('fPass').type = t;
+  document.getElementById('fPass2').type = t;
+}
+function passwordOk(){
+  var p1 = document.getElementById('fPass').value;
+  var p2 = document.getElementById('fPass2').value;
+  fieldErr('fPass', 'ePass', '');
+  fieldErr('fPass2', 'ePass2', '');
+
+  if (!p1){
+    fieldErr('fPass', 'ePass', 'Create a password before saving.');
+    return false;
+  }
+  if (p1.length < 6){
+    fieldErr('fPass', 'ePass', 'Wrong entry. A password here is at least 6 characters. You have ' + p1.length + '.');
+    return false;
+  }
+  if (!p2){
+    fieldErr('fPass2', 'ePass2', 'Type the password a second time to confirm it.');
+    return false;
+  }
+  if (p1 !== p2){
+    fieldErr('fPass2', 'ePass2', 'The two passwords do not match. Type the same password in both boxes.');
+    return false;
+  }
+  return true;
+}
+
+/* ---------- save record ---------- */
+function saveStaff(){
+  var name  = document.getElementById('fName').value.trim();
+  var phone = document.getElementById('fPhone').value.trim();
+  var desig = document.getElementById('fDesig').value.trim();
+  var place = document.getElementById('fPlace').value;
+  if (place === OTHER){
+    place = document.getElementById('fPlaceOther').value.trim();
+    if (!place){
+      fieldErr('fPlaceOther', 'ePlaceOther', 'Name the directorate or office before saving.');
+      note('Name the directorate or office, or pick one from the list.', true);
+      document.getElementById('fPlaceOther').focus();
+      return;
+    }
+    fieldErr('fPlaceOther', 'ePlaceOther', '');
+  }
+  var lvl   = document.getElementById('fLevel').value;
+  var addr  = document.getElementById('fAddr').value.trim();
+  var email = document.getElementById('fEmail').value.trim();
+  var pass  = document.getElementById('fPass').value;
+
+  var missing = [];
+  if (!photoData) missing.push('photo');
+  if (!name)  missing.push('full name');
+  if (!phone) missing.push('telephone');
+  if (!desig) missing.push('designation');
+  if (!place) missing.push('place of work');
+  if (!lvl)   missing.push('level');
+  if (!addr)  missing.push('address');
+  if (!email) missing.push('email address');
+  if (!pass)  missing.push('password');
+
+  if (missing.length){
+    note('Add the ' + missing.join(', ') + ' before saving.', true);
+    return;
+  }
+
+  if (!phoneOk()){
+    note('The telephone number must be exactly 9 digits, digits only.', true);
+    document.getElementById('fPhone').focus();
+    return;
+  }
+
+  if (!emailOk()){
+    note('Check the email address before saving.', true);
+    document.getElementById('fEmail').focus();
+    return;
+  }
+
+  if (!passwordOk()){
+    note('Check the password boxes before saving.', true);
+    return;
+  }
+
+  staff.push({
+    id: 'S' + Date.now(),
+    name: name,
+    phone: phone,
+    designation: desig,
+    place: place,
+    rank: parseInt(lvl, 10),
+    address: addr,
+    email: email,
+    password: pass,
+    photo: photoData,
+    photoUrl: '',
+    synced: false,
+    saved: new Date().toISOString()
+  });
+
+  var ok = save();
+  var justSaved = staff[staff.length - 1];
+  resetForm(false);
+  fillPlaces();
+
+  if (!ok){
+    note(name + ' added to this session only. This browser is blocking saved storage, so the record is lost when the page closes.', true);
+  } else if (!SCRIPT_URL){
+    note(name + ' saved on this device. Add the Apps Script URL to send records to the server.');
+  } else {
+    note(name + ' saved on this device. Sending to the server...');
+    push(justSaved, function(res){
+      if (res.ok) note(name + ' saved and now on the server.');
+      else note(name + ' is saved on this device but has not reached the server yet: ' + res.error + ' Use Sync now on the dashboard to try again.', true);
+    });
+  }
+}
+
+/* ---------- remote: push, pull, merge ---------- */
+function push(rec, done){
+  if (!SCRIPT_URL) { done({ ok:false, error:'No Apps Script URL is set.' }); return; }
+  var payload = {
+    action: 'save',
+    record: {
+      id: rec.id, name: rec.name, designation: rec.designation, phone: rec.phone,
+      address: rec.address, place: rec.place, rank: rec.rank,
+      email: rec.email || '',
+      password: rec.password || '',
+      levelLabel: levelLabel(rec.rank), saved: rec.saved, photo: rec.photo
+    }
+  };
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },  /* text/plain avoids a CORS preflight */
+    body: JSON.stringify(payload)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if (res && res.ok){
+      rec.synced = true;
+      rec.photoUrl = res.photoUrl || rec.photoUrl || '';
+      save();
+      done({ ok:true });
+    } else {
+      done({ ok:false, error: (res && res.error) ? res.error : 'The backend refused the record.' });
+    }
+  })
+  .catch(function(err){
+    done({ ok:false, error: 'No connection to the backend (' + err.message + ').' });
+  });
+}
+
+function pull(done){
+  if (!SCRIPT_URL) { done({ ok:false, error:'No Apps Script URL is set.' }); return; }
+  fetch(SCRIPT_URL + (SCRIPT_URL.indexOf('?') > -1 ? '&' : '?') + 'action=list')
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if (res && res.ok && Array.isArray(res.records)){
+        remote = res.records;
+        pulled = true;
+        done({ ok:true, count: remote.length });
+      } else {
+        done({ ok:false, error: (res && res.error) ? res.error : 'The backend sent no records.' });
+      }
+    })
+    .catch(function(err){
+      done({ ok:false, error: 'No connection to the backend (' + err.message + ').' });
+    });
+}
+
+function pending(){
+  return staff.filter(function(s){ return !s.synced; });
+}
+
+function syncNow(loud){
+  if (syncing) return;
+  if (!SCRIPT_URL){
+    setStatus('Working from this device only. Paste the Apps Script URL into SCRIPT_URL to save to the server.');
+    return;
+  }
+  syncing = true;
+  var queue = pending();
+  setStatus(queue.length ? 'Sending ' + queue.length + ' record(s) to the server...' : 'Reading the server...');
+
+  var left = queue.length;
+  var failed = 0;
+
+  function thenPull(){
+    pull(function(res){
+      syncing = false;
+      if (res.ok){
+        var extra = failed ? ' ' + failed + ' record(s) could not be sent.' : '';
+        setStatus('The server holds <b>' + res.count + '</b> record(s). On this device: <b>' + staff.length +
+                  '</b>, waiting to send: <b>' + pending().length + '</b>.' + extra);
+      } else {
+        setStatus('Showing this device only. ' + res.error);
+      }
+      absorbRemoteAccess();
+      renderDash();
+      fillPlaces();
+    });
+  }
+
+  if (!left) { thenPull(); return; }
+
+  queue.forEach(function(rec){
+    push(rec, function(res){
+      if (!res.ok) failed++;
+      left--;
+      if (left === 0) thenPull();
+    });
+  });
+}
+
+function setStatus(html){
+  document.getElementById('syncStatus').innerHTML = html;
+}
+
+/* one list from both sources, the device copy winning when a record is in both */
+function merged(){
+  var out = [];
+  var seen = {};
+  staff.forEach(function(s){
+    seen[s.id] = true;
+    out.push({
+      id: s.id, name: s.name, designation: s.designation, phone: s.phone,
+      address: s.address, place: s.place, rank: s.rank,
+      img: s.photo || s.photoUrl || '',
+      source: s.synced ? 'both' : 'wait'
+    });
+  });
+  remote.forEach(function(r){
+    if (seen[r.id]) return;
+    out.push({
+      id: r.id, name: r.name, designation: r.designation, phone: r.phone,
+      address: r.address, place: r.place, rank: r.rank,
+      img: r.photoUrl || '',
+      source: 'drive'
+    });
+  });
+  return out;
+}
+
+function sourceTag(source){
+  if (source === 'drive') return '<span class="src drive">On the server</span>';
+  if (source === 'both')  return '<span class="src drive">Synced</span>';
+  return '<span class="src wait">Not sent yet</span>';
+}
+
+function resetForm(withMessage){
+  ['fName','fPhone','fDesig','fAddr','fEmail','fPass','fPass2'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('fPlace').value = '';
+  document.getElementById('fLevel').value = '';
+  document.getElementById('fPlaceOther').value = '';
+  fieldErr('fPlaceOther', 'ePlaceOther', '');
+  togglePlaceOther();
+  document.getElementById('showPass').checked = false;
+  togglePass();
+  fieldErr('fPhone', 'ePhone', '');
+  fieldErr('fEmail', 'eEmail', '');
+  fieldErr('fPass', 'ePass', '');
+  fieldErr('fPass2', 'ePass2', '');
+  clearPhoto();
+  if (withMessage) note('Form cleared.');
+}
+
+
+/* ================= ACCESS CONTROL =================
+   Sets what each registered staff member may open in the NMDR portal.
+   The tab list below is the NMDR left panel, tab id then the label the
+   portal shows. Access is saved on this device, sent to the sheet, and
+   written out as access.csv, which the NMDR index reads at sign in. */
+
+var ACCESS_PASSWORD = 'admin123';
+var ACCESS_KEY = 'icf_staff_access_v1';
+
+var NMDR_TABS = [
+  { section: "Home", subs: [
+    { label: "Home", tabs: [["welcome","Welcome"], ["architecture","NMDR Architecture and Data Flow"], ["use-cases","NMDR Navigation"]] },
+  ]},
+  { section: "1.0 Malaria Surveillance", subs: [
+    { label: "1.0.1.1 HMIS (Monthly)", tabs: [["hmis-extraction","1.0.1.1.1 Data Extraction"], ["hmis-epi-dashboard","1.0.1.1.2 Malaria Epi Dashboard"]] },
+    { label: "1.0.1.2 eIDSR (Weekly)", tabs: [["eidsr-extraction","1.0.1.2.1 Data Extraction"], ["eidsr-dashboard","1.0.1.2.2 Dashboard"]] },
+    { label: "1.0.2 Monitoring and Evaluation", tabs: [["me-dqa","1.0.2.1 Data Quality Assessment"]] },
+    { label: "1.0.2.2 Key Malaria Data Elements", tabs: [["med-suspected","1.0.2.2.1 Fever Suspected Malaria"], ["med-tested","1.0.2.2.2 Tested"], ["med-confirmed","1.0.2.2.3 Confirmed Malaria Case"], ["med-treated","1.0.2.2.4 Confirmed and Treated"], ["med-presumptive","1.0.2.2.5 Presumptive Treatment"], ["med-ptr","1.0.2.2.6 Treated"]] },
+    { label: "1.0.2.3 Key Malaria Indicators", tabs: [["med-reporting","1.0.2.3.1 Reporting Rate"], ["med-testing","1.0.2.3.2 Testing Rate"], ["med-tpr","1.0.2.3.3 Test Positivity Rate"], ["med-cfr","1.0.2.3.4 Confirmed and Treatment Rate"]] },
+    { label: "1.0.2.4 Comparative Analysis on Key Indicators", tabs: [["med-comp-u5","1.0.2.4.1 Under Five"], ["med-comp-allages","1.0.2.4.2 All Ages"], ["me-reports","1.0.2.5 Reporting"]] },
+    { label: "1.0.3 Therapeutic Efficacy Study", tabs: [["tes-data","1.0.3.1 Data"], ["tes-report","1.0.3.2 Report"], ["tes-dashboard","1.0.3.3 Dashboard"]] },
+  ]},
+  { section: "2.0 Supply Chain", subs: [
+    { label: "2.0.1 Quantification", tabs: [["quant-data","2.0.1.1 Data"], ["quant-dashboard","2.0.1.2 Dashboard"]] },
+    { label: "2.0.2 Supply Tracking", tabs: [["supply-track-data","2.0.2.1 Data"], ["supply-track-dashboard","2.0.2.2 Dashboard"]] },
+  ]},
+  { section: "3.0 Interventions", subs: [
+    { label: "3.0.1 Routine Interventions", tabs: [["int-pmc","3.0.1.1 PMC"], ["int-malaria-vaccine","3.0.1.2 Malaria Vaccine"], ["int-penta","3.0.1.3 Penta"], ["int-measles","3.0.1.4 Measles"], ["int-vitamin-a","3.0.1.5 Vitamin A"], ["int-iptp","3.0.1.6 IPTp"], ["int-anc","3.0.1.7 ANC"]] },
+    { label: "3.0.2 Campaign Interventions", tabs: [["int-mass-itn","3.0.2.1 Mass ITN"], ["int-sbd","3.0.2.2 SBD"], ["int-irs","3.0.2.3 IRS"]] },
+  ]},
+  { section: "4.0 Vector Control", subs: [
+    { label: "4.0.1 Entomology", tabs: [["ento-data","4.0.1.1 Data"], ["ento-report","4.0.1.2 Report"], ["ento-dashboard","4.0.1.3 Dashboard"]] },
+    { label: "4.0.2 Insecticide Resistance", tabs: [["ir-data","4.0.2.1 Data"], ["ir-report","4.0.2.2 Report"], ["ir-dashboard","4.0.2.3 Dashboard"]] },
+  ]},
+  { section: "5.0 Resources", subs: [
+    { label: "5.0 Resources", tabs: [["user-guide","5.0.1 User Guide"], ["bulletins","5.0.2 Monthly Bulletin"], ["mpd","5.0.3 Malaria Programme Docs"]] },
+    { label: "5.0.4 Survey", tabs: [["survey-data","5.0.4.1 Data"], ["survey-report","5.0.4.2 Report"]] },
+    { label: "5.0.5 Data Collection Apps", tabs: [["dct-sbd","5.0.5.1 SBD"], ["dct-mocm-phu","5.0.5.2 MOCM (PHU)"], ["dct-mocm-hospital","5.0.5.3 MOCM (Hospital)"], ["dct-mocm-lab","5.0.5.4 MOCM (Lab)"], ["dct-warehouse","5.0.5.5 Warehouse Assessment"], ["dct-sbc","5.0.5.6 SBC Coaching (Form K)"], ["dct-tes","5.0.5.7 TES Data Collection Tool"], ["analytics-training","5.0.6 Analytics Learning"], ["gf-plan","5.0.7 GF Implementation Plan"], ["partners-mapping","5.0.8 NMCP Partners Mapping"], ["world-malaria-day","5.0.9 World Malaria Day"], ["population-estimate","5.0.7 Population"], ["performance-framework","5.0.8 Performance Framework"], ["archive","5.0.9 Google Drive Files"]] },
+  ]},
+  { section: "6.0 D-MAT Automation", subs: [
+    { label: "6.0 D-MAT Automation", tabs: [["dmat-dqa","6.0.1 Data Quality Assessment"], ["dmat-reporting","6.0.2 Reporting"], ["dmat-suspected","6.0.3 Suspected"], ["dmat-tested","6.0.4 Tested"], ["dmat-confirmed","6.0.5 Confirmed Cases"], ["dmat-treated","6.0.6 Confirmed and Treated"], ["dmat-confirmed-not-treated","6.0.7 Confirmed and Not Treated"], ["dmat-presumptive","6.0.8 Presumptive Treatment"], ["dmat-total-treated","6.0.9 Total Treated"], ["dmat-tpr","6.0.10 Test Positivity Rate"]] },
+    { label: "6.0.11 Comparative Analysis", tabs: [["dmat-u5","6.0.11.1 Under 5"], ["dmat-allages","6.0.11.2 All Ages"], ["dmat-eidsr","6.0.12 eIDSR"]] },
+  ]},
+  { section: "7.0 Retrospective Analysis", subs: [
+    { label: "7.0.1 SNT 2015 to 2025", tabs: [["snt-datasets","7.0.1.1 Datasets"], ["snt-codes","7.0.1.2 Codes"], ["snt-outputs","7.0.1.3 Outputs"], ["snt-report","7.0.1.4 Report"], ["snt-manual","7.0.1.5 SNT Manual"], ["snt-intervention-targeting","7.0.1.6 Intervention Targeting"]] },
+    { label: "7.0.2 MPR 2021 to 2023", tabs: [["mpr-datasets","7.0.2.1 Datasets"], ["mpr-codes","7.0.2.2 Codes"], ["mpr-outputs","7.0.2.3 Outputs"], ["mpr-report","7.0.2.4 Report"]] },
+    { label: "7.0.3 Other Analysis", tabs: [["other-trend-allages","7.0.3.1 Trend Analysis (All Ages)"], ["other-trend-u5","7.0.3.2 Trend Analysis (Under 5)"]] },
+  ]},
+  { section: "8.0 Finance", subs: [
+    { label: "8.0 Finance", tabs: [["finance-data","8.0.1 Data"], ["finance-report","8.0.2 Report"], ["finance-dashboard","8.0.3 Dashboard"], ["nsp-costing","8.0.4 NSP Costing"]] },
+  ]},
+  { section: "Admin", subs: [
+    { label: "Admin", tabs: [["admin-dashboard","Admin Dashboard"]] },
+  ]},
+];
+
+var ALL_TAB_IDS = (function(){
+  var out = [];
+  NMDR_TABS.forEach(function(sec){
+    sec.subs.forEach(function(sub){
+      sub.tabs.forEach(function(t){ out.push(t[0]); });
+    });
+  });
+  return out;
+})();
+
+var access = {};            /* staff id -> array of tab ids */
+var accessUnlocked = false;
+var accSelected = '';
+var accDraft = null;        /* the ticks being edited, before saving */
+var accDirty = false;
+
+/* ---------- store ---------- */
+function loadAccess(){
+  try {
+    var raw = window.localStorage.getItem(ACCESS_KEY);
+    access = raw ? JSON.parse(raw) : {};
+  } catch (e) { access = {}; }
+  if (!access || typeof access !== 'object') access = {};
+}
+function storeAccess(){
+  try { window.localStorage.setItem(ACCESS_KEY, JSON.stringify(access)); return true; }
+  catch (e) { return false; }
+}
+
+/* ---------- opening it for one person ---------- */
+function accCount(id){
+  return (access[id] || []).length;
+}
+
+function openAccess(id){
+  var s = merged().filter(function(x){ return x.id === id; })[0];
+  if (!s) return;
+  accSelected = id;
+  accDirty = false;
+  var saved = access[id];
+  accDraft = {};
+  (saved && saved.length ? saved : ['welcome']).forEach(function(t){ accDraft[t] = true; });
+
+  document.getElementById('accWho').textContent = s.name;
+  document.getElementById('accShade').classList.add('on');
+
+  if (accessUnlocked){
+    showAccessTree();
+  } else {
+    document.getElementById('accGateStep').style.display = 'block';
+    document.getElementById('accTreeStep').style.display = 'none';
+    document.getElementById('accPass').value = '';
+    fieldErr('accPass', 'eAccPass', '');
+    setTimeout(function(){ document.getElementById('accPass').focus(); }, 60);
+  }
+}
+
+function closeAccess(){
+  if (accDirty && !window.confirm('Close without saving? The ticks you changed will be lost.')) return;
+  accDirty = false;
+  accSelected = '';
+  accDraft = null;
+  document.getElementById('accShade').classList.remove('on');
+  document.getElementById('accPass').value = '';
+  fieldErr('accPass', 'eAccPass', '');
+}
+
+function unlockAccess(){
+  var typed = document.getElementById('accPass').value;
+  if (!typed){
+    fieldErr('accPass', 'eAccPass', 'Type the administrator password.');
+    return;
+  }
+  if (typed !== ACCESS_PASSWORD){
+    fieldErr('accPass', 'eAccPass', 'Wrong password. Access was not opened.');
+    document.getElementById('accPass').value = '';
+    document.getElementById('accPass').focus();
+    return;
+  }
+  fieldErr('accPass', 'eAccPass', '');
+  document.getElementById('accPass').value = '';
+  accessUnlocked = true;
+  showAccessTree();
+}
+
+function showAccessTree(){
+  document.getElementById('accGateStep').style.display = 'none';
+  document.getElementById('accTreeStep').style.display = 'block';
+  renderPane();
+  document.getElementById('accTreeStep').parentNode.scrollTop = 0;
+}
+
+function draftList(){
+  return ALL_TAB_IDS.filter(function(t){ return accDraft && accDraft[t]; });
+}
+
+function renderPane(){
+  var pane = document.getElementById('accTreeStep');
+  var s = merged().filter(function(x){ return x.id === accSelected; })[0];
+  if (!s){ closeAccess(); return; }
+
+  var html = '';
+  html += '<div class="who"><span class="wn">' + esc(s.name) + '</span>' +
+          '<span class="wm">' + esc(s.designation || 'No designation') + ' &middot; ' + esc(s.place) +
+          ' &middot; ' + levelLabel(s.rank) + ' &middot; ' + esc(s.phone) + '</span></div>';
+
+  html += '<div class="accnote" id="accTally"></div>';
+
+  html += '<div class="tools">' +
+            '<button class="btn ghost" type="button" onclick="tickAll(true)">Tick everything</button>' +
+            '<button class="btn ghost" type="button" onclick="tickAll(false)">Clear all</button>' +
+          '</div>';
+
+  html += '<div class="tree">';
+  NMDR_TABS.forEach(function(sec, si){
+    var ids = [];
+    sec.subs.forEach(function(sub){ sub.tabs.forEach(function(t){ ids.push(t[0]); }); });
+    html += '<div class="sec">';
+    html += '<div class="sech"><span class="st">' + esc(sec.section) + '</span>' +
+            '<span class="sn" id="secn' + si + '"></span>' +
+            '<button class="tickall" type="button" onclick="tickSection(' + si + ',true)">All</button>' +
+            '<button class="tickall" type="button" onclick="tickSection(' + si + ',false)">None</button></div>';
+    html += '<div class="body">';
+    sec.subs.forEach(function(sub){
+      if (sub.label !== sec.section) html += '<div class="subh">' + esc(sub.label) + '</div>';
+      sub.tabs.forEach(function(t){
+        html += '<label class="tick"><input type="checkbox" value="' + t[0] + '"' +
+                (accDraft[t[0]] ? ' checked' : '') +
+                ' onchange="tickOne(this)"><span>' + esc(t[1]) + '</span></label>';
+      });
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+
+  html += '<div class="msg" id="accMsg"></div>';
+  html += '<div class="form-foot">' +
+            '<button class="btn" type="button" onclick="saveAccess()">Save access</button>' +
+            '<button class="btn ghost" type="button" onclick="openAccess(accSelected)">Undo changes</button>' +
+            '<button class="btn ghost" type="button" onclick="closeAccess()">Close</button>' +
+          '</div>';
+  html += '<div class="form-foot" style="margin-top:10px">' +
+            '<button class="btn gold" type="button" onclick="downloadAccessCsv()">Download access.csv</button>' +
+          '</div>';
+
+  pane.innerHTML = html;
+  paintTally();
+}
+
+function paintTally(){
+  var n = draftList().length;
+  var tally = document.getElementById('accTally');
+  if (tally){
+    tally.innerHTML = '<b>' + n + '</b> of ' + ALL_TAB_IDS.length + ' tabs ticked.' +
+      (accDirty ? '<span class="dirty">Not saved yet</span>' : '');
+  }
+  NMDR_TABS.forEach(function(sec, si){
+    var el = document.getElementById('secn' + si);
+    if (!el) return;
+    var ids = [];
+    sec.subs.forEach(function(sub){ sub.tabs.forEach(function(t){ ids.push(t[0]); }); });
+    var on = ids.filter(function(t){ return accDraft[t]; }).length;
+    el.textContent = on + ' of ' + ids.length;
+  });
+}
+
+function tickOne(box){
+  if (box.checked) accDraft[box.value] = true;
+  else delete accDraft[box.value];
+  accDirty = true;
+  paintTally();
+}
+
+function tickAll(on){
+  if (!accDraft) return;
+  ALL_TAB_IDS.forEach(function(t){ if (on) accDraft[t] = true; else delete accDraft[t]; });
+  accDirty = true;
+  syncBoxes();
+}
+
+function tickSection(si, on){
+  if (!accDraft) return;
+  NMDR_TABS[si].subs.forEach(function(sub){
+    sub.tabs.forEach(function(t){ if (on) accDraft[t[0]] = true; else delete accDraft[t[0]]; });
+  });
+  accDirty = true;
+  syncBoxes();
+}
+
+function syncBoxes(){
+  var boxes = document.querySelectorAll('#accTreeStep .tick input[type="checkbox"]');
+  Array.prototype.forEach.call(boxes, function(b){ b.checked = accDraft[b.value] ? true : false; });
+  paintTally();
+}
+
+function saveAccess(){
+  if (!accSelected) return;
+  var s = merged().filter(function(x){ return x.id === accSelected; })[0];
+  var who = s ? s.name : 'the record';
+  var tabs = draftList();
+  var id = accSelected;
+
+  access[id] = tabs;
+  var storedHere = storeAccess();
+  accDirty = false;
+  paintTally();
+  renderDash();
+
+  var btn = accSaveButton();
+  if (!storedHere){
+    accStatus('Saved for this session only. This browser is blocking saved storage, so these ticks are lost when the page closes.', 'bad');
+    return;
+  }
+  if (!SCRIPT_URL){
+    accStatus('<b>' + esc(who) + '</b> now has <b>' + tabs.length + '</b> tab(s), saved on this device. The server was not updated because no Apps Script URL is set.', 'bad');
+    return;
+  }
+
+  if (btn){ btn.disabled = true; btn.classList.add('busy'); btn.textContent = 'Sending...'; }
+  accStatus('Sending ' + tabs.length + ' tab(s) for <b>' + esc(who) + '</b> to the server...', 'wait');
+
+  pushAccess(id, tabs, function(res){
+    if (btn){ btn.disabled = false; btn.classList.remove('busy'); btn.textContent = 'Save access'; }
+    if (res.ok){
+      accStatus('Saved. The Access column on the server now holds <b>' + res.count +
+                '</b> tab(s) for <b>' + esc(who) + '</b>.', 'ok');
+    } else {
+      accStatus('<b>' + esc(who) + '</b> is saved on this device, but the server was not updated: ' +
+                esc(res.error) + ' Press Save access again when the connection is back.', 'bad');
+    }
+  });
+}
+
+function accSaveButton(){
+  var btns = document.querySelectorAll('#accTreeStep .form-foot .btn');
+  for (var i = 0; i < btns.length; i++){
+    if (btns[i].getAttribute('onclick') === 'saveAccess()') return btns[i];
+  }
+  return null;
+}
+
+function accStatus(html, kind){
+  var el = document.getElementById('accMsg');
+  if (el){
+    el.innerHTML = html;
+    el.className = 'msg on' + (kind ? ' ' + kind : '');
+    try { el.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+  }
+  setStatus(html);
+}
+
+function pushAccess(id, tabs, done){
+  if (!SCRIPT_URL) { done({ ok:false, error:'No Apps Script URL is set.' }); return; }
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'access', id: id, tabs: tabs.join(';') })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if (res && res.ok) done({ ok:true, count: (res.count == null ? tabs.length : res.count), tabs: res.tabs || tabs.join(';') });
+    else done({ ok:false, error: (res && res.error) ? res.error : 'The backend refused the change.' });
+  })
+  .catch(function(err){ done({ ok:false, error: 'No connection to the backend (' + err.message + ').' }); });
+}
+
+/* ---------- access.csv ---------- */
+function csvCell(v){
+  v = String(v == null ? '' : v);
+  return '"' + v.replace(/"/g, '""') + '"';
+}
+
+function buildAccessCsvLocally(){
+  var rows = ['ID,Name,Telephone,Place of Work,Level,Password,Tabs'];
+  var passwords = {};
+  staff.forEach(function(r){ if (r.password) passwords[r.id] = r.password; });
+  var missing = 0;
+
+  merged().forEach(function(s){
+    var tabs = access[s.id] || [];
+    if (!tabs.length) return;
+    if (!passwords[s.id]) missing++;
+    rows.push([
+      csvCell(s.id), csvCell(s.name), csvCell(s.phone), csvCell(s.place),
+      csvCell(levelLabel(s.rank)), csvCell(passwords[s.id] || ''), csvCell(tabs.join(';'))
+    ].join(','));
+  });
+  return { csv: rows.join('\n'), rows: rows.length - 1, missing: missing };
+}
+
+function saveCsvFile(text){
+  var blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'access.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+
+function downloadAccessCsv(){
+  if (accDirty && !window.confirm('There are ticks you have not saved. Download access.csv without them?')) return;
+
+  function local(reason){
+    var built = buildAccessCsvLocally();
+    if (!built.rows){
+      accStatus('Nothing to write yet. No one has any tabs ticked, so access.csv would be empty. Tick some tabs for a name, save, then download.', 'bad');
+      return;
+    }
+    saveCsvFile(built.csv);
+    accStatus('Saved. <b>access.csv</b> written with <b>' + built.rows + '</b> staff member(s), from this device.' +
+      (reason ? ' ' + reason : '') +
+      (built.missing ? ' Note that ' + built.missing + ' of them have an empty password column, because they were registered on another device.' : '') +
+      ' Put the file beside the NMDR index.html.', 'ok');
+  }
+
+  if (!SCRIPT_URL){ local('No Apps Script URL is set.'); return; }
+
+  accStatus('Reading the server so every password is included...', 'wait');
+  fetch(SCRIPT_URL + (SCRIPT_URL.indexOf('?') > -1 ? '&' : '?') + 'action=accesscsv')
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      if (text && text.indexOf('ID,Name,Telephone') === 0){
+        var lines = text.replace(/\r/g, '').split('\n').filter(function(l){ return l.trim() !== ''; });
+        if (lines.length < 2){ local('The sheet holds no access rows yet.'); return; }
+        saveCsvFile(text);
+        accStatus('Saved. <b>access.csv</b> written with <b>' + (lines.length - 1) +
+                  '</b> staff member(s), straight from the server, passwords included. Put the file beside the NMDR index.html.', 'ok');
+      } else {
+        local('The server did not send a readable file, so this copy came from the device.');
+      }
+    })
+    .catch(function(){ local('The server could not be reached, so this copy came from the device.'); });
+}
+
+/* access read back from the sheet, for names this device never registered */
+function absorbRemoteAccess(){
+  remote.forEach(function(r){
+    if (r.access && !access[r.id]){
+      access[r.id] = String(r.access).split(';').filter(function(t){ return t; });
+    }
+  });
+  storeAccess();
+}
+
+/* ================= FORGOTTEN PASSWORD =================
+   The email address is checked on the server, against the Email column of the
+   record, and the password is emailed from there. The page never receives the
+   password or the address on file, so a wrong guess learns nothing. */
+
+var fpFor = '';
+
+function openForgot(id){
+  var s = merged().filter(function(x){ return x.id === id; })[0];
+  if (!s) return;
+  fpFor = id;
+  document.getElementById('fpWho').textContent = s.name;
+  document.getElementById('fpEmail').value = '';
+  fieldErr('fpEmail', 'eFpEmail', '');
+  fpMsg('', '');
+  document.getElementById('fpShade').classList.add('on');
+  setTimeout(function(){ document.getElementById('fpEmail').focus(); }, 60);
+}
+
+function closeForgot(){
+  fpFor = '';
+  document.getElementById('fpShade').classList.remove('on');
+  document.getElementById('fpEmail').value = '';
+  fieldErr('fpEmail', 'eFpEmail', '');
+  fpMsg('', '');
+}
+
+function fpMsg(html, kind){
+  var el = document.getElementById('fpMsg');
+  if (!el) return;
+  el.innerHTML = html;
+  el.className = html ? ('msg on' + (kind ? ' ' + kind : '')) : 'msg';
+}
+
+function sendForgot(){
+  var typed = document.getElementById('fpEmail').value.trim();
+  if (!typed){
+    fieldErr('fpEmail', 'eFpEmail', 'Type the email address.');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(typed)){
+    fieldErr('fpEmail', 'eFpEmail', 'Wrong entry. That does not look like an email address.');
+    return;
+  }
+  fieldErr('fpEmail', 'eFpEmail', '');
+
+  if (!SCRIPT_URL){
+    fpMsg('No Apps Script URL is set, so no email can be sent from this device.', 'bad');
+    return;
+  }
+
+  var btn = document.getElementById('fpSend');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  btn.textContent = 'Sending...';
+  fpMsg('Checking the email address on the server...', 'wait');
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'forgot', id: fpFor, email: typed })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    btn.disabled = false;
+    btn.classList.remove('busy');
+    btn.textContent = 'Send the password';
+    if (res && res.ok){
+      fpMsg('Sent. The password is on its way to <b>' + esc(typed) + '</b>. Check the inbox, and the spam folder if it is not there.', 'ok');
+    } else {
+      fpMsg((res && res.error) ? esc(res.error) : 'The email could not be sent.', 'bad');
+    }
+  })
+  .catch(function(err){
+    btn.disabled = false;
+    btn.classList.remove('busy');
+    btn.textContent = 'Send the password';
+    fpMsg('No connection to the server (' + esc(err.message) + '). Try again when the connection is back.', 'bad');
+  });
+}
+
+/* ---------- dashboard ---------- */
+function levelLabel(rank){
+  for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].rank === rank) return LEVELS[i].label;
+  return 'Grade ' + rank;
+}
+
+/* The office a record belongs to. Trimmed, so a stray space does not make a
+   second group, and blank becomes one visible group rather than vanishing. */
+function placeOf(s){
+  var p = String(s.place == null ? '' : s.place).trim();
+  return p === '' ? 'Not stated' : p;
+}
+
+/* Every office to show: the five in the dropdown first, then any other name
+   actually found on a record. Without this, a directorate saved from another
+   device, an older record, or a name no longer in the dropdown would be
+   counted in All offices but never given a band, so its cards disappeared. */
+function officeNames(all){
+  var out = OFFICES.slice();
+  all.forEach(function(s){
+    var p = placeOf(s);
+    if (out.indexOf(p) === -1) out.push(p);
+  });
+  return out;
+}
+
+function renderOffices(all){
+  var box = document.getElementById('offices');
+  var html = '';
+  html += '<button class="pill' + (currentOffice === 'ALL' ? ' on' : '') +
+          '" onclick="pickOffice(\'ALL\')">All offices<span>' + all.length + '</span></button>';
+  officeNames(all).forEach(function(o){
+    var n = all.filter(function(s){ return placeOf(s) === o; }).length;
+    html += '<button class="pill' + (currentOffice === o ? ' on' : '') +
+            '" onclick="pickOffice(\'' + esc(o).replace(/'/g, "\\'") + '\')">' + esc(o) + '<span>' + n + '</span></button>';
+  });
+  box.innerHTML = html;
+}
+
+function pickOffice(o){
+  currentOffice = o;
+  renderDash();
+}
+
+function esc(t){
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function accessButton(s){
+  var n = accCount(s.id);
+  return '<button class="ac' + (n ? '' : ' none') + '" onclick="openAccess(\'' + s.id + '\')">' +
+         'Access <b>' + (n ? n + ' of ' + ALL_TAB_IDS.length : 'none') + '</b></button>';
+}
+
+function cardHtml(s){
+  return '' +
+  '<article class="staff">' +
+    '<span class="img" style="background-image:url(' + s.img + ')" role="img" aria-label="Photo of ' + esc(s.name) + '"></span>' +
+    '<div class="body">' +
+      '<div class="nm">' + esc(s.name) + '</div>' +
+      '<div class="dg">' + esc(s.designation) + '</div>' +
+      '<dl>' +
+        '<div><dt>Level</dt><dd>' + levelLabel(s.rank) + '</dd></div>' +
+        '<div><dt>Phone</dt><dd>' + esc(s.phone) + '</dd></div>' +
+        '<div><dt>Address</dt><dd>' + esc(s.address) + '</dd></div>' +
+      '</dl>' +
+      '<span class="tag">' + esc(placeOf(s)) + '</span>' + sourceTag(s.source) +
+      '<button class="rm" onclick="removeStaff(\'' + s.id + '\')">Remove</button>' +
+      accessButton(s) +
+      '<button class="fp" onclick="openForgot(\'' + s.id + '\')">Forgot password</button>' +
+    '</div>' +
+  '</article>';
+}
+
+function renderDash(){
+  var all = merged();
+  renderOffices(all);
+  var body = document.getElementById('dashBody');
+  var list = currentOffice === 'ALL' ? all : all.filter(function(s){ return placeOf(s) === currentOffice; });
+
+  if (!list.length){
+    body.innerHTML = '<div class="empty"><strong>No staff here yet</strong>' +
+      (all.length
+        ? 'No one is registered under ' + esc(currentOffice) + '. Pick another office, or register a staff member.'
+        : 'Register the first staff member on the form tab and the card appears here.') +
+      '</div>';
+    return;
+  }
+
+  /* highest level first, then name */
+  list.sort(function(a,b){
+    if (b.rank !== a.rank) return b.rank - a.rank;
+    return a.name.localeCompare(b.name);
+  });
+
+  var html = '';
+  if (currentOffice === 'ALL'){
+    officeNames(list).forEach(function(o){
+      var group = list.filter(function(s){ return placeOf(s) === o; });
+      if (!group.length) return;
+      html += '<div class="band"><span class="lvl">' + o + '</span><hr></div>';
+      html += '<div class="grid">' + group.map(cardHtml).join('') + '</div>';
+    });
+  } else {
+    var rank = null;
+    var open = false;
+    list.forEach(function(s){
+      if (s.rank !== rank){
+        if (open) html += '</div>';
+        html += '<div class="band"><span class="lvl">' + levelLabel(s.rank) + '</span><hr></div><div class="grid">';
+        rank = s.rank;
+        open = true;
+      }
+      html += cardHtml(s);
+    });
+    if (open) html += '</div>';
+  }
+  body.innerHTML = html;
+}
+
+function removeStaff(id){
+  var s = merged().filter(function(x){ return x.id === id; })[0];
+  if (!s) return;
+  pendingRemove = id;
+  document.getElementById('rmWho').textContent = s.name;
+  document.getElementById('rmPass').value = '';
+  fieldErr('rmPass', 'eRmPass', '');
+  document.getElementById('rmShade').classList.add('on');
+  setTimeout(function(){ document.getElementById('rmPass').focus(); }, 60);
+}
+
+function closeRemove(){
+  pendingRemove = '';
+  document.getElementById('rmShade').classList.remove('on');
+  document.getElementById('rmPass').value = '';
+  fieldErr('rmPass', 'eRmPass', '');
+}
+
+function confirmRemove(){
+  var typed = document.getElementById('rmPass').value;
+  if (!typed){
+    fieldErr('rmPass', 'eRmPass', 'Type the removal password.');
+    return;
+  }
+  if (typed !== REMOVE_PASSWORD){
+    fieldErr('rmPass', 'eRmPass', 'Wrong password. The record has not been removed.');
+    document.getElementById('rmPass').value = '';
+    document.getElementById('rmPass').focus();
+    return;
+  }
+  var id = pendingRemove;
+  closeRemove();
+  doRemove(id);
+}
+
+function doRemove(id){
+  var s = merged().filter(function(x){ return x.id === id; })[0];
+  if (!s) return;
+
+  staff = staff.filter(function(x){ return x.id !== id; });
+  save();
+  remote = remote.filter(function(x){ return x.id !== id; });
+  renderDash();
+
+  if (!SCRIPT_URL || s.source === 'wait') return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'delete', id: id, password: REMOVE_PASSWORD })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if (!res || !res.ok){
+      var why = (res && res.error) ? ' ' + res.error : '';
+      setStatus('Removed here, but the server still holds ' + esc(s.name) + '.' + why + ' Use Sync now to check.');
+    }
+  })
+  .catch(function(){
+    setStatus('Removed here, but the server could not be reached, so ' + esc(s.name) + ' is still on the server.');
+  });
+}
+
+/* ---------- start ---------- */
+(function init(){
+  var sel = document.getElementById('fLevel');
+  LEVELS.forEach(function(l){
+    var o = document.createElement('option');
+    o.value = l.rank;
+    o.textContent = l.label;
+    sel.appendChild(o);
+  });
+  loadAccess();
+  document.getElementById('accPass').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); unlockAccess(); }
+  });
+  document.getElementById('accShade').addEventListener('click', function(e){
+    if (e.target === this) closeAccess();
+  });
+
+  var ph = document.getElementById('fPhone');
+  ph.addEventListener('input', cleanPhone);
+  ph.addEventListener('blur', function(){ if (ph.value.trim()) phoneOk(); });
+  document.getElementById('fEmail').addEventListener('blur', function(){
+    if (document.getElementById('fEmail').value.trim()) emailOk();
+  });
+  document.getElementById('fPass2').addEventListener('blur', function(){
+    if (document.getElementById('fPass').value && document.getElementById('fPass2').value) passwordOk();
+  });
+  document.getElementById('rmPass').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); confirmRemove(); }
+  });
+  document.getElementById('fpEmail').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); sendForgot(); }
+  });
+  document.getElementById('fpShade').addEventListener('click', function(e){
+    if (e.target === this) closeForgot();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('rmShade').classList.contains('on')) closeRemove();
+    else if (document.getElementById('fpShade').classList.contains('on')) closeForgot();
+    else if (document.getElementById('accShade').classList.contains('on')) closeAccess();
+  });
+  document.getElementById('rmShade').addEventListener('click', function(e){
+    if (e.target === this) closeRemove();
+  });
+  document.getElementById('camIn').addEventListener('change', function(e){ handleFile(e.target.files[0]); });
+  document.getElementById('fileIn').addEventListener('change', function(e){ handleFile(e.target.files[0]); });
+  load();
+  fillPlaces();
+  paintPreview();
+})();
+</script>
+</body>
+</html>

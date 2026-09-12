@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <base target="_self">
     <title>National Malaria Control Programme (NMCP)</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f4a6a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NMDR">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -550,6 +557,45 @@
             #hmisCardGrid { gap: 12px !important; }
             .slides-ratio-wrap { padding-top: 62%; }
         }
+
+        /* Update, back in the sidebar footer where it was. */
+        .update-btn{
+            width:100%;background:rgba(255,193,7,0.12);border:1px solid rgba(255,193,7,0.35);
+            color:#ffc107;padding:9px 14px;border-radius:6px;font-size:12px;font-weight:600;
+            cursor:pointer;display:flex;align-items:center;gap:8px;font-family:inherit;margin-bottom:8px;
+            transition:all .18s;
+        }
+        .update-btn:hover{background:rgba(255,193,7,0.2);border-color:rgba(255,193,7,0.55)}
+        .update-btn.is-busy{opacity:.6;cursor:progress}
+        .update-btn .update-status{font-weight:500;color:rgba(255,255,255,0.55);font-size:11px}
+
+        /* INSTALL PAGE: the app install step, and nothing else on it.
+           Never shown once the app is installed. */
+        .inst-page{
+            position:fixed; inset:0; z-index:10020;
+            background:linear-gradient(160deg,#1f4a6a 0%,#123449 100%);
+            display:none; align-items:center; justify-content:center; padding:20px;
+        }
+        .inst-page.show{display:flex}
+        .inst-card{
+            background:#fff;border-radius:18px;padding:30px 26px;width:100%;max-width:420px;
+            box-shadow:0 18px 50px rgba(0,0,0,.35);text-align:center;
+        }
+        .inst-logo{width:78px;height:78px;border-radius:16px;margin:0 auto 16px;display:block}
+        .inst-card h1{color:#1f4a6a;font-size:23px;font-weight:700;margin:0 0 4px}
+        .inst-card h2{color:#2c6793;font-size:14px;font-weight:500;margin:0 0 22px}
+        .inst-btn{
+            width:100%;padding:15px 18px;border:none;border-radius:11px;background:#1f4a6a;color:#fff;
+            font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
+            box-shadow:0 4px 14px rgba(31,74,106,.3);
+        }
+        .inst-btn:hover{filter:brightness(1.1)}
+        .inst-btn.later{
+            background:transparent;color:#5c6b78;box-shadow:none;font-weight:500;font-size:13.5px;
+            margin-top:8px;padding:11px;
+        }
+        .inst-btn.later:hover{color:#1f4a6a;text-decoration:underline}
+
     </style>
 </head>
 <body>
@@ -566,6 +612,18 @@
     <div class="splash-by">Developed with Informatics Consultancy Firm &middot; Sierra Leone</div>
     <div class="splash-barwrap"><div class="splash-bar" id="splashBar"></div></div>
     <button class="splash-skip" onclick="endSplash()">Skip</button>
+</div>
+
+<!-- INSTALL PAGE. Skipped entirely once the app is installed. -->
+<div class="inst-page" id="installPage">
+    <div class="inst-card">
+        <img src="icon-192.png" alt="NMDR" class="inst-logo"
+             onerror="this.src='mohlogo.png';this.onerror=null;">
+        <h1>Install NMDR</h1>
+        <h2>Ministry of Health, Sierra Leone</h2>
+        <button class="inst-btn" id="nmdrInstall" type="button">Install the app</button>
+        <button class="inst-btn later" id="instLater" type="button">Continue to the sign in</button>
+    </div>
 </div>
 
 <div id="programModal" class="prog-modal">
@@ -669,6 +727,8 @@
             <button id="submitRolePassword">Sign in</button>
             <div id="passwordError" class="access-denied"></div>
         </div>
+        <button class="prog-back-btn" id="staffDirBtn" onclick="openStaffDirectory()"
+                style="margin-top:10px;">&#128100; Access, staff directory</button>
         <button class="prog-back-btn" id="backToProgrammesBtn" onclick="backToProgrammes()">&#8592; Back to programmes</button>
     </div>
 </div>
@@ -1065,6 +1125,11 @@
         <button class="home-btn" id="portalHomeBtn" onclick="goMainMenu()" title="Back to the main menu (Alt+H)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
             Main menu
+        </button>
+        <button class="update-btn" id="nmdrUpdate" type="button"
+                title="Download the latest version of the portal and its tools">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Update<span class="update-status" id="nmdrUpdateStatus"></span>
         </button>
         <button class="logout-btn" id="logoutBtn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -1859,6 +1924,16 @@ function openHmisFrame(src, title) {
 }
 function closeHmisFrame() {
     closeToolPage();
+}
+
+
+/* ================= THE STAFF DIRECTORY =================
+   access.html sits beside this file. It is the staff directory, where records
+   are registered and each person's tabs are ticked. */
+function openStaffDirectory(){
+    var w = null;
+    try { w = window.open('access.html', '_blank'); } catch (e) {}
+    if (!w) window.location.href = 'access.html';
 }
 
 /* ================= SIGN IN FROM THE STAFF DATABASE =================
@@ -2852,6 +2927,90 @@ preloadAllMedTabs();
    Runs last, so everything it needs is defined. A remembered sign in opens
    the portal straight away and the password is never asked for again until
    Logout. */
+/* ================= THE INSTALL PAGE =================
+   It is only ever shown to someone who can still install the app. Anyone who
+   already has it goes straight to the sign in, and the Install button goes
+   with the page.
+
+   Running from the installed icon is easy to see, display mode is standalone.
+   The harder case is the app being installed while this tab is an ordinary
+   browser tab. Chrome answers that for us: once a site is installed it stops
+   firing beforeinstallprompt. So if no prompt has arrived after a moment,
+   there is nothing to install and the page is skipped. iPhone and iPad have
+   no prompt at all, so there the page is offered and the button explains the
+   Share then Add to Home Screen step. */
+
+var canPrompt = false;
+window.addEventListener('beforeinstallprompt', function(){ canPrompt = true; });
+
+(function bootInstallPage(){
+    var INSTALLED_KEY = 'nmdrAppInstalled';   /* kept, installing is permanent */
+    var NOPROMPT_KEY  = 'nmdrNoPrompt';       /* this visit only, so it is rechecked */
+
+    var el = document.getElementById('installPage');
+    var later = document.getElementById('instLater');
+    if (later) later.onclick = hide;
+    if (!el) return;
+
+    function hide(){ el.classList.remove('show'); }
+    function show(){
+        el.classList.add('show');
+        var sp = document.getElementById('splash');
+        if (sp){ sp.style.display = 'none'; splashDone = true; }
+    }
+    function remember(){ try { localStorage.setItem(INSTALLED_KEY, '1'); } catch (e) {} }
+    function remembered(){ try { return localStorage.getItem(INSTALLED_KEY) === '1'; } catch (e) { return false; } }
+    function noPromptHere(){ try { return sessionStorage.getItem(NOPROMPT_KEY) === '1'; } catch (e) { return false; } }
+    function markNoPrompt(){ try { sessionStorage.setItem(NOPROMPT_KEY, '1'); } catch (e) {} }
+
+    function standalone(){
+        try {
+            if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+            if (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches) return true;
+            if (window.matchMedia && window.matchMedia('(display-mode: minimal-ui)').matches) return true;
+            if (window.navigator.standalone === true) return true;
+        } catch (e) {}
+        return false;
+    }
+
+    /* installed while this page is open: the page has nothing left to ask */
+    window.addEventListener('appinstalled', function(){ remember(); hide(); });
+
+    if (standalone()){ remember(); return; }   /* opened from the icon */
+    if (remembered()) return;                  /* installed on an earlier visit */
+    if (noPromptHere()) return;                /* already worked out this visit */
+
+    var ua = navigator.userAgent || '';
+    var iOS = /iPad|iPhone|iPod/.test(ua) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    function decide(){
+        if (iOS){ show(); return; }            /* no prompt exists on iOS */
+        if (canPrompt){ show(); return; }      /* the prompt already arrived */
+
+        var timer = setTimeout(function(){
+            if (canPrompt) show();
+            else { markNoPrompt(); }           /* installed, or this browser cannot install */
+        }, 2200);
+
+        window.addEventListener('beforeinstallprompt', function(){
+            clearTimeout(timer);
+            show();
+        }, { once: true });
+    }
+
+    /* Chrome can also name the installed app outright when the manifest lists
+       it under related_applications. Harmless where it is not supported. */
+    if (navigator.getInstalledRelatedApps){
+        navigator.getInstalledRelatedApps().then(function(apps){
+            if (apps && apps.length){ remember(); return; }
+            decide();
+        }).catch(decide);
+    } else {
+        decide();
+    }
+})();
+
 (function bootSession(){
     var ses = readSession();
     if (!ses) return;
@@ -2864,5 +3023,6 @@ preloadAllMedTabs();
 })();
 
 </script>
+<script src="nmdr-offline.js"></script>
 </body>
 </html>

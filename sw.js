@@ -193,8 +193,15 @@ async function cacheWithAssets(url, cache, seen, depth) {
     res = await fetch(new Request(url, { cache: 'reload', mode: 'cors', credentials: 'omit' }));
   } catch (e) {
     try { res = await fetch(new Request(url, { cache: 'reload', mode: 'no-cors' })); }
-    catch (e2) { return 0; }
+    catch (e2) {
+      /* The network itself failed. This is NOT the same as a file that is not
+         in the repo, and the Update button must be able to tell the two apart,
+         so it is thrown rather than counted as a skip. */
+      throw new Error('netfail:' + url);
+    }
   }
+  /* A reply that is not ok means the file is simply not there, which is normal
+     for the tool pages that have not been published yet. Skipped, not failed. */
   if (!res || (!res.ok && res.type !== 'opaque')) return 0;
 
   const type = res.headers.get('Content-Type') || '';
@@ -212,8 +219,15 @@ async function cacheWithAssets(url, cache, seen, depth) {
   if (text) {
     const links = assetsIn(text, isCss, url).filter(u => !seen.has(u));
     const counts = [];
-    await inBatches(links, async u => { counts.push(await cacheWithAssets(u, cache, seen, depth - 1)); });
+    let netfail = null;
+    await inBatches(links, async u => {
+      try { counts.push(await cacheWithAssets(u, cache, seen, depth - 1)); }
+      catch (e) {
+        if (String(e && e.message).startsWith('netfail:')) netfail = netfail || e;
+      }
+    });
     saved += counts.reduce((a, b) => a + b, 0);
+    if (netfail) throw netfail;
   }
   return saved;
 }
@@ -262,6 +276,14 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
+
+  /* Who may open what changes in the staff directory, so access.csv is always
+     read from the network, with the last copy kept only as an offline
+     fallback. Serving a stale copy from the shell would freeze people's tabs. */
+  if (/access\.csv$/i.test(url.pathname)) {
+    event.respondWith(networkFirstKeepLast(req));
+    return;
+  }
 
   // Apps Script, DHIS2 and any other data service: always ask the network
   // first, so a run is always live, but keep the answer. If the same run is
@@ -378,37 +400,101 @@ self.addEventListener('message', event => {
 });
 
 /* Re-download every same origin file already held, plus the precache list,
-   bypassing the browser HTTP cache. This is what the Update button runs. */
+   bypassing the browser HTTP cache. This is what the Update button runs.
+
+   ALL OR NOTHING. Everything is downloaded into a pair of staging caches
+   first. The files people are using are not touched until every download has
+   succeeded. If the connection drops halfway, the staging caches are thrown
+   away and the portal carries on with exactly the files it had, so a failed
+   update can never leave a half replaced, broken set on the device.
+
+   A file that answers 404 is not a failure: the precache list names tool pages
+   that are not all published. Only a network failure counts. */
+
+const STAGE_SHELL   = 'nmdr-stage-shell';
+const STAGE_RUNTIME = 'nmdr-stage-runtime';
+
+async function dropStaging() {
+  await caches.delete(STAGE_SHELL);
+  await caches.delete(STAGE_RUNTIME);
+}
+
+/* moves everything downloaded into the caches the portal actually reads */
+async function commitStaging() {
+  let moved = 0;
+  for (const [stageName, liveName] of [[STAGE_SHELL, SHELL_CACHE], [STAGE_RUNTIME, RUNTIME_CACHE]]) {
+    const stage = await caches.open(stageName);
+    const live  = await caches.open(liveName);
+    const keys  = await stage.keys();
+    for (const req of keys) {
+      const res = await stage.match(req);
+      if (res) { await live.put(req, res); moved++; }
+    }
+  }
+  await dropStaging();
+  return moved;
+}
+
 async function refreshContent() {
   const shell   = await caches.open(SHELL_CACHE);
   const runtime = await caches.open(RUNTIME_CACHE);
 
-  const targets = new Map(); // url -> cache holding it
+  /* start from clean staging, in case a previous attempt was cut off */
+  await dropStaging();
+  const stageShell   = await caches.open(STAGE_SHELL);
+  const stageRuntime = await caches.open(STAGE_RUNTIME);
+
+  const targets = new Map();   // url -> the staging cache it belongs in
 
   for (const url of PRECACHE) {
-    targets.set(new URL(url, self.location).href, shell);
+    targets.set(new URL(url, self.location).href, stageShell);
   }
-  for (const cache of [shell, runtime]) {
+  for (const [cache, stage] of [[shell, stageShell], [runtime, stageRuntime]]) {
     for (const req of await cache.keys()) {
       if (new URL(req.url).origin === self.location.origin) {
-        targets.set(req.url, cache);
+        if (!targets.has(req.url)) targets.set(req.url, stage);
       }
     }
   }
 
   let updated = 0;
-  const failed = [];
+  const missing = [];      // not in the repo, fine
+  const netfail = [];      // the connection let go, not fine
   const seen = new Set();
 
-  await inBatches([...targets], async ([url, cache]) => {
-    if (seen.has(url)) return;   // already fetched as part of a page above
+  await inBatches([...targets], async ([url, stage]) => {
+    if (seen.has(url)) return;
     try {
-      const n = await cacheWithAssets(url, cache, seen, 2);
-      if (n) updated += n; else failed.push(url);
+      const n = await cacheWithAssets(url, stage, seen, 2);
+      if (n) updated += n; else missing.push(url);
     } catch (e) {
-      failed.push(url);
+      if (String(e && e.message).startsWith('netfail:')) netfail.push(url);
+      else missing.push(url);
     }
   });
 
-  return { type: 'REFRESH_DONE', updated, failed, version: APP_VERSION };
+  /* anything at all went wrong on the wire: keep what the device already has */
+  if (netfail.length || updated === 0) {
+    await dropStaging();
+    return {
+      type: 'REFRESH_DONE',
+      complete: false,
+      updated: 0,
+      netfail: netfail.slice(0, 12),
+      failed: netfail.slice(0, 12),
+      missing: missing.length,
+      version: APP_VERSION,
+      kept: true
+    };
+  }
+
+  const moved = await commitStaging();
+  return {
+    type: 'REFRESH_DONE',
+    complete: true,
+    updated: moved || updated,
+    failed: [],
+    missing: missing.length,
+    version: APP_VERSION
+  };
 }

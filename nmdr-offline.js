@@ -15,6 +15,7 @@
 
   var LOG = '[NMDR update]';
   var UPDATED_FLAG = 'nmdrJustUpdated';
+  var UPDATED_COUNT = 'nmdrUpdatedCount';
   var LAST_UPDATE  = 'nmdrLastUpdate';
 
   var STATUS_EL, BTN, INSTALL_BTN;
@@ -132,9 +133,12 @@
 
     // Confirm the previous press worked, now that the reload has happened.
     if (get(UPDATED_FLAG)) {
+      var n = get(UPDATED_COUNT);
       del(UPDATED_FLAG);
+      del(UPDATED_COUNT);
       savedSummary().then(function (extra) {
-        toast('Portal updated. ' + extra + ' It will open without internet.');
+        toast('Fully updated. ' + (n ? n + ' file(s) downloaded. ' : '') + extra +
+              ' The portal will open without internet.');
       });
     }
   }
@@ -233,14 +237,20 @@
     return send(target, { type: 'REFRESH_CONTENT' }, 600000).then(function (res) {
       if (!res || res.type !== 'REFRESH_DONE') throw new Error('bad reply');
 
-      console.log(LOG, 'refreshed ' + res.updated + ' file(s)', res);
+      console.log(LOG, 'refresh reply', res);
       if (res.failed && res.failed.length) console.warn(LOG, 'could not refresh:', res.failed);
 
-      if (res.updated === 0) {
-        finish('Nothing downloaded. Check your connection and try again.');
+      /* All or nothing. The worker only replaces the saved files when every
+         download succeeded. An incomplete run leaves the device exactly as it
+         was, so the portal still opens offline with the files it already had. */
+      if (!res.complete) {
+        finish(res.updated === 0 && res.kept
+          ? 'Update not completed, so nothing on this device was changed. The portal still works offline with the files it already had. Reconnect and press Update again.'
+          : 'Update not completed. Nothing on this device was changed. Try again on a better connection.');
         return;
       }
 
+      set(UPDATED_COUNT, String(res.updated || 0));
       setStatus('updating');
       markUpdated();
       setTimeout(function () { window.location.reload(); }, 400);
@@ -371,7 +381,7 @@
       '.nmdr-update-float{position:fixed;right:16px;bottom:16px;z-index:9998;',
       'box-shadow:0 4px 14px rgba(0,0,0,.28);}',
       '.nmdr-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);',
-      'z-index:10001;max-width:88vw;background:#004080;color:#fff;',
+      'z-index:10030;max-width:88vw;background:#004080;color:#fff;',
       'font:500 13px/1.45 inherit;padding:12px 18px;border-radius:6px;',
       'box-shadow:0 6px 18px rgba(0,0,0,.3);transition:opacity .4s;}',
       '.nmdr-toast.is-out{opacity:0;}',
