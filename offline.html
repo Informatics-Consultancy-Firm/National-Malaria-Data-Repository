@@ -32,11 +32,13 @@
   <div class="note">Sierra Leone · NMCP · NMDR Portal</div>
 </div>
 <script>
-  function tryAgain(){ if(navigator.onLine){ location.href='./index.html'; }
+  // When this shows inside the portal's tool frame, go back to the portal window itself
+  function goPortal(){ try{ (window.top||window).location.href='./index.html'; }catch(e){ location.href='./index.html'; } }
+  function tryAgain(){ if(navigator.onLine){ goPortal(); }
     else{ var s=document.getElementById('status'); s.textContent='Still offline — check your network and try again.'; s.className='status'; } }
   addEventListener('online',function(){ var s=document.getElementById('status');
     s.textContent='Connection restored! Redirecting…'; s.className='status online';
-    setTimeout(function(){ location.href='./index.html'; },1000); });
+    setTimeout(goPortal,1000); });
   document.getElementById('status').textContent = navigator.onLine
     ? 'Connection available — tap Try again.' : 'No connection detected.';
 </script>

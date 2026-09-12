@@ -5,17 +5,22 @@
    Edit PRECACHE below to match the files sitting beside index.html.
 */
 
-const APP_VERSION   = 'nmdr-2026-07-25c';
+const APP_VERSION   = 'nmdr-2026-09-11b';
 const SHELL_CACHE   = 'nmdr-shell-' + APP_VERSION;
 const RUNTIME_CACHE = 'nmdr-runtime';
 
 /* Files fetched and stored the moment the portal is first opened. */
 const PRECACHE = [
+  /* portal shell */
   './',
   './index.html',
+  './offline.html',
   './nmdr-offline.js',
   './manifest.json',
+  /* images and icons */
   './mohlogo.png',
+  './ICF-SL.jpg',
+  './nmdr_architecture.jpg',
   './nmdr_info.png',
   './icon-192.png',
   './icon-512.png',
@@ -23,9 +28,81 @@ const PRECACHE = [
   './icon-512-maskable.png',
   './apple-touch-icon.png',
   './favicon-32.png',
-  './sbd.html',
-  './mocm_phu.html',
+  /* every tool page the portal opens (a file that is not in the repo is skipped) */
+  './all.html',
+  './analytic_training.html',
+  './automation.html',
+  './bulletins.html',
+  './confirmed.html',
+  './confirmed_and_treated.html',
+  './confirmed_not_treated.html',
+  './data_extraction.html',
+  './dmat_allages.html',
+  './dmat_comparative.html',
+  './dmat_confirmed.html',
+  './dmat_confirmed_and_treated.html',
+  './dmat_confirmed_not_treated.html',
+  './dmat_eidsr.html',
+  './dmat_presumptive.html',
+  './dmat_reporting.html',
+  './dmat_suspected.html',
+  './dmat_tested.html',
+  './dmat_total_treated.html',
+  './dmat_u5.html',
+  './dqa.html',
+  './dqa_tool_v5_drive.html',
+  './eidsr_extraction.html',
+  './ento_dashboard.html',
+  './ento_data.html',
+  './ento_report.html',
+  './finance_dashboard.html',
+  './finance_data.html',
+  './finance_report.html',
+  './form_k.html',
+  './gf_plan.html',
+  './google_drive_files.html',
+  './int_anc.html',
+  './int_iptp.html',
+  './int_irs.html',
+  './int_malaria_vaccine.html',
+  './int_mass_itn.html',
+  './int_measles.html',
+  './int_penta.html',
+  './int_pmc.html',
+  './int_sbd.html',
+  './int_vitamin_a.html',
+  './ir_dashboard.html',
+  './ir_data.html',
+  './ir_report.html',
+  './me_reports.html',
   './mocm_hospital.html',
+  './mocm_hospital_v2.html',
+  './mocm_lab.html',
+  './mocm_phu.html',
+  './mpd.html',
+  './mpr.html',
+  './navigation.html',
+  './opd.html',
+  './other_trend_allages.html',
+  './other_trend_u5.html',
+  './partners.html',
+  './presumptive.html',
+  './quant_dashboard.html',
+  './quant_data.html',
+  './sbd.html',
+  './snt.html',
+  './supply_track_dashboard.html',
+  './supply_track_data.html',
+  './survey_data.html',
+  './survey_report.html',
+  './suspected.html',
+  './tes_dashboard.html',
+  './tes_data.html',
+  './tes_report.html',
+  './testing.html',
+  './tpr.html',
+  './treated.html',
+  './user.html',
   './warehouse.html'
 ];
 
@@ -37,7 +114,15 @@ const CACHEABLE_HOSTS = [
   'fonts.gstatic.com',
   'cdn.jsdelivr.net',
   'cdnjs.cloudflare.com',
-  'unpkg.com'
+  'unpkg.com',
+  'cdn.plot.ly',
+  'code.jquery.com',
+  'd3js.org',
+  'cdn.sheetjs.com',
+  'cdn.datatables.net',
+  'cdn.tailwindcss.com',
+  'stackpath.bootstrapcdn.com',
+  'maxcdn.bootstrapcdn.com'
 ];
 
 /* ---------------------------------------------------------------- install */
@@ -45,15 +130,22 @@ const CACHEABLE_HOSTS = [
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL_CACHE);
-    // One at a time so a single missing file cannot fail the whole install.
-    for (const url of PRECACHE) {
+    // Each file on its own so a single missing file cannot fail the whole install.
+    await inBatches(PRECACHE, async url => {
       try {
         const res = await fetch(new Request(url, { cache: 'reload' }));
         if (res.ok) await cache.put(url, res);
       } catch (e) { /* file not present yet, runtime caching will pick it up */ }
-    }
+    });
   })());
 });
+
+/* Run a task over a list a few at a time: fast on a good line, gentle on a weak one. */
+async function inBatches(list, task, size = 6) {
+  for (let i = 0; i < list.length; i += size) {
+    await Promise.all(list.slice(i, i + size).map(task));
+  }
+}
 
 /* --------------------------------------------------------------- activate */
 
@@ -102,7 +194,12 @@ async function cacheFirst(req, sameOrigin) {
     return res;
   } catch (e) {
     if (req.mode === 'navigate') {
-      const fallback = await shell.match('./index.html');
+      // The portal itself falls back to index.html; a tool page that was never
+      // saved shows offline.html instead of a second copy of the portal.
+      const path = new URL(req.url).pathname;
+      const isPortal = path.endsWith('/') || path.endsWith('/index.html');
+      const fallback = (await shell.match(isPortal ? './index.html' : './offline.html')) ||
+                       (await shell.match('./index.html'));
       if (fallback) return fallback;
     }
     return new Response(
@@ -162,7 +259,7 @@ async function refreshContent() {
   let updated = 0;
   const failed = [];
 
-  for (const [url, cache] of targets) {
+  await inBatches([...targets], async ([url, cache]) => {
     try {
       const res = await fetch(new Request(url, { cache: 'reload' }));
       if (res.ok) {
@@ -174,7 +271,7 @@ async function refreshContent() {
     } catch (e) {
       failed.push(url);
     }
-  }
+  });
 
   return { type: 'REFRESH_DONE', updated, failed, version: APP_VERSION };
 }
