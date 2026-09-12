@@ -43,6 +43,17 @@ header h1{
 }
 header p{margin:2px 0 0;color:#bcd2e8;font-size:12px;text-transform:uppercase;letter-spacing:1px}
 
+/* back to the portal sign in, sitting above the logos */
+.backbtn{
+  display:inline-flex;align-items:center;gap:6px;
+  margin:0 0 10px;padding:7px 13px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);
+  color:var(--white);font-family:'Oswald',sans-serif;font-size:12px;
+  text-transform:uppercase;letter-spacing:.6px;cursor:pointer;border-radius:3px;
+  width:auto;
+}
+.backbtn:hover{background:rgba(255,255,255,.22);border-color:var(--white)}
+
 /* two logo brand bar: NMCP left, ICF right */
 .brandbar{
   max-width:1080px;margin:0 auto;
@@ -349,6 +360,7 @@ img,svg,canvas,iframe,video,pre,table{max-width:100%}
 <body>
 
 <header>
+  <button class="backbtn" type="button" onclick="backToPortal()">&#8592; Back to the sign in</button>
   <div class="brandbar">
     <img class="logo" src="NMCP.png" alt="National Malaria Control Programme"
          onerror="this.style.display='none'">
@@ -573,6 +585,26 @@ function load(){
 function save(){
   try { window.localStorage.setItem(KEY, JSON.stringify(staff)); return true; }
   catch (e) { return false; }
+}
+
+/* ---------- back to the portal ---------- */
+/* This page is usually opened from the portal's sign in screen, in its own
+   tab. Closing that tab puts the person back on the password area they came
+   from. Where the page was opened on its own instead, it walks back through
+   the history, and failing that it simply opens the portal. */
+function backToPortal(){
+  try {
+    if (window.opener && !window.opener.closed){
+      try { window.opener.focus(); } catch (e) {}
+      window.close();
+      return;
+    }
+  } catch (e) {}
+
+  /* No portal tab behind this one, so go to the portal itself. Walking back
+     through the history was tried and dropped: in a fresh tab the step back
+     lands on a blank page rather than the sign in. */
+  window.location.href = 'index.html';
 }
 
 /* ---------- place of work ---------- */
