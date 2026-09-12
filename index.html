@@ -304,6 +304,23 @@
         .password-input button:hover { background: var(--blue-dk); }
         .access-denied { color: #d32f2f; font-size: 12px; margin-top: 8px; display: none; }
 
+        /* The eye inside a password box, so what has been typed can be checked. */
+        .pw-wrap { position: relative; margin-bottom: 10px; }
+        .pw-wrap input { margin-bottom: 0 !important; padding-right: 46px !important; }
+        .pw-wrap .pw-eye {
+            position: absolute; top: 0; right: 0; height: 100%; width: 44px;
+            background: none !important; border: none; padding: 0 !important; margin: 0;
+            width: 44px !important; color: #8a95a0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 0 8px 8px 0;
+        }
+        .pw-wrap .pw-eye:hover { background: none !important; color: var(--blue); }
+        .pw-wrap .pw-eye svg { width: 20px; height: 20px; display: block; }
+        .pw-wrap .pw-eye .eye-shut { display: none; }
+        .pw-wrap .pw-eye.on .eye-open { display: none; }
+        .pw-wrap .pw-eye.on .eye-shut { display: block; }
+        .pw-wrap .pw-eye.on { color: var(--blue); }
+
         /* MOBILE TOP BAR */
         .topbar {
             display: none;
@@ -698,7 +715,14 @@
         <p id="psSub">Type the password to continue</p>
         <div id="psPasswordArea" class="password-input" style="display:block;">
             <input type="text"     id="psUsername" style="display:none" tabindex="-1" aria-hidden="true">
-            <input type="password" id="psPassword" placeholder="Password" autocomplete="current-password">
+            <div class="pw-wrap">
+                <input type="password" id="psPassword" placeholder="Password" autocomplete="current-password">
+                <button type="button" class="pw-eye" onclick="togglePw(this,'psPassword')"
+                        aria-label="Show or hide the password" title="Show or hide the password">
+                    <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-shut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
             <button id="psSubmit" onclick="psVerify()">Sign in</button>
             <div id="psError" class="access-denied" style="display:none;"></div>
         </div>
@@ -760,7 +784,14 @@
         <p>Type your password. The portal reads what you may open from the staff database.</p>
         <div id="passwordArea" class="password-input" style="display:block">
             <input type="text"     id="roleUsername" style="display:none" tabindex="-1" aria-hidden="true">
-            <input type="password" id="rolePassword" placeholder="Your password" autocomplete="current-password">
+            <div class="pw-wrap">
+                <input type="password" id="rolePassword" placeholder="Your password" autocomplete="current-password">
+                <button type="button" class="pw-eye" onclick="togglePw(this,'rolePassword')"
+                        aria-label="Show or hide the password" title="Show or hide the password">
+                    <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-shut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+            </div>
             <button id="submitRolePassword">Sign in</button>
             <div id="passwordError" class="access-denied"></div>
         </div>
@@ -1964,6 +1995,22 @@ function closeHmisFrame() {
 }
 
 
+/* The eye in a password box. Shows what has been typed, and puts it back to
+   dots when pressed again. The box keeps the focus and the caret, so typing
+   can carry on either way. */
+function togglePw(btn, inputId){
+    var box = document.getElementById(inputId);
+    if (!box) return;
+    var showing = box.type === 'text';
+    box.type = showing ? 'password' : 'text';
+    btn.classList.toggle('on', !showing);
+    try {
+        var at = box.value.length;
+        box.focus();
+        box.setSelectionRange(at, at);
+    } catch (e) {}
+}
+
 /* ================= THE STAFF DIRECTORY =================
    access.html sits beside this file. It is the staff directory, where records
    are registered and each person's tabs are ticked. */
@@ -2056,7 +2103,10 @@ function rowsToPeople(text){
     out.push({
       id: v(iId), name: v(iName), phone: v(iPhone), place: v(iPlace), level: v(iLevel),
       password: v(iPass),
-      tabs: v(iTabs).split(';').map(function(t){ return t.trim(); }).filter(function(t){ return t; })
+      /* The list is meant to be separated by semicolons, but a pasted cell can
+         arrive with commas, tabs or line breaks instead. A tab id never
+         contains any of those, so all of them are treated as separators. */
+      tabs: v(iTabs).split(/[;,\t\r\n|]+/).map(function(t){ return t.trim(); }).filter(function(t){ return t; })
     });
   }
   return out;
@@ -2303,7 +2353,7 @@ function verifyPassword() {
     errEl.textContent   = 'Checking the staff database...';
     errEl.style.display = 'block';
 
-    loadStaffAccess(function(err, people){
+    loadStaffAccess(function(err, people, source){
         if (err || !people){
             /* name each source and what it said, so the cause is visible
                rather than guessed at */
@@ -2314,17 +2364,29 @@ function verifyPassword() {
                               'the Apps Script needs redeploying after a change, and access.csv must sit beside this page for use without internet.</span>';
             return;
         }
+        /* Every row that carries this password, not just the first. A person
+           saved twice leaves two rows, and if the older one has no tabs
+           ticked, stopping at the first match locked them out of their own
+           access. The row with tabs wins. */
+        var matches = people.filter(function(x){ return x.password === pw; });
         var hit = null;
-        for (var i = 0; i < people.length; i++){
-            if (people[i].password === pw){ hit = people[i]; break; }
+        for (var i = 0; i < matches.length; i++){
+            if (matches[i].tabs.length){ hit = matches[i]; break; }
         }
+        if (!hit) hit = matches[0] || null;
+
         if (!hit){
             errEl.textContent = 'That password is not in the staff database. Access denied.';
             document.getElementById('rolePassword').value = '';
             return;
         }
         if (!hit.tabs.length){
-            errEl.textContent = hit.name + ', your account carries no tabs yet. Ask the administrator to tick what you may open.';
+            /* Say where this was read and how many rows it held, so a stale
+               copy or the wrong column is obvious rather than guessed at. */
+            errEl.innerHTML = hit.name + ', your account carries no tabs yet. Ask the administrator to tick what you may open.' +
+                '<br><br><span style="font-size:11.5px;opacity:.85;">Read from ' + (source || 'the staff database') +
+                ', ' + people.length + ' record(s), ' + matches.length + ' with this password. ' +
+                'The tabs must sit in the Access column of the same row as the password.</span>';
             return;
         }
         errEl.style.display = 'none';
