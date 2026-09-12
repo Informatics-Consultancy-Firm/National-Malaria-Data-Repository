@@ -1585,8 +1585,10 @@ function cardHtml(s){
     '<div class="body">' +
       '<div class="nm">' + esc(s.name) + '</div>' +
       '<div class="dg">' + esc(s.designation) + '</div>' +
+      /* The grade is not printed on the card. It still decides the order the
+         cards are packed in, highest grade first, and it is still saved on the
+         record and written to the sheet. */
       '<dl>' +
-        '<div><dt>Level</dt><dd>' + levelLabel(s.rank) + '</dd></div>' +
         '<div><dt>Phone</dt><dd>' + esc(s.phone) + '</dd></div>' +
         '<div><dt>Address</dt><dd>' + esc(s.address) + '</dd></div>' +
       '</dl>' +
