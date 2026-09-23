@@ -224,6 +224,54 @@
             .prog-grid { grid-template-columns: 1fr; }
         }
 
+        /* ORGANOGRAM: Ministry of Health at the top, the five directorates beneath it, and the
+           programmes of the chosen directorate beneath that. The arrows are drawn in one SVG
+           laid over the chart and redrawn whenever the chart changes size or a branch opens. */
+        .org-chart { position: relative; margin: 4px 0 6px; text-align: left; }
+        .org-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 0; }
+        .org-top { display: flex; justify-content: center; margin-bottom: 50px; }
+        .org-node {
+            position: relative; z-index: 1; background: #fff;
+            border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px;
+            cursor: pointer; text-align: center; box-sizing: border-box;
+            /* every directorate and programme card is the same size, so the chart reads as a grid */
+            height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: box-shadow .12s ease, border-color .12s ease, background .12s ease;
+        }
+        .org-node:hover { box-shadow: 0 6px 18px rgba(0,0,0,.13); border-color: var(--blue); }
+        .org-node:focus-visible { outline: 3px solid rgba(44,103,147,.35); outline-offset: 2px; }
+        .org-abbr { font-size: 18px; font-weight: 800; color: var(--blue); letter-spacing: .4px; }
+        .org-name { font-size: 11px; color: #5b6b7a; line-height: 1.35; margin-top: 3px; }
+        .org-count { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #9aa7b2; margin-top: 6px; }
+        .org-moh { background: var(--blue-dk); border-color: var(--blue-dk); cursor: default; min-width: 280px; height: auto; padding: 14px 24px; }
+        .org-moh:hover { box-shadow: none; }
+        .org-moh .org-abbr { color: #fff; font-size: 20px; }
+        .org-moh .org-name { color: rgba(255,255,255,.9); font-size: 12px; }
+        .org-dirs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; align-items: start; }
+        .org-dir { cursor: default; background: var(--blue); border-color: var(--blue); }
+        .org-dir:hover { box-shadow: none; border-color: var(--blue); }
+        .org-dir .org-abbr { color: #fff; }
+        .org-dir .org-name { color: rgba(255,255,255,.9); }
+        .org-col { padding-left: 22px; }
+        .org-kids { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; }
+        .org-prog .org-abbr { font-size: 14.5px; }
+        .org-flag {
+            display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .4px; padding: 2px 8px; border-radius: 10px;
+            background: #f1f4f6; color: #7d8b97; margin-top: 6px;
+        }
+        .org-prog.ready { border-color: var(--blue); }
+        .org-prog.ready .org-flag { background: #e8f2fa; color: var(--blue); }
+        /* Below 900px the tree turns on its side: directorates stack down the page, hanging off
+           a rail from the Ministry, and programmes hang off their own rail beneath each one. */
+        @media (max-width: 900px) {
+            .org-top { display: block; margin-bottom: 22px; }
+            .org-moh { width: 100%; min-width: 0; }
+            .org-dirs { grid-template-columns: 1fr; gap: 14px; padding-left: 34px; }
+            .org-node { height: 76px; }
+            .org-moh { height: auto; }
+        }
+
         /* ===== PHONE: the landing card =====
            On a narrow screen the two logos and the title cannot sit side by
            side at full size: the title ends up one word per line and the
@@ -1789,7 +1837,7 @@ var NMDR_TABS = [
   ]},
   { section: "1.0 Malaria Surveillance", subs: [
     { label: "1.0.1.1 HMIS (Monthly)", tabs: [["hmis-extraction","1.0.1.1.1 Data Extraction"], ["hmis-epi-dashboard","1.0.1.1.2 Malaria Epi Dashboard"]] },
-    { label: "1.0.1.2 eIDSR (Weekly)", tabs: [["eidsr-extraction","1.0.1.2.1 Data Extraction"], ["eidsr-dashboard","1.0.1.2.2 Dashboard"]] },
+    { label: "1.0.1.2 eIDSR (Weekly)", tabs: [["eidsr-methods","1.0.1.2.1 Methods"], ["eidsr-output","1.0.1.2.2 Output"]] },
     { label: "1.0.2 Monitoring and Evaluation", tabs: [["me-dqa","1.0.2.1 Data Quality Assessment"]] },
     { label: "1.0.2.2 Key Malaria Data Elements", tabs: [["med-suspected","1.0.2.2.1 Fever Suspected Malaria"], ["med-tested","1.0.2.2.2 Tested"], ["med-confirmed","1.0.2.2.3 Confirmed Malaria Case"], ["med-treated","1.0.2.2.4 Confirmed and Treated"], ["med-presumptive","1.0.2.2.5 Presumptive Treatment"], ["med-ptr","1.0.2.2.6 Treated"]] },
     { label: "1.0.2.3 Key Malaria Indicators", tabs: [["med-reporting","1.0.2.3.1 Reporting Rate"], ["med-testing","1.0.2.3.2 Testing Rate"], ["med-tpr","1.0.2.3.3 Test Positivity Rate"], ["med-cfr","1.0.2.3.4 Confirmed and Treatment Rate"]] },
@@ -2513,7 +2561,16 @@ function doRemove(id){
                  onerror="this.style.visibility='hidden'">
         </div>
         <p id="progSub">Choose a directorate to continue</p>
-        <div class="prog-grid" id="progGrid"></div>
+        <div class="org-chart" id="orgChart">
+            <svg class="org-lines" id="orgLines" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="org-top">
+                <div class="org-node org-moh" id="orgMoh">
+                    <div class="org-abbr">MoH</div>
+                    <div class="org-name">Ministry of Health, Sierra Leone</div>
+                </div>
+            </div>
+            <div class="org-dirs" id="orgDirs"></div>
+        </div>
         <div class="prog-note" id="progNote"></div>
         <button class="prog-back-btn" id="dirBackBtn" style="display:none;" onclick="showDirectorates()">&#8592; Back to directorates</button>
     </div>
@@ -2706,8 +2763,8 @@ function doRemove(id){
                         <svg id="eidsrChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
                     <div id="eidsrChildren" style="overflow:hidden;max-height:0;transition:max-height .25s ease;">
-                        <button class="nav-child nav-l3" data-tab="eidsr-extraction">1.0.1.2.1 Data Extraction</button>
-                        <button class="nav-child nav-l3" data-tab="eidsr-dashboard">1.0.1.2.2 Dashboard</button>
+                        <button class="nav-child nav-l3" data-tab="eidsr-methods">1.0.1.2.1 Methods</button>
+                        <button class="nav-child nav-l3" data-tab="eidsr-output">1.0.1.2.2 Output</button>
                     </div>
                 </div>
 
@@ -3169,10 +3226,8 @@ function doRemove(id){
     <div id="hmis-epi-dashboard" class="tab-content"><div id="hmis-epi-dashboard-wrap" class="me-detail-wrap"></div></div>
 
     <!-- 1.0.1.2 eIDSR (Weekly) -->
-    <div id="eidsr-extraction" class="tab-content">
-        <div class="iframe-pane"><iframe id="frame-eidsr-extraction" src="" data-src="eidsr_extraction.html" loading="lazy" allow="fullscreen"></iframe></div>
-    </div>
-    <div id="eidsr-dashboard" class="tab-content"><div id="eidsr-dashboard-wrap" class="me-detail-wrap"></div></div>
+    <div id="eidsr-methods" class="tab-content"><div id="eidsr-methods-wrap" class="me-detail-wrap"></div></div>
+    <div id="eidsr-output" class="tab-content"><div id="eidsr-output-wrap" class="me-detail-wrap"></div></div>
 
     <!-- 1.0.3 TES -->
     <div id="tes-data" class="tab-content">
@@ -3427,57 +3482,86 @@ function tileHtml(abbr, name, onclick, flag, small){
       + '<div class="prog-name">'+name+'</div>'
       + '<div class="prog-flag">'+flag+'</div></div>';
 }
-/* LEVEL 1: the directorates */
-function showDirectorates(){
-    currentDirectorate=null;
-    document.getElementById('progH2').textContent='Directorate Automated Analytic Pipelines';
-    document.getElementById('progSub').textContent='Choose a directorate to continue';
-    // five across one row, so the card widens for this level only
-    document.getElementById('progGrid').classList.add('one-row');
-    document.querySelector('.prog-card-wrap').classList.add('wide');
-    document.getElementById('progGrid').innerHTML=DIRECTORATES.map(function(d){
+/* The organogram is built once, then opened and closed branch by branch. */
+function orgKey(e,fn){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fn(); } }
+function renderOrg(){
+    var box=document.getElementById('orgDirs');
+    if(!box || box.getAttribute('data-built'))return;
+    box.innerHTML=DIRECTORATES.map(function(d){
         var n=d.progs.length;
         var sub=n?(n+' programme'+(n>1?'s':'')):'No programmes listed yet';
-        return tileHtml(d.code, d.name+'<br><span style="color:#9aa7b2;">'+sub+'</span>',
-                        "openDirectorate('"+d.code+"')", n?'Open':'Empty', d.code.length>4);
+        var kids=d.progs.map(function(p){
+            var ready=CONFIGURED.indexOf(p)>=0;
+            return '<div class="org-node org-prog'+(ready?' ready':'')+'" data-prog="'+p+'" role="button" tabindex="0"'
+              + ' onclick="openProgramme(\''+p+'\')" onkeydown="orgKey(event,function(){openProgramme(\''+p+'\');})">'
+              + '<div class="org-abbr">'+progLabel(p)+'</div>'
+              + '<div class="org-name">'+(PROG_NAMES[p]||p)+'</div></div>';
+        }).join('');
+        return '<div class="org-col" id="oc-'+d.code+'">'
+          + '<div class="org-node org-dir" id="od-'+d.code+'">'
+          + '<div class="org-abbr">'+d.code+'</div>'
+          + '<div class="org-name">'+d.name+'</div></div>'
+          + '<div class="org-kids">'+kids+'</div></div>';
     }).join('');
+    box.setAttribute('data-built','1');
+    var chart=document.getElementById('orgChart');
+    if(window.ResizeObserver){ new ResizeObserver(function(){ drawOrgLines(); }).observe(chart); }
+    window.addEventListener('resize', drawOrgLines);
+}
+/* Arrows: Ministry to each directorate, and the open directorate to each of its programmes.
+   The live branch is drawn in blue, the rest in grey. */
+function drawOrgLines(){
+    var chart=document.getElementById('orgChart'), svg=document.getElementById('orgLines');
+    if(!chart||!svg)return;
+    var c=chart.getBoundingClientRect();
+    if(!c.width){ svg.innerHTML=''; return; }
+    svg.setAttribute('width', chart.offsetWidth); svg.setAttribute('height', chart.offsetHeight);
+    function R(el){ var r=el.getBoundingClientRect();
+        return {l:r.left-c.left, t:r.top-c.top, r:r.right-c.left, b:r.bottom-c.top, cx:(r.left+r.right)/2-c.left, cy:(r.top+r.bottom)/2-c.top}; }
+    var wide=window.matchMedia('(min-width: 901px)').matches;
+    var moh=R(document.getElementById('orgMoh'));
+    var out='<defs>'
+      + '<marker id="orgArrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b5c3cf"/></marker>'
+      + '<marker id="orgArrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c6793"/></marker>'
+      + '</defs>';
+    function path(d,live){ return '<path d="'+d+'" fill="none" stroke="'+(live?'#2c6793':'#b5c3cf')+'" stroke-width="'+(live?2.2:1.6)
+        + '" stroke-linejoin="round" marker-end="url(#'+(live?'orgArrB':'orgArrG')+')"/>'; }
+    var dirs=DIRECTORATES.map(function(d){ return {d:d, n:document.getElementById('od-'+d.code)}; }).filter(function(x){return x.n;});
+    var dirsTop=Math.min.apply(null, dirs.map(function(x){ return R(x.n).t; }));
+    var railX=R(document.getElementById('orgDirs')).l+14;
+    dirs.forEach(function(x){
+        var r=R(x.n), d;
+        if(wide){ var mid=(moh.b+dirsTop)/2;
+            d='M'+moh.cx+','+moh.b+' V'+mid+' H'+r.cx+' V'+(r.t-1); }
+        else { d='M'+railX+','+moh.b+' V'+r.cy+' H'+(r.l-1); }
+        out+=path(d,true);
+        // each programme hangs off a rail down the left of its directorate's column
+        var col=document.getElementById('oc-'+x.d.code), px=R(col).l+9;
+        col.querySelectorAll('.org-prog').forEach(function(p){
+            var k=R(p);
+            out+=path('M'+r.l+','+r.cy+' H'+px+' V'+k.cy+' H'+(k.l-1), true);
+        });
+    });
+    svg.innerHTML=out;
+}
+/* The whole organogram, every directorate with all its programmes showing at once */
+function showDirectorates(){
+    currentDirectorate=null;
+    renderOrg();
+    document.getElementById('progH2').textContent='Directorate Automated Analytic Pipelines';
+    document.getElementById('progSub').textContent='Choose a programme to continue';
+    document.querySelector('.prog-card-wrap').classList.add('wide');
     document.getElementById('progNote').innerHTML='Five directorates. <strong>NMCP</strong>, under '
       + '<strong>DPC</strong>, is fully configured and connected to DHIS2. The other programmes open '
       + 'their pipeline layout so the intended structure is visible.';
     document.getElementById('dirBackBtn').style.display='none';
     document.getElementById('programModal').style.display='flex';
     document.body.style.overflow='hidden';
+    requestAnimationFrame(drawOrgLines);
 }
-/* LEVEL 2: the programmes under one directorate */
-function openDirectorate(code){
-    var d=DIRECTORATES.filter(function(x){return x.code===code;})[0];
-    if(!d)return;
-    currentDirectorate=code;
-    document.getElementById('progH2').textContent='Programmes';
-    document.getElementById('progSub').textContent=d.code+', '+d.name;
-    document.getElementById('progGrid').classList.remove('one-row');
-    document.querySelector('.prog-card-wrap').classList.remove('wide');
-    if(!d.progs.length){
-        document.getElementById('progGrid').innerHTML='';
-        document.getElementById('progNote').innerHTML='<strong>'+d.code+'</strong> has no programmes '
-          + 'listed yet. Once its programmes are confirmed they will appear here as its sub components, '
-          + 'each with the same pipeline layout as the others.';
-    } else {
-        document.getElementById('progGrid').innerHTML=d.progs.map(function(p){
-            var ready=CONFIGURED.indexOf(p)>=0;
-            return tileHtml(progLabel(p), PROG_NAMES[p]||p, "openProgramme('"+p+"')",
-                            ready?'Configured':'Open', progLabel(p).length>9);
-        }).join('');
-        document.getElementById('progNote').innerHTML=d.progs.filter(function(p){
-            return CONFIGURED.indexOf(p)>=0; }).length
-          ? '<strong>'+d.progs.filter(function(p){return CONFIGURED.indexOf(p)>=0;}).map(progLabel).join(', ')
-            + '</strong> is connected to DHIS2. The others open their pipeline layout with no data behind it.'
-          : 'None of these programmes is configured yet. Each opens its pipeline layout so the intended '
-            + 'structure is visible, and says on the page which modules are not yet connected.';
-    }
-    document.getElementById('dirBackBtn').style.display='inline-block';
-    document.body.style.overflow='hidden';
-}
+/* kept for the existing callers: with everything open there is only one view */
+function openDirectorate(code){ showDirectorates(); }
+
 var currentProgramme = null;
 
 
@@ -4083,7 +4167,7 @@ var ME_DETAIL_TABS = ['med-suspected','med-tested','med-confirmed','med-treated'
                       'med-presumptive','med-comp-u5','med-comp-allages',
                       'med-reporting','med-testing','med-tpr','med-cfr','med-ptr',
                       'me-comp-u5','me-comp-allages','me-reports'];
-var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-extraction','eidsr-dashboard'];
+var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-methods','eidsr-output'];
 var TES_TABS         = ['tes-data','tes-report','tes-dashboard'];
 var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles','int-vitamin-a','int-iptp','int-anc','int-mass-itn','int-sbd','int-irs'];
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
@@ -4412,7 +4496,7 @@ var pageLabelMap = {
     'med-comp-u5':'Comparative · Under Five','med-comp-allages':'Comparative · All Ages',
     'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages','me-reports':'M&E · Reporting',
     'hmis-extraction':'HMIS · Data Extraction','hmis-epi-dashboard':'HMIS · Epi Dashboard',
-    'eidsr-extraction':'eIDSR · Data Extraction','eidsr-dashboard':'eIDSR · Dashboard',
+    'eidsr-methods':'eIDSR · Methods','eidsr-output':'eIDSR · Output',
     'tes-data':'TES · Data','tes-report':'TES · Report','tes-dashboard':'TES · Dashboard',
     'quant-data':'Quantification · Data','quant-dashboard':'Quantification · Dashboard',
     'supply-track-data':'Supply Tracking · Data','supply-track-dashboard':'Supply Tracking · Dashboard',
@@ -4690,7 +4774,7 @@ function toggleNestedGroup(childrenId,chevronId,toggleId,e){
 }
 
 var MED_DRIVE_KEYS = {
-    'hmis-epi-dashboard':'malaria_dashboard.html','eidsr-dashboard':'eidsr_dashboard.html',
+    'hmis-epi-dashboard':'malaria_dashboard.html','eidsr-methods':'eidsr_dashboard.html','eidsr-output':'eidsr_output.html',
     'med-suspected':'med_suspected.html','med-tested':'med_tested.html',
     'med-confirmed':'med_confirmed.html','med-treated':'med_treated.html',
     'med-presumptive':'med_presumptive.html','med-ptr':'med_ptr.html',
