@@ -3226,8 +3226,9 @@ function doRemove(id){
     <div id="hmis-epi-dashboard" class="tab-content"><div id="hmis-epi-dashboard-wrap" class="me-detail-wrap"></div></div>
 
     <!-- 1.0.1.2 eIDSR (Weekly) -->
-    <div id="eidsr-extraction" class="tab-content"><div id="eidsr-extraction-wrap" class="me-detail-wrap"></div></div>
-    <div id="eidsr-dashboard" class="tab-content"><div id="eidsr-dashboard-wrap" class="me-detail-wrap"></div></div>
+    <!-- loaded as files beside index.html, like the other tools, not through the Drive script -->
+    <div id="eidsr-extraction" class="tab-content"><div class="iframe-pane"><iframe id="frame-eidsr-extraction" src="" data-src="eidsr_dashboard.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="eidsr-dashboard" class="tab-content"><div class="iframe-pane"><iframe id="frame-eidsr-dashboard" src="" data-src="eidsr_output.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- 1.0.3 TES -->
     <div id="tes-data" class="tab-content">
@@ -4774,7 +4775,7 @@ function toggleNestedGroup(childrenId,chevronId,toggleId,e){
 }
 
 var MED_DRIVE_KEYS = {
-    'hmis-epi-dashboard':'malaria_dashboard.html','eidsr-extraction':'eidsr_dashboard.html','eidsr-dashboard':'eidsr_output.html',
+    'hmis-epi-dashboard':'malaria_dashboard.html',
     'med-suspected':'med_suspected.html','med-tested':'med_tested.html',
     'med-confirmed':'med_confirmed.html','med-treated':'med_treated.html',
     'med-presumptive':'med_presumptive.html','med-ptr':'med_ptr.html',
