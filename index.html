@@ -1837,7 +1837,7 @@ var NMDR_TABS = [
   ]},
   { section: "1.0 Malaria Surveillance", subs: [
     { label: "1.0.1.1 HMIS (Monthly)", tabs: [["hmis-extraction","1.0.1.1.1 Data Extraction"], ["hmis-epi-dashboard","1.0.1.1.2 Malaria Epi Dashboard"]] },
-    { label: "1.0.1.2 eIDSR (Weekly)", tabs: [["eidsr-methods","1.0.1.2.1 Methods"], ["eidsr-output","1.0.1.2.2 Output"]] },
+    { label: "1.0.1.2 eIDSR (Weekly)", tabs: [["eidsr-extraction","1.0.1.2.1 Methods"], ["eidsr-dashboard","1.0.1.2.2 Output"]] },
     { label: "1.0.2 Monitoring and Evaluation", tabs: [["me-dqa","1.0.2.1 Data Quality Assessment"]] },
     { label: "1.0.2.2 Key Malaria Data Elements", tabs: [["med-suspected","1.0.2.2.1 Fever Suspected Malaria"], ["med-tested","1.0.2.2.2 Tested"], ["med-confirmed","1.0.2.2.3 Confirmed Malaria Case"], ["med-treated","1.0.2.2.4 Confirmed and Treated"], ["med-presumptive","1.0.2.2.5 Presumptive Treatment"], ["med-ptr","1.0.2.2.6 Treated"]] },
     { label: "1.0.2.3 Key Malaria Indicators", tabs: [["med-reporting","1.0.2.3.1 Reporting Rate"], ["med-testing","1.0.2.3.2 Testing Rate"], ["med-tpr","1.0.2.3.3 Test Positivity Rate"], ["med-cfr","1.0.2.3.4 Confirmed and Treatment Rate"]] },
@@ -2763,8 +2763,8 @@ function doRemove(id){
                         <svg id="eidsrChevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;flex-shrink:0;opacity:0.6;margin-left:4px;"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
                     <div id="eidsrChildren" style="overflow:hidden;max-height:0;transition:max-height .25s ease;">
-                        <button class="nav-child nav-l3" data-tab="eidsr-methods">1.0.1.2.1 Methods</button>
-                        <button class="nav-child nav-l3" data-tab="eidsr-output">1.0.1.2.2 Output</button>
+                        <button class="nav-child nav-l3" data-tab="eidsr-extraction">1.0.1.2.1 Methods</button>
+                        <button class="nav-child nav-l3" data-tab="eidsr-dashboard">1.0.1.2.2 Output</button>
                     </div>
                 </div>
 
@@ -3226,8 +3226,8 @@ function doRemove(id){
     <div id="hmis-epi-dashboard" class="tab-content"><div id="hmis-epi-dashboard-wrap" class="me-detail-wrap"></div></div>
 
     <!-- 1.0.1.2 eIDSR (Weekly) -->
-    <div id="eidsr-methods" class="tab-content"><div id="eidsr-methods-wrap" class="me-detail-wrap"></div></div>
-    <div id="eidsr-output" class="tab-content"><div id="eidsr-output-wrap" class="me-detail-wrap"></div></div>
+    <div id="eidsr-extraction" class="tab-content"><div id="eidsr-extraction-wrap" class="me-detail-wrap"></div></div>
+    <div id="eidsr-dashboard" class="tab-content"><div id="eidsr-dashboard-wrap" class="me-detail-wrap"></div></div>
 
     <!-- 1.0.3 TES -->
     <div id="tes-data" class="tab-content">
@@ -4167,7 +4167,7 @@ var ME_DETAIL_TABS = ['med-suspected','med-tested','med-confirmed','med-treated'
                       'med-presumptive','med-comp-u5','med-comp-allages',
                       'med-reporting','med-testing','med-tpr','med-cfr','med-ptr',
                       'me-comp-u5','me-comp-allages','me-reports'];
-var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-methods','eidsr-output'];
+var MALARIA_EPI_TABS = ['hmis-extraction','hmis-epi-dashboard','eidsr-extraction','eidsr-dashboard'];
 var TES_TABS         = ['tes-data','tes-report','tes-dashboard'];
 var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles','int-vitamin-a','int-iptp','int-anc','int-mass-itn','int-sbd','int-irs'];
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
@@ -4496,7 +4496,7 @@ var pageLabelMap = {
     'med-comp-u5':'Comparative · Under Five','med-comp-allages':'Comparative · All Ages',
     'me-comp-u5':'Comparative · Under 5','me-comp-allages':'Comparative · All Ages','me-reports':'M&E · Reporting',
     'hmis-extraction':'HMIS · Data Extraction','hmis-epi-dashboard':'HMIS · Epi Dashboard',
-    'eidsr-methods':'eIDSR · Methods','eidsr-output':'eIDSR · Output',
+    'eidsr-extraction':'eIDSR · Methods','eidsr-dashboard':'eIDSR · Output',
     'tes-data':'TES · Data','tes-report':'TES · Report','tes-dashboard':'TES · Dashboard',
     'quant-data':'Quantification · Data','quant-dashboard':'Quantification · Dashboard',
     'supply-track-data':'Supply Tracking · Data','supply-track-dashboard':'Supply Tracking · Dashboard',
@@ -4774,7 +4774,7 @@ function toggleNestedGroup(childrenId,chevronId,toggleId,e){
 }
 
 var MED_DRIVE_KEYS = {
-    'hmis-epi-dashboard':'malaria_dashboard.html','eidsr-methods':'eidsr_dashboard.html','eidsr-output':'eidsr_output.html',
+    'hmis-epi-dashboard':'malaria_dashboard.html','eidsr-extraction':'eidsr_dashboard.html','eidsr-dashboard':'eidsr_output.html',
     'med-suspected':'med_suspected.html','med-tested':'med_tested.html',
     'med-confirmed':'med_confirmed.html','med-treated':'med_treated.html',
     'med-presumptive':'med_presumptive.html','med-ptr':'med_ptr.html',
