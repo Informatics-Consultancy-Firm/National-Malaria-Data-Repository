@@ -556,6 +556,15 @@
             .page-label { font-size: 12px; }
         }
 
+        /* WELCOME VIDEO */
+        .welcome-video { background: var(--white); border-radius: 12px; border: 2px solid var(--border); overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.06); max-width: 1100px; margin: 0 auto 18px; }
+        .welcome-video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+        .welcome-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+        .welcome-video-foot { padding: 10px 16px; font-size: 12px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .welcome-video-foot a { color: var(--blue); font-weight: 700; text-decoration: none; }
+        .welcome-video-foot a:hover { text-decoration: underline; }
+        @supports not (aspect-ratio: 16 / 9) { .welcome-video-frame { height: 0; padding-top: 56.25%; } }
+
         /* WELCOME */
         .hero { background: var(--white); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--blue); }
         .hero-tag { display: inline-block; background: var(--blue-lt); color: var(--blue); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 8px; }
@@ -3085,71 +3094,21 @@ function doRemove(id){
 
     <!-- WELCOME -->
     <div id="welcome" class="tab-content active">
-        <div class="hero">
-            <div class="hero-tag">Sierra Leone NMCP</div>
-            <h1>National Malaria Control Programme</h1>
-            <p>A centralized, integrated platform for malaria surveillance, programme monitoring, and data-driven decision making across Sierra Leone.</p>
+        <div class="welcome-video">
+            <div class="welcome-video-frame">
+                <iframe id="welcomeVideo"
+                    src="https://www.youtube.com/embed/HMRQcZGKkEg?rel=0&amp;modestbranding=1&amp;playsinline=1&amp;enablejsapi=1"
+                    title="NMDR Welcome Video"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="welcome-video-foot">
+                <span>If the video does not play here,</span>
+                <a href="https://youtu.be/HMRQcZGKkEg" target="_blank" rel="noopener">watch it on YouTube</a>
+            </div>
         </div>
-        <div class="section-label">About the Repository</div>
-        <div class="cards-grid">
-            <div class="card"><div class="card-stripe"></div><div class="card-body">
-                <div class="card-icon-row">
-                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-                    <div><div class="card-num">What</div><div class="card-title">What is the NMDR?</div></div>
-                </div>
-                <div class="card-divider"></div>
-                <ul class="card-list">
-                    <li>A national digital infrastructure for malaria programme data</li>
-                    <li>Hosted on DHIS2 integrated with HMIS, LMIS</li>
-                    <li><strong>Developed:</strong> Informatics Consultancy Firm &mdash; Sierra Leone (ICF-SL)</li>
-                    <li><strong>Technical Support:</strong> WHO, CHAI, AHADI, AMMnet-SL</li>
-                    <li><strong>Funded:</strong> The Global Fund</li>
-                </ul>
-            </div></div>
-            <div class="card"><div class="card-stripe"></div><div class="card-body">
-                <div class="card-icon-row">
-                    <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
-                    <div><div class="card-num">Why</div><div class="card-title">Why the NMDR Exists</div></div>
-                </div>
-                <div class="card-divider"></div>
-                <ul class="card-list">
-                    <li>Consolidate fragmented malaria data into one repository</li>
-                    <li>Eliminate data silos between systems</li>
-                    <li>Strengthen national data governance</li>
-                    <li>Support data analytics at national and sub-national levels</li>
-                    <li>Improve data quality for decision-making</li>
-                </ul>
-            </div></div>
-            <div class="card"><div class="card-stripe"></div><div class="card-body">
-                <div class="card-icon-row">
-                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
-                    <div><div class="card-num">Focus</div><div class="card-title">Focus Areas</div></div>
-                </div>
-                <div class="card-divider"></div>
-                <ul class="card-list">
-                    <li>Malaria Surveillance</li>
-                    <li>Supply Chain Management</li>
-                    <li>Interventions</li>
-                    <li>Resources and Documentation</li>
-                    <li>Automated Pipelines</li>
-                    <li>Analytics</li>
-                </ul>
-            </div></div>
-            <div class="card"><div class="card-stripe"></div><div class="card-body">
-                <div class="card-icon-row">
-                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                    <div><div class="card-num">Benefits</div><div class="card-title">Expected Benefits</div></div>
-                </div>
-                <div class="card-divider"></div>
-                <ul class="card-list">
-                    <li>Faster evidence-based programme planning and reporting</li>
-                    <li>Improved data quality through validation</li>
-                    <li>Enhanced transparency and accountability</li>
-                    <li>Early warning signs for stockouts and outbreaks</li>
-                </ul>
-            </div></div>
-        </div>
-
     </div>
 
     <!-- Architecture — moved out of Welcome, now its own sub-page -->
@@ -5095,5 +5054,17 @@ window.addEventListener('beforeinstallprompt', function(){ canPrompt = true; });
 
 </script>
 <script src="nmdr-offline.js"></script>
+<script>
+/* Pause the welcome video whenever the Welcome tab is hidden */
+(function(){
+  var tab=document.getElementById('welcome'), vid=document.getElementById('welcomeVideo');
+  if(!tab||!vid||!window.MutationObserver) return;
+  new MutationObserver(function(){
+    if(!tab.classList.contains('active')){
+      try{ vid.contentWindow.postMessage(JSON.stringify({event:'command',func:'pauseVideo',args:[]}),'*'); }catch(e){}
+    }
+  }).observe(tab,{attributes:true,attributeFilter:['class']});
+})();
+</script>
 </body>
 </html>
