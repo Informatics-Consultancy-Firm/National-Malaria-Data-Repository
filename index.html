@@ -229,7 +229,22 @@
            laid over the chart and redrawn whenever the chart changes size or a branch opens. */
         .org-chart { position: relative; margin: 4px 0 6px; text-align: left; }
         .org-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 0; }
-        .org-top { display: flex; justify-content: center; margin-bottom: 50px; }
+        .org-top { display: flex; justify-content: center; margin-bottom: 40px; }
+        /* the logo replaces the ICF mark and the Ministry title, and sits tighter to the top */
+        .org-brand { display: grid; grid-template-columns: 80px 1fr 80px; align-items: center; margin: 0 0 14px; padding: 0 10px; }
+        .org-brand img { height: 72px; width: auto; display: block; }
+        .org-brand-mid { text-align: center; }
+        .prog-card-wrap .org-brand h2 { margin-bottom: 2px; font-size: 18px; font-weight: 700; }
+        .prog-card-wrap .org-brand p { margin-bottom: 0; }
+        /* no side padding on the landing card, so the chart runs edge to edge */
+        .prog-card-wrap.wide { padding: 14px 0 16px; }
+        .org-credit { font-size: 11.5px; font-weight: 700; color: var(--blue); margin-top: 10px; letter-spacing: .3px; }
+        .prog-card-wrap #progSub { margin-bottom: 14px; }
+        /* DPPI sits between the Ministry and the five directorates */
+        .org-node.org-dppi { cursor: default; background: #3a7fb3; border-color: #3a7fb3; min-width: 280px; height: auto; padding: 12px 22px; }
+        .org-node.org-dppi:hover { box-shadow: none; border-color: #3a7fb3; }
+        .org-dppi .org-abbr { color: #fff; }
+        .org-dppi .org-name { color: rgba(255,255,255,.92); }
         .org-node {
             position: relative; z-index: 1; background: #fff;
             border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px;
@@ -247,7 +262,7 @@
         .org-moh:hover { box-shadow: none; }
         .org-moh .org-abbr { color: #fff; font-size: 20px; }
         .org-moh .org-name { color: rgba(255,255,255,.9); font-size: 12px; }
-        .org-dirs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; align-items: start; }
+        .org-dirs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: start; padding-right: 10px; }
         .org-dir { cursor: default; background: var(--blue); border-color: var(--blue); }
         .org-dir:hover { box-shadow: none; border-color: var(--blue); }
         .org-dir .org-abbr { color: #fff; }
@@ -266,6 +281,11 @@
            a rail from the Ministry, and programmes hang off their own rail beneath each one. */
         @media (max-width: 900px) {
             .org-top { display: block; margin-bottom: 22px; }
+            .org-node.org-dppi { width: 100%; min-width: 0; }
+            .org-brand { grid-template-columns: 52px 1fr 52px; }
+            .org-brand img { height: 48px; }
+            .prog-card-wrap .org-brand h2 { font-size: 14px; }
+            .prog-card-wrap.wide { padding: 12px 0 14px; }
             .org-moh { width: 100%; min-width: 0; }
             .org-dirs { grid-template-columns: 1fr; gap: 14px; padding-left: 34px; }
             .org-node { height: 76px; }
@@ -555,15 +575,6 @@
             .page-menu-btn { padding: 7px 11px; font-size: 12px; }
             .page-label { font-size: 12px; }
         }
-
-        /* WELCOME VIDEO */
-        .welcome-video { background: var(--white); border-radius: 12px; border: 2px solid var(--border); overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.06); max-width: 1100px; margin: 0 auto 18px; }
-        .welcome-video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
-        .welcome-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
-        .welcome-video-foot { padding: 10px 16px; font-size: 12px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-        .welcome-video-foot a { color: var(--blue); font-weight: 700; text-decoration: none; }
-        .welcome-video-foot a:hover { text-decoration: underline; }
-        @supports not (aspect-ratio: 16 / 9) { .welcome-video-frame { height: 0; padding-top: 56.25%; } }
 
         /* WELCOME */
         .hero { background: var(--white); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 4px solid var(--blue); }
@@ -2556,20 +2567,15 @@ function doRemove(id){
 
 <div id="programModal" class="prog-modal">
     <div class="prog-card-wrap">
-        <!-- MoH on the left, ICF on the right, title between them -->
-        <!-- ICF-SL on the left, Ministry of Health on the right. The ICF mark is the same
-             GitHub hosted image the extraction tools already use, so there is one source. -->
-        <div class="brand-row">
-            <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL"
-                 onerror="this.style.visibility='hidden'">
-            <div class="brand-mid">
-                <h1>Ministry of Health, Sierra Leone</h1>
+        <!-- Ministry of Health logo on the left, title and prompt beside it in one short row -->
+        <div class="org-brand">
+            <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone" onerror="this.style.visibility='hidden'">
+            <div class="org-brand-mid">
                 <h2 id="progH2">Directorate Automated Analytic Pipelines</h2>
+                <p id="progSub">Choose a directorate to continue</p>
             </div>
-            <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone"
-                 onerror="this.style.visibility='hidden'">
+            <span></span>
         </div>
-        <p id="progSub">Choose a directorate to continue</p>
         <div class="org-chart" id="orgChart">
             <svg class="org-lines" id="orgLines" xmlns="http://www.w3.org/2000/svg"></svg>
             <div class="org-top">
@@ -2578,9 +2584,16 @@ function doRemove(id){
                     <div class="org-name">Ministry of Health, Sierra Leone</div>
                 </div>
             </div>
+            <div class="org-top org-mid">
+                <div class="org-node org-dppi" id="orgDppi">
+                    <div class="org-abbr">DPPI</div>
+                    <div class="org-name">Directorate of Policy, Planning and Information</div>
+                </div>
+            </div>
             <div class="org-dirs" id="orgDirs"></div>
         </div>
         <div class="prog-note" id="progNote"></div>
+        <div class="org-credit">Developed by ICF-SL</div>
         <button class="prog-back-btn" id="dirBackBtn" style="display:none;" onclick="showDirectorates()">&#8592; Back to directorates</button>
     </div>
 </div>
@@ -3094,21 +3107,71 @@ function doRemove(id){
 
     <!-- WELCOME -->
     <div id="welcome" class="tab-content active">
-        <div class="welcome-video">
-            <div class="welcome-video-frame">
-                <iframe id="welcomeVideo"
-                    src="https://www.youtube.com/embed/HMRQcZGKkEg?rel=0&amp;modestbranding=1&amp;playsinline=1&amp;enablejsapi=1"
-                    title="NMDR Welcome Video"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen></iframe>
-            </div>
-            <div class="welcome-video-foot">
-                <span>If the video does not play here,</span>
-                <a href="https://youtu.be/HMRQcZGKkEg" target="_blank" rel="noopener">watch it on YouTube</a>
-            </div>
+        <div class="hero">
+            <div class="hero-tag">Sierra Leone NMCP</div>
+            <h1>National Malaria Control Programme</h1>
+            <p>A centralized, integrated platform for malaria surveillance, programme monitoring, and data-driven decision making across Sierra Leone.</p>
         </div>
+        <div class="section-label">About the Repository</div>
+        <div class="cards-grid">
+            <div class="card"><div class="card-stripe"></div><div class="card-body">
+                <div class="card-icon-row">
+                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+                    <div><div class="card-num">What</div><div class="card-title">What is the NMDR?</div></div>
+                </div>
+                <div class="card-divider"></div>
+                <ul class="card-list">
+                    <li>A national digital infrastructure for malaria programme data</li>
+                    <li>Hosted on DHIS2 integrated with HMIS, LMIS</li>
+                    <li><strong>Developed:</strong> Informatics Consultancy Firm &mdash; Sierra Leone (ICF-SL)</li>
+                    <li><strong>Technical Support:</strong> WHO, CHAI, AHADI, AMMnet-SL</li>
+                    <li><strong>Funded:</strong> The Global Fund</li>
+                </ul>
+            </div></div>
+            <div class="card"><div class="card-stripe"></div><div class="card-body">
+                <div class="card-icon-row">
+                    <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+                    <div><div class="card-num">Why</div><div class="card-title">Why the NMDR Exists</div></div>
+                </div>
+                <div class="card-divider"></div>
+                <ul class="card-list">
+                    <li>Consolidate fragmented malaria data into one repository</li>
+                    <li>Eliminate data silos between systems</li>
+                    <li>Strengthen national data governance</li>
+                    <li>Support data analytics at national and sub-national levels</li>
+                    <li>Improve data quality for decision-making</li>
+                </ul>
+            </div></div>
+            <div class="card"><div class="card-stripe"></div><div class="card-body">
+                <div class="card-icon-row">
+                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+                    <div><div class="card-num">Focus</div><div class="card-title">Focus Areas</div></div>
+                </div>
+                <div class="card-divider"></div>
+                <ul class="card-list">
+                    <li>Malaria Surveillance</li>
+                    <li>Supply Chain Management</li>
+                    <li>Interventions</li>
+                    <li>Resources and Documentation</li>
+                    <li>Automated Pipelines</li>
+                    <li>Analytics</li>
+                </ul>
+            </div></div>
+            <div class="card"><div class="card-stripe"></div><div class="card-body">
+                <div class="card-icon-row">
+                    <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                    <div><div class="card-num">Benefits</div><div class="card-title">Expected Benefits</div></div>
+                </div>
+                <div class="card-divider"></div>
+                <ul class="card-list">
+                    <li>Faster evidence-based programme planning and reporting</li>
+                    <li>Improved data quality through validation</li>
+                    <li>Enhanced transparency and accountability</li>
+                    <li>Early warning signs for stockouts and outbreaks</li>
+                </ul>
+            </div></div>
+        </div>
+
     </div>
 
     <!-- Architecture — moved out of Welcome, now its own sub-page -->
@@ -3371,6 +3434,8 @@ var DIRECTORATES = [
    progs:['NMSA','LMIS']},
   {code:'DHS',   name:'Directorate of Hospital Services',
    progs:['HOSPITAL','NEMS','LAB']},
+  {code:'DHRH',  name:'Directorate of Human Resource for Health',
+   progs:[]},
 ];
 var PROG_NAMES = {
     NMDR:'National Malaria Control Programme',
@@ -3479,13 +3544,19 @@ function drawOrgLines(){
     function R(el){ var r=el.getBoundingClientRect();
         return {l:r.left-c.left, t:r.top-c.top, r:r.right-c.left, b:r.bottom-c.top, cx:(r.left+r.right)/2-c.left, cy:(r.top+r.bottom)/2-c.top}; }
     var wide=window.matchMedia('(min-width: 901px)').matches;
-    var moh=R(document.getElementById('orgMoh'));
+    var moh=R(document.getElementById('orgMoh')), dppiEl=document.getElementById('orgDppi');
     var out='<defs>'
       + '<marker id="orgArrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b5c3cf"/></marker>'
       + '<marker id="orgArrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c6793"/></marker>'
       + '</defs>';
     function path(d,live){ return '<path d="'+d+'" fill="none" stroke="'+(live?'#2c6793':'#b5c3cf')+'" stroke-width="'+(live?2.2:1.6)
         + '" stroke-linejoin="round" marker-end="url(#'+(live?'orgArrB':'orgArrG')+')"/>'; }
+    if(dppiEl){
+        var dp=R(dppiEl);
+        out+=path(wide ? 'M'+moh.cx+','+moh.b+' V'+(dp.t-1)
+                       : 'M'+(R(document.getElementById('orgDirs')).l+14)+','+moh.b+' V'+(dp.t-1), true);
+        moh=dp;   // the directorates now hang off DPPI
+    }
     var dirs=DIRECTORATES.map(function(d){ return {d:d, n:document.getElementById('od-'+d.code)}; }).filter(function(x){return x.n;});
     var dirsTop=Math.min.apply(null, dirs.map(function(x){ return R(x.n).t; }));
     var railX=R(document.getElementById('orgDirs')).l+14;
@@ -3511,7 +3582,7 @@ function showDirectorates(){
     document.getElementById('progH2').textContent='Directorate Automated Analytic Pipelines';
     document.getElementById('progSub').textContent='Choose a programme to continue';
     document.querySelector('.prog-card-wrap').classList.add('wide');
-    document.getElementById('progNote').innerHTML='Five directorates. <strong>NMCP</strong>, under '
+    document.getElementById('progNote').innerHTML='Six directorates. <strong>NMCP</strong>, under '
       + '<strong>DPC</strong>, is fully configured and connected to DHIS2. The other programmes open '
       + 'their pipeline layout so the intended structure is visible.';
     document.getElementById('dirBackBtn').style.display='none';
@@ -5054,17 +5125,5 @@ window.addEventListener('beforeinstallprompt', function(){ canPrompt = true; });
 
 </script>
 <script src="nmdr-offline.js"></script>
-<script>
-/* Pause the welcome video whenever the Welcome tab is hidden */
-(function(){
-  var tab=document.getElementById('welcome'), vid=document.getElementById('welcomeVideo');
-  if(!tab||!vid||!window.MutationObserver) return;
-  new MutationObserver(function(){
-    if(!tab.classList.contains('active')){
-      try{ vid.contentWindow.postMessage(JSON.stringify({event:'command',func:'pauseVideo',args:[]}),'*'); }catch(e){}
-    }
-  }).observe(tab,{attributes:true,attributeFilter:['class']});
-})();
-</script>
 </body>
 </html>
