@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2c6793">
+<title>NMDR Use Cases</title>
+<style>
+  /* E-learning theme: NMCP blue and gold on white, colour blind safe card accents */
+  :root{
+    --blue:#2c6793; --blue-dk:#1f4a6a; --blue-lt:#e8f0f7;
+    --bg:#f0f5f9; --surface:#ffffff; --line:#d0dde8;
+    --text:#2b3a47; --ink:#1a3a5c; --muted:#6c7a89; --faint:#8a97a3;
+    --gold:#ffc107; --focus:#ffc107;
+    --c1:#2c6793; --c2:#c98a00; --c3:#0f9d58; --c4:#8a5ea8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);line-height:1.55;min-height:100vh;
+    font-family:'Roboto','Segoe UI',Helvetica,Arial,sans-serif;display:flex;flex-direction:column;
+    -webkit-text-size-adjust:100%}
+  .wrap{width:100%;max-width:100%;margin:0;
+    padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+
+  /* Country bar */
+  .country-bar{display:none;background:var(--blue-dk);border-bottom:1px solid rgba(255,255,255,.18)}
+  .country-bar.on{display:block}
+  .country-bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:9px;padding-bottom:9px}
+  .country-bar a{color:#fff;text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center;
+    gap:7px;padding:7px 15px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12)}
+  .country-bar a:hover{background:rgba(255,255,255,.22)}
+  .country-bar a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+  .country-bar a svg{width:17px;height:17px}
+  .country-now{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:15px;color:#fff;min-width:0}
+  .country-now img{width:40px;height:27px;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.5)}
+  .country-now span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Header */
+  .top{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dk) 100%);color:#fff;
+    border-bottom:4px solid var(--gold);padding-top:env(safe-area-inset-top)}
+  .top .wrap{padding-top:16px;padding-bottom:16px}
+  .brand-row{display:flex;align-items:center;gap:18px}
+  .top img{height:76px;width:auto;object-fit:contain;background:#fff;border-radius:10px;padding:5px 8px;
+    flex:0 0 auto;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  .top img.nmcp{padding:4px}
+  .top img.icf{margin-left:auto}
+  .brand{flex:1 1 auto;min-width:0}
+  .brand h1{margin:0;font-size:30px;line-height:1.1;font-weight:700;letter-spacing:.5px;color:#fff}
+  .brand p{margin:7px 0 0;font-size:15px;font-weight:400;color:rgba(255,255,255,.85)}
+  .brand .tag{margin:7px 0 0;max-width:100ch;font-size:14.5px;font-style:normal;color:rgba(255,255,255,.85)}
+  .stats{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:14px;padding:11px 16px;
+    background:rgba(255,255,255,.12);border-radius:8px;font-size:13px;color:rgba(255,255,255,.8)}
+  .stats b{color:#fff;font-size:17px;margin-right:4px}
+
+  main{flex:1;padding:20px 0 40px}
+
+  /* Panels */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(30,70,110,.05)}
+  .panel.about{margin-bottom:20px;border-left:6px solid var(--gold)}
+  .head{background:#f7fafc;border-bottom:1px solid var(--line);padding:16px 20px}
+  .head h2{margin:0;font-size:18px;font-weight:700;color:var(--ink)}
+  .head span{display:block;margin-top:3px;color:var(--muted);font-size:13px}
+
+  /* About */
+  .about-body{padding:18px 20px 20px}
+  .nw{white-space:nowrap}
+  .icf-name{color:var(--blue);font-weight:700;font-style:normal}
+  .about-body p{margin:0 0 12px;font-size:15px;line-height:1.65;color:var(--text);max-width:110ch}
+  .points{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px;grid-template-columns:repeat(4,minmax(0,1fr))}
+  .points li{--accent:var(--c1);background:#f7fafc;border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 14px}
+  .points li.p2{--accent:var(--c2)} .points li.p3{--accent:var(--c3)} .points li.p4{--accent:var(--c4)}
+  .points b{display:block;color:var(--accent);font-size:14.5px;margin-bottom:4px}
+  .points span{display:block;color:var(--text);font-size:13.5px;line-height:1.5}
+
+  .intro{margin:8px 0 0;max-width:110ch;font-size:13.5px;line-height:1.6;color:var(--muted)}
+  .intro small{display:block;margin-top:5px;font-size:12.5px;color:var(--faint)}
+
+  /* Cards: three columns */
+  .grid{list-style:none;margin:0;padding:20px;display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid li{display:flex}
+  .card{--accent:var(--c1);width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);
+    border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:18px 19px 16px;
+    display:flex;flex-direction:column;gap:11px;cursor:pointer;min-height:236px;
+    box-shadow:0 1px 3px rgba(30,70,110,.05);
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .card.a2{--accent:var(--c2)} .card.a3{--accent:var(--c3)} .card.a4{--accent:var(--c4)}
+  @media (hover:hover){.card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 6px 18px rgba(30,70,110,.13)}}
+  .card:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+  .card .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .num{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);
+    background:var(--blue-lt);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .card.a2 .num{background:#fdf3e2} .card.a3 .num{background:#e7f6ec} .card.a4 .num{background:#f3ecf8}
+  .pill{font-size:11px;font-weight:700;padding:3px 11px;border-radius:999px;white-space:nowrap;
+    background:var(--blue-lt);color:var(--blue)}
+  .pill.on{background:#e7f6ec;color:#0b7a44}
+  .pill.doc{background:#fff4d6;color:#8a6a00}
+  .pill.off{background:#eef2f6;color:var(--muted)}
+  .card h3{margin:0;font-size:16px;line-height:1.35;font-weight:700;color:var(--ink)}
+  .card h3 .uc{color:var(--accent);font-weight:700}
+  .card p{margin:0;font-size:12.8px;color:var(--muted);flex:1;line-height:1.55}
+  .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent);color:#fff;font-weight:600;font-size:13px;padding:9px 16px;border-radius:8px;min-height:40px}
+  .go svg{width:16px;height:16px;transition:transform .2s ease}
+  @media (hover:hover){.card:hover .go svg{transform:translateX(3px)}}
+
+  /* Written up, not yet configured */
+  .card.doc .go{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+  .card.doc:hover .go{background:var(--blue-lt)}
+
+  /* Not configured yet */
+  .card.soon{border-style:dashed;border-top-style:solid;cursor:default;background:#fbfdfe}
+  .card.soon:hover{transform:none;border-color:var(--line);border-top-color:var(--accent);box-shadow:0 1px 3px rgba(30,70,110,.05)}
+  .card.soon h3{color:var(--muted)}
+  .card.soon .go{background:#fff;color:var(--muted);border:1px dashed var(--line);font-weight:600}
+
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,20px);
+    background:#fff;color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--gold);
+    padding:12px 18px;border-radius:8px;font-weight:600;font-size:14px;box-shadow:0 10px 30px rgba(20,50,80,.2);
+    opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;max-width:calc(100% - 32px);text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  footer{border-top:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px;
+    padding:14px 0 calc(14px + env(safe-area-inset-bottom));text-align:center}
+
+  /* Tablet */
+  @media (max-width:1023px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .points{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .top img{height:64px}
+    .brand h1{font-size:25px}
+    .brand .tag{font-size:14px}
+  }
+  @media (min-width:1024px) and (max-height:820px){
+    .top .wrap{padding-top:12px;padding-bottom:12px}
+    .top img{height:66px}
+    .brand h1{font-size:27px}
+    .stats{margin-top:10px}
+  }
+  /* Phone */
+  @media (max-width:639px){
+    .wrap{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+    .grid{grid-template-columns:1fr;gap:14px;padding:14px}
+    .points{grid-template-columns:1fr;gap:10px}
+    .brand-row{gap:12px;flex-wrap:wrap}
+    .brand{flex:1 1 100%;order:3}
+    .top img{height:54px;padding:4px 6px}
+    .top img.nmcp{order:1} .top img.icf{order:2}
+    .brand h1{font-size:21px;letter-spacing:.3px}
+    .brand .tag{font-size:13.5px}
+    .stats{gap:6px 16px;font-size:12.5px;padding:9px 13px}
+    .head{padding:14px}
+    .about-body{padding:14px}
+    .about-body p{font-size:14.5px}
+    main{padding:14px 0 28px}
+    .card{padding:16px;min-height:0}
+    .card:hover{transform:none}
+  }
+  @media (max-height:500px) and (orientation:landscape){
+    .top .wrap{padding-top:10px;padding-bottom:10px}
+    .brand-row{flex-wrap:nowrap}
+    .brand{order:0;flex:1 1 auto}
+    .top img{height:48px;padding:4px 6px}
+    .brand h1{font-size:20px}
+    .stats{margin-top:8px;padding:7px 12px}
+  }
+  @media (max-width:360px){
+    .top img{height:48px}
+    .brand h1{font-size:19px}
+    .card{padding:14px}
+  }
+  @media (prefers-reduced-motion:reduce){.card,.go svg,.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="country-bar" id="countryBar">
+  <div class="wrap">
+    <a href="https://informatics-consultancy-firm.github.io/NMDR-Uses/index_africa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All countries</a>
+    <div class="country-now"><img id="countryFlag" alt=""><span id="countryName"></span></div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand-row">
+      <img class="logo nmcp" src="NMCP.png" alt="National Malaria Control Programme Sierra Leone" onerror="this.remove()">
+      <div class="brand">
+        <h1>NMDR Use Cases</h1>
+        <p class="tag">A platform that turns data into clear answers that help the programme decide what to do next.</p>
+      </div>
+      <img class="logo icf" src="ICF-SL.jpg" alt="Informatics Consultancy Firm Sierra Leone" onerror="this.remove()">
+    </div>
+    <div class="stats">
+      <div><b id="total">0</b> use cases</div>
+      <div><b id="ready">0</b> live</div>
+      <div><b id="pending">0</b> written up</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="panel about" aria-labelledby="about-title">
+      <div class="head">
+        <h2 id="about-title">About the NMDR Use Cases</h2>
+      </div>
+      <div class="about-body">
+        <p><strong class="icf-name">Informatics Consultancy Firm Sierra Leone (<span class="nw">ICF-SL</span>)</strong> developed the Sierra Leone National Malaria Data Repository (NMDR) as a robust platform for decision making. With the support of the National Malaria Control Programme (NMCP), <span class="nw">ICF-SL</span> is now sharing the use cases that guided its setup, so that other countries can learn from them and build their own.</p>
+        <p>These use cases have delivered real impact. Because the system identifies issues as soon as the data arrive, teams can follow up and fix problems quickly, and this has greatly strengthened the health system. Moreover, the platform works on Android and iOS devices, which brings data to the doorstep of health staff wherever they work.</p>
+        <ul class="points">
+          <li class="p1"><b>Finds issues early</b><span>Problems in the data show up as soon as they arrive.</span></li>
+          <li class="p2"><b>Fast follow up</b><span>Teams know where to act and fix problems quickly.</span></li>
+          <li class="p3"><b>Stronger health system</b><span>Better data leads to better and faster decisions.</span></li>
+          <li class="p4"><b>Android and iOS</b><span>Data reaches health staff on the phones they carry.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="uc-title">
+      <div class="head">
+        <h2 id="uc-title">Use Cases</h2>
+        <span id="count"></span>
+        <p class="intro" id="intro"></p>
+      </div>
+      <ul class="grid" id="grid"></ul>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap" id="footerText">National Malaria Control Programme, Ministry of Health, Sierra Leone.</div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   USE CASES: all 21 from NMDR Functional Use Cases (NMCP, March 2026).
+   Each card opens its page in `url`. `live: true` marks a use case that
+   is fully configured (walkthrough and live output); the others are
+   written up only. Leave `url` empty and the card shows as Coming soon.
+   ============================================================ */
+var INTRO = "A use case describes a specific function that the National Malaria Data Repository (NMDR) should provide to meet a defined programme need. It identifies the user, the need or action, the system function that addresses that need, and the expected result. Together, the use cases define what the NMDR should be capable of doing for malaria programme management, surveillance, analysis, intervention monitoring, commodity management and decision making. <small>Source: NMDR Functional Use Cases, NMCP SM&amp;E Unit, March 2026.</small>";
+
+var USE_CASES = [
+  {"n": 1, "title": "Decentralised Access and Performance Monitoring", "desc": "Monitor performance and information for the area for which each user is responsible.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case1.html", "live": false},
+  {"n": 2, "title": "Achieving 100% Monthly Malaria Reporting for Key Malaria Variables", "desc": "Achieve complete monthly reporting of key malaria variables from every reporting facility and CHW.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case2.html", "live": true},
+  {"n": 3, "title": "Weekly eIDSR Surveillance and Commodity Monitoring", "desc": "Strengthen weekly malaria surveillance and commodity monitoring using eIDSR data.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case3.html", "live": false},
+  {"n": 4, "title": "Standardised Data Extraction and Analysis for Key Malaria Variables", "desc": "Ensure that the same malaria indicator is extracted completely and consistently by all users.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case4.html", "live": false},
+  {"n": 5, "title": "Dynamic and Interactive Malaria Performance Dashboard for Key Malaria Variables", "desc": "Explore malaria outputs and outcome indicators dynamically by indicator, period and geography.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case5.html", "live": false},
+  {"n": 6, "title": "Automated Data Quality Assessment and Performance Ranking for Key Malaria Variables", "desc": "Identify, score and prioritise malaria data quality concerns for facilities and CHWs.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case6.html", "live": false},
+  {"n": 7, "title": "Automated Detailed Disaggregated Data Analysis for Key Malaria Variables", "desc": "Generate comprehensive disaggregated malaria analysis without requiring users to perform each analytical step manually.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case7.html", "live": false},
+  {"n": 8, "title": "Automated Commodity Quantification by Facility", "desc": "Quantify RDT and ACT requirements for each facility using historical malaria data.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case8.html", "live": false},
+  {"n": 9, "title": "Quarterly Commodity Tracking and Replenishment", "desc": "Track quarterly commodity availability, consumption and requirements and support timely replenishment.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case9.html", "live": false},
+  {"n": 10, "title": "Achieving 100% Monthly Reporting for Routine Intervention Variables", "desc": "Achieve complete monthly reporting of routine malaria intervention variables.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case10.html", "live": false},
+  {"n": 11, "title": "Standardised Data Extraction and Analysis for Routine Intervention Data", "desc": "Ensure routine intervention data are extracted consistently and completely.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case11.html", "live": false},
+  {"n": 12, "title": "Dynamic and Interactive Routine Intervention Dashboard", "desc": "Monitor and explore routine intervention performance dynamically.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case12.html", "live": false},
+  {"n": 13, "title": "Automated Data Quality Assessment and Performance Ranking for Routine Interventions", "desc": "Identify and prioritise data quality concerns in routine intervention reporting.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case13.html", "live": false},
+  {"n": 14, "title": "Automated Detailed Disaggregated Analysis of Routine Interventions", "desc": "Generate detailed and disaggregated analysis of routine interventions efficiently.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case14.html", "live": false},
+  {"n": 15, "title": "Campaign Intervention Data Management, Standardisation and Dynamic Analysis (Mass ITN Distribution, School Based Distribution of ITNs, IRS)", "desc": "Manage, standardise and analyse campaign intervention data for each campaign or event.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case15.html", "live": false},
+  {"n": 16, "title": "Entomology Data Management and Analysis", "desc": "Manage and analyse entomology data by period.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case16.html", "live": false},
+  {"n": 17, "title": "Insecticide Resistance Data Management and Analysis", "desc": "Manage and analyse insecticide resistance data by period.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case17.html", "live": false},
+  {"n": 18, "title": "Survey Data Management, Analysis and Dynamic Visualisation (MIS, DHS, MICS and other relevant surveys)", "desc": "Manage, analyse and visualise malaria related survey data for selected surveys and periods.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case18.html", "live": false},
+  {"n": 19, "title": "Data Collection Tool Integrated into the NMDR", "desc": "Collect programme data through a pathway integrated with the NMDR.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case19.html", "live": false},
+  {"n": 20, "title": "Retrospective Analysis (Sub National Tailoring [SNT] and Malaria Programme Review [MPR])", "desc": "Conduct retrospective analysis for SNT and MPR.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case20.html", "live": false},
+  {"n": 21, "title": "Finance Data Management, Analysis and Reporting (Data, Dashboard and Reports)", "desc": "Manage and analyse malaria programme finance data and produce reports.", "url": "https://informatics-consultancy-firm.github.io/NMDR-Uses/use_case21.html", "live": false}
+];
+
+(function () {
+  var toast = document.getElementById('toast');
+  var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  var timer;
+
+  function esc(t) {
+    return String(t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function notify(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.remove('show'); }, 2600);
+  }
+
+  /* ---------- Country chosen on index_africa.html ---------- */
+  var params = new URLSearchParams(location.search);
+  var code = (params.get('country') || '').toLowerCase();
+  var cname = (params.get('name') || '').trim().slice(0, 60);
+  var country = /^[a-z]{2}$/.test(code) && cname ? { code: code, name: cname } : null;
+  var carry = country ? 'country=' + encodeURIComponent(code) + '&name=' + encodeURIComponent(cname) : '';
+  if (country) {
+    document.getElementById('countryBar').classList.add('on');
+    var flag = document.getElementById('countryFlag');
+    flag.onerror = function () { flag.remove(); };
+    flag.src = 'https://flagcdn.com/w80/' + code + '.png';
+    document.getElementById('countryName').textContent = cname;
+    document.getElementById('footerText').textContent = 'NMDR Use Cases for ' + cname + '.';
+    document.title = 'NMDR Use Cases: ' + cname;
+  }
+  function withCountry(url) {
+    return carry ? url + (url.indexOf('?') === -1 ? '?' : '&') + carry : url;
+  }
+
+  document.getElementById('intro').innerHTML = INTRO;
+
+  var grid = document.getElementById('grid');
+
+  var live = 0, docs = 0;
+  USE_CASES.forEach(function (uc, i) {
+    var n = uc.n || i + 1;
+    var has = !!(uc.url && uc.url.trim());
+    var state = uc.live && has ? 'live' : (has ? 'doc' : 'soon');
+    if (state === 'live') live++; else if (state === 'doc') docs++;
+    var label = 'Use Case ' + n;
+
+    var li = document.createElement('li');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    /* accents run sky blue, orange, green, purple in use case order */
+    btn.className = 'card a' + (((n - 1) % 4) + 1) + (state === 'live' ? '' : ' ' + state);
+    var pill = state === 'live' ? '<span class="pill on">Live</span>'
+             : state === 'doc' ? '<span class="pill doc">Written up</span>'
+             : '<span class="pill off">Coming soon</span>';
+    var go = state === 'live' ? 'Open use case' + ARROW
+           : state === 'doc' ? 'Read use case' + ARROW
+           : 'Not configured yet';
+    btn.setAttribute('aria-label', label + ': ' + uc.title + (state === 'live' ? ', live' : state === 'doc' ? ', written up' : ', coming soon'));
+    btn.innerHTML =
+      '<div class="row"><span class="num" aria-hidden="true">' + n + '</span>' + pill + '</div>' +
+      '<h3><span class="uc">' + esc(label) + '</span>: ' + esc(uc.title) + '</h3>' +
+      '<p>' + esc(uc.desc) + '</p>' +
+      '<span class="go">' + go + '</span>';
+
+    btn.addEventListener('click', function () {
+      if (!has) { notify(label + ' is not configured yet.'); return; }
+      var target = withCountry(uc.url);
+      if (!/^https?:$/.test(location.protocol)) { location.href = target; return; }
+      fetch(uc.url, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+        if (r.ok) location.href = target;
+        else notify(uc.url.split('/').pop() + ' is not on the site yet. Upload it to the NMDR-Uses repo.');
+      }).catch(function () { location.href = target; });
+    });
+
+    li.appendChild(btn);
+    grid.appendChild(li);
+  });
+
+  document.getElementById('count').textContent = USE_CASES.length + ' use cases, ' + live + ' live';
+  document.getElementById('total').textContent = USE_CASES.length;
+  document.getElementById('ready').textContent = live;
+  document.getElementById('pending').textContent = docs;
+})();
+</script>
+</body>
+</html>
