@@ -128,6 +128,7 @@
             padding: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.22);
         }
         .splash h1 { font-size: 27px; font-weight: 800; margin: 0; letter-spacing: .2px; }
+        .splash .splash-dppi { font-size: 14px; font-weight: 700; margin: -4px 0 4px; letter-spacing: .4px; opacity: .95; }
         .splash h2 { font-size: 16px; font-weight: 500; margin: 0; opacity: .92; }
         .splash .splash-by { font-size: 12px; opacity: .8; margin-top: 2px; }
         .splash-barwrap {
@@ -227,49 +228,50 @@
         /* ORGANOGRAM: Ministry of Health at the top, the five directorates beneath it, and the
            programmes of the chosen directorate beneath that. The arrows are drawn in one SVG
            laid over the chart and redrawn whenever the chart changes size or a branch opens. */
-        .org-chart { position: relative; margin: 4px 0 6px; text-align: left; }
+        .org-chart { position: relative; margin: 0 0 6px; text-align: left; }
         .org-lines { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 0; }
-        .org-top { display: flex; justify-content: center; margin-bottom: 40px; }
+        .org-top { display: flex; justify-content: center; margin-bottom: 30px; }
         /* the logo replaces the ICF mark and the Ministry title, and sits tighter to the top */
-        .org-brand { display: grid; grid-template-columns: 80px 1fr 80px; align-items: center; margin: 0 0 14px; padding: 0 10px; }
-        .org-brand img { height: 72px; width: auto; display: block; }
+        .org-brand { display: grid; grid-template-columns: 110px 1fr 110px; align-items: center; margin: 0 0 -18px; padding: 0 10px; }
+        /* the negative margin lets MoH rise into the empty space beside the logo, so the prompt and MoH sit close */
+        .org-brand img { height: 100px; width: auto; display: block; }
         .org-brand-mid { text-align: center; }
         .prog-card-wrap .org-brand h2 { margin-bottom: 2px; font-size: 18px; font-weight: 700; }
         .prog-card-wrap .org-brand p { margin-bottom: 0; }
         /* no side padding on the landing card, so the chart runs edge to edge */
         .prog-card-wrap.wide { padding: 14px 0 16px; }
         .org-credit { font-size: 11.5px; font-weight: 700; color: var(--blue); margin-top: 10px; letter-spacing: .3px; }
-        .prog-card-wrap #progSub { margin-bottom: 14px; }
+        .prog-card-wrap #progSub { margin-bottom: 0; }
         /* DPPI sits between the Ministry and the five directorates */
-        .org-node.org-dppi { cursor: default; background: #3a7fb3; border-color: #3a7fb3; min-width: 280px; height: auto; padding: 12px 22px; }
+        .org-node.org-dppi { cursor: default; background: #3a7fb3; border-color: #3a7fb3; min-width: 230px; height: auto; padding: 8px 16px; }
         .org-node.org-dppi:hover { box-shadow: none; border-color: #3a7fb3; }
         .org-dppi .org-abbr { color: #fff; }
         .org-dppi .org-name { color: rgba(255,255,255,.92); }
         .org-node {
             position: relative; z-index: 1; background: #fff;
-            border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px;
+            border: 2px solid var(--border); border-radius: 10px; padding: 7px 10px;
             cursor: pointer; text-align: center; box-sizing: border-box;
             /* every directorate and programme card is the same size, so the chart reads as a grid */
-            height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: box-shadow .12s ease, border-color .12s ease, background .12s ease;
         }
         .org-node:hover { box-shadow: 0 6px 18px rgba(0,0,0,.13); border-color: var(--blue); }
         .org-node:focus-visible { outline: 3px solid rgba(44,103,147,.35); outline-offset: 2px; }
-        .org-abbr { font-size: 18px; font-weight: 800; color: var(--blue); letter-spacing: .4px; }
-        .org-name { font-size: 11px; color: #5b6b7a; line-height: 1.35; margin-top: 3px; }
+        .org-abbr { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: .4px; }
+        .org-name { font-size: 10px; color: #5b6b7a; line-height: 1.3; margin-top: 2px; }
         .org-count { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #9aa7b2; margin-top: 6px; }
-        .org-moh { background: var(--blue-dk); border-color: var(--blue-dk); cursor: default; min-width: 280px; height: auto; padding: 14px 24px; }
+        .org-moh { background: var(--blue-dk); border-color: var(--blue-dk); cursor: default; min-width: 230px; height: auto; padding: 9px 18px; }
         .org-moh:hover { box-shadow: none; }
-        .org-moh .org-abbr { color: #fff; font-size: 20px; }
-        .org-moh .org-name { color: rgba(255,255,255,.9); font-size: 12px; }
-        .org-dirs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: start; padding-right: 10px; }
+        .org-moh .org-abbr { color: #fff; font-size: 17px; }
+        .org-moh .org-name { color: rgba(255,255,255,.9); font-size: 11px; }
+        .org-dirs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; align-items: start; padding-right: 10px; }
         .org-dir { cursor: default; background: var(--blue); border-color: var(--blue); }
         .org-dir:hover { box-shadow: none; border-color: var(--blue); }
         .org-dir .org-abbr { color: #fff; }
         .org-dir .org-name { color: rgba(255,255,255,.9); }
         .org-col { padding-left: 22px; }
-        .org-kids { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; }
-        .org-prog .org-abbr { font-size: 14.5px; }
+        .org-kids { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; }
+        .org-prog .org-abbr { font-size: 13px; }
         .org-flag {
             display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase;
             letter-spacing: .4px; padding: 2px 8px; border-radius: 10px;
@@ -280,15 +282,18 @@
         /* Below 900px the tree turns on its side: directorates stack down the page, hanging off
            a rail from the Ministry, and programmes hang off their own rail beneath each one. */
         @media (max-width: 900px) {
-            .org-top { display: block; margin-bottom: 22px; }
+            .org-chart { padding: 0 12px; }
+            .org-top { display: block; margin-bottom: 16px; }
+            .org-dirs { padding-right: 0; }
             .org-node.org-dppi { width: 100%; min-width: 0; }
-            .org-brand { grid-template-columns: 52px 1fr 52px; }
-            .org-brand img { height: 48px; }
+            .org-brand { grid-template-columns: 68px 1fr 68px; margin-bottom: 10px; }
+            .org-brand img { height: 64px; }
             .prog-card-wrap .org-brand h2 { font-size: 14px; }
             .prog-card-wrap.wide { padding: 12px 0 14px; }
             .org-moh { width: 100%; min-width: 0; }
-            .org-dirs { grid-template-columns: 1fr; gap: 14px; padding-left: 34px; }
-            .org-node { height: 76px; }
+            .org-dirs { grid-template-columns: 1fr; gap: 10px; padding-left: 30px; }
+            .org-node { height: 58px; }
+            .org-kids { gap: 7px; padding-top: 8px; }
             .org-moh { height: auto; }
         }
 
@@ -362,6 +367,18 @@
         .role-btn.district  { background: #2c6e5c; color: white; }
         .role-btn.chiefdom  { background: #b4652c; color: white; }
         .role-btn.phu       { background: #6c7a89; color: white; }
+        .role-btn.datacollector { background: #2a6f7a; color: white; grid-column: 1 / -1; }
+        .role-btn.icfsl     { background: #2a6f7a; color: white; }
+        .role-btn.chai      { background: #5b4a8b; color: white; }
+        .role-btn.crs       { background: #8a3b3b; color: white; }
+        .role-btn.pmi       { background: #3d6b2f; color: white; }
+        .role-btn.picked    { outline: 3px solid rgba(0,0,0,.22); outline-offset: 2px; }
+        /* Sign in: Ministry of Health / Partners tabs */
+        .login-tabs { display: flex; gap: 4px; background: var(--blue-lt); border-radius: 12px; padding: 4px; margin: 0 0 16px; }
+        .login-tab { flex: 1; border: none; background: transparent; color: var(--blue-dk); font-family: inherit; font-size: 14px; font-weight: 600; padding: 11px 12px; border-radius: 9px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+        .login-tab:hover { background: rgba(44,103,147,0.08); }
+        .login-tab.active { background: var(--blue); color: white; box-shadow: 0 2px 8px rgba(31,74,106,0.25); }
+        .login-tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
         .role-btn.admin-btn { background: #1a3a5c; color: white; width: 100%; font-size: 13px; padding: 12px; border-radius: 10px; }
         .role-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); filter: brightness(1.08); }
 
@@ -758,6 +775,7 @@
         <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone" onerror="this.style.display='none'">
     </div>
     <h1>Ministry of Health, Sierra Leone</h1>
+    <div class="splash-dppi">Directorate of Policy, Planning and Information (DPPI)</div>
     <h2>Directorate Automated Analytic Pipelines</h2>
     <div class="splash-by">Developed with Informatics Consultancy Firm &middot; Sierra Leone</div>
     <div class="splash-barwrap"><div class="splash-bar" id="splashBar"></div></div>
@@ -770,7 +788,8 @@
         <img src="icon-192.png" alt="NMDR" class="inst-logo"
              onerror="this.src='mohlogo.png';this.onerror=null;">
         <h1>Install NMDR</h1>
-        <h2>Ministry of Health, Sierra Leone</h2>
+        <h2 style="margin-bottom:2px">Ministry of Health, Sierra Leone</h2>
+        <h2 style="font-size:12.5px;font-weight:700">Directorate of Policy, Planning and Information (DPPI)</h2>
         <button class="inst-btn" id="nmdrInstall" type="button">Install the app</button>
         <button class="inst-btn later" id="instLater" type="button">Continue to the sign in</button>
     </div>
@@ -1853,7 +1872,7 @@ var ACCESS_KEY = 'icf_staff_access_v1';
 
 var NMDR_TABS = [
   { section: "Home", subs: [
-    { label: "Home", tabs: [["welcome","Welcome"], ["architecture","NMDR Architecture and Data Flow"], ["use-cases","NMDR Navigation"]] },
+    { label: "Home", tabs: [["welcome","Welcome"], ["architecture","NMDR Architecture and Data Flow"], ["use-cases","NMDR Navigation"], ["who-use-cases","NMDR Use Cases"], ["e-learning","E-learning Modules"]] },
   ]},
   { section: "1.0 Malaria Surveillance", subs: [
     { label: "1.0.1.1 HMIS (Monthly)", tabs: [["hmis-extraction","1.0.1.1.1 Data Extraction"], ["hmis-epi-dashboard","1.0.1.1.2 Malaria Epi Dashboard"]] },
@@ -2569,7 +2588,7 @@ function doRemove(id){
     <div class="prog-card-wrap">
         <!-- Ministry of Health logo on the left, title and prompt beside it in one short row -->
         <div class="org-brand">
-            <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone" onerror="this.style.visibility='hidden'">
+            <img src="mohlogo.png" alt="Ministry of Health, Sierra Leone" onerror="this.style.display='none'">
             <div class="org-brand-mid">
                 <h2 id="progH2">Directorate Automated Analytic Pipelines</h2>
                 <p id="progSub">Choose a directorate to continue</p>
@@ -2675,20 +2694,38 @@ function doRemove(id){
                 <img src="mohlogo.png" alt="Ministry of Health Sierra Leone" style="width:90px;height:auto;border-radius:50%;">
             </div>
         </div>
-        <h1>Welcome to NMCP</h1>
-        <h2>Sign in</h2>
-        <p>Type your password. The portal reads what you may open from the staff database.</p>
-        <div id="passwordArea" class="password-input" style="display:block">
-            <input type="text"     id="roleUsername" style="display:none" tabindex="-1" aria-hidden="true">
+        <h1>Welcome to NMDR</h1>
+        <h2>Who are you?</h2>
+        <p>Select your role to access the National Malaria Data Repository</p>
+        <div class="login-tabs" role="tablist" aria-label="Sign in as">
+            <button type="button" class="login-tab active" data-group="moh" role="tab" aria-selected="true" aria-controls="mohRoles">Ministry of Health</button>
+            <button type="button" class="login-tab" data-group="partners" role="tab" aria-selected="false" aria-controls="partnerRoles">Partners</button>
+        </div>
+        <div class="role-buttons" id="mohRoles" role="tabpanel">
+            <button class="role-btn national" data-role="national">National Staff</button>
+            <button class="role-btn district"  data-role="district">District Staff</button>
+            <button class="role-btn chiefdom"  data-role="chiefdom">Chiefdom Supervisor</button>
+            <button class="role-btn phu"       data-role="phu">PHU Staff</button>
+            <button class="role-btn datacollector" data-role="datacollector">Data Collector</button>
+        </div>
+        <div class="role-buttons" id="partnerRoles" role="tabpanel" style="display:none;">
+            <button class="role-btn icfsl" data-role="icfsl">ICF-SL</button>
+            <button class="role-btn chai"  data-role="chai">CHAI</button>
+            <button class="role-btn crs"   data-role="crs">CRS</button>
+            <button class="role-btn pmi"   data-role="pmi">PMI Evolve</button>
+        </div>
+        <button class="role-btn admin-btn" data-role="admin" style="margin-top:4px">&#128274; Admin</button>
+        <div id="passwordArea" class="password-input">
+            <input type="text"     id="roleUsername" placeholder="Username" style="display:none" autocomplete="username">
             <div class="pw-wrap">
-                <input type="password" id="rolePassword" placeholder="Your password" autocomplete="current-password">
+                <input type="password" id="rolePassword" placeholder="Enter password" autocomplete="current-password">
                 <button type="button" class="pw-eye" onclick="togglePw(this,'rolePassword')"
                         aria-label="Show or hide the password" title="Show or hide the password">
                     <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     <svg class="eye-shut" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                 </button>
             </div>
-            <button id="submitRolePassword">Sign in</button>
+            <button id="submitRolePassword">Verify and Access</button>
             <div id="passwordError" class="access-denied"></div>
         </div>
         <button class="prog-back-btn" id="staffDirBtn" onclick="openStaffDirectory()"
@@ -2752,8 +2789,12 @@ function doRemove(id){
                 <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="nav-group-children open" id="children-welcome">
+                <button class="nav-child nav-l2" data-tab="welcome">Overview</button>
+                <button class="nav-child nav-l2" data-tab="welcome-text">Background</button>
                 <button class="nav-child nav-l2" data-tab="architecture">NMDR Architecture &amp; Data Flow</button>
                 <button class="nav-child nav-l2" data-tab="use-cases">NMDR Navigation</button>
+                <button class="nav-child nav-l2" data-tab="who-use-cases">NMDR Use Cases</button>
+                <button class="nav-child nav-l2" data-tab="e-learning">E-learning Modules</button>
             </div>
         </div>
 
@@ -3107,6 +3148,23 @@ function doRemove(id){
 
     <!-- WELCOME -->
     <div id="welcome" class="tab-content active">
+        <!-- NMDR Introduction video. Paste the YouTube link into WELCOME_VIDEO_URL in the script;
+             the block stays hidden until a link is set. -->
+        <div class="slides-container" id="welcomeVideo" style="display:none;">
+            <div class="slides-ratio-wrap">
+                <iframe id="welcomeVideoFrame" src="" title="NMDR Introduction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div style="padding:9px 16px;text-align:center;font-size:12.5px;color:var(--muted);">
+                If the video does not play here, <a id="welcomeVideoLink" href="#" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;text-decoration:none;">watch it on YouTube</a>
+            </div>
+        </div>
+        <div class="slides-container" id="welcomeVideoEmpty" style="padding:40px 20px;text-align:center;color:var(--muted);font-size:13px;">
+            The NMDR Introduction video will appear here.
+        </div>
+    </div>
+
+    <!-- Welcome Background: the banner and the About the Repository cards, split out from the Overview video -->
+    <div id="welcome-text" class="tab-content">
         <div class="hero">
             <div class="hero-tag">Sierra Leone NMCP</div>
             <h1>National Malaria Control Programme</h1>
@@ -3191,6 +3249,16 @@ function doRemove(id){
     <!-- Navigation — moved out of Welcome, now its own sub-page -->
     <div id="use-cases" class="tab-content">
         <div class="iframe-pane"><iframe id="frame-use-cases" src="" data-src="navigation.html" loading="lazy" allow="fullscreen"></iframe></div>
+    </div>
+
+    <!-- NMDR Use Cases -->
+    <div id="who-use-cases" class="tab-content">
+        <div class="iframe-pane"><iframe id="frame-who-use-cases" src="" data-src="use_cases.html" loading="lazy" allow="fullscreen"></iframe></div>
+    </div>
+
+    <!-- E-learning modules -->
+    <div id="e-learning" class="tab-content">
+        <div class="iframe-pane"><iframe id="frame-e-learning" src="" data-src="e_learning.html" loading="lazy" allow="fullscreen"></iframe></div>
     </div>
 
     <!-- M&E — DQA tab -->
@@ -3553,8 +3621,7 @@ function drawOrgLines(){
         + '" stroke-linejoin="round" marker-end="url(#'+(live?'orgArrB':'orgArrG')+')"/>'; }
     if(dppiEl){
         var dp=R(dppiEl);
-        out+=path(wide ? 'M'+moh.cx+','+moh.b+' V'+(dp.t-1)
-                       : 'M'+(R(document.getElementById('orgDirs')).l+14)+','+moh.b+' V'+(dp.t-1), true);
+        out+=path('M'+moh.cx+','+moh.b+' V'+(dp.t-1), true);   // straight down the middle on every screen
         moh=dp;   // the directorates now hang off DPPI
     }
     var dirs=DIRECTORATES.map(function(d){ return {d:d, n:document.getElementById('od-'+d.code)}; }).filter(function(x){return x.n;});
@@ -3759,9 +3826,7 @@ function goMainMenu(){
     try{
         currentUserRole=null; selectedRole=null;
         document.querySelectorAll('iframe[data-src]').forEach(function(f){ f.src=''; });
-        var pa=document.getElementById('passwordArea'); if(pa)pa.style.display='block';
-        var pw=document.getElementById('rolePassword'); if(pw)pw.value='';
-        var pe=document.getElementById('passwordError'); if(pe)pe.style.display='none';
+        try{ nmcpLoginTab('moh'); }catch(e2){}
         var rm=document.getElementById('roleModal'); if(rm)rm.style.display='none';
         var pp=document.getElementById('progPortal'); if(pp)pp.classList.remove('open');
         var ps=document.getElementById('progSignin'); if(ps)ps.style.display='none';
@@ -3781,8 +3846,9 @@ function backToProgrammes(){
     /* Going back must not leave a half finished sign in behind: clear the chosen role,
        the typed password and any error, so returning to NMDR starts clean. */
     if(typeof selectedRole!=='undefined')selectedRole=null;
+    try{ nmcpLoginTab('moh'); }catch(e){}
     var pwArea=document.getElementById('passwordArea');
-    if(pwArea)pwArea.style.display='block';
+    if(pwArea)pwArea.style.display='none';
     var pw=document.getElementById('rolePassword');
     if(pw)pw.value='';
     var user=document.getElementById('roleUsername');
@@ -3830,7 +3896,11 @@ function applySession(ses){
     var rm=document.getElementById('roleModal');    if(rm)rm.style.display='none';
     var ps=document.getElementById('progSignin');   if(ps)ps.style.display='none';
 
-    if (ses.kind === 'staff' && ses.person && ses.person.tabs && ses.person.tabs.length){
+    if (ses.kind === 'role' && ses.role && roleAccess[ses.role]){
+        staffAccount = null;
+        enableTabsForRole(ses.role);
+        paintSignedAs();
+    } else if (ses.kind === 'staff' && ses.person && ses.person.tabs && ses.person.tabs.length){
         staffAccount = ses.person;
         roleAccess.staffaccount = ses.person.tabs.slice();
         enableTabsForRole('staffaccount');
@@ -4142,9 +4212,43 @@ function signInStaffMember(p){
   paintSignedAs();
 }
 
+function signInRole(role){
+  staffAccount = null;
+  saveSession({ kind: 'role', programme: 'NMDR', role: role });
+  enableTabsForRole(role);
+  paintSignedAs();
+}
+
+/* Ministry of Health / Partners tabs. Switching clears any half finished sign in so a
+   password typed for one role is never checked against another. */
+function nmcpLoginTab(group) {
+  document.querySelectorAll('#roleModal .login-tab').forEach(function(t){
+    var on = t.getAttribute('data-group') === group;
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.getElementById('mohRoles').style.display     = (group === 'moh')      ? '' : 'none';
+  document.getElementById('partnerRoles').style.display = (group === 'partners') ? '' : 'none';
+  selectedRole = null;
+  document.querySelectorAll('#roleModal .role-btn').forEach(function(b){ b.classList.remove('picked'); });
+  document.getElementById('passwordArea').style.display  = 'none';
+  document.getElementById('passwordError').style.display = 'none';
+  document.getElementById('rolePassword').value = '';
+  var u = document.getElementById('roleUsername');
+  u.value = ''; u.style.display = 'none';
+}
+document.querySelectorAll('#roleModal .login-tab').forEach(function(t){
+  t.addEventListener('click', function(){ nmcpLoginTab(this.getAttribute('data-group')); });
+});
+
 function paintSignedAs(){
   var el = document.getElementById('signedAs');
   if (!el) return;
+  if (!staffAccount && currentUserRole && ROLE_LABELS[currentUserRole]){
+    el.innerHTML = 'Signed in as <b>' + ROLE_LABELS[currentUserRole] + '</b>';
+    el.style.display = 'block';
+    return;
+  }
   if (staffAccount){
     var clean = function(t){ return String(t || '').replace(/[<>]/g, ''); };
     el.innerHTML = 'Signed in as <b>' + clean(staffAccount.name) + '</b><br>' +
@@ -4186,8 +4290,19 @@ var rolePasswords = {
     district: 'District@2026',
     chiefdom: 'Chiefdom@2026',
     phu:      'Phu@2026',
+    datacollector: 'ds@2026',
+    icfsl:    'ICF@2026',
+    chai:     'CHAI@2026!',
+    crs:      'CRS@2026$',
+    pmi:      'PMI@2026#',
     admin:    'admin'
 };
+
+/* Partner sign ins. Partners see only the Welcome page and the Data Collection Tools. */
+var PARTNER_NAMES = { icfsl: 'ICF-SL', chai: 'CHAI', crs: 'CRS', pmi: 'PMI Evolve' };
+var ROLE_LABELS   = { national: 'National Staff', district: 'District Staff', chiefdom: 'Chiefdom Supervisor',
+                      phu: 'PHU Staff', datacollector: 'Data Collector', admin: 'Admin',
+                      icfsl: 'ICF-SL', chai: 'CHAI', crs: 'CRS', pmi: 'PMI Evolve' };
 
 var DMAT_TABS = ['dmat-dqa','dmat-reporting','dmat-suspected','dmat-tested',
                  'dmat-confirmed','dmat-treated','dmat-confirmed-not-treated',
@@ -4226,6 +4341,11 @@ var roleAccess = {
     phu:      ['welcome','architecture','use-cases','me-dqa','me-detailed']
                .concat(ME_SUMMARY_TABS).concat(ME_DETAIL_TABS)
                .concat(MALARIA_EPI_TABS).concat(TES_TABS),
+    datacollector: ['welcome'].concat(DCT_TABS),
+    icfsl:    ['welcome'].concat(DCT_TABS),
+    chai:     ['welcome'].concat(DCT_TABS),
+    crs:      ['welcome'].concat(DCT_TABS),
+    pmi:      ['welcome'].concat(DCT_TABS),
     admin:    ['welcome','architecture','use-cases','me-dqa','me-detailed',
                'user-guide','bulletins','mpd','survey-data','survey-report',
                'analytics-training','gf-plan','partners-mapping','world-malaria-day','population-estimate','performance-framework','archive','other-trend-allages','other-trend-u5',
@@ -4237,6 +4357,12 @@ var roleAccess = {
 
 function enableTabsForRole(role) {
     currentUserRole = role;
+    /* Welcome is split into Overview (the welcome tab) and Background, and carries the use cases
+       and the e-learning modules: anyone who may open Welcome may open all of them */
+    if (roleAccess[role] && roleAccess[role].indexOf('welcome') !== -1)
+        ['welcome-text','who-use-cases','e-learning'].forEach(function(t){
+            if (roleAccess[role].indexOf(t) === -1) roleAccess[role].push(t);
+        });
     var allowed = {};
     (roleAccess[role] || []).forEach(function(t){ allowed[t] = true; });
     document.getElementById('roleModal').style.display = 'none';
@@ -4271,6 +4397,21 @@ function enableTabsForRole(role) {
         if (label && label.classList.contains('nav-section-label')) label.style.display = visible ? '' : 'none';
     });
 
+    /* Data collectors and partners only have this one group, so open it for them.
+       The else branch matters because logging out reopens the modal without
+       reloading the page, so the next role must not inherit an open dropdown. */
+    var dct = document.getElementById('dctChildren'), chev = document.getElementById('dctChevron'), dctBtn = document.getElementById('dctToggle');
+    if (role === 'datacollector' || PARTNER_NAMES[role]) {
+        try { openGroup('resources'); } catch(e){}
+        if (dct)    dct.style.maxHeight = '2000px';
+        if (chev)   chev.style.transform = 'rotate(180deg)';
+        if (dctBtn) dctBtn.classList.add('active');
+    } else {
+        if (dct)    dct.style.maxHeight = '0px';
+        if (chev)   chev.style.transform = '';
+        if (dctBtn) dctBtn.classList.remove('active');
+    }
+
     // First successful login this page load: if the URL was opened with a #tool link
     // (shared or bookmarked), jump straight into that tool now that a role is set.
     if (!hashOpenedOnLoad) {
@@ -4279,9 +4420,10 @@ function enableTabsForRole(role) {
     }
 }
 
-document.querySelectorAll('.role-btn').forEach(function(btn){
+document.querySelectorAll('#roleModal .role-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
         selectedRole = this.getAttribute('data-role');
+        document.querySelectorAll('#roleModal .role-btn').forEach(function(b){ b.classList.toggle('picked', b === btn); });
         var pwArea     = document.getElementById('passwordArea');
         var usernameEl = document.getElementById('roleUsername');
         var pwEl       = document.getElementById('rolePassword');
@@ -4291,17 +4433,33 @@ document.querySelectorAll('.role-btn').forEach(function(btn){
         pwEl.value               = '';
         usernameEl.style.display = (selectedRole === 'admin') ? 'block' : 'none';
         usernameEl.value         = '';
-        pwEl.placeholder         = (selectedRole === 'admin') ? 'Password' : 'Password for ' + selectedRole + ' staff';
+        pwEl.placeholder         = (selectedRole === 'admin') ? 'Password'
+                                   : (selectedRole === 'datacollector') ? 'Password for data collectors'
+                                   : PARTNER_NAMES[selectedRole] ? 'Password for ' + PARTNER_NAMES[selectedRole]
+                                   : 'Password for ' + selectedRole + ' staff';
+        (selectedRole === 'admin' ? usernameEl : pwEl).focus();
     });
 });
 
 function verifyPassword() {
+    if (!selectedRole) return;
     var pw    = document.getElementById('rolePassword').value;
+    var user  = document.getElementById('roleUsername').value;
     var errEl = document.getElementById('passwordError');
 
     if (!pw){
         errEl.textContent   = 'Type your password.';
         errEl.style.display = 'block';
+        return;
+    }
+
+    /* the password for the chosen role */
+    var roleOk = (selectedRole === 'admin') ? (user === 'admin' && pw === rolePasswords.admin)
+                                            : (pw === rolePasswords[selectedRole]);
+    if (roleOk){
+        errEl.style.display = 'none';
+        document.getElementById('rolePassword').value = '';
+        signInRole(selectedRole);
         return;
     }
 
@@ -4320,6 +4478,10 @@ function verifyPassword() {
         if (err || !people){
             /* name each source and what it said, so the cause is visible
                rather than guessed at */
+            /* the staff database could not be reached, so the role password is all that counts */
+            errEl.textContent = 'Incorrect credentials. Access denied.';
+            document.getElementById('rolePassword').value = '';
+            return;
             var detail = (err && err.message) ? err.message : '';
             errEl.innerHTML = 'No staff password could be checked, so only the general password works for now.' +
                               (detail ? '<br><br><span style="font-size:11.5px;opacity:.85;">' + detail.replace(/[<>]/g, '') + '</span>' : '') +
@@ -4339,7 +4501,7 @@ function verifyPassword() {
         if (!hit) hit = matches[0] || null;
 
         if (!hit){
-            errEl.textContent = 'That password is not in the staff database. Access denied.';
+            errEl.textContent = 'Incorrect credentials. Access denied.';
             document.getElementById('rolePassword').value = '';
             return;
         }
@@ -4366,6 +4528,17 @@ document.getElementById('psPassword').addEventListener('keydown', function(e){
     if (e.key === 'Enter'){ e.preventDefault(); psVerify(); }
 });
 document.getElementById('rolePassword').addEventListener('keypress', function(e){ if(e.key==='Enter') verifyPassword(); });
+
+/* WELCOME VIDEO: accepts any YouTube link form (watch?v=, youtu.be/, embed/, shorts/) */
+var WELCOME_VIDEO_URL = '';
+(function(){
+    var m = String(WELCOME_VIDEO_URL).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+    if (!m) return;
+    document.getElementById('welcomeVideoFrame').src = 'https://www.youtube.com/embed/' + m[1] + '?rel=0';
+    document.getElementById('welcomeVideoLink').href = 'https://www.youtube.com/watch?v=' + m[1];
+    document.getElementById('welcomeVideo').style.display = '';
+    document.getElementById('welcomeVideoEmpty').style.display = 'none';
+})();
 
 /* DASHBOARD ENDPOINT + DQA LOADER */
 const DV_GAS = 'https://script.google.com/macros/s/AKfycbyTprTce5ft5gxSwY7jOku2GNeKMG8V-X1BrY0jB3QDPyuVWXwFPNr_CH80BRfcLcwD/exec';
@@ -4515,7 +4688,7 @@ function renderMeDqaPage(host, result){
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
 var pageLabelMap = {
-    'welcome':'Welcome','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','me-dqa':'M&E · DQA',
+    'welcome':'Welcome · Overview','welcome-text':'Welcome · Background','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','who-use-cases':'NMDR Use Cases','e-learning':'E-learning Modules','me-dqa':'M&E · DQA',
     'me-summary-epi':'Detailed · Malaria Epi (Summary)',
     'me-summary-int':'Detailed · Intervention (Summary)',
     'me-summary-stock':'Detailed · Stock (Summary)',
@@ -4957,9 +5130,7 @@ document.getElementById('logoutBtn').addEventListener('click',function(){
     document.getElementById('meDqaFrame').style.display='none';
     document.getElementById('meDqaStats').style.display='none';
     document.getElementById('meDqaIframe').srcdoc='';
-    document.getElementById('passwordArea').style.display='block';
-    document.getElementById('rolePassword').value='';
-    document.getElementById('passwordError').style.display='none';
+    nmcpLoginTab('moh');
     document.getElementById('roleModal').style.display='flex';
     document.body.style.overflow='hidden';
     closeHmisFrame();
