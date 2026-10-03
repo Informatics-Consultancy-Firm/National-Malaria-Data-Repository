@@ -425,36 +425,32 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
 <div class="tab-page active" id="tab-entry">
 <div class="form-title">FORM A: General Hospital Information</div>
 
-<!-- 1 to 5: which hospital -->
+<!-- 1 to 4: which hospital -->
 <div class="demographics">
   <h3>HOSPITAL IDENTIFICATION</h3>
   <div class="site-note" id="siteNote"></div>
   <div class="question-row">
-    <div class="question-text">1. Region <span class="required-star">*</span></div>
-    <select class="form-select" id="regionSelect" onchange="onRegion()">
-      <option value="">Select region...</option>
-    </select>
-  </div>
-  <div class="question-row">
-    <div class="question-text">2. District <span class="required-star">*</span></div>
+    <div class="question-text">1. District <span class="required-star">*</span></div>
     <select class="form-select" id="districtSelect" onchange="onDistrictPick()">
-      <option value="">Select region first</option>
+      <option value="">Select district...</option>
     </select>
   </div>
   <div class="question-row">
-    <div class="question-text">3. Chiefdom / Zone / City <span class="required-star">*</span></div>
-    <input class="form-input" id="citySelect" type="text" placeholder="e.g. Bo City">
+    <div class="question-text">2. Chiefdom <span class="required-star">*</span></div>
+    <select class="form-select" id="citySelect" onchange="onChiefdomPick()" disabled>
+      <option value="">Select district first</option>
+    </select>
   </div>
   <div class="question-row">
-    <div class="question-text">4. Name of Hospital <span class="required-star">*</span></div>
+    <div class="question-text">3. Name of Hospital <span class="required-star">*</span></div>
     <select class="form-select" id="hospitalSelect" onchange="onHospitalPick()">
-      <option value="">Select district first</option>
+      <option value="">Select chiefdom first</option>
     </select>
     <input class="form-input" id="hospital_other" type="text" placeholder="If Other, type the hospital name"
            style="display:none;margin-top:8px;">
   </div>
   <div class="question-row">
-    <div class="question-text">5. Hospital Ownership <span class="required-star">*</span></div>
+    <div class="question-text">4. Hospital Ownership <span class="required-star">*</span></div>
     <div class="options-group-vertical" id="ownership_group">
       <label class="radio-option-vertical"><input type="radio" name="ownership" value="Government"> Government</label>
       <label class="radio-option-vertical"><input type="radio" name="ownership" value="Private"> Private</label>
@@ -464,28 +460,28 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
   </div>
 </div>
 
-<!-- 6 to 11: who we spoke to -->
+<!-- 5 to 10: who we spoke to -->
 <div class="section-card">
   <div class="card-header">HOSPITAL LEADERSHIP AND RESPONDENT</div>
   <div class="card-body">
-    <div class="question-row"><div class="question-text">6. Name of Head of Hospital <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">5. Name of Head of Hospital <span class="required-star">*</span></div>
       <input class="form-input" id="head_name" type="text" placeholder="Full name">
     </div>
-    <div class="question-row"><div class="question-text">7. Designation of Head of Hospital <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">6. Designation of Head of Hospital <span class="required-star">*</span></div>
       <input class="form-input" id="head_designation" type="text" placeholder="e.g. Medical Superintendent">
     </div>
-    <div class="question-row"><div class="question-text">8. Contact of Head of Hospital (9 digits) <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">7. Contact of Head of Hospital (9 digits) <span class="required-star">*</span></div>
       <input class="form-input" id="head_phone" type="tel" placeholder="099177283" maxlength="9"
              oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,9)">
     </div>
-    <div class="question-row"><div class="question-text">9. Name of Respondent <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">8. Name of Respondent <span class="required-star">*</span></div>
       <input class="form-input" id="respondent_name" type="text" placeholder="Full name">
     </div>
-    <div class="question-row"><div class="question-text">10. Contact of Respondent (9 digits) <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">9. Contact of Respondent (9 digits) <span class="required-star">*</span></div>
       <input class="form-input" id="respondent_phone" type="tel" placeholder="099177283" maxlength="9"
              oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,9)">
     </div>
-    <div class="question-row"><div class="question-text">11. Date of Visit <span class="required-star">*</span></div>
+    <div class="question-row"><div class="question-text">10. Date of Visit <span class="required-star">*</span></div>
       <input class="form-input" id="visit_date" type="date">
     </div>
   </div>
@@ -496,7 +492,7 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
   <div class="card-header">CLINICAL MENTORS / SUPERVISORS</div>
   <div class="card-body">
     <div class="question-row">
-      <div class="question-text">12. Number of clinical mentors / supervisors on this visit <span class="required-star">*</span></div>
+      <div class="question-text">11. Number of clinical mentors / supervisors on this visit <span class="required-star">*</span></div>
       <input class="form-input" id="supervisor_count" type="number" min="1" max="10" step="1" placeholder="Type a number" oninput="onSupervisorCountInput()">
       <div class="count-note" id="supervisor_count_note"></div>
       <div class="count-hint" id="supervisor_count_hint">Type the number and one card will open for each mentor.</div>
@@ -510,7 +506,7 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
   <div class="card-header">HOSPITAL STAFF ENGAGED</div>
   <div class="card-body">
     <div class="question-row">
-      <div class="question-text">13. Number of hospital staff engaged <span class="required-star">*</span></div>
+      <div class="question-text">12. Number of hospital staff engaged <span class="required-star">*</span></div>
       <input class="form-input" id="staff_count" type="number" min="1" max="30" step="1" placeholder="Type a number" oninput="onStaffCountInput()">
       <div class="count-note" id="staff_count_note"></div>
       <div class="count-hint" id="staff_count_hint">Type the number and one card will open for each staff member engaged.</div>
@@ -524,7 +520,7 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
   <div class="card-header">SUBMITTED BY</div>
   <div class="card-body">
     <div class="question-row" style="margin-bottom:0;">
-      <div class="question-text">14. Submitted by</div>
+      <div class="question-text">13. Submitted by</div>
       <div id="submittedByPanel" class="submitted-by"></div>
     </div>
   </div>
@@ -535,7 +531,7 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
   <div class="card-header">LOCATION</div>
   <div class="card-body">
     <div class="question-row" style="margin-bottom:0;">
-      <div class="question-text">15. GPS position of the hospital</div>
+      <div class="question-text">14. GPS position of the hospital</div>
       <div id="gpsPanel" class="gps-panel"></div>
       <button class="btn-tool" style="margin-top:10px;" onclick="captureGps(true)"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="11" r="2.5"/></svg>CAPTURE AGAIN</button>
     </div>
@@ -607,18 +603,13 @@ body.framed .tab-nav, body.framed .tool-status, body.framed .progress-container 
 
 <script>
 // ==================== FACILITY LIST ====================
-// MOCM pilot: 10 selected facilities, Bo District.
-// district | chiefdom | phu | facility_type
-/* The hospitals this tool is used at. Add a row per hospital as the pilot
-   widens; "Other hospital" lets a supervisor name one not yet listed rather
-   than being stuck. Region and ownership are asked separately, as the
-   validated checklist does. */
-const HOSPITALS = [
-  { region: "South", district: "Bo", city: "Bo City", name: "Bo Government Hospital", ownership: "Government" },
-  { region: "Other",        district: "Other",        city: "",               name: "Other hospital (not listed)" }
+/* The hospital list comes from hospitals.csv beside this form, columns
+   Region, District, Chiefdom, Hospital. The one row below is
+   only a fallback so the pilot site still works if the CSV cannot be read.
+   "Other hospital" lets a supervisor name one not yet listed. */
+let HOSPITALS = [
+  { region: "South", district: "Bo District", chiefdom: "Bo City", name: "Bo Government Hospital", ownership: "Government" }
 ];
-
-const REGIONS = ["East", "North", "North West", "South", "Western Area"];
 
 // ==================== CADRE LIST ====================
 // One list, used by question 8 (In-Charge) and by every staff card.
@@ -669,36 +660,44 @@ function resetCascade() {
   facilityTypeMap = new Map();
 }
 
-/* hospitals.csv beside the form extends the built-in list.
-   Columns: region, district, city, name */
+/* hospitals.csv beside the form is the hospital list.
+   Columns: Region, District, Chiefdom, Hospital. Region is not asked on the
+   form; it is saved from the CSV row of the hospital picked. */
 async function loadCSV() {
-  fillRegions();
+  fillDistricts();
   prefillSite();
   try {
-    const response = await fetch('hospitals.csv');
+    const response = await fetch('hospitals.csv', { cache: 'no-cache' });
     if (!response.ok) return;
     const rows = parseCSV(await response.text());
+    const list = [];
     rows.forEach(function (r) {
-      const name = (r.name || r.hospital || '').trim();
+      const name = (r.hospital || '').trim();
       if (!name) return;
-      if (HOSPITALS.some(function (h) { return h.name === name; })) return;
-      HOSPITALS.push({ region: (r.region || '').trim(), district: (r.district || '').trim(),
-                       city: (r.city || r.chiefdom || '').trim(), name: name });
+      if (list.some(function (h) { return h.name === name; })) return;
+      list.push({ region: (r.region || '').trim(), district: (r.district || '').trim(),
+                  chiefdom: (r.chiefdom || '').trim(), name: name });
     });
-    fillRegions();
-    prefillSite();
+    if (!list.length) return;
+    list.forEach(function (h) {            // keep the ownership the fallback row knew
+      HOSPITALS.forEach(function (o) { if (o.name === h.name && o.ownership) h.ownership = o.ownership; });
+    });
+    HOSPITALS = list;
+    var keep = currentSite();
+    fillDistricts();
+    if (keep.district) restoreSite(keep); else prefillSite();
   } catch (error) {
-    // no CSV present: the built-in list stays in use
+    // CSV not reachable (for example opened straight from disk): the fallback row stays in use
   }
 }
 
-// Expected CSV columns: region, district, city, name
+// header row first; quoted cells are allowed
 function parseCSV(csvText) {
-  const lines = csvText.trim().split(/\r?\n/);
+  const lines = csvText.replace(/^\uFEFF/, '').trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const head = lines[0].split(',').map(function (h) { return h.trim().toLowerCase(); });
+  const head = parseCSVLine(lines[0]).map(function (h) { return h.trim().toLowerCase(); });
   return lines.slice(1).map(function (line) {
-    const cells = line.split(',');
+    const cells = parseCSVLine(line);
     const row = {};
     head.forEach(function (h, i) { row[h] = (cells[i] || '').trim(); });
     return row;
@@ -725,53 +724,70 @@ function chiefdomsForDistrict(district) {
   return [];
 }
 
-/* region, district, hospital: a short cascade over the HOSPITALS list, with an
+/* district, chiefdom, hospital: a short cascade over the HOSPITALS list, with an
    Other route so a hospital not yet listed can still be recorded */
-function fillRegions(){
-  var sel = document.getElementById('regionSelect');
-  var seen = {};
-  var list = REGIONS.slice();
-  HOSPITALS.forEach(function (h) { if (list.indexOf(h.region) === -1 && h.region !== 'Other') list.push(h.region); });
-  sel.innerHTML = '<option value="">Select region...</option>' +
-    list.map(function (r) { return '<option>' + escapeHtml(r) + '</option>'; }).join('') +
-    '<option>Other</option>';
+function uniqSorted(arr){
+  var out = [];
+  arr.forEach(function (x) { if (x && out.indexOf(x) === -1) out.push(x); });
+  return out.sort();
+}
+function optionsHtml(first, list){
+  return '<option value="">' + first + '</option>' +
+    list.map(function (x) { return '<option>' + escapeHtml(x) + '</option>'; }).join('');
 }
 
-function onRegion(){
-  var region = document.getElementById('regionSelect').value;
+function fillDistricts(){
   var d = document.getElementById('districtSelect');
-  var districts = [];
-  HOSPITALS.forEach(function (h) {
-    if (h.region === region && districts.indexOf(h.district) === -1) districts.push(h.district);
-  });
-  if (districts.indexOf('Other') === -1) districts.push('Other');
-  d.disabled = !region;
-  d.innerHTML = region
-    ? '<option value="">Select district...</option>' + districts.map(function (x) { return '<option>' + escapeHtml(x) + '</option>'; }).join('')
-    : '<option value="">Select region first</option>';
+  d.innerHTML = optionsHtml('Select district...', uniqSorted(HOSPITALS.map(function (h) { return h.district; })));
   onDistrictPick();
 }
 
 function onDistrictPick(){
-  var region = document.getElementById('regionSelect').value;
   var district = document.getElementById('districtSelect').value;
+  var c = document.getElementById('citySelect');
+  var chiefdoms = uniqSorted(HOSPITALS.filter(function (h) { return h.district === district; })
+                                      .map(function (h) { return h.chiefdom; }));
+  c.disabled = !district;
+  c.innerHTML = district ? optionsHtml('Select chiefdom...', chiefdoms)
+                         : '<option value="">Select district first</option>';
+  onChiefdomPick();
+}
+
+function onChiefdomPick(){
+  var district = document.getElementById('districtSelect').value;
+  var chiefdom = document.getElementById('citySelect').value;
   var h = document.getElementById('hospitalSelect');
-  var names = [];
-  HOSPITALS.forEach(function (x) {
-    if (x.district === district && x.name.indexOf('Other hospital') !== 0) names.push(x.name);
-  });
-  h.disabled = !district;
-  h.innerHTML = district
-    ? '<option value="">Select hospital...</option>' +
-      names.map(function (n) { return '<option>' + escapeHtml(n) + '</option>'; }).join('') +
-      '<option>Other hospital (not listed)</option>'
-    : '<option value="">Select district first</option>';
+  var names = HOSPITALS.filter(function (x) { return x.district === district && x.chiefdom === chiefdom; })
+                       .map(function (x) { return x.name; }).sort();
+  h.disabled = !chiefdom;
+  h.innerHTML = chiefdom
+    ? optionsHtml('Select hospital...', names) + '<option>Other hospital (not listed)</option>'
+    : '<option value="">Select chiefdom first</option>';
   onHospitalPick();
+}
+
+/* the region of a district, read from the hospital list */
+function regionFor(district){
+  var hit = HOSPITALS.filter(function (h) { return h.district === district && h.region; })[0];
+  return hit ? hit.region : '';
+}
+
+function currentSite(){
+  return { district: document.getElementById('districtSelect').value,
+           chiefdom: document.getElementById('citySelect').value,
+           hospital: document.getElementById('hospitalSelect').value,
+           other:    document.getElementById('hospital_other').value };
+}
+function restoreSite(k){
+  document.getElementById('districtSelect').value = k.district; onDistrictPick();
+  document.getElementById('citySelect').value = k.chiefdom;     onChiefdomPick();
+  document.getElementById('hospitalSelect').value = k.hospital; onHospitalPick();
+  document.getElementById('hospital_other').value = k.other;
 }
 
 /* the site this pilot runs at, filled in on a blank form so nobody types it
    each visit. Everything stays editable, and the hospital list can grow. */
-const DEFAULT_SITE = { region: "South", district: "Bo", city: "Bo City",
+const DEFAULT_SITE = { district: "Bo District", chiefdom: "Bo City",
                        name: "Bo Government Hospital", ownership: "Government" };
 
 /* a line at the top of the form saying which hospital this visit is for, so a
@@ -790,16 +806,15 @@ function renderSiteNote(){
 }
 
 function prefillSite(){
-  var region = document.getElementById('regionSelect');
-  if (!region || region.value) return;                 // already chosen, leave it
+  var district = document.getElementById('districtSelect');
+  if (!district || district.value) return;               // already chosen, leave it
   if (!HOSPITALS.some(function (h) { return h.name === DEFAULT_SITE.name; })) return;
-  region.value = DEFAULT_SITE.region;
-  onRegion();
-  document.getElementById('districtSelect').value = DEFAULT_SITE.district;
+  district.value = DEFAULT_SITE.district;
   onDistrictPick();
+  document.getElementById('citySelect').value = DEFAULT_SITE.chiefdom;
+  onChiefdomPick();
   document.getElementById('hospitalSelect').value = DEFAULT_SITE.name;
   onHospitalPick();
-  document.getElementById('citySelect').value = DEFAULT_SITE.city;
   var own = document.querySelector('input[name="ownership"][value="' + DEFAULT_SITE.ownership + '"]');
   if (own) { own.checked = true; updateRadioVisuals(document.getElementById('ownership_group')); }
   if (typeof updateProgress === 'function') updateProgress();
@@ -813,11 +828,9 @@ function onHospitalPick(){
   other.style.display = isOther ? 'block' : 'none';
   if (!isOther) other.value = '';
 
-  /* fill the city in from the list, but leave it editable */
-  var city = document.getElementById('citySelect');
+  /* ownership from the list when it is known */
   HOSPITALS.forEach(function (x) {
     if (x.name !== name) return;
-    if (x.city && !city.value) city.value = x.city;
     if (x.ownership && !document.querySelector('input[name="ownership"]:checked')) {
       var own = document.querySelector('input[name="ownership"][value="' + x.ownership + '"]');
       if (own) { own.checked = true; updateRadioVisuals(document.getElementById('ownership_group')); }
@@ -1147,9 +1160,8 @@ function renderSubmittedBy() {
 }
 
 function validateForm() {
-  if (!document.getElementById("regionSelect").value) { alert("Please select the Region"); return false; }
   if (!document.getElementById("districtSelect").value) { alert("Please select the District"); return false; }
-  if (!document.getElementById("citySelect").value.trim()) { alert("Please give the Chiefdom / Zone / City"); return false; }
+  if (!document.getElementById("citySelect").value.trim()) { alert("Please select the Chiefdom"); return false; }
   if (!hospitalName()) { alert("Please select the hospital, or type its name if you chose Other"); return false; }
   if (!document.querySelector('input[name="ownership"]:checked')) { alert("Please select the Hospital Ownership"); return false; }
   if (!document.getElementById("head_name").value.trim()) { alert("Please give the Name of Head of Hospital"); return false; }
@@ -1192,7 +1204,7 @@ function getFormData() {
     submittedBy: submittedByNames(),
     supervisorEmails: submittedByEmails(),
     submittedAt: new Date().toLocaleString(),
-    region: document.getElementById("regionSelect").value,
+    region: regionFor(document.getElementById("districtSelect").value),   // from the CSV, not asked
     district: document.getElementById("districtSelect").value,
     chiefdom: document.getElementById("citySelect").value.trim(),
     phu: hospitalName(),                     // the hospital, kept in the shared field name
@@ -1228,7 +1240,6 @@ function showSummary() {
   html += `<div class="summary-item"><div class="summary-label">Health Facility (PHU)</div><div class="summary-value">${data.phu}</div></div>`;
   html += `<div class="summary-item"><div class="summary-label">Facility Type</div><div class="summary-value">${data.facility_type}</div></div>`;
   html += `<div class="summary-section-title">FACILITY INFORMATION</div>`;
-  html += `<div class="summary-item"><div class="summary-label">Region</div><div class="summary-value">${escapeHtml(data.region || '')}</div></div>`;
   html += `<div class="summary-item"><div class="summary-label">Ownership</div><div class="summary-value">${escapeHtml(data.ownership || '')}</div></div>`;
   html += `<div class="summary-item"><div class="summary-label">Head of Hospital</div><div class="summary-value">${escapeHtml(data.head_name || '')}</div></div>`;
   html += `<div class="summary-item"><div class="summary-label">Designation</div><div class="summary-value">${escapeHtml(data.head_designation || '')}</div></div>`;
@@ -1599,7 +1610,7 @@ function renderTabSummary() {
   html += row('District', d.district) + row('Chiefdom', d.chiefdom) +
           row('Health Facility (PHU)', d.phu) + row('Facility Type', d.facility_type);
   html += '<div class="summary-section-title">FACILITY INFORMATION</div>';
-  html += row('Region', d.region) + row('Ownership', d.ownership) +
+  html += row('Ownership', d.ownership) +
           row('Head of Hospital', d.head_name) + row('Designation', d.head_designation) +
           row('Respondent', d.respondent_name) + row('Visit Date', d.visit_date) +
           row('GPS', d.gps_lat ? d.gps_lat + ', ' + d.gps_lng : 'Not captured');
@@ -1904,10 +1915,10 @@ function fillFormFrom(rec) {
   RECORD = { id: rec.recordId, accepted: Number(rec.revision || rec.version) || 1, hash: null };
   saveRecord();
 
-  document.getElementById("regionSelect").value = rec.region || "";
-  onRegion();
   document.getElementById("districtSelect").value = rec.district || "";
   onDistrictPick();
+  document.getElementById("citySelect").value = rec.chiefdom || "";
+  onChiefdomPick();
   var picked = rec.phu || "";
   var known = Array.prototype.some.call(document.getElementById("hospitalSelect").options,
     function (o) { return o.value === picked; });
@@ -1917,7 +1928,6 @@ function fillFormFrom(rec) {
     onHospitalPick();
     document.getElementById("hospital_other").value = picked;
   }
-  document.getElementById("citySelect").value = rec.chiefdom || "";
   var own = document.querySelector('input[name="ownership"][value="' + (rec.ownership || '') + '"]');
   if (own) { own.checked = true; updateRadioVisuals(document.getElementById('ownership_group')); }
   document.getElementById("head_name").value = rec.head_name || "";
@@ -1985,7 +1995,7 @@ function setCadreFromLabel(label) {
 
 /* ==================== CLEAR FOR THE NEXT ENTRY ==================== */
 function resetForm() {
-  ["citySelect", "hospital_other", "head_name", "head_designation", "head_phone",
+  ["hospital_other", "head_name", "head_designation", "head_phone",
    "respondent_name", "respondent_phone", "supervisor_count", "staff_count"]
     .forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ""; });
 
@@ -1994,9 +2004,8 @@ function resetForm() {
 
   document.getElementById("visit_date").value = new Date().toISOString().split('T')[0];
 
-  document.getElementById("regionSelect").value = "";
-  fillRegions();
-  onRegion();                          // relists the districts, clears the hospital
+  document.getElementById("districtSelect").value = "";
+  fillDistricts();                     // relists the districts, clears chiefdom and hospital
   prefillSite();                       // then puts the pilot site back
 
   for (var i = 0; i < 40; i++) { sessionStorage.removeItem('sup_sig_' + i); sessionStorage.removeItem('staff_sig_' + i); }

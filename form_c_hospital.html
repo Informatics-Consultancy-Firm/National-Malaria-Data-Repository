@@ -926,12 +926,7 @@ function renderActions(){
   }).join('');
 }
 
-function onHospital(){
-  var note = document.getElementById('siteNote');
-  var name = document.getElementById('phuSelect').value;
-  if (note) note.innerHTML = '<b>' + escOpt(name) + '</b> · Bo City · Bo district';
-  updateProgress();
-}
+function onHospital(){ updateFacilityType(); }
 
 /* how much of the form is answered, ignoring anything skipped */
 /* an answer changed: keep it, rescore, reapply the skips and repaint */
@@ -1010,13 +1005,13 @@ function buildAllSections() {
 
   html += `<div class="section-page" id="section_ward"><div class="section-header">1. WARD AND VISIT</div><div class="section-card">
     <div class="site-note" id="siteNote"></div>
-    <div class="question-row"><div class="question-text">Hospital <span class="required-star">*</span></div>
-      <select class="form-select" id="phuSelect" onchange="onHospital()">
-        <option>Bo Government Hospital</option><option>Bo Children's Hospital</option></select></div>
     <div class="question-row"><div class="question-text">District <span class="required-star">*</span></div>
-      <input class="form-input" id="districtSelect" type="text" value="Bo"></div>
-    <div class="question-row"><div class="question-text">Chiefdom / Zone / City <span class="required-star">*</span></div>
-      <input class="form-input" id="chiefdomSelect" type="text" value="Bo City"></div>
+      <select class="form-select" id="districtSelect" onchange="updateChiefdom()"><option>Bo District</option></select></div>
+    <div class="question-row"><div class="question-text">Chiefdom <span class="required-star">*</span></div>
+      <select class="form-select" id="chiefdomSelect" onchange="updatePHU()"><option>Bo City</option></select></div>
+    <div class="question-row"><div class="question-text">Hospital <span class="required-star">*</span></div>
+      <select class="form-select" id="phuSelect" onchange="onHospital()"><option>Bo Government Hospital</option></select>
+      <input class="form-input" id="hospital_other" type="text" placeholder="Hospital not listed? Type its name here" style="display:none;margin-top:8px;" onchange="addOtherHospital()"></div>
     <div class="question-row"><div class="question-text"><span class="question-num">1.1</span>Name of Ward In-charge <span class="required-star">*</span></div>
       <input class="form-input" type="text" oninput="updateAns('ward_incharge',this.value)"></div>
     <div class="question-row"><div class="question-text"><span class="question-num">1.2</span>Designation <span class="required-star">*</span></div>
@@ -1140,52 +1135,118 @@ function switchTab(tab) {
   window.scrollTo(0, 0);
 }
 
-// ==================== CASCADE ====================
-function updateChiefdom() {
-  const district = document.getElementById("districtSelect")?.value;
-  const chiefdomSelect = document.getElementById("chiefdomSelect");
-  if(!chiefdomSelect) return;
-  const list = district ? chiefdomsIn(district) : [];
-  if (list.length) {
-    chiefdomSelect.innerHTML = '<option value="">Select Chiefdom...</option>' + list.map(c => `<option>${escOpt(c)}</option>`).join('');
-    chiefdomSelect.disabled = false;
-  } else {
-    chiefdomSelect.innerHTML = '<option value="">No chiefdoms listed for this district</option>';
-    chiefdomSelect.disabled = true;
-  }
-  const phuSelect = document.getElementById("phuSelect");
-  if(phuSelect) { phuSelect.innerHTML = '<option value="">Select Chiefdom first</option>'; phuSelect.disabled = true; }
-  const typeSelect = document.getElementById("facilityTypeSelect");
-  if(typeSelect) { typeSelect.innerHTML = '<option value="">Select PHU first</option>'; typeSelect.disabled = true; }
+// ==================== CASCADE: hospitals.csv ====================
+/* District, Chiefdom and Hospital come from hospitals.csv beside this form,
+   columns Region, District, Chiefdom, Hospital. The one row below is only a
+   fallback so the pilot site still works if the CSV cannot be read. */
+var HOSPITAL_LIST = [
+  { region: "South", district: "Bo District", chiefdom: "Bo City", name: "Bo Government Hospital" }
+];
+var DEFAULT_SITE = { district: "Bo District", chiefdom: "Bo City", name: "Bo Government Hospital" };
+
+function hlUniq(arr){
+  var out = [];
+  arr.forEach(function (x) { if (x && out.indexOf(x) === -1) out.push(x); });
+  return out.sort();
+}
+/* fill a dropdown; a value not in the list (an older record) is kept as an option */
+function hlFill(el, first, list, keep){
+  if (!el) return;
+  var all = list.slice();
+  if (keep && all.indexOf(keep) === -1) all.push(keep);
+  el.innerHTML = '<option value="">' + first + '</option>' +
+    all.map(function (x) { return '<option>' + escOpt(x) + '</option>'; }).join('');
+  el.value = keep || '';
+}
+function siteVal(id){ var el = document.getElementById(id); return el ? el.value : ''; }
+
+function updateChiefdom(keepChiefdom, keepHospital){
+  var d = siteVal('districtSelect');
+  var list = hlUniq(HOSPITAL_LIST.filter(function (h) { return h.district === d; })
+                                 .map(function (h) { return h.chiefdom; }));
+  var c = document.getElementById('chiefdomSelect');
+  hlFill(c, d ? 'Select chiefdom...' : 'Select district first', list, typeof keepChiefdom === 'string' ? keepChiefdom : '');
+  if (c) c.disabled = !d;
+  updatePHU(keepHospital);
 }
 
-function updatePHU() {
-  const district = document.getElementById("districtSelect")?.value;
-  const chiefdom = document.getElementById("chiefdomSelect")?.value;
-  const phuSelect = document.getElementById("phuSelect");
-  if(!phuSelect) return;
-  const list = (district && chiefdom) ? phusIn(district, chiefdom) : [];
-  if (list.length) {
-    phuSelect.innerHTML = '<option value="">Select PHU...</option>' + list.map(f => `<option>${escOpt(f.phu)}</option>`).join('');
-    phuSelect.disabled = false;
-  } else {
-    phuSelect.innerHTML = '<option value="">No facilities listed for this chiefdom</option>';
-    phuSelect.disabled = true;
-  }
-  const typeSelect = document.getElementById("facilityTypeSelect");
-  if(typeSelect) { typeSelect.innerHTML = '<option value="">Select PHU first</option>'; typeSelect.disabled = true; }
+function updatePHU(keepHospital){
+  var d = siteVal('districtSelect'), c = siteVal('chiefdomSelect');
+  var list = HOSPITAL_LIST.filter(function (h) { return h.district === d && h.chiefdom === c; })
+                          .map(function (h) { return h.name; }).sort();
+  var p = document.getElementById('phuSelect');
+  hlFill(p, c ? 'Select hospital...' : 'Select chiefdom first', list, typeof keepHospital === 'string' ? keepHospital : '');
+  if (p && c) p.insertAdjacentHTML('beforeend', '<option value="" data-other="1">Other hospital (not listed)</option>');
+  if (p) p.disabled = !c;
+  updateFacilityType();
 }
 
-function updateFacilityType() {
-  const district = document.getElementById("districtSelect")?.value;
-  const chiefdom = document.getElementById("chiefdomSelect")?.value;
-  const phu = document.getElementById("phuSelect")?.value;
-  const t = document.getElementById("facilityTypeSelect");
-  if(!t) return;
-  if (!phu) { t.innerHTML = '<option value="">Select PHU first</option>'; t.disabled = true; return; }
-  const type = typeOf(district, chiefdom, phu);
-  if (type) { t.innerHTML = `<option>${escOpt(type)}</option>`; t.disabled = false; }
-  else { t.innerHTML = '<option value="">Type not listed for this facility</option>'; t.disabled = true; }
+/* the hospital changed: keep the answers in step and repaint the note */
+function updateFacilityType(){
+  var d = siteVal('districtSelect'), c = siteVal('chiefdomSelect'), h = siteVal('phuSelect');
+  ans.district = d; ans.chiefdom = c; ans.phu = h;
+  var p = document.getElementById('phuSelect'), box = document.getElementById('hospital_other');
+  var isOther = !!(p && p.selectedIndex >= 0 && p.options[p.selectedIndex].getAttribute('data-other'));
+  if (box) { box.style.display = isOther ? 'block' : 'none'; if (!isOther) box.value = ''; }
+  var note = document.getElementById('siteNote');
+  if (note) note.innerHTML = h ? '<b>' + escOpt(h) + '</b> · ' + escOpt(c) + ' · ' + escOpt(d)
+                               : 'Choose the district, chiefdom and hospital below.';
+  if (typeof updateProgress === 'function') updateProgress();
+}
+
+/* Other hospital: the typed name joins the list for this chiefdom and is selected,
+   so everything that reads the hospital dropdown gets the real name */
+function addOtherHospital(){
+  var box = document.getElementById('hospital_other');
+  var name = box ? box.value.trim() : '';
+  if (!name) return;
+  var d = siteVal('districtSelect'), c = siteVal('chiefdomSelect');
+  if (!HOSPITAL_LIST.some(function (h) { return h.name === name && h.district === d && h.chiefdom === c; }))
+    HOSPITAL_LIST.push({ district: d, chiefdom: c, name: name });
+  updatePHU(name);
+}
+
+function setSite(district, chiefdom, hospital){
+  if (district === 'Bo') district = 'Bo District';          // records saved before the CSV
+  var list = hlUniq(HOSPITAL_LIST.map(function (h) { return h.district; }));
+  hlFill(document.getElementById('districtSelect'), 'Select district...', list, district || '');
+  updateChiefdom(chiefdom || '', hospital || '');
+}
+
+function hlParseLine(line){
+  var out = [], cur = '', q = false;
+  for (var i = 0; i < line.length; i++) {
+    var ch = line[i];
+    if (ch === '"') q = !q;
+    else if (ch === ',' && !q) { out.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+
+async function loadHospitals(){
+  try {
+    var res = await fetch('hospitals.csv', { cache: 'no-cache' });
+    if (!res.ok) return;
+    var lines = (await res.text()).replace(/^\uFEFF/, '').trim().split(/\r?\n/);
+    var head = hlParseLine(lines[0]).map(function (h) { return h.trim().toLowerCase(); });
+    var list = [];
+    lines.slice(1).forEach(function (line) {
+      var cells = hlParseLine(line), r = {};
+      head.forEach(function (h, i) { r[h] = (cells[i] || '').trim(); });
+      if (!r.hospital || list.some(function (x) { return x.name === r.hospital; })) return;
+      list.push({ region: r.region, district: r.district, chiefdom: r.chiefdom, name: r.hospital });
+    });
+    if (!list.length) return;
+    HOSPITAL_LIST.forEach(function (h) {                  // hospitals typed under Other stay
+      if (!list.some(function (x) { return x.name === h.name; })) list.push(h);
+    });
+    HOSPITAL_LIST = list;
+    setSite(siteVal('districtSelect'), siteVal('chiefdomSelect'), siteVal('phuSelect'));
+  } catch (e) {
+    // CSV not reachable (for example opened straight from disk): the fallback row stays in use
+  }
 }
 
 function getDemographics() {
@@ -2032,7 +2093,7 @@ function getPayload(){
     resubmission: RECORD.accepted > 0,
     submittedAt: new Date().toLocaleString(),
     submittedBy: ans.supervisor || '',
-    district: ans.district || 'Bo',
+    district: ans.district || 'Bo District',
     chiefdom: ans.chiefdom || 'Bo City',
     phu: document.getElementById('phuSelect') ? document.getElementById('phuSelect').value : '',
     facility_type: 'Hospital',
@@ -2207,6 +2268,7 @@ function toolStatus(kind, text){
 /* ---------- submit ---------- */
 function readyToSubmit(){
   if (typeof validateAllQuestions === 'function' && !validateAllQuestions()) return false;
+  if (!document.getElementById('phuSelect').value) { alert('Select the hospital, or choose Other and type its name'); return false; }
   if (!ans.supervisor) { alert('Enter the supervisor name'); return false; }
   if (!ans.visit_date) { alert('Select the date of visit'); return false; }
   if (!/^[0-9]{9}$/.test(String(ans.ward_phone || ''))) { alert('The ward in-charge contact must be 9 digits'); return false; }
@@ -2423,9 +2485,7 @@ function applyRecord(rec){
   saveRecord();
 
   var district = document.getElementById('districtSelect');
-  if(district){ district.value = rec.district || 'Bo'; updateChiefdom(); }
-  if(rec.chiefdom){ document.getElementById('chiefdomSelect').value = rec.chiefdom; updatePHU(); }
-  if(rec.phu){ document.getElementById('phuSelect').value = rec.phu; updateFacilityType(); }
+  if(district){ setSite(rec.district || DEFAULT_SITE.district, rec.chiefdom || '', rec.phu || ''); }
   var sup = document.getElementById('supervisor'); if(sup) sup.value = rec.submittedBy || '';
   var vd = document.getElementById('visitdate'); if(vd) vd.value = rec.visit_date || '';
 
@@ -2804,6 +2864,8 @@ numberQuestions();
   updateScores();
 })();
 
+setSite(DEFAULT_SITE.district, DEFAULT_SITE.chiefdom, DEFAULT_SITE.name);
+loadHospitals();
 loadRecord();
 claimFreshStart();
 renderGps();
