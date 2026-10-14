@@ -312,7 +312,7 @@ canvas { max-width: 100%; display: block; }
             <div class="cfg-step-num">1</div>
             <div>
               <div class="cfg-step-head">Fetch Facility Registry</div>
-              <div class="cfg-step-desc">Loads all Level-5 org units from DHIS2 with district and chiefdom hierarchy. Each facility is classified by name suffix into one of 5 assessed types. All other types are excluded.</div>
+              <div class="cfg-step-desc">Loads all Level 5 PHUs and all Level 6 CHW posts from DHIS2 with district and chiefdom hierarchy. Each PHU is classified by name into one of 5 assessed types. <b>Laboratories</b> (many are typed Hospital in the source) and <b>Marie Stopes</b> facilities (NMCP request) are excluded, as is any facility of an unrecognised type. Nursing homes and misspelt clinics fold into Clinic.</div>
               <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:10px;">
                 <thead><tr style="background:rgba(44,103,147,.12);">
                   <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;letter-spacing:.4px;">Type</th>
@@ -333,30 +333,34 @@ canvas { max-width: 100%; display: block; }
             <div class="cfg-step-num">2</div>
             <div>
               <div class="cfg-step-head">Data Elements and Datasets</div>
-              <div class="cfg-step-desc">Three data elements are queried — RDT Positive and Microscopy Positive for facility, RDT Positive for community. Only positive results are counted. Microscopy is excluded for CHP and MCHP.</div>
+              <div class="cfg-step-desc">Confirmed cases come from <b>three sources</b>: the <b style="color:#dc2626;">old facility form</b> and the <b style="color:#15803d;">new 2025_HF01 facility form</b> (RDT Positive and Microscopy Positive) and the <b style="color:#2c6793;">community</b> form (RDT Positive only, CHWs do not do microscopy). Only positive results are counted. All sources map onto the same 3 age groups.</div>
               <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:10px;">
-                <thead><tr style="background:rgba(44,103,147,.12);">
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Source</th>
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Dataset</th>
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">DE UID</th>
-                </tr></thead>
-                <tbody>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">Facility RDT Positive</td><td style="padding:3px 7px;color:var(--muted);">HF01 Outpatient Morbidity</td><td style="padding:3px 7px;font-family:monospace;color:#1f4a6a;font-size:9px;">p6zQLDFjSfd</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">Facility Microscopy Positive</td><td style="padding:3px 7px;color:var(--muted);">HF01 (excl. CHP/MCHP)</td><td style="padding:3px 7px;font-family:monospace;color:#1f4a6a;font-size:9px;">Sz13vbo2Qwh</td></tr>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">Community RDT Positive</td><td style="padding:3px 7px;color:var(--muted);">HF04 Community Based Services</td><td style="padding:3px 7px;font-family:monospace;color:#1f4a6a;font-size:9px;">T7xH8GwWpEM</td></tr>
-                </tbody>
+                <thead><tr style="background:rgba(44,103,147,.12);"><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Source</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Data Element</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Dataset</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">DE UID</th></tr></thead>
+                <tbody><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#dc2626;">Old facility</td><td style="padding:3px 7px;font-weight:700;">RDT Positive</td><td style="padding:3px 7px;color:var(--muted);">HF01 Outpatient morbidity</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:#1f4a6a;">p6zQLDFjSfd</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#dc2626;"></td><td style="padding:3px 7px;font-weight:700;">Microscopy Positive</td><td style="padding:3px 7px;color:var(--muted);"></td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:#1f4a6a;">Sz13vbo2Qwh</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#15803d;">New facility</td><td style="padding:3px 7px;font-weight:700;">RDT Positive</td><td style="padding:3px 7px;color:var(--muted);">2025_HF01</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:#1f4a6a;">AwLklDAVtvq</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#15803d;"></td><td style="padding:3px 7px;font-weight:700;">Microscopy Positive</td><td style="padding:3px 7px;color:var(--muted);"></td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:#1f4a6a;">AMrdoWsiHMa</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#2c6793;">Community</td><td style="padding:3px 7px;font-weight:700;">RDT Positive (HTR)</td><td style="padding:3px 7px;color:var(--muted);">HF04 Community Based Services</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:#1f4a6a;">T7xH8GwWpEM</td></tr></tbody>
               </table>
               <table style="width:100%;border-collapse:collapse;margin-top:5px;font-size:10px;">
-                <thead><tr style="background:rgba(44,103,147,.08);">
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Age Group</th>
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Facility COC</th>
-                  <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Community COC</th>
-                </tr></thead>
+                <thead><tr style="background:rgba(44,103,147,.08);"><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Age Group</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Old Facility COC</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Community COC</th></tr></thead>
                 <tbody>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);">0 to 59 months</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">m5T8uBNB8aN</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">NtjMVmRfvHH</td></tr>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age1);">5 to 14 years</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">j7j6iaknOFn</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">qDXW7WMLT99</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);">0 to 59 months</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">m5T8uBNB8aN</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">NtjMVmRfvHH (02-59m, treated as 0-59m)</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#5a6b7a;">5 to 14 years</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">j7j6iaknOFn</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">qDXW7WMLT99</td></tr>
                   <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age2);">15 years and above</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">zK1aiw8zFac</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">mdjRPpvLKdu</td></tr>
                 </tbody>
               </table>
+              <div class="cfg-step-desc" style="margin-top:7px;">Both new form elements are split into <b>12 age bands by sex</b>. Male and female are summed into the same age group. The 1-11m band (QFTvC3ZBlaE / NonO0cPD8ZS) is <b>deliberately omitted</b> because it overlaps 1-5m plus 06-11m and would double count infants.</div>
+              <table style="width:100%;border-collapse:collapse;margin-top:5px;font-size:10px;">
+                <thead><tr style="background:rgba(21,128,61,.10);"><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Age Group</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">New Form Band</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Male COC</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Female COC</th></tr></thead>
+                <tbody><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);">0 to 59m</td><td style="padding:3px 7px;">0-7d</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">X1fJr7y51lU</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">ajwU95HMY2p</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);"></td><td style="padding:3px 7px;">08-28d</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">QVABDpl0H4k</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">wOsJkGpglpx</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);"></td><td style="padding:3px 7px;">1-5m</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">EBG5ZbRgj46</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">z0s3iTdlbsd</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);"></td><td style="padding:3px 7px;">06-11m</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">KIJHMZSahcW</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">aCwYAbE3GHL</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age0);"></td><td style="padding:3px 7px;">12-59m</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">CcMrNXzzVHL</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">YHJ1j33ZMs5</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#5a6b7a;">5 to 14y</td><td style="padding:3px 7px;">05-09y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">eGhQxrBx3sy</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">i4MRLwVtIGa</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#5a6b7a;"></td><td style="padding:3px 7px;">10-14y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">oZ7YgBgNGRd</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">UI2y7qIOkvz</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age2);">15y and above</td><td style="padding:3px 7px;">15-19y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">OzqClEP84wm</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">vshWQEGCCTp</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age2);"></td><td style="padding:3px 7px;">20-44y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">ztWgelWML6b</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">fLgy2fpBWrb</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age2);"></td><td style="padding:3px 7px;">45-59y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">zqNF6erLupJ</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">eaWE8YjN4j0</td></tr><tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:var(--age2);"></td><td style="padding:3px 7px;">60+y</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">hGJdT29m3P6</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">g2NiIyG3PLj</td></tr></tbody>
+              </table>
+              <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:10px;">
+                <thead><tr style="background:rgba(255,193,7,.18);"><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Rule</th><th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Applied</th></tr></thead>
+                <tbody>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#dc2626;">Old facility form</td><td style="padding:3px 7px;color:var(--muted);">Used up to and including March 2026; later values ignored</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#15803d;">New facility form</td><td style="padding:3px 7px;color:var(--muted);">Used from April 2026; earlier values ignored</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;color:#2c6793;">Community</td><td style="padding:3px 7px;color:var(--muted);">All periods (separate dataset, unaffected)</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">Microscopy at MCHP / CHP</td><td style="padding:3px 7px;color:var(--muted);">Skipped: no laboratory or microscope. Hospital, CHC and Clinic keep microscopy in full</td></tr>
+                </tbody>
+              </table>
+              <div class="cfg-step-desc" style="margin-top:6px;">The two facility windows never overlap, so a facility month can only take values from one form and double counting is impossible.</div>
             </div>
           </div>
 
@@ -364,7 +368,7 @@ canvas { max-width: 100%; display: block; }
             <div class="cfg-step-num">3</div>
             <div>
               <div class="cfg-step-head">Analytics Query</div>
-              <div class="cfg-step-desc">All 9 de.coc pairs are sent (3 DEs × 3 age COCs each — positives only) in a single <code>dx</code> dimension with periods batched at 24 and <code>ou:LEVEL-5</code> covering all facilities in one request. Level-6 CHW and ETR records are automatically rolled up to their Level-5 MCHP parent.</div>
+              <div class="cfg-step-desc">Facility data values are sent in batches of 6 at <code>ou:LEVEL-5</code>. Community values are sent one at a time at <code>ou:LEVEL-5;LEVEL-6</code>, because CHW posts report at Level 6; every Level 6 value is rolled up to its Level 5 PHU parent. A failed batch is split in half and retried, then split by period. Each element, COC, period and facility is counted only once.</div>
               <table style="width:100%;border-collapse:collapse;margin-top:7px;font-size:10px;">
                 <thead><tr style="background:rgba(44,103,147,.12);">
                   <th style="padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;">Parameter</th>
@@ -372,10 +376,10 @@ canvas { max-width: 100%; display: block; }
                 </tr></thead>
                 <tbody>
                   <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">Endpoint</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">/api/analytics.json</td></tr>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">dimension dx</td><td style="padding:3px 7px;color:var(--muted);">6 de.coc pairs (facility + community)</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">dimension dx</td><td style="padding:3px 7px;color:var(--muted);">6 old form + 44 new form + 3 community = 53 de.coc pairs</td></tr>
                   <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">dimension pe</td><td style="padding:3px 7px;color:var(--muted);">Selected months (batched at 24)</td></tr>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">dimension ou</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">LEVEL-5</td></tr>
-                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">API calls</td><td style="padding:3px 7px;color:var(--muted);">Typically 1 to 2 per run</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">dimension ou</td><td style="padding:3px 7px;font-family:monospace;font-size:9px;color:var(--muted);">LEVEL-5 (facility) · LEVEL-5;LEVEL-6 (community)</td></tr>
+                  <tr style="border-top:1px solid var(--border);"><td style="padding:3px 7px;font-weight:700;">API calls</td><td style="padding:3px 7px;color:var(--muted);">12 per 24 month block (9 facility + 3 community)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -410,7 +414,7 @@ canvas { max-width: 100%; display: block; }
             <div class="cfg-step-num">5</div>
             <div>
               <div class="cfg-step-head">Outputs</div>
-              <div class="cfg-step-desc">Builds 7 proportion charts, geographic monthly and annual maps across Hospital, Clinic, CHC, CHP and MCHP, a facility tracker, summary table and downloadable Excel. Microscopy positives are excluded for CHP and MCHP.</div>
+              <div class="cfg-step-desc">Builds 7 proportion charts, geographic monthly and annual maps across Hospital, Clinic, CHC, CHP and MCHP, a facility tracker, summary table and downloadable Excel. Microscopy positives reported by CHP and MCHP are skipped.</div>
             </div>
           </div>
 
@@ -666,31 +670,65 @@ const BASE_URL = 'https://sl.dhis2.org/hmis23';
 const AUTH     = 'Basic ' + btoa('musa-sillahkanu:Navigator/2024!');
 const LEVEL_PHU = 5, LEVEL_DIST = 2, LEVEL_CHIEF = 4;
 
-// ── Analytics dx strings (DE.COC) ──────────────────────────────────
-// Facility confirmed malaria — RDT Positive + Microscopy Positive (HF01)
-// ── DX_MAP for Tested Malaria ────────────────────────────────────────────
-// Facility: RDT Pos + RDT Neg + Microscopy Pos + Microscopy Neg (excl CHP/MCHP)
-// Community: RDT Pos + RDT Neg (HTR)
-// totalField: accumulates tested total per source
-// splitField: accumulates age-disaggregated sub-total
+// ── CONFIRMED MALARIA CASES: positives only (RDT + Microscopy), three sources ──
+// OLD facility (HF01 Outpatient morbidity) · NEW facility (2025_HF01) · COMMUNITY (HF04, RDT only)
+const OLD_DE = { rdt_pos:'p6zQLDFjSfd', mic_pos:'Sz13vbo2Qwh' };
+const NEW_DE = { rdt_pos:'AwLklDAVtvq', mic_pos:'AMrdoWsiHMa' };
+const COM_DE = { rdt_pos:'T7xH8GwWpEM' };
+const OLD_COC = { u5:'m5T8uBNB8aN', c514:'j7j6iaknOFn', a15:'zK1aiw8zFac' };
+// Community 02-59m is TREATED AS 0-59m (CHWs do not treat neonates)
+const COM_COC = { u5:'NtjMVmRfvHH', c514:'qDXW7WMLT99', a15:'mdjRPpvLKdu' };
+// New facility form: age band -> [Male COC, Female COC]. Sex is collapsed on summation.
+const NEW_BANDS = {
+  u5:  { '0-7d':['X1fJr7y51lU','ajwU95HMY2p'], '08-28d':['QVABDpl0H4k','wOsJkGpglpx'],
+         '1-5m':['EBG5ZbRgj46','z0s3iTdlbsd'], '06-11m':['KIJHMZSahcW','aCwYAbE3GHL'],
+         '12-59m':['CcMrNXzzVHL','YHJ1j33ZMs5'] },
+  c514:{ '05-09y':['eGhQxrBx3sy','i4MRLwVtIGa'], '10-14y':['oZ7YgBgNGRd','UI2y7qIOkvz'] },
+  a15: { '15-19y':['OzqClEP84wm','vshWQEGCCTp'], '20-44y':['ztWgelWML6b','fLgy2fpBWrb'],
+         '45-59y':['zqNF6erLupJ','eaWE8YjN4j0'], '60+y':['hGJdT29m3P6','g2NiIyG3PLj'] },
+};
+// DELIBERATELY OMITTED: 1-11m (QFTvC3ZBlaE / NonO0cPD8ZS), it overlaps 1-5m + 06-11m.
+
+// ── MICROSCOPY IS SKIPPED FOR MCHP AND CHP (no laboratory, no microscope) ──
 const EXCL_MICRO = ['CHP','MCHP'];
+// ── FORM CUTOVER: new facility form data entry starts April 2026 ──
+//   OLD form used only <= 202603 · NEW form used only >= 202604 · COMMUNITY all periods
+const OLD_FORM_END   = 202603;
+const NEW_FORM_START = 202604;
+
+// ── DX_MAP: totalField + splitField, plus RDT / microscopy subtotals and src for the cutover ──
+const HF_SPLIT  = { u5:'testedHF_U5',  c514:'testedHF_5_14',  a15:'testedHF_15plus'  };
+const RDT_SPLIT = { u5:'rdtHF_U5',     c514:'rdtHF_5_14',     a15:'rdtHF_15plus'     };
+const MIC_SPLIT = { u5:'microHF_U5',   c514:'microHF_5_14',   a15:'microHF_15plus'   };
+const COM_SPLIT = { u5:'testedCom_U5', c514:'testedCom_5_14', a15:'testedCom_15plus' };
+const CRDT_SPLIT= { u5:'rdtCom_U5',    c514:'rdtCom_5_14',    a15:'rdtCom_15plus'    };
+function facEntry(dxStr, tr, age, src){
+  const isMic = tr.startsWith('mic');
+  return isMic
+    ? { dxStr, totalField:'testedHF', microField:'microHF', splitField:HF_SPLIT[age], microSplit:MIC_SPLIT[age], excludeTypes:EXCL_MICRO, src }
+    : { dxStr, totalField:'testedHF', rdtField:'rdtHF',     splitField:HF_SPLIT[age], rdtSplit:RDT_SPLIT[age], src };
+}
 const DX_MAP_SUSP = [
-  // Facility RDT Positive — accumulates into both rdtHF and testedHF (combined)
-  { dxStr:'p6zQLDFjSfd.m5T8uBNB8aN', totalField:'testedHF', rdtField:'rdtHF', splitField:'testedHF_U5',     rdtSplit:'rdtHF_U5'     },
-  { dxStr:'p6zQLDFjSfd.j7j6iaknOFn', totalField:'testedHF', rdtField:'rdtHF', splitField:'testedHF_5_14',   rdtSplit:'rdtHF_5_14'   },
-  { dxStr:'p6zQLDFjSfd.zK1aiw8zFac', totalField:'testedHF', rdtField:'rdtHF', splitField:'testedHF_15plus', rdtSplit:'rdtHF_15plus' },
-  // Facility Microscopy Positive (excluded for CHP/MCHP)
-  { dxStr:'Sz13vbo2Qwh.m5T8uBNB8aN', totalField:'testedHF', microField:'microHF', splitField:'testedHF_U5',     microSplit:'microHF_U5',     excludeTypes:EXCL_MICRO },
-  { dxStr:'Sz13vbo2Qwh.j7j6iaknOFn', totalField:'testedHF', microField:'microHF', splitField:'testedHF_5_14',   microSplit:'microHF_5_14',   excludeTypes:EXCL_MICRO },
-  { dxStr:'Sz13vbo2Qwh.zK1aiw8zFac', totalField:'testedHF', microField:'microHF', splitField:'testedHF_15plus', microSplit:'microHF_15plus', excludeTypes:EXCL_MICRO },
-  // Community RDT Positive (HTR)
-  { dxStr:'T7xH8GwWpEM.NtjMVmRfvHH', totalField:'testedCommunity', rdtField:'rdtCommunity', splitField:'testedCom_U5',     rdtSplit:'rdtCom_U5'     },
-  { dxStr:'T7xH8GwWpEM.qDXW7WMLT99', totalField:'testedCommunity', rdtField:'rdtCommunity', splitField:'testedCom_5_14',   rdtSplit:'rdtCom_5_14'   },
-  { dxStr:'T7xH8GwWpEM.mdjRPpvLKdu', totalField:'testedCommunity', rdtField:'rdtCommunity', splitField:'testedCom_15plus', rdtSplit:'rdtCom_15plus' },
+  ...Object.entries(OLD_DE).flatMap(([tr,de])=>Object.keys(OLD_COC).map(k=>facEntry(de+'.'+OLD_COC[k], tr, k, 'old'))),
+  ...Object.entries(NEW_DE).flatMap(([tr,de])=>Object.keys(NEW_BANDS).flatMap(k=>
+      Object.values(NEW_BANDS[k]).flatMap(([m,f])=>[facEntry(de+'.'+m, tr, k, 'new'), facEntry(de+'.'+f, tr, k, 'new')]))),
+  ...Object.values(COM_DE).flatMap(de=>Object.keys(COM_COC).map(k=>(
+      { dxStr:de+'.'+COM_COC[k], totalField:'testedCommunity', rdtField:'rdtCommunity', splitField:COM_SPLIT[k], rdtSplit:CRDT_SPLIT[k], src:'com' }))),
 ];
 const DX_LOOKUP_SUSP = {};
 DX_MAP_SUSP.forEach(d => { DX_LOOKUP_SUSP[d.dxStr] = d; });
 const ALL_DX_SUSP = DX_MAP_SUSP.map(d => d.dxStr);
+const DX_FAC_SUSP = ALL_DX_SUSP.filter(d => DX_LOOKUP_SUSP[d].src !== 'com');
+const DX_COM_SUSP = ALL_DX_SUSP.filter(d => DX_LOOKUP_SUSP[d].src === 'com');
+
+// ── EXCLUSION RULES ──
+// Laboratories are not health facilities (many are typed Hospital in the source).
+// Marie Stopes facilities are excluded by NMCP request.
+function exclusionReason(name){
+  if (/\bLABORATOR/i.test(name||''))  return 'Laboratory: not a health facility';
+  if (/MARIE\s*STOPES/i.test(name||'')) return 'Marie Stopes: excluded by NMCP';
+  return null;
+}
 
 const CHIEFDOM_GEOJSON = 'https://raw.githubusercontent.com/mohamedsillahkanu/tpr/8b16cd164aa5116242b9e8e29ea777cf79a1b211/Chiefdom_shp.geojson';
 const DISTRICT_GEOJSON = 'https://raw.githubusercontent.com/mohamedsillahkanu/tpr/d202a234dfd9b30de6216b5da59b2a1ee14283b5/District_Shapefiles.geojson';
@@ -771,6 +809,31 @@ async function dhis2(path, retries = 3) {
   throw new Error('Failed after ' + retries + ' attempts — ' + (lastErr?.message || 'network error'));
 }
 
+// ── RESILIENT ANALYTICS FETCH ──
+// A failed batch is split in half and retried down to one dx, then split by period down to
+// one month. Safe because values are deduplicated on element + COC + period + org unit.
+async function fetchAnalytics(dxList, peList, ouDim, onSplit){
+  const path='/api/analytics.json?dimension=dx:'+dxList.join(';')
+    +'&dimension=pe:'+peList.join(';')+'&dimension=ou:'+ouDim
+    +'&displayProperty=NAME&paging=false&ignoreLimit=true';
+  try { return await dhis2(path); }
+  catch(e){
+    if (dxList.length>1){
+      const mid=Math.ceil(dxList.length/2); if(onSplit)onSplit('splitting '+dxList.length+' data values');
+      const a=await fetchAnalytics(dxList.slice(0,mid),peList,ouDim,onSplit);
+      const b=await fetchAnalytics(dxList.slice(mid),peList,ouDim,onSplit);
+      return {rows:[...(a.rows||[]),...(b.rows||[])]};
+    }
+    if (peList.length>1){
+      const mid=Math.ceil(peList.length/2); if(onSplit)onSplit('splitting '+peList.length+' months');
+      const a=await fetchAnalytics(dxList,peList.slice(0,mid),ouDim,onSplit);
+      const b=await fetchAnalytics(dxList,peList.slice(mid),ouDim,onSplit);
+      return {rows:[...(a.rows||[]),...(b.rows||[])]};
+    }
+    throw e;
+  }
+}
+
 function genPeriods(s, e) {
   const out = [];
   let [y,m] = s.split('-').map(Number);
@@ -793,6 +856,7 @@ function getHFType(name) {
   if (suffix==='CHP')      return 'CHP';
   const clinicSuffixes=['CLINIC','CLINNIC','CLINNC','CLIMIC','CLINC','CLINIK','CLENIC','CLINCC','CLIN'];
   if (clinicSuffixes.includes(suffix)) return 'Clinic';
+  if (suffix==='HOME' || u.includes('NURSING HOME')) return 'Clinic';
   if (u.includes('HOSPITAL')) return 'Hospital';
   if (u.includes('MCHP'))     return 'MCHP';
   if (u.includes('CHC'))      return 'CHC';
@@ -882,9 +946,9 @@ async function sa_startPipeline() {
   ST.geoRates  = { district:{}, chiefdom:{} };
 
   // Dashboard-mirrored step labels
-  addStep('s_ou',    'Fetch facility registry — all Level-5 OUs with hierarchy · classify Hospital / Clinic / CHC / CHP / MCHP');
-  addStep('s_plan',  'Build query plan — 6 de.coc pairs · period batches of 24 · analytics.json · LEVEL-5');
-  addStep('s_fetch', 'Fetch analytics — DHIS2 pre-aggregated data · same endpoint as Malaria Dashboard');
+  addStep('s_ou',    'Fetch facility registry — Level 5 PHUs + Level 6 CHW posts · classify Hospital / Clinic / CHC / CHP / MCHP · exclude labs and Marie Stopes');
+  addStep('s_plan',  'Build query plan — old form + new 2025_HF01 form (RDT + Microscopy positives) + community RDT positives · period batches of 24');
+  addStep('s_fetch', 'Fetch analytics — April 2026 form cutover · microscopy skipped at MCHP/CHP · Level 6 community rollup · duplicates counted once');
   addStep('s_derive','Derive flat rows — facility-month and community-month records with age proportions');
   addStep('s_geo',   'Load GeoJSON · compute geographic age-proportion rates');
   addStep('s_render','Render charts, maps, facility tracker, summary table');
@@ -900,10 +964,14 @@ async function sa_startPipeline() {
     setStep('s_ou','running');
     setProgress(3);
 
-    const ouResp = await dhis2(
-      '/api/organisationUnits.json?level=' + LEVEL_PHU +
-      '&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false&pageSize=50000'
-    );
+    // Level 5 = PHU · Level 6 = CHW posts (community reporting units, rolled up to their PHU)
+    const OU_FIELDS = '&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false&pageSize=50000';
+    const [ouL5, ouL6] = await Promise.all([
+      dhis2('/api/organisationUnits.json?level=' + LEVEL_PHU + OU_FIELDS),
+      dhis2('/api/organisationUnits.json?level=' + (LEVEL_PHU+1) + OU_FIELDS),
+    ]);
+    const ouResp = { organisationUnits:[...(ouL5.organisationUnits||[]), ...(ouL6.organisationUnits||[])] };
+    ST.excluded = [];
 
     const ASSESSED_TYPES = ['Hospital','Clinic','CHC','CHP','MCHP'];
     // Level-6 CHW/ETR → their Level-5 parent (for community rollup)
@@ -918,7 +986,9 @@ async function sa_startPipeline() {
 
       if (ou.level === LEVEL_PHU) {
         const hfType = getHFType(ou.displayName);
-        if (!ASSESSED_TYPES.includes(hfType)) { skipped++; return; }
+        const reason = exclusionReason(ou.displayName);
+        if (reason) { ST.excluded.push({ id:ou.id, name:ou.displayName, reason }); return; }
+        if (!ASSESSED_TYPES.includes(hfType)) { skipped++; ST.excluded.push({ id:ou.id, name:ou.displayName, reason:'Unrecognised facility type' }); return; }
         ST.ouHierarchy[ou.id] = {
           id:ou.id, name:ou.displayName, hfType,
           districtName: dist  ? dist.displayName  : '',
@@ -939,9 +1009,9 @@ async function sa_startPipeline() {
     window._totalAssessed = phuIds.length;
 
     setStep('s_ou','done',
-      phuIds.length + ' assessed facilities (' + skipped + ' other types excluded) · ' +
+      phuIds.length + ' assessed facilities · ' + (ST.excluded.length-skipped) + ' labs / Marie Stopes excluded · ' + skipped + ' other types excluded · ' +
       ASSESSED_TYPES.map(t=>t+': '+typeCounts[t]).join(' · ') + ' · ' +
-      Object.keys(childToL5).length + ' Level-6 CHW/ETR mapped'
+      Object.keys(childToL5).length + ' Level 6 CHW posts mapped to their PHU'
     );
     setProgress(15);
     await sleep(40);
@@ -955,10 +1025,15 @@ async function sa_startPipeline() {
     setStep('s_plan','running');
 
     const periods   = ST.config.periods;
-    const DX_BATCH  = 40;
+    // Facility elements only hold data at Level 5; community needs Level 5 + Level 6.
+    // Smaller requests fail far less often, and deduplication makes chunk size irrelevant to totals.
+    const OU_FAC = 'LEVEL-' + LEVEL_PHU;
+    const OU_COM = 'LEVEL-' + LEVEL_PHU + ';LEVEL-' + (LEVEL_PHU+1);
+    const DX_CHUNK = 6;
     const dxBatches = [];
-    for (let i = 0; i < ALL_DX_SUSP.length; i += DX_BATCH)
-      dxBatches.push(ALL_DX_SUSP.slice(i, i + DX_BATCH));
+    for (let i = 0; i < DX_FAC_SUSP.length; i += DX_CHUNK)
+      dxBatches.push({ dx:DX_FAC_SUSP.slice(i, i + DX_CHUNK), ou:OU_FAC, kind:'facility' });
+    DX_COM_SUSP.forEach(d => dxBatches.push({ dx:[d], ou:OU_COM, kind:'community' }));
 
     const PE_BATCH  = 24;
     const pBatches  = [];
@@ -967,9 +1042,9 @@ async function sa_startPipeline() {
 
     const totalCalls = dxBatches.length * pBatches.length;
     setStep('s_plan','done',
-      ALL_DX_SUSP.length + ' dx strings · ' + periods.length + ' periods → ' +
-      dxBatches.length + ' dx batch(es) × ' + pBatches.length + ' period batch(es) = ' +
-      totalCalls + ' API call(s)'
+      ALL_DX_SUSP.length + ' dx strings (' + DX_FAC_SUSP.length + ' facility, ' + DX_COM_SUSP.length + ' community) · ' +
+      periods.length + ' periods → ' + dxBatches.length + ' dx batch(es) × ' + pBatches.length +
+      ' period batch(es) = ' + totalCalls + ' API call(s)'
     );
     setProgress(20);
     await sleep(40);
@@ -1009,56 +1084,55 @@ async function sa_startPipeline() {
     }
 
     let callsDone = 0, totalRows = 0;
+    ST.cutIgnored = { oldAfter:0, newBefore:0 };
+    ST.cutIgnoredVal = { oldAfter:0, newBefore:0 };
+    ST.micSkipped = 0; ST.micSkippedVal = 0;
+    ST.dupRows = 0; ST.comRollup = 0;
+    const seenTriple = new Set();   // element + COC + period + org unit already consumed
 
     for (let di = 0; di < dxBatches.length; di++) {
-      const dxParam = dxBatches[di].join(';');
       for (let pi = 0; pi < pBatches.length; pi++) {
-        const peParam = pBatches[pi].join(';');
         callsDone++;
-        setProgress(
-          20 + Math.round((callsDone / totalCalls) * 65),
-          'Analytics batch ' + callsDone + '/' + totalCalls,
-          'dx batch ' + (di+1) + '/' + dxBatches.length +
-          ' · periods ' + pBatches[pi][0] + '→' + pBatches[pi][pBatches[pi].length-1]
-        );
-        setStep('s_fetch','running',
-          'Batch ' + callsDone + '/' + totalCalls +
-          ' · ' + pBatches[pi][0] + '→' + pBatches[pi][pBatches[pi].length-1]
-        );
+        setProgress(20 + Math.round((callsDone / totalCalls) * 65));
+        const lbl = 'Batch ' + callsDone + '/' + totalCalls + ' (' + dxBatches[di].kind + ')' +
+          ' · ' + pBatches[pi][0] + '→' + pBatches[pi][pBatches[pi].length-1];
+        setStep('s_fetch','running', lbl);
 
-        // ── Exact same query as malaria dashboard ──
-        const resp = await dhis2(
-          '/api/analytics.json' +
-          '?dimension=dx:'   + dxParam +
-          '&dimension=pe:'   + peParam +
-          '&dimension=ou:LEVEL-' + LEVEL_PHU +
-          '&displayProperty=NAME&paging=false&ignoreLimit=true'
-        );
+        const resp = await fetchAnalytics(dxBatches[di].dx, pBatches[pi], dxBatches[di].ou,
+          msg => setStep('s_fetch','running', lbl + ' · request failed, ' + msg));
 
         (resp.rows || []).forEach(row => {
-          // row = [dxStr, period, ouId, value] — same as dashboard
           const [dxStr, period, ouId, rawVal] = row;
           const val = parseFloat(rawVal) || 0;
           if (!val) return;
-
           const mapping = DX_LOOKUP_SUSP[dxStr];
           if (!mapping) return;
 
-          // Community rows: roll up Level-6 CHW/ETR to their Level-5 parent
-          // (same pattern as dashboard uses for excludeTypes)
+          // Idempotent: the same element + COC + period + org unit is never summed twice
+          const tk = dxStr + '|' + period + '|' + ouId;
+          if (seenTriple.has(tk)) { ST.dupRows++; return; }
+          seenTriple.add(tk);
+
+          // Level 6 rollup: community only. Facility forms are never reported at Level 6.
+          const isL6 = !!ST.config.childToL5[ouId];
+          if (isL6 && mapping.src !== 'com') return;
           const effectiveId = ST.config.childToL5[ouId] || ouId;
 
-          // Accept the row — if OU not in hierarchy, add it on-the-fly
-          // (same as dashboard: !_ouHierarchy[ouId] check is permissive)
-          if (!ST.ouHierarchy[effectiveId]) {
-            ST.ouHierarchy[effectiveId] = {
-              id:effectiveId, name:effectiveId,
-              hfType:'Other', districtName:'', chiefdomName:'',
-            };
+          // Excluded facilities (labs, Marie Stopes, unrecognised) never re-enter
+          const ou = ST.ouHierarchy[effectiveId];
+          if (!ou) return;
+          if (isL6) ST.comRollup++;
+
+          // Microscopy at an MCHP or CHP: skipped (no laboratory, no microscope)
+          if (mapping.excludeTypes && mapping.excludeTypes.includes(ou.hfType)) {
+            ST.micSkipped++; ST.micSkippedVal += val; return;
           }
 
-          const ouType = ST.ouHierarchy[effectiveId]?.hfType || 'Other';
-          if (mapping.excludeTypes && mapping.excludeTypes.includes(ouType)) return;
+          // Form cutover: values outside a form's window are ignored
+          const pNum = parseInt(period, 10);
+          if (mapping.src === 'old' && pNum > OLD_FORM_END)   { ST.cutIgnored.oldAfter++;  ST.cutIgnoredVal.oldAfter  += val; return; }
+          if (mapping.src === 'new' && pNum < NEW_FORM_START) { ST.cutIgnored.newBefore++; ST.cutIgnoredVal.newBefore += val; return; }
+
           const slot = getSlot(effectiveId, period);
           // Combined total
           slot[mapping.totalField] = (slot[mapping.totalField] || 0) + val;
@@ -1081,9 +1155,14 @@ async function sa_startPipeline() {
       }
     }
 
+    const ign = ST.cutIgnoredVal.oldAfter + ST.cutIgnoredVal.newBefore;
     setStep('s_fetch','done',
       totalCalls + ' analytics call(s) · ' + totalRows.toLocaleString() +
-      ' data points · ' + Object.keys(_accMap).length.toLocaleString() + ' ou-period slots'
+      ' data points · ' + Object.keys(_accMap).length.toLocaleString() + ' ou-period slots · ' +
+      ST.comRollup.toLocaleString() + ' Level 6 values rolled up · ' +
+      ign.toLocaleString() + ' confirmed cases ignored (wrong form for period) · ' +
+      ST.micSkippedVal.toLocaleString() + ' microscopy positives skipped at MCHP/CHP · ' +
+      ST.dupRows.toLocaleString() + ' duplicate rows dropped'
     );
     setProgress(86);
 
@@ -1176,6 +1255,9 @@ async function sa_startPipeline() {
       `<div class="stat-pill" style="background:#d6f0de;border-color:#31a354;color:#1a5e2a;">Comm 15y+ confirmed: ${totA2c.toLocaleString()} (${fp(totA2c,totComm)})</div>`,
       `<div class="stat-pill ok">Combined: ${allTot.toLocaleString()} · Fac share: ${fp(totFac,allTot)}</div>`,
       `<div class="stat-pill">${periods.length} months · ${start} → ${end}</div>`,
+      `<div class="stat-pill warn">Wrong form ignored: old after Mar 2026 ${ST.cutIgnoredVal.oldAfter.toLocaleString()} · new before Apr 2026 ${ST.cutIgnoredVal.newBefore.toLocaleString()}</div>`,
+      `<div class="stat-pill warn">Microscopy positives skipped at MCHP/CHP: ${ST.micSkippedVal.toLocaleString()} cases</div>`,
+      `<div class="stat-pill warn">${(ST.excluded||[]).length.toLocaleString()} facilities excluded (labs, Marie Stopes, unrecognised)</div>`,
     ].join('');
 
     setPill('Done ✓','rgba(40,167,69,.55)');
@@ -1853,8 +1935,8 @@ function sa_exportCSV(){const header='ou_uid,district,chiefdom,date,age0_59m,age
 // ═══════════════════════════════════════════════════════════════════
 //  CODE DOWNLOADS
 // ═══════════════════════════════════════════════════════════════════
-function sa_downloadR(){const s=ST.config?.start||'2020-01',e=ST.config?.end||'2024-12';triggerDL(`# Confirmed Malaria Age Disaggregation — R Script\n# Period: ${s} → ${e}\n# ICF-SL\n# Uses analytics.json endpoint (fast)\n\nlibrary(httr); library(jsonlite); library(dplyr); library(ggplot2); library(openxlsx)\n\nBASE_URL <- "https://sl.dhis2.org/hmis23"\nUSERNAME <- "your_username"; PASSWORD <- "your_password"\nSTART_YM <- "${s}"; END_YM <- "${e}"\n\n# Analytics dx strings\ndxParam <- paste(c(\n  "FJafyE1kzs4.m5T8uBNB8aN",  # Facility 0-59m\n  "FJafyE1kzs4.j7j6iaknOFn",  # Facility 5-14y\n  "FJafyE1kzs4.zK1aiw8zFac",  # Facility 15+y\n  "wfaQBIVQxWo.NtjMVmRfvHH",  # Community 0-59m\n  "wfaQBIVQxWo.qDXW7WMLT99",  # Community 5-14y\n  "wfaQBIVQxWo.mdjRPpvLKdu"   # Community 15+y\n), collapse=";")\n\nauth <- authenticate(USERNAME, PASSWORD)\ndhis2 <- function(path) fromJSON(content(GET(paste0(BASE_URL,path),auth),"text",encoding="UTF-8"),flatten=TRUE)\n\ncat("Script ready. Fill in USERNAME/PASSWORD and run.\\n")\n`,`NMCP_ConfirmedAge_${s}_${e}.R`);}
-function sa_downloadPy(){const s=ST.config?.start||'2020-01',e=ST.config?.end||'2024-12';triggerDL(`# Confirmed Malaria Age Disaggregation — Python Script\n# Period: ${s} → ${e} · ICF-SL\n# Uses analytics.json endpoint (fast)\n\nimport requests, pandas as pd\nfrom requests.auth import HTTPBasicAuth\n\nBASE_URL = "https://sl.dhis2.org/hmis23"\nauth = HTTPBasicAuth("your_username", "your_password")\n\n# 9 de.coc pairs — facility RDT Pos + Micro Pos + community RDT Pos (confirmed cases only)\nDX_STRINGS = [\n  "FJafyE1kzs4.m5T8uBNB8aN",  # Facility 0-59m\n  "FJafyE1kzs4.j7j6iaknOFn",  # Facility 5-14y\n  "FJafyE1kzs4.zK1aiw8zFac",  # Facility 15+y\n  "wfaQBIVQxWo.NtjMVmRfvHH",  # Community 0-59m\n  "wfaQBIVQxWo.qDXW7WMLT99",  # Community 5-14y\n  "wfaQBIVQxWo.mdjRPpvLKdu",  # Community 15+y\n]\n\nprint("Script ready. Fill in USERNAME/PASSWORD and run.")\n`,`NMCP_ConfirmedAge_${s}_${e}.py`);}
+function sa_downloadR(){const s=ST.config?.start||'2020-01',e=ST.config?.end||'2024-12';triggerDL(`# Confirmed Malaria Age Disaggregation — R Script\n# Period: ${s} → ${e}\n# ICF-SL\n# Uses analytics.json endpoint (fast)\n\nlibrary(httr); library(jsonlite); library(dplyr); library(ggplot2); library(openxlsx)\n\nBASE_URL <- "https://sl.dhis2.org/hmis23"\nUSERNAME <- "your_username"; PASSWORD <- "your_password"\nSTART_YM <- "${s}"; END_YM <- "${e}"\n\n# Analytics dx strings: old facility form (to Mar 2026), new 2025_HF01 form (from Apr 2026), community RDT positives (all periods)\n# Rules: old form used only <= 202603, new form only >= 202604; microscopy skipped at MCHP/CHP;\n# Level 6 community rolled up to Level 5 PHU; labs and Marie Stopes excluded;\n# community 02-59m treated as 0-59m; new form 1-11m omitted (overlap); positives only\ndx_map <- read.csv(text="dx,src,test,age\n${DX_MAP_SUSP.map(d=>d.dxStr+','+d.src+','+(d.microField?'mic':'rdt')+','+d.splitField).join('\\n')}", stringsAsFactors=FALSE)\ndxFac <- paste(dx_map$dx[dx_map$src!="com"], collapse=";")   # query at ou:LEVEL-5\ndxCom <- paste(dx_map$dx[dx_map$src=="com"], collapse=";")   # query at ou:LEVEL-5;LEVEL-6\n\nauth <- authenticate(USERNAME, PASSWORD)\ndhis2 <- function(path) fromJSON(content(GET(paste0(BASE_URL,path),auth),"text",encoding="UTF-8"),flatten=TRUE)\n\ncat("Script ready. Fill in USERNAME/PASSWORD and run.\\n")\n`,`NMCP_ConfirmedAge_${s}_${e}.R`);}
+function sa_downloadPy(){const s=ST.config?.start||'2020-01',e=ST.config?.end||'2024-12';triggerDL(`# Confirmed Malaria Age Disaggregation — Python Script\n# Period: ${s} → ${e} · ICF-SL\n# Uses analytics.json endpoint (fast)\n\nimport requests, pandas as pd\nfrom requests.auth import HTTPBasicAuth\n\nBASE_URL = "https://sl.dhis2.org/hmis23"\nauth = HTTPBasicAuth("your_username", "your_password")\n\n# Old facility form (to Mar 2026), new 2025_HF01 form (from Apr 2026), community RDT positives (all periods)\n# Rules: old form used only <= 202603, new form only >= 202604; microscopy skipped at MCHP/CHP;\n# Level 6 community rolled up to Level 5 PHU; labs and Marie Stopes excluded;\n# community 02-59m treated as 0-59m; new form 1-11m omitted (overlap); positives only\nDX_MAP = [\n${DX_MAP_SUSP.map(d=>'  ("'+d.dxStr+'", "'+d.src+'", "'+(d.microField?'mic':'rdt')+'", "'+d.splitField+'"),').join('\\n')}\n]\nOLD_FORM_END, NEW_FORM_START = 202603, 202604\nMIC_EXCL_TYPES = ["MCHP", "CHP"]\nDX_FAC = ";".join(d for d,s,_,_ in DX_MAP if s != "com")   # query at ou:LEVEL-5\nDX_COM = ";".join(d for d,s,_,_ in DX_MAP if s == "com")   # query at ou:LEVEL-5;LEVEL-6\n\nprint("Script ready. Fill in USERNAME/PASSWORD and run.")\n`,`NMCP_ConfirmedAge_${s}_${e}.py`);}
 
 // ═══════════════════════════════════════════════════════════════════
 //  FACILITY TRACKING
