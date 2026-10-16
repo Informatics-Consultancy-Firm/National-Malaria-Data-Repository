@@ -309,16 +309,15 @@ var MODULES = [
    desc:"RTS,S dose schedule, cold chain, wastage and recording.",
    pres:"form-j-presentation.pdf", video:"form-j-video.mp4", assessment:"form-j-assessment.html", data:"form_j.html"},
 
-  /* The scorecard runs through the same four sub-modules as every other module:
-     presentation, video, assessment, then the live tool. The data step is the
-     scoring form itself, which is also where the dashboard lives. */
-  {letter:"SC", accent:"#0b3d68", title:"Scoring Form",
-   desc:"Collates the section scores from the scored checklists, bands them (under 70% needs improvement, 70 to 85% satisfactory, above 85% good) and works out one facility performance score. The same page carries the dashboard over everything submitted to NMDR.",
-   pres:"form-sc-presentation.pdf", video:"form-sc-video.mp4", assessment:"form-sc-assessment.html",
-   data:"summary_form.html", dataAlt:"form_summary.html",
-   dataTitle:"Scoring and Dashboard",
-   dataDesc:"Open the scoring form, check the facility score and submit it, or read the dashboard of everything in the sheets.",
-   dataBtn:"Open the scoring form"}
+  /* MOCM-AI replaces the scoring form. It is one live tool, so the module shows a
+     single card: it fetches every submission, keeps the latest per PHU and form,
+     scores Forms B to J, maps the PHUs and builds the Word and PowerPoint outputs. */
+  {letter:"AI", accent:"#0b3d68", title:"MOCM-AI",
+   desc:"Fetches the latest MOCM submissions, keeps the last one per PHU and form, scores Forms B to J and the overall facility score (Good 85 to 100, Satisfactory 64 to 84, Needs Improvement below 64), writes the key findings, maps every PHU and builds the Word document and PowerPoint deck.",
+   data:"mocm_analysis.html", dataOnly:true,
+   dataTitle:"Run MOCM-AI",
+   dataDesc:"Open MOCM-AI and press Run MOCM-AI. Watch the log as it fetches and scores the data, then read the results and download the Word and PowerPoint files.",
+   dataBtn:"Open MOCM-AI"}
 ];
 
 var SUBS = [
@@ -350,7 +349,7 @@ var FORM_CREDENTIALS = {
   "G": { username: "supervisor", password: "mocm2026" },
   "I": { username: "supervisor", password: "mocm2026" },
   "J": { username: "supervisor", password: "mocm2026" },
-  "SC": { username: "supervisor", password: "mocm2026" }
+  "AI": { username: "supervisor", password: "mocm2026" }
 };
 
 /* ================= ICONS ================= */
@@ -382,9 +381,9 @@ try {
 function homeHTML(){
   var cards = MODULES.map(function(m,i){
     return '<div class="mod" style="--accent:'+m.accent+'" onclick="goModule('+i+')"><div class="body2">'+
-      '<div class="num">MODULE '+m.letter+'</div>'+
+      '<div class="num">'+(m.letter === 'AI' ? 'ANALYSIS' : 'MODULE '+m.letter)+'</div>'+
       '<h3>'+esc(m.title)+'</h3><p>'+esc(m.desc)+'</p>'+
-      '<div class="foot"><span class="sub">'+SUBS.length+' sub-modules</span>'+
+      '<div class="foot"><span class="sub">'+(m.dataOnly ? 'Live analysis tool' : SUBS.length+' sub-modules')+'</span>'+
       '<span class="go">Open '+IC.arrow+'</span></div>'+
     '</div></div>';
   }).join("");
@@ -396,7 +395,7 @@ function homeHTML(){
       '<div class="stats">'+
         '<div class="st"><div class="v">'+MODULES.length+'</div><div class="k">Modules</div></div>'+
         '<div class="st"><div class="v">'+SUBS.length+'</div><div class="k">Steps each</div></div>'+
-        '<div class="st"><div class="v">'+MODULES[0].letter+'&ndash;'+MODULES[MODULES.length-1].letter+'</div><div class="k">Forms</div></div>'+
+        '<div class="st"><div class="v">'+MODULES[0].letter+' to '+MODULES.filter(function(m){return m.letter.length===1;}).slice(-1)[0].letter+'</div><div class="k">Forms</div></div>'+
       '</div>'+
     '</div></section>'+
     '<div class="wrap">'+
@@ -430,7 +429,7 @@ function moduleHTML(i){
   }).join("");
 
   return '<div class="wrap"><div class="detail">'+
-    '<div class="dhero"><div class="num">'+(m.letter === 'SC' ? 'SCORING FORM' : 'MODULE '+m.letter)+'</div>'+
+    '<div class="dhero"><div class="num">'+(m.letter === 'AI' ? 'MOCM-AI ANALYSIS' : 'MODULE '+m.letter)+'</div>'+
       '<h2>'+esc(m.title)+'</h2><p>'+esc(m.desc)+'</p></div>'+
     '<div class="subs">'+subs+
       '<div class="player" id="player"><div class="pbar">'+
