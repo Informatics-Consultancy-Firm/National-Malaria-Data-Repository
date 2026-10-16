@@ -2,770 +2,1635 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>E-learning &middot; MOCM / OTSS+ &middot; NMCP Sierra Leone</title>
-<meta name="theme-color" content="#2b5f8a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- tells the MOCM portal not to apply its shared theme over this page -->
+<meta id="mocm-theme" name="mocm-theme" content="own">
+<title>MOCM-AI · PHU MOCM Analysis · ICF-SL</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  :root{
-    --blue:#3b78a8; --blue-dark:#2b5f8a; --blue-light:#4a8dbf; --blue-900:#1e4a6d;
-    --gold:#ffc107; --gold-600:#e0a800;
-    --green:#28a745; --red:#dc3545; --orange:#d1671a;
-    --ink:#1a2c3e; --muted:#6c7a8a; --line:#e0e6ed; --bg:#f0f2f5; --white:#fff;
-    --sh-sm:0 2px 8px rgba(43,95,138,.08);
-    --sh-md:0 12px 30px rgba(43,95,138,.14);
-    --sh-lg:0 26px 60px rgba(30,74,109,.30);
-    --disp:'Oswald',system-ui,sans-serif;
-    --body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
-  body{font-family:var(--body);color:var(--ink);background:var(--bg);overflow:hidden;}
-  a{text-decoration:none;color:inherit;}
+#leafMap{height:600px;border-radius:8px;border:1px solid var(--border);z-index:0;}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:10px 0 22px;font-size:12px;font-weight:700;color:#2c4b62;}
+.map-legend span.dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:6px;vertical-align:middle;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
+.leaflet-popup-content{font-size:12.5px;line-height:1.5;}
+@media (max-width:768px){#leafMap{height:440px;}}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#2c6793;--blue-dk:#1f4a6a;--blue-lt:#e8f0f7;
+  --white:#ffffff;--bg:#f0f5f9;--border:#d0dde8;--muted:#6c7a89;
+  --gold:#ffc107;--green:#28a745;--teal:#17a2b8;--red:#dc3545;
+}
+html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans-serif;background:var(--bg);color:#22313f;}
+.page-header{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dk) 100%);color:#fff;padding:22px 32px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+.header-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.logo-box{background:#fff;border-radius:8px;padding:6px 10px;display:flex;align-items:center;justify-content:center;}
+.logo-box img{width:80px;height:auto;border-radius:4px;}
+.header-text h1{font-size:20px;font-weight:700;letter-spacing:.5px;margin-bottom:2px;}
+.header-text p{font-size:12px;opacity:.85;}
+.page-body{max-width:1400px;margin:0 auto;padding:24px 28px;}
+.card{background:var(--white);border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:22px;overflow:hidden;}
+.card-head{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border);}
+.card-head h2{font-size:15px;font-weight:700;color:var(--blue-dk);letter-spacing:.3px;}
+.card-body{padding:20px;}
+.form-control{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:#222;background:#fff;transition:border-color .2s;}
+.form-control:focus{outline:none;border-color:var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.4px;transition:all .2s;text-transform:uppercase;font-family:inherit;}
+.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue);} .btn-outline:hover{background:var(--blue-lt);}
+.btn-sm{padding:6px 12px;font-size:11px;}
 
-  /* FULL WINDOW APP
-     No phone frame and no fixed size. The portal takes the whole window of
-     whatever it is opened on, phone, tablet or computer, and reflows to fit.
-     The top bar stays in place and the body scrolls under it. */
-  .app{position:relative;width:100%;height:100vh;height:100dvh;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;}
+/* config screen */
+#configScreen{padding:20px 0;}
+.cfg-wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px;}
+.cfg-how{border:1px solid var(--border);border-radius:16px;padding:24px 28px;background:var(--blue-lt);}
+.cfg-how-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:18px;}
+.cfg-steps{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cfg-step{display:flex;gap:14px;align-items:flex-start;}
+.cfg-step-num{min-width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cfg-step-head{font-size:13px;font-weight:800;color:var(--blue-dk);margin-bottom:3px;}
+.cfg-step-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+.mini{width:100%;border-collapse:collapse;margin-top:7px;font-size:10px;}
+.mini th{padding:4px 7px;text-align:left;color:var(--blue);font-weight:800;background:rgba(44,103,147,.12);}
+.mini td{padding:3px 7px;border-top:1px solid var(--border);color:var(--muted);}
+.mini td:first-child{font-weight:700;color:#1e3a5f;white-space:nowrap;}
+.cfg-form{background:#fff;border-radius:16px;padding:30px 28px;box-shadow:0 4px 20px rgba(44,103,147,.12);border:1px solid var(--border);}
+.cfg-form-title{font-size:14px;font-weight:800;color:var(--blue);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:6px;}
+.cfg-form-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:22px;line-height:1.5;}
+.cfg-label{display:block;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.cfg-input{font-size:13px;font-weight:600;color:var(--blue-dk);padding:12px 14px;margin-bottom:10px;}
+.cfg-hint{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:18px;}
+.cfg-run-btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;border:none;padding:16px;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 4px 14px rgba(44,102,147,.3);transition:transform .2s;font-family:inherit;}
+.cfg-run-btn:hover{transform:translateY(-2px);}
+.cfg-credit{text-align:center;margin-top:14px;font-size:11px;color:var(--muted);}
+.band-legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:#fff;border-radius:8px;border:1.5px solid var(--border);margin-top:16px;font-size:12px;font-weight:700;}
+.band-legend span.sw{display:inline-block;width:20px;height:14px;border-radius:3px;margin-right:6px;vertical-align:middle;}
+@media (min-width:640px){.cfg-wrap{flex-direction:row;align-items:flex-start;}.cfg-how{flex:1.6;}.cfg-form{flex:.8;}}
+@media (max-width:639px){.cfg-steps{grid-template-columns:1fr;}}
+/* MOCM-AI agent intro */
+.agent{max-width:1200px;margin:0 auto 20px;display:flex;gap:26px;align-items:center;background:linear-gradient(135deg,#0b3d68 0%,#2c6793 100%);border-radius:18px;padding:26px 30px;color:#fff;box-shadow:0 8px 28px rgba(11,61,104,.28);position:relative;overflow:hidden;}
+.agent::after{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(79,209,197,.25),transparent 70%);pointer-events:none;}
+.agent-av{flex:0 0 170px;width:170px;animation:agFloat 4s ease-in-out infinite;}
+.agent-av svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 18px rgba(0,0,0,.3));}
+.agent-av .eye{animation:agBlink 5s infinite;transform-origin:center;transform-box:fill-box;}
+.agent-av .ant{animation:agPulse 1.8s ease-in-out infinite;}
+.agent-main{flex:1;min-width:0;position:relative;z-index:1;}
+.agent-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;background:rgba(255,255,255,.14);padding:5px 12px;border-radius:20px;margin-bottom:12px;}
+.agent-tag i{width:8px;height:8px;border-radius:50%;background:#4fd1c5;box-shadow:0 0 0 0 rgba(79,209,197,.7);animation:agDot 1.6s infinite;}
+.agent-bubble{background:#fff;color:#1f3a56;border-radius:16px;padding:18px 20px;position:relative;font-size:15px;line-height:1.6;min-height:96px;}
+.agent-bubble::before{content:"";position:absolute;left:-10px;top:30px;border:10px solid transparent;border-right-color:#fff;border-left:0;}
+.agent-bubble b{color:#0b3d68;}
+.agent-caret{display:inline-block;width:2px;height:1em;background:#2c6793;vertical-align:-2px;margin-left:2px;animation:agCaret .8s steps(1) infinite;}
+.agent-go{margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.agent-go .cfg-run-btn{width:auto;min-width:240px;background:linear-gradient(135deg,#4fd1c5,#2c9c94);color:#06263f;box-shadow:0 6px 18px rgba(79,209,197,.35);}
+.agent-go small{font-size:11px;opacity:.85;}
+@keyframes agFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes agBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes agPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes agDot{0%{box-shadow:0 0 0 0 rgba(79,209,197,.7)}100%{box-shadow:0 0 0 10px rgba(79,209,197,0)}}
+.agent-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.agent-top .agent-tag{margin-bottom:0;}
+.agent-say{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.agent-say:hover,.agent-say.on{background:#4fd1c5;color:#06263f;border-color:#4fd1c5;}
+@keyframes agCaret{50%{opacity:0}}
+@media (max-width:768px){.agent{flex-direction:column;text-align:left;padding:22px 18px;gap:14px;}.agent-av{flex:0 0 auto;width:130px;}.agent-bubble{font-size:14px;}.agent-bubble::before{left:50%;top:-10px;margin-left:-10px;border:10px solid transparent;border-bottom-color:#fff;border-top:0;}.agent-go .cfg-run-btn{width:100%;min-width:0;}}
 
-  /* one content width shared by the top bar, the hero and the page body */
-  .top-in,.hero-in,.wrap{width:100%;max-width:1240px;margin:0 auto;padding-left:clamp(15px,3vw,36px);padding-right:clamp(15px,3vw,36px);}
-
-  /* TOP BAR */
-  .top{flex:0 0 auto;background:var(--white);border-bottom:3px solid var(--blue);box-shadow:var(--sh-sm);z-index:10;padding:11px 0;padding-top:calc(11px + env(safe-area-inset-top));}
-  .top-in{display:flex;align-items:center;gap:10px;}
-  .top .logo{height:36px;width:auto;display:block;}
-  .top .brand{border-left:2px solid var(--line);padding-left:10px;min-width:0;}
-  .top .brand .n{font:600 13px/1 var(--disp);letter-spacing:.04em;color:var(--blue-dark);text-transform:uppercase;}
-  .top .brand .s{font:500 8.5px/1.2 var(--body);color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .top .home-link{margin-left:auto;font:600 11px var(--body);color:var(--blue-dark);display:none;align-items:center;gap:5px;cursor:pointer;padding:7px 10px;border-radius:9px;border:1.5px solid var(--line);background:none;flex:0 0 auto;}
-  .top .home-link.show{display:inline-flex;}
-
-  /* SCROLL BODY */
-  .body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;}
-  #view{flex:1 0 auto;}
-
-  /* HERO */
-  .hero{background:linear-gradient(155deg,var(--blue) 0%,var(--blue-dark) 55%,var(--blue-900) 100%);color:#fff;border-radius:0 0 24px 24px;position:relative;overflow:hidden;padding:22px 0 26px;}
-  .hero-in{position:relative;z-index:1;}
-  .hero::after{content:"";position:absolute;right:-50px;top:-60px;width:170px;height:170px;border-radius:50%;background:rgba(255,193,7,.14);}
-  .hero .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);padding:5px 11px;border-radius:99px;font:600 9px var(--body);letter-spacing:.06em;text-transform:uppercase;position:relative;}
-  .hero .tag .g{width:6px;height:6px;border-radius:50%;background:var(--gold);}
-  .hero h1{font:600 22px/1.18 var(--disp);letter-spacing:.01em;margin:12px 0 10px;position:relative;}
-  .hero h1 span{color:var(--gold);}
-  .hero p{font:400 12px/1.6 var(--body);color:rgba(255,255,255,.92);position:relative;}
-  .hero .stats{display:flex;gap:20px;margin-top:18px;position:relative;}
-  .hero .stats .v{font:700 19px/1 var(--disp);color:var(--gold);}
-  .hero .stats .k{font:500 9.5px var(--body);color:rgba(255,255,255,.82);margin-top:4px;}
+/* MOCM-AI explainer */
+.explain-btn{background:linear-gradient(135deg,#4fd1c5,#2c9c94);color:#06263f;border:none;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.3px;box-shadow:0 3px 10px rgba(79,209,197,.35);}
+.explain-btn.on{background:#0b3d68;color:#fff;}
+.say-on{outline:3px solid #4fd1c5 !important;outline-offset:4px;border-radius:8px;box-shadow:0 0 0 8px rgba(79,209,197,.18);transition:outline-color .2s;scroll-margin:120px;}
+.kf li.say-on{background:#e3faf7;}
+.say-bar{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);width:min(900px,calc(100% - 24px));background:#0b3d68;color:#fff;border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:2000;transition:transform .3s;}
+.say-bar.show{transform:translate(-50%,0);}
+.say-av{flex:0 0 40px;height:40px;border-radius:50%;background:#4fd1c5;color:#06263f;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.say-bar.talking .say-av{animation:agDot 1.4s infinite;}
+.say-main{flex:1;min-width:0;}
+.say-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7fe0d6;margin-bottom:2px;}
+.say-text{font-size:13px;line-height:1.5;max-height:4.5em;overflow:auto;}
+.say-ctl{display:flex;gap:6px;flex-shrink:0;}
+.say-ctl button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;font-size:12px;}
+.say-ctl button:hover{background:#4fd1c5;color:#06263f;}
+@media (max-width:600px){.say-bar{flex-wrap:wrap;bottom:8px;}.say-ctl{width:100%;justify-content:center;}.say-text{font-size:12.5px;}}
+@media (prefers-reduced-motion:reduce){.agent-av,.agent-av .eye,.agent-av .ant,.agent-tag i,.agent-caret{animation:none;}}
 
 
-  /* STATUS ROW */
-  .status-row{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:9px 14px;margin-top:16px;box-shadow:var(--sh-sm);}
-  .status-left{display:flex;align-items:center;gap:8px;}
-  .status-dot{width:8px;height:8px;border-radius:8px;}
-  .status-dot.online{background:var(--green);box-shadow:0 0 0 2px rgba(40,167,69,.15);}
-  .status-dot.offline{background:#9ca3af;}
-  .status-text{font:500 12px var(--body);color:var(--ink);}
-  .status-badge{font:700 9.5px var(--body);letter-spacing:.06em;padding:4px 12px;border-radius:20px;background:#e8f5e9;color:var(--green);}
+/* progress */
+.pbar-wrap{height:8px;background:#1a1a2e;border-radius:4px;overflow:hidden;margin:10px 0;}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:4px;transition:width .35s;}
+.step-list{display:flex;flex-direction:column;gap:5px;max-height:420px;overflow-y:auto;}
+.step-item{display:flex;align-items:flex-start;gap:9px;padding:6px 10px;border-radius:5px;font-size:11.5px;font-family:'Courier New',monospace;}
+.step-item.pending{background:#1a1a2e;color:#666;}
+.step-item.running{background:#1a2e4a;color:var(--teal);animation:pulse 1.4s ease-in-out infinite;}
+.step-item.done{background:#0a2e0a;color:#4cd964;}
+.step-item.error{background:#2e0a0a;color:#ff6b6b;}
+.step-item.log{background:transparent;color:#9fb3c8;padding:2px 10px 2px 28px;font-size:11px;}
+.step-item.log.warn{color:#ffd166;}
+.step-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:2px;}
+.step-item.pending .step-dot{background:#555;}
+.step-item.running .step-dot{background:var(--teal);}
+.step-item.done .step-dot{background:var(--green);}
+.step-item.error .step-dot{background:var(--red);}
+.step-item.log .step-dot{display:none;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 
-  /* SECTION HEAD */
-  .sec-head{display:flex;align-items:baseline;gap:10px;margin:20px 2px 14px;}
-  .sec-head h2{font:600 17px/1 var(--disp);letter-spacing:.03em;color:var(--blue-dark);text-transform:uppercase;}
-  .sec-head .bar{flex:1;height:2px;background:var(--line);}
-  .sec-head .count{font:600 10.5px var(--body);color:var(--muted);}
-
-  /* MODULE CARDS */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:12px;padding-bottom:24px;}
-  .mod{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:15px;box-shadow:var(--sh-sm);cursor:pointer;overflow:hidden;position:relative;transition:transform .12s,box-shadow .2s;}
-  .mod::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--accent,var(--blue));}
-  .mod:active{transform:scale(.99);background:#fafcff;}
-  .mod .body2{flex:1 1 auto;display:flex;flex-direction:column;padding:15px 15px 15px 19px;}
-  .mod .num{font:700 10px var(--disp);letter-spacing:.12em;color:var(--gold-600);}
-  .mod h3{font:600 16px/1.22 var(--disp);color:var(--ink);margin:5px 0 7px;}
-  .mod p{font:400 11.5px/1.5 var(--body);color:var(--muted);margin-bottom:12px;}
-  .mod .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:11px;border-top:1px solid var(--line);}
-  .mod .foot .sub{font:700 10.5px var(--body);color:var(--gold-600);letter-spacing:.01em;}
-  .mod .foot .go{display:inline-flex;align-items:center;gap:5px;font:700 12px var(--body);color:var(--gold-600);}
-  .mod .foot .go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
-
-  /* MODULE DETAIL */
-  .detail{padding-bottom:26px;animation:fade .3s ease;}
-  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-  .dhero{background:linear-gradient(150deg,var(--blue),var(--blue-900));color:#fff;border-radius:16px;padding:18px;margin:16px 0;position:relative;overflow:hidden;}
-  .dhero::after{content:"";position:absolute;right:-40px;top:-50px;width:130px;height:130px;border-radius:50%;background:rgba(255,193,7,.16);}
-  .dhero .num{font:700 10px var(--disp);letter-spacing:.14em;color:var(--gold);position:relative;}
-  .dhero h2{font:600 20px/1.18 var(--disp);margin:6px 0 8px;position:relative;}
-  .dhero p{font:400 12px/1.6 var(--body);color:rgba(255,255,255,.9);position:relative;}
-
-  /* SUB-MODULE CARDS */
-  .subs{display:grid;grid-template-columns:1fr;gap:11px;}
-  @media(min-width:600px){ .subs{grid-template-columns:repeat(2,1fr);} }
-  @media(min-width:1100px){ .subs{grid-template-columns:repeat(4,1fr);} }
-  .sub-card{background:var(--white);border:1px solid var(--line);border-radius:15px;box-shadow:var(--sh-sm);padding:16px;display:flex;flex-direction:column;}
-  .sub-card .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:11px;}
-  .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-  .ic.ppt{background:#fdeede;color:var(--orange);}
-  .ic.vid{background:#e7f3ff;color:var(--blue-dark);}
-  .ic.ass{background:#fff6d9;color:var(--gold-600);}
-  .ic.dat{background:#e4f5ec;color:var(--green);}
-  .sub-card .step{font:700 10px var(--disp);letter-spacing:.1em;color:var(--muted);}
-  .sub-card h4{font:600 16px/1.2 var(--disp);margin:4px 0 6px;}
-  .sub-card p{font:400 11.5px/1.5 var(--body);color:var(--muted);margin-bottom:13px;}
-  .sub-card .btn{margin-top:auto;border:none;border-radius:11px;padding:12px 14px;font:600 13px var(--body);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:filter .2s,transform .08s;}
-  .sub-card .btn:active{transform:translateY(1px);}
-  .btn-blue{background:var(--blue-dark);color:#fff;}
-  .btn-gold{background:var(--gold);color:var(--blue-900);}
-  .btn-green{background:var(--green);color:#fff;}
-  .btn-orange{background:var(--orange);color:#fff;}
-  .btn .lk{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
-
-  /* VIDEO PLAYER */
-  .player{grid-column:1/-1;background:#000;border-radius:15px;overflow:hidden;box-shadow:var(--sh-md);display:none;}
-  .player.show{display:block;animation:fade .3s ease;}
-  .player video{width:100%;display:block;max-height:40vh;background:#000;}
-  .player .pbar{background:var(--blue-900);color:#fff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font:600 11px var(--body);gap:10px;}
-  .player .pbar button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 10px;font:600 11px var(--body);cursor:pointer;flex:0 0 auto;}
-
-  /* FOOTER */
-  .foot{background:var(--blue-900);color:rgba(255,255,255,.72);text-align:center;padding:18px;font:400 10.5px var(--body);letter-spacing:.3px;}
-  .foot b{color:var(--gold);font-weight:600;}
-
-  /* DOC VIEWER: takes the whole window, so every HTML page and PDF opens at full size */
-  .docviewer{position:fixed;inset:0;background:var(--bg);z-index:60;display:none;flex-direction:column;}
-  .docviewer.show{display:flex;}
-  .dvbar{flex:0 0 auto;background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;padding:11px 13px;padding-top:calc(11px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:10px;font:600 11.5px var(--body);}
-  .dvbar .dvtitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .dvbar button{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:9px;padding:7px 12px;font:600 11px var(--body);cursor:pointer;flex:0 0 auto;}
-  .docviewer .dvframe{flex:1 1 auto;width:100%;border:none;background:var(--bg);display:none;}
-  .docviewer .pdfscroll{flex:1 1 auto;width:100%;overflow:auto;background:#4a5561;padding:10px;display:none;}
-  .docviewer.pdf .pdfscroll{display:block;}
-  .docviewer.html .dvframe{display:block;}
-  .pdfscroll canvas{display:block;max-width:100%;height:auto;background:#fff;}
-  .pdfscroll .pdfpage{margin:0 auto 10px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.4);}
-  .dvmsg{color:#eef3f8;font:500 12.5px/1.55 var(--body);padding:16px;text-align:center;}
-
-  /* LOGIN MODAL */
-  .login-overlay{display:none;position:fixed;inset:0;background:rgba(30,74,109,.78);backdrop-filter:blur(3px);z-index:120;align-items:center;justify-content:center;padding:18px;}
-  .login-sheet{background:var(--white);border-radius:22px;width:100%;max-width:300px;padding:22px 18px 24px;text-align:center;box-shadow:0 24px 40px rgba(0,0,0,.28);}
-  .login-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--blue-dark),var(--blue));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
-  .login-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;}
-  .login-title{font:600 17px/1.2 var(--disp);letter-spacing:.02em;color:var(--blue-dark);text-transform:uppercase;margin-bottom:5px;}
-  .login-lbl{font:400 11px var(--body);color:var(--muted);margin-bottom:14px;}
-  .login-input{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font:400 13px var(--body);margin-bottom:10px;background:var(--white);color:var(--ink);}
-  .login-input:focus{border-color:var(--blue);outline:2px solid rgba(59,120,168,.2);outline-offset:1px;}
-  .login-error{color:var(--red);font:500 10px var(--body);margin-bottom:12px;display:none;}
-  .login-btns{display:flex;gap:10px;margin-top:6px;}
-  .login-cancel,.login-submit{flex:1;padding:12px;border-radius:11px;font:600 12.5px var(--body);cursor:pointer;}
-  .login-cancel{background:var(--bg);color:var(--muted);border:1px solid var(--line);}
-  .login-submit{background:var(--blue-dark);color:#fff;border:none;}
-
-  /* ---- adapt to the screen it is opened on ---- */
-  @media(max-width:380px){
-    .top .logo{height:32px;}
-  }
-  @media(min-width:768px){
-    .top .logo{height:44px;}
-    .top .brand .n{font-size:16px;}
-    .top .brand .s{font-size:11px;}
-    .top .home-link{font-size:13px;padding:9px 14px;}
-    .hero{border-radius:0 0 32px 32px;padding:40px 0 44px;}
-    .hero::after{width:300px;height:300px;right:-80px;top:-110px;}
-    .hero .tag{font-size:10.5px;padding:6px 13px;}
-    .hero h1{font-size:clamp(28px,3.3vw,42px);max-width:920px;margin:16px 0 14px;}
-    .hero p{font-size:14.5px;max-width:760px;}
-    .hero .stats{gap:40px;margin-top:24px;}
-    .hero .stats .v{font-size:26px;}
-    .hero .stats .k{font-size:11.5px;}
-    .status-row{padding:12px 18px;margin-top:22px;}
-    .status-text{font-size:13.5px;}
-    .status-badge{font-size:10.5px;}
-    .sec-head{margin:28px 2px 18px;}
-    .sec-head h2{font-size:20px;}
-    .sec-head .count{font-size:12px;}
-    .grid{gap:16px;padding-bottom:36px;}
-    .mod .body2{padding:18px 18px 18px 23px;}
-    .mod .num{font-size:11px;}
-    .mod h3{font-size:18px;}
-    .mod p{font-size:13px;}
-    .mod .foot .sub{font-size:11.5px;}
-    .mod .foot .go{font-size:13px;}
-    .dhero{padding:28px 30px;margin:22px 0;}
-    .dhero::after{width:220px;height:220px;right:-60px;top:-80px;}
-    .dhero .num{font-size:11px;}
-    .dhero h2{font-size:28px;}
-    .dhero p{font-size:14px;max-width:820px;}
-    .detail{padding-bottom:36px;}
-    .subs{gap:16px;}
-    .sub-card{padding:20px;}
-    .sub-card h4{font-size:18px;}
-    .sub-card p{font-size:13px;}
-    .sub-card .btn{font-size:14px;padding:13px 16px;}
-    .player video{max-height:70vh;}
-    .player .pbar{font-size:12.5px;padding:10px 14px;}
-    .dvbar{font-size:13px;padding-left:18px;padding-right:18px;}
-    .dvbar button{font-size:12.5px;padding:8px 14px;}
-    .docviewer .pdfscroll{padding:18px;}
-    .foot{font-size:12px;padding:22px;}
-    .login-sheet{max-width:360px;}
-  }
-
-  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-2px)}}
-  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+/* results */
+.stats-row{display:flex;gap:8px;flex-wrap:wrap;}
+.stat-pill{background:var(--blue-lt);border:1.5px solid var(--blue);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--blue);}
+.stat-pill.ok{background:#d4edda;border-color:var(--green);color:#155724;}
+.stat-pill.warn{background:#fff3cd;border-color:var(--gold);color:#856404;}
+.stat-pill.bad{background:#f8d7da;border-color:var(--red);color:#721c24;}
+.dl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px;}
+.dl-card{border:2px solid var(--blue);border-radius:10px;overflow:hidden;}
+.dl-card .dl-head{color:#fff;padding:12px 16px;font-size:14px;font-weight:700;}
+.dl-card .dl-body{padding:16px;display:flex;flex-direction:column;gap:10px;}
+.dl-card p{font-size:12px;color:#3a5068;line-height:1.5;}
+.dl-btn{color:#fff;font-size:13px;padding:12px 18px;justify-content:center;}
+.dl-btn:disabled{opacity:.6;cursor:wait;}
+.dl-status{font-size:11px;color:var(--muted);min-height:14px;}
+.tab-nav{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{padding:10px 20px;background:transparent;border:none;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;font-family:inherit;}
+.tab-btn:hover{color:var(--blue);background:var(--blue-lt);}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-lt);}
+.tab-pane{display:none;} .tab-pane.active{display:block;}
+.collap{border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.collap-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;background:var(--blue-lt);border-bottom:1px solid var(--border);user-select:none;}
+.collap-head:hover{background:#dfe9f3;}
+.collap-head h3{font-size:13px;font-weight:700;color:var(--blue-dk);}
+.collap-chev{transition:transform .25s;color:var(--blue);font-size:16px;font-weight:700;}
+.collap-body{padding:16px;background:#fff;}
+.collap-body.hidden{display:none;}
+.fig{margin:6px 0 22px;text-align:center;}
+.fig canvas{max-width:100%;height:auto;display:block;margin:0 auto;border:1px solid var(--border);border-radius:6px;}
+.fig canvas.pie{max-width:640px;}
+.cap{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:6px;}
+.kf{margin:4px 0 22px 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;}
+.kf li{background:var(--blue-lt);border-left:4px solid #C9A227;border-radius:6px;padding:11px 14px;font-size:13.5px;line-height:1.6;color:#22313f;}
+.tcap{font-size:12.5px;font-weight:700;color:var(--blue-dk);margin:6px 0 8px;}
+.tbl-search{max-width:320px;margin-bottom:8px;}
+.data-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);margin-bottom:22px;max-height:560px;overflow-y:auto;}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table thead th{position:sticky;top:0;background:var(--blue-dk);color:#fff;padding:9px 12px;text-align:left;font-weight:700;white-space:nowrap;}
+.data-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:#2c4b62;}
+.data-table td:first-child{white-space:nowrap;}
+.data-table tbody tr:nth-child(even) td{background:#f7fafc;}
+.data-table td.b-Good{background:#d5ecdd!important;}
+.data-table td.b-Satisfactory{background:#fcefc7!important;}
+.data-table td.b-NeedsImprovement{background:#f6d5d1!important;}
+.alert{padding:11px 16px;border-radius:6px;margin-bottom:12px;font-size:13px;border:1.5px solid;line-height:1.5;}
+.alert-err{background:#f8d7da;border-color:var(--red);color:#721c24;}
+.alert-warn{background:#fff3cd;border-color:var(--gold);color:#856404;}
+.page-footer{background:var(--blue-dk);color:rgba(255,255,255,.8);text-align:center;padding:14px;font-size:11px;margin-top:28px;}
+/* phones, tablets and laptops */
+html,body{overflow-x:hidden;}
+.page-body,.card,.card-body,.tab-pane,.collap-body{min-width:0;}
+.swipe-hint{display:none;font-size:11px;color:var(--muted);margin:2px 0 4px;}
+@media (max-width:1024px){
+  .page-body{padding:18px 18px;}
+  .cfg-steps{grid-template-columns:1fr;}
+}
+@media (max-width:768px){
+  .page-body{padding:14px 12px;}
+  .tab-nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
+  .tab-btn{white-space:nowrap;flex-shrink:0;padding:10px 14px;}
+  .card-head{padding:12px 14px;}
+  .card-head > div{flex-wrap:wrap;}
+  .collap-body{padding:12px 10px;}
+  /* charts keep a readable size and scroll sideways rather than shrinking */
+  .fig{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .fig canvas{max-width:none;width:760px;}
+  .fig canvas.pie{width:560px;}
+  .swipe-hint{display:block;}
+  .data-table{font-size:11.5px;}
+  .data-table thead th,.data-table td{padding:7px 9px;}
+  .tbl-search{max-width:none;}
+  .kf li{font-size:13px;padding:10px 12px;}
+  .stat-pill{font-size:11.5px;padding:5px 11px;}
+}
+@media (max-width:480px){
+  .page-header{padding:14px 14px;}
+  .header-row{gap:10px;}
+  .logo-box img{width:56px;}
+  .header-text h1{font-size:16px;}
+  .header-text p{font-size:11px;}
+  .card-body{padding:12px 10px;}
+  .cfg-how,.cfg-form{padding:18px 16px;border-radius:12px;}
+  .cfg-run-btn{font-size:15px;padding:15px;}
+  .btn-sm{padding:8px 10px;}
+  .dl-btn{width:100%;}
+  .fig canvas{width:680px;}
+  .fig canvas.pie{width:500px;}
+  .step-item{font-size:11px;}
+  .mini{font-size:10px;}
+}
+@media (pointer:coarse){ .tab-btn,.btn{min-height:42px;} .form-control{font-size:16px;min-height:42px;} .collap-head{min-height:46px;} }
 </style>
 </head>
 <body>
 
-<div class="app">
+<div class="page-header">
+  <div class="header-row">
+    <div class="logo-box"><img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL"></div>
+    <div class="header-text">
+      <h1>PHU MOCM Analysis Tool</h1>
+      <p>Malaria Onsite Coaching and Mentorship · National Malaria Control Programme · Sierra Leone · ICF-SL</p>
+    </div>
+    <div style="margin-left:auto;"><span id="headerPill" style="background:rgba(255,255,255,.15);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;">Ready</span></div>
+  </div>
+</div>
 
-    <!-- TOP BAR -->
-    <header class="top"><div class="top-in">
-      <img src="NMCP.png" class="logo" alt="NMCP" onerror="this.style.display='none'">
-      <div class="brand">
-        <div class="n">NMCP</div>
-        <div class="s">National Malaria Control Programme &middot; SL</div>
+<div class="page-body">
+
+  <!-- SCREEN 1: CONFIG -->
+  <div id="configScreen">
+    <div class="agent" id="agentIntro">
+      <div class="agent-av"><svg viewBox="0 0 200 220" role="img" aria-label="MOCM-AI agent">
+  <defs>
+    <linearGradient id="agHead" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d6e6f2"/></linearGradient>
+    <linearGradient id="agVisor" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b2741"/><stop offset="1" stop-color="#16466e"/></linearGradient>
+    <linearGradient id="agBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fd1c5"/><stop offset="1" stop-color="#2c9c94"/></linearGradient>
+  </defs>
+  <line x1="100" y1="22" x2="100" y2="44" stroke="#d6e6f2" stroke-width="5" stroke-linecap="round"/>
+  <circle class="ant" cx="100" cy="18" r="9" fill="#4fd1c5"/>
+  <rect x="22" y="80" width="16" height="40" rx="8" fill="#4fd1c5"/>
+  <rect x="162" y="80" width="16" height="40" rx="8" fill="#4fd1c5"/>
+  <rect x="34" y="42" width="132" height="110" rx="38" fill="url(#agHead)"/>
+  <rect x="50" y="66" width="100" height="56" rx="26" fill="url(#agVisor)"/>
+  <ellipse class="eye" cx="80" cy="92" rx="10" ry="12" fill="#4fd1c5"/>
+  <ellipse class="eye" cx="120" cy="92" rx="10" ry="12" fill="#4fd1c5"/>
+  <circle cx="83" cy="87" r="3" fill="#fff"/><circle cx="123" cy="87" r="3" fill="#fff"/>
+  <path d="M86 132 Q100 142 114 132" stroke="#2c6793" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M170 104 q16 4 10 30 l-22 12" stroke="#d6e6f2" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="156" cy="146" r="6" fill="#4fd1c5"/>
+  <rect x="88" y="148" width="24" height="16" rx="5" fill="#9fb9cf"/>
+  <rect x="58" y="158" width="84" height="56" rx="20" fill="url(#agBody)"/>
+  <rect x="76" y="172" width="48" height="26" rx="7" fill="#0b2741"/>
+  <rect x="82" y="186" width="7" height="8" rx="1.5" fill="#4fd1c5"/><rect x="93" y="180" width="7" height="14" rx="1.5" fill="#ffc107"/><rect x="104" y="176" width="7" height="18" rx="1.5" fill="#fff"/><rect x="115" y="183" width="5" height="11" rx="1.5" fill="#4fd1c5"/>
+</svg></div>
+      <div class="agent-main">
+        <div class="agent-top"><div class="agent-tag"><i></i>MOCM-AI agent · online</div><button type="button" class="agent-say" id="agentSay" aria-label="Read the message aloud">&#128266; Listen</button></div>
+        <div class="agent-bubble"><span id="agentText"></span><span class="agent-caret" id="agentCaret"></span></div>
+        <div id="cfgError" class="alert alert-err" style="display:none;margin-top:12px;"></div>
+        <div class="agent-go">
+          <button class="cfg-run-btn" onclick="runAnalysis()">&#9654; Run MOCM-AI</button>
+          <small>Developed by Informatics Consultancy Firm, Sierra Leone (ICF-SL)</small>
+        </div>
       </div>
-      <button class="home-link" id="backLink">&larr; Modules</button>
-    </div></header>
+    </div>
+    <div class="cfg-wrap">
+      <div class="cfg-how">
+        <div class="cfg-how-title">How It Works</div>
+        <div class="cfg-steps">
+          <div class="cfg-step"><div class="cfg-step-num">1</div><div>
+            <div class="cfg-step-head">Fetch the Latest Data</div>
+            <div class="cfg-step-desc">Reads the latest PHU MOCM submissions for every form.</div>
+            <table class="mini"><thead><tr><th>Form</th><th>Title</th></tr></thead><tbody>
+              <tr><td>Form A</td><td>General Health Facility Information</td></tr>
+              <tr><td>Form B</td><td>Health Facility Readiness</td></tr>
+              <tr><td>Form C</td><td>mRDT Use Assessment</td></tr>
+              <tr><td>Form D</td><td>Clinical Management of Suspected Malaria</td></tr>
+              <tr><td>Form E</td><td>Perennial Malaria Chemoprevention at EPI</td></tr>
+              <tr><td>Form F</td><td>Malaria in Pregnancy at ANC</td></tr>
+              <tr><td>Form G</td><td>Data Management Checklist</td></tr>
+              <tr><td>Form I</td><td>SP as Perennial Malaria Chemoprevention tally</td></tr>
+              <tr><td>Form J</td><td>Malaria Vaccine (RTS,S) Administration tally</td></tr>
+            </tbody></table>
+          </div></div>
+          <div class="cfg-step"><div class="cfg-step-num">2</div><div>
+            <div class="cfg-step-head">Clean Resubmissions</div>
+            <div class="cfg-step-desc">Keeps one record per facility per form: the one with the latest date and time submitted. Earlier ones are removed whatever their status. Submission dates later than the server receipt have their day and month swapped back.</div>
+          </div></div>
+          <div class="cfg-step"><div class="cfg-step-num">3</div><div>
+            <div class="cfg-step-head">Scoring</div>
+            <div class="cfg-step-desc">Each form is scored as points earned divided by points possible, times 100. On Forms D to J every good practice question is worth one point, and a question that was skipped or did not apply is left out, so it never counts against a PHU. Form A is the facility profile and is not scored.</div>
+            <table class="mini"><thead><tr><th>Form</th><th>Points</th><th>Sections</th></tr></thead><tbody>
+              <tr><td>Form B</td><td>97</td><td>7</td></tr>
+              <tr><td>Form C</td><td>32</td><td>6</td></tr>
+              <tr><td>Form D</td><td>21</td><td>6</td></tr>
+              <tr><td>Form E</td><td>22</td><td>4</td></tr>
+              <tr><td>Form F</td><td>29</td><td>4</td></tr>
+              <tr><td>Form G</td><td>40</td><td>5</td></tr>
+              <tr><td>Form I</td><td>2</td><td>1</td></tr>
+              <tr><td>Form J</td><td>3</td><td>1</td></tr>
+              <tr><td>Overall</td><td>246</td><td>Points earned ÷ points possible on the forms the PHU has × 100. A missing form is left out of the denominator.</td></tr>
+            </tbody></table>
+          </div></div>
+          <div class="cfg-step"><div class="cfg-step-num">4</div><div>
+            <div class="cfg-step-head">Completeness</div>
+            <div class="cfg-step-desc">Counts which of the nine PHU forms each facility has, by district, so you can see which facilities sent all forms, which sent some, and what is missing.</div>
+          </div></div>
+          <div class="cfg-step"><div class="cfg-step-num">5</div><div>
+            <div class="cfg-step-head">Outputs</div>
+            <div class="cfg-step-desc">Key findings naming the PHUs and the areas that need improvement, then bar and pie charts and tables for every form, the score bands and the facility lists, on screen and as a Word document and a PowerPoint deck.</div>
+          </div></div>
+        </div>
+        <div class="band-legend">
+          <span style="font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;">Score bands</span>
+          <span><span class="sw" style="background:#2E8B57"></span>Good 85 to 100</span>
+          <span><span class="sw" style="background:#E0A800"></span>Satisfactory 64 to 84</span>
+          <span><span class="sw" style="background:#C0392B"></span>Needs Improvement below 64</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- SCROLLING BODY -->
-    <div class="body" id="scroll">
-      <div id="view"></div>
-      <div class="foot">&copy; <span id="year">2026</span> <b>ICF-SL</b> &middot; MOCM / OTSS+ Training &amp; Data Collection Portal</div>
+  <!-- SCREEN 2: PROGRESS -->
+  <div id="pipelineScreen" style="display:none;">
+    <div class="card">
+      <div class="card-head">
+        <h2>Analysis Progress</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span id="elapsed" style="font-size:12px;color:var(--muted);"></span>
+          <span id="pctLabel" style="font-size:13px;font-weight:700;color:var(--blue);">0%</span>
+          <button class="btn btn-outline btn-sm" onclick="showConfig()">&#8592; Back</button>
+        </div>
+      </div>
+      <div class="card-body" style="background:#0d1117;padding:14px;">
+        <div class="pbar-wrap"><div class="pbar-fill" id="pbarFill" style="width:0%"></div></div>
+        <div class="step-list" id="stepList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: RESULTS -->
+  <div id="resultsSection" style="display:none;">
+    <div class="card">
+      <div class="card-head">
+        <h2>Summary</h2>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="showProgress()">View Log</button>
+          <button class="btn btn-outline btn-sm" onclick="runAnalysis()">&#8635; Run Again</button>
+          <button class="btn btn-outline btn-sm" onclick="showConfig()">&#8592; Start</button>
+        </div>
+      </div>
+      <div class="card-body"><div class="stats-row" id="statsRow"></div></div>
     </div>
 
-    <!-- DOC VIEWER -->
-    <div class="docviewer" id="docViewer">
-      <div class="dvbar">
-        <span class="dvtitle" id="dvTitle">Presentation</span>
-        <button onclick="closeDoc()">Close &times;</button>
-      </div>
-      <div class="pdfscroll" id="pdfScroll"></div>
-      <iframe class="dvframe" id="dvFrame" title="viewer"></iframe>
-    </div>
-
-    <!-- LOGIN MODAL -->
-    <div class="login-overlay" id="loginOverlay">
-      <div class="login-sheet">
-        <div class="login-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        <div class="login-title">Authentication Required</div>
-        <div class="login-lbl" id="loginLabel">Enter credentials to continue</div>
-        <input type="text" class="login-input" id="loginUsername" placeholder="Username" autocomplete="off">
-        <input type="password" class="login-input" id="loginPassword" placeholder="Password" onkeydown="if(event.key==='Enter') submitLogin()">
-        <div class="login-error" id="loginErrorMsg">Invalid username or password.</div>
-        <div class="login-btns">
-          <button class="login-cancel" onclick="closeLoginModal()">Cancel</button>
-          <button class="login-submit" onclick="submitLogin()">Unlock</button>
+    <div class="card">
+      <div class="card-head"><h2>Downloads</h2></div>
+      <div class="card-body">
+        <div class="dl-grid">
+          <div class="dl-card" style="border-color:#2b579a;">
+            <div class="dl-head" style="background:#2b579a;">Word Document (.docx)</div>
+            <div class="dl-body">
+              <p>Headings, every chart and every table from this run, numbered, with the facility lists in the appendices.</p>
+              <button class="btn dl-btn" id="btnDocx" style="background:#2b579a;" onclick="downloadDocx()">&#11015; Download Word</button>
+              <div class="dl-status" id="docxStatus"></div>
+            </div>
+          </div>
+          <div class="dl-card" style="border-color:#c43e1c;">
+            <div class="dl-head" style="background:#c43e1c;">PowerPoint Deck (.pptx)</div>
+            <div class="dl-body">
+              <p>One slide per chart and per key table, with section slides, ready to present.</p>
+              <button class="btn dl-btn" id="btnPptx" style="background:#c43e1c;" onclick="downloadPptx()">&#11015; Download PowerPoint</button>
+              <div class="dl-status" id="pptxStatus"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-head" style="border-bottom:none;padding-bottom:0;"><h2>Results</h2><button type="button" class="explain-btn" id="explainBtn" onclick="sayStart()">&#128266; Explain this tab</button></div>
+      <div class="card-body" style="padding-top:12px;">
+        <div class="tab-nav" id="tabNav"></div>
+        <div id="tabPanes"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="say-bar" id="sayBar" role="status" aria-live="polite">
+  <div class="say-av" aria-hidden="true">AI</div>
+  <div class="say-main"><div class="say-label" id="sayLabel">MOCM-AI is explaining</div><div class="say-text" id="sayText"></div></div>
+  <div class="say-ctl">
+    <button type="button" onclick="sayStep(-1)" aria-label="Previous">&#9664;</button>
+    <button type="button" id="sayPauseBtn" onclick="sayPause()" aria-label="Pause">&#10074;&#10074;</button>
+    <button type="button" onclick="sayStep(1)" aria-label="Next">&#9654;</button>
+    <button type="button" onclick="sayStop()" aria-label="Stop">&#10005;</button>
+  </div>
+</div>
+<div class="page-footer">
+  National Malaria Control Programme (NMCP), Ministry of Health, Sierra Leone &nbsp;|&nbsp; Technical Partner: Informatics Consultancy Firm, Sierra Leone (ICF-SL)
 </div>
 
 <script>
-/* ================= CONFIGURATION ================= */
+/* ═══════════════════════════════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════════════════════════════ */
+const DATA_SERVICE = 'https://script.google.com/macros/s/AKfycbwV04trmpmSLJAS5BTdgBHTS4lumCPRd45yIUvOx9Z0BX7147xCGVId9JcoNt_nCUG_/exec';
+const SHEET_ID = '11SbElH-7rGS2ujVho4fsvREMeValjiBRw-y1BSntXow';
+/* district boundaries, the same file the DMAT tools use */
+const DISTRICT_GEOJSON = 'https://raw.githubusercontent.com/mohamedsillahkanu/tpr/d202a234dfd9b30de6216b5da59b2a1ee14283b5/District_Shapefiles.geojson';
+/* a GPS point is used only when it falls inside Sierra Leone */
+const SL_BOX = {latMin:6.8, latMax:10.1, lngMin:-13.5, lngMax:-10.2};
+const BAND_GOOD = 85, BAND_SAT = 64;     // Good 85 to 100, Satisfactory 64 to 84, Needs Improvement below 64
 
-/* One module per MOCM form. Every file is named after the form, all in the
-   same folder as index.html — no sub-folders. */
-var MODULES = [
-  {letter:"A", accent:"#3b78a8", title:"Facility Profile",
-   desc:"PHU identification, location and staff details.",
-   pres:"form-a-presentation.pdf", video:"form-a-video.mp4", assessment:"form-a-assessment.html", data:"form_a.html"},
-
-  {letter:"B", accent:"#2b5f8a", title:"HF Readiness",
-   desc:"Capacity, supplies, tools and referral readiness.",
-   pres:"form-b-presentation.pdf", video:"form-b-video.mp4", assessment:"form-b-assessment.html", data:"form_b.html"},
-
-  {letter:"C", accent:"#4a8dbf", title:"Malria Rapid Diagnostic Test (mRDT)",
-   desc:"RDT, ACT and treatment compliance at the facility.",
-   pres:"form-c-presentation.pdf", video:"form-c-video.mp4", assessment:"form-c-assessment.html", data:"form_c.html"},
-
-  {letter:"D", accent:"#28a745", title:"Assessing Clinical Management of patients suspected of having malaria",
-   desc:"HMIS register review and data verification.",
-   pres:"form-d-presentation.pdf", video:"form-d-video.mp4", assessment:"form-d-assessment.html", data:"form_d.html"},
-
-  {letter:"E", accent:"#fd7e14", title:"Specific Intervention Prevention (SPI)",
-   desc:"IPTp, ITN distribution and outreach activities.",
-   pres:"form-e-presentation.pdf", video:"form-e-video.mp4", assessment:"form-e-assessment.html", data:"form_e.html"},
-
-  {letter:"F", accent:"#9c27b0", title:"Malaria and Pregnancy",
-   desc:"Severe malaria referral pathway and follow-up.",
-   pres:"form-f-presentation.pdf", video:"form-f-video.mp4", assessment:"form-f-assessment.html", data:"form_f.html"},
-
-  {letter:"G", accent:"#ffc107", title:"Data Management Checklist",
-   desc:"Ratings, gaps and agreed corrective actions.",
-   pres:"form-g-presentation.pdf", video:"form-g-video.mp4", assessment:"form-g-assessment.html", data:"form_g.html"},
-
-  {letter:"I", accent:"#e83e8c", title:"Perennial Malaria Chemoprevention (PMC)",
-   desc:"Formerly Intermittent Preventive Treatment in Infants (IPTi). Eligibility, doses and recording.",
-   pres:"form-i-presentation.pdf", video:"form-i-video.mp4", assessment:"form-i-assessment.html", data:"form_i.html"},
-
-  {letter:"J", accent:"#6f42c1", title:"Malaria Vaccine (RTS,S) Administration",
-   desc:"RTS,S dose schedule, cold chain, wastage and recording.",
-   pres:"form-j-presentation.pdf", video:"form-j-video.mp4", assessment:"form-j-assessment.html", data:"form_j.html"},
-
-  /* MOCM-AI replaces the scoring form. It is one live tool, so the module shows a
-     single card: it fetches every submission, keeps the latest per PHU and form,
-     scores Forms B to J, maps the PHUs and builds the Word and PowerPoint outputs. */
-  {letter:"AI", accent:"#0b3d68", title:"MOCM-AI",
-   desc:"Fetches the latest MOCM submissions, keeps the last one per PHU and form, scores Forms B to J and the overall facility score (Good 85 to 100, Satisfactory 64 to 84, Needs Improvement below 64), writes the key findings, maps every PHU and builds the Word document and PowerPoint deck.",
-   data:"mocm_analysis.html", dataOnly:true,
-   dataTitle:"Run MOCM-AI",
-   dataDesc:"Open MOCM-AI and press Run MOCM-AI. Watch the log as it fetches and scores the data, then read the results and download the Word and PowerPoint files.",
-   dataBtn:"Open MOCM-AI"}
-];
-
-var SUBS = [
-  {key:"ppt", ic:"ppt", cls:"btn-orange", step:"Sub-module 1",
-   title:"Presentation", desc:"Slide walkthrough of the form and the supervision workflow.", btn:"Open presentation"},
-  {key:"video", ic:"vid", cls:"btn-blue", step:"Sub-module 2",
-   title:"Video", desc:"Recorded demonstration (.mp4) of how to complete the form.", btn:"Play video"},
-  {key:"assessment", ic:"ass", cls:"btn-gold", step:"Sub-module 3",
-   title:"Assessment", desc:"Short assessment to confirm understanding before fieldwork.", btn:"Start assessment"},
-  {key:"data", ic:"dat", cls:"btn-green", step:"Sub-module 4",
-   title:"Data Collection", desc:"Launch the live supervision form used at the facility.", btn:"Open data collection"}
-];
-
-/* Stylesheet applied to every HTML page opened in the viewer */
-var THEME_CSS = "elearning-theme.css";
-
-/* Set to true to ask for a username and password before the
-   data collection step. false = every file opens straight away. */
-var REQUIRE_LOGIN = false;
-
-/* Credentials used only when REQUIRE_LOGIN is true */
-var FORM_CREDENTIALS = {
-  "A": { username: "supervisor", password: "mocm2026" },
-  "B": { username: "supervisor", password: "mocm2026" },
-  "C": { username: "supervisor", password: "mocm2026" },
-  "D": { username: "supervisor", password: "mocm2026" },
-  "E": { username: "supervisor", password: "mocm2026" },
-  "F": { username: "supervisor", password: "mocm2026" },
-  "G": { username: "supervisor", password: "mocm2026" },
-  "I": { username: "supervisor", password: "mocm2026" },
-  "J": { username: "supervisor", password: "mocm2026" },
-  "AI": { username: "supervisor", password: "mocm2026" }
+const PHU = ['Form A','Form B','Form C','Form D','Form E','Form F','Form G','Form I','Form J'];
+const ALL_FORMS = PHU;   /* Form H (hospital laboratory) is left out */
+const TITLE = {
+  'Form A':'General Health Facility Information','Form B':'Health Facility Readiness','Form C':'mRDT Use Assessment',
+  'Form D':'Clinical Management of Suspected Malaria','Form E':'Perennial Malaria Chemoprevention at EPI',
+  'Form F':'Malaria in Pregnancy at ANC','Form G':'Data Management Checklist','Form H':'Clinical Laboratory Coaching (hospital)',
+  'Form I':'SP as Perennial Malaria Chemoprevention tally','Form J':'Malaria Vaccine (RTS,S) Administration tally'};
+/* facility names entered under two types: treated as one facility */
+const ALIAS = {
+  'Foindu (Lower Bambara) CHP':'Foindu (Lower Bambara) CHC','Kamiendor MCHP':'Kamiendor CHC',
+  'Manjama MCHP':'Manjama CHC','Motoni MCHP':'Motoni CHC'};
+const BSEC = {'Reporting Forms':22,'Reference Material':14,'Antimalarials':22,'Essential Drugs':22,'Basic Tools':9,'Referral':6,'Waste':2};
+const CSEC = {'Availability':3,'Preparation':6,'Procedure':6,'Waste':3,'Therapeutic':6,'Records':8};
+const B_TOTAL = 97, C_TOTAL = 32;
+/* question prefixes for the unscored forms: perf = practice and readiness, ca = corrective action areas */
+const SPEC = {
+  'Form D':{perf:['3.1','3.2','4.2','4.3','4.4','4.5','4.7','6.1','6.2','6.3','7.1','7.2','7.3','7.4','7.8','7.13','7.16'], ca:rng(8,2,10)},
+  'Form E':{perf:['3.1','3.2','3.4','3.5','3.7','4.1','4.11',...rng(6,1,8),'5.1'], ca:rng(7,2,9)},
+  'Form F':{perf:['3.1','3.2','3.3','3.4','3.5','3.6','3.7','4.1','4.3','4.10','4.18',...rng(6,1,9)], ca:rng(7,2,12)},
+  'Form G':{perf:[...rng(3,1,9),...rng(4,1,5),'5.4','5.5','5.6',...rng(7,1,5)], ca:rng(9,2,6)},
 };
+const PRACTICE_FORMS = [['Form D','clinical management'],['Form E','PMC at EPI'],['Form F','malaria in pregnancy at ANC'],['Form G','data management']];
 
-/* ================= ICONS ================= */
-var IC = {
-  ppt:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 17v4M8 21h8"/><path d="M7 11l3-2 3 3 4-4"/></svg>',
-  vid:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>',
-  ass:'<svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3v2h6V3"/></svg>',
-  dat:'<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 10h6M9 14h4"/></svg>',
-  arrow:'<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>',
-  lock:'<svg class="lk" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+/* Scoring for Forms D to J. Each item scores 1 when the answer is good practice and 0 otherwise;
+   skipped or not applicable items are left out, so a PHU is scored only on what applied to it.
+   Section and form scores are items done ÷ items answered × 100, banded like Forms B and C.
+   Questions that only describe the case (fever present, first ANC visit, already on Sulphur
+   medication) and the corrective action sections are not scored. */
+const BOTH_RECORDS = v => /register updated correctly/i.test(v) && /(card|handbook) updated correctly/i.test(v) && !/neither/i.test(v);
+const SCORE_SPEC = {
+  'Form D':{
+    'Patient reception':['3.1','3.2'],
+    'History and vital signs':['4.2','4.3','4.4','4.5','4.7'],
+    'Physical examination':['6.1','6.2','6.3'],
+    'Commodities':['7.1','7.2'],
+    'Testing and diagnosis':['7.3','7.4','7.7','7.8','7.13'],
+    'Treatment and counselling':['7.15','7.16','7.18','7.19']},
+  'Form E':{
+    'Readiness':['3.1','3.2','3.4','3.5','3.7'],
+    'Service delivery':['4.1','4.6','4.9','4.10','4.11',{p:'4.14',good:['Correct SP dose administered via DOT']},'5.1'],
+    'Records':[{p:'4.15',fn:BOTH_RECORDS},{p:'5.4',fn:BOTH_RECORDS}],
+    'Counselling':rng(6,1,8)},
+  'Form F':{
+    'Readiness':rng(3,1,7),
+    'Service delivery':['4.1','4.3',{p:'4.6',good:['Yes','Refer to lab/OPD']},'4.8','4.9','4.10',{p:'4.11',good:['Yes','Referred']},{p:'4.16',good:['Correct SP dose administered via DOT']},'4.18','5.2'],
+    'Records':[{p:'4.17',fn:BOTH_RECORDS},{p:'4.19',fn:BOTH_RECORDS},{p:'5.3',fn:BOTH_RECORDS}],
+    'Counselling':rng(6,1,9)},
+  'Form G':{
+    'Register knowledge':rng(3,1,9),
+    'Training of staff':rng(4,1,5),
+    'DHIS2 capacity':['5.4','5.5','5.6',{p:'5.8',good:['Facility based data validation','Sub-district data validation']}],
+    'Registers and forms complete':rng(6,1,12).map(p=>({p,good:['Available with all fields completed']})),
+    'Reporting to DHIS2':rng(7,1,10)},
+  'Form I':{'Readiness':['2.1','2.2']},
+  'Form J':{'Readiness':['2.1','2.2','2.3']},
 };
+const SCORED_PRACTICE = Object.keys(SCORE_SPEC);
+const SKIP_VALUES = new Set(['','skipped','not applicable','n/a','na']);
+function rng(a,b,n){const o=[];for(let i=b;i<=n;i++)o.push(a+'.'+i);return o;}
 
-function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+const NAVY='#1F4E78', GOLD='#C9A227', GREEN='#2E8B57', AMBER='#E0A800', RED='#C0392B', GREY='#8C9AA6';
+const BANDC = {'Good':GREEN,'Satisfactory':AMBER,'Needs Improvement':RED};
+const TYPEC = [NAVY,GOLD,GREY,'#5B8DB8','#7A9E7E'];
 
-/* ================= STATE ================= */
-var view = document.getElementById("view");
-var scroller = document.getElementById("scroll");
-var backLink = document.getElementById("backLink");
-var currentModule = null;
-var pendingModuleIndex = null;
-
-var unlockedForms = {};
-try {
-  var saved = sessionStorage.getItem("mocm_unlocked_final");
-  if (saved) unlockedForms = JSON.parse(saved);
-} catch(e) {}
-
-/* ================= HOME ================= */
-function homeHTML(){
-  var cards = MODULES.map(function(m,i){
-    return '<div class="mod" style="--accent:'+m.accent+'" onclick="goModule('+i+')"><div class="body2">'+
-      '<div class="num">'+(m.letter === 'AI' ? 'ANALYSIS' : 'MODULE '+m.letter)+'</div>'+
-      '<h3>'+esc(m.title)+'</h3><p>'+esc(m.desc)+'</p>'+
-      '<div class="foot"><span class="sub">'+(m.dataOnly ? 'Live analysis tool' : SUBS.length+' sub-modules')+'</span>'+
-      '<span class="go">Open '+IC.arrow+'</span></div>'+
-    '</div></div>';
-  }).join("");
-
-  return '<section class="hero"><div class="hero-in">'+
-      '<span class="tag"><span class="g"></span>MOCM / OTSS+ &middot; Sierra Leone 2026</span>'+
-      '<h1>E-learning for <span>Supportive Supervision &amp; Readiness Assessment</span></h1>'+
-      '<p>Open a module to find its presentation, a demo video, a readiness assessment, and the live data collection form in order. Built by ICF-SL for NMCP Sierra Leone.</p>'+
-      '<div class="stats">'+
-        '<div class="st"><div class="v">'+MODULES.length+'</div><div class="k">Modules</div></div>'+
-        '<div class="st"><div class="v">'+SUBS.length+'</div><div class="k">Steps each</div></div>'+
-        '<div class="st"><div class="v">'+MODULES[0].letter+' to '+MODULES.filter(function(m){return m.letter.length===1;}).slice(-1)[0].letter+'</div><div class="k">Forms</div></div>'+
-      '</div>'+
-    '</div></section>'+
-    '<div class="wrap">'+
-      '<div class="status-row">'+
-        '<div class="status-left"><div class="status-dot online" id="statusDot"></div>'+
-        '<div class="status-text" id="statusTxt">System ready</div></div>'+
-        '<div class="status-badge" id="statusBadge">ONLINE</div>'+
-      '</div>'+
-      '<div class="sec-head"><h2>Modules</h2><span class="bar"></span><span class="count">'+MODULES.length+'</span></div>'+
-      '<div class="grid">'+cards+'</div>'+
-    '</div>';
+/* ═══════════════════════════════════════════════════════════════════
+   SMALL HELPERS
+   ═══════════════════════════════════════════════════════════════════ */
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const keyOf = s => String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,' ');
+const p1 = x => (isFinite(x)?Number(x).toFixed(1):'0.0')+'%';
+const p0 = x => Math.round(x)+'%';
+const n0 = x => Math.round(Number(x)||0).toLocaleString('en-US');
+const D_ = s => String(s).replace(/ District$/,'');
+const num = v => { if(v===''||v==null) return NaN; const n=Number(v); return isFinite(n)?n:NaN; };
+function band(p){ return p>=BAND_GOOD?'Good':(p>=BAND_SAT?'Satisfactory':'Needs Improvement'); }
+function ndist(d){ d=String(d||'').trim(); return !d?'Unknown':(/District$/.test(d)?d:d+' District'); }
+function mode(arr){ const m=new Map(); arr.forEach(v=>m.set(v,(m.get(v)||0)+1)); let best=null,bc=-1; m.forEach((c,v)=>{if(c>bc){bc=c;best=v;}}); return best; }
+function median(a){ const s=a.filter(isFinite).sort((x,y)=>x-y); if(!s.length) return NaN; const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+function mean(a){ const s=a.filter(isFinite); return s.length?s.reduce((x,y)=>x+y,0)/s.length:NaN; }
+function counts(rows,col,order){
+  const m={}; rows.forEach(r=>{ const v=String(r[col]==null?'':r[col]).trim(); if(v) m[v]=(m[v]||0)+1; });
+  if(order){ const o={}; order.forEach(k=>o[k]=m[k]||0); return o; }
+  return Object.fromEntries(Object.entries(m).sort((a,b)=>b[1]-a[1]));
 }
-
-/* ================= MODULE DETAIL ================= */
-function moduleHTML(i){
-  var m = MODULES[i];
-  var steps = m.dataOnly ? SUBS.filter(function(s){ return s.key === "data"; }) : SUBS;
-  var subs = steps.map(function(s){
-    var locked = (REQUIRE_LOGIN && s.key === "data" && FORM_CREDENTIALS[m.letter] && !unlockedForms[m.letter]);
-    /* a module may reword its own data step, which the scoring form does */
-    var step  = m.dataOnly ? "" : s.step;
-    var title = (s.key === "data" && m.dataTitle) ? m.dataTitle : s.title;
-    var desc  = (s.key === "data" && m.dataDesc)  ? m.dataDesc  : s.desc;
-    var btn   = (s.key === "data" && m.dataBtn)   ? m.dataBtn   : s.btn;
-    return '<div class="sub-card"><div class="ic '+s.ic+'">'+IC[s.ic]+'</div>'+
-      (step ? '<div class="step">'+esc(step)+'</div>' : '')+
-      '<h4>'+esc(title)+'</h4><p>'+esc(desc)+'</p>'+
-      '<button class="btn '+s.cls+'" onclick="openSub(\''+s.key+'\','+i+')">'+
-        (locked ? IC.lock : '')+esc(btn)+'</button>'+
-    '</div>';
-  }).join("");
-
-  return '<div class="wrap"><div class="detail">'+
-    '<div class="dhero"><div class="num">'+(m.letter === 'AI' ? 'MOCM-AI ANALYSIS' : 'MODULE '+m.letter)+'</div>'+
-      '<h2>'+esc(m.title)+'</h2><p>'+esc(m.desc)+'</p></div>'+
-    '<div class="subs">'+subs+
-      '<div class="player" id="player"><div class="pbar">'+
-        '<span>Video &middot; '+esc(m.title)+'</span>'+
-        '<button onclick="closePlayer()">Close &times;</button></div>'+
-        '<video id="playerVideo" controls preload="metadata"></video></div>'+
-    '</div></div></div>';
+function cleanLbl(s){ return String(s).replace(/(\d)\s*[-–]\s*(\d)/g,'$1 to $2').replace(/\s*[-–—]\s*/g,' ').replace(/\s+/g,' ').trim(); }
+function qLabel(c){ return cleanLbl(String(c).replace(/^[\d.]+\s+(\d\.\s+)?/,'')).replace(/\?+$/,''); }
+function cap1(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function pyes(rows,col){
+  let y=0,n=0; rows.forEach(r=>{ const v=String(r[col]==null?'':r[col]).trim(); if(v==='Yes')y++; else if(v==='No')n++; });
+  return (y+n)?y/(y+n)*100:NaN;
 }
-
-/* ================= NAVIGATION ================= */
-function goHome(){
-  currentModule = null;
-  view.innerHTML = homeHTML();
-  backLink.classList.remove("show");
-  updateOnlineStatus();
-  scroller.scrollTop = 0;
-}
-
-function goModule(i){
-  currentModule = i;
-  view.innerHTML = moduleHTML(i);
-  backLink.classList.add("show");
-  scroller.scrollTop = 0;
-}
-
-backLink.onclick = goHome;
-
-/* ================= SUB-MODULES ================= */
-if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-}
-
-function subByKey(key){
-  for (var i = 0; i < SUBS.length; i++) if (SUBS[i].key === key) return SUBS[i];
+function findCol(headers,...cands){
+  for(const c of cands){
+    if(typeof c==='string'){ if(headers.includes(c)) return c; }
+    else { const f=headers.find(h=>c.test(h)); if(f) return f; }
+  }
   return null;
 }
+const startsCols = (headers,p) => headers.filter(h=>h.startsWith(p+' '));
 
-function subUrl(m, s){
-  return (s.key === "ppt") ? m.pres : m[s.key];
+/* Dates arrive three ways: Excel serial numbers (xlsx export), ISO strings (Apps
+   Script feed) and text such as "7/28/2026, 1:45:36 PM". All become wall clock
+   milliseconds, Freetown time being UTC. */
+function toMs(v){
+  if(v===''||v==null) return NaN;
+  if(v instanceof Date) return Date.UTC(v.getFullYear(),v.getMonth(),v.getDate(),v.getHours(),v.getMinutes(),v.getSeconds());
+  if(typeof v==='number') return (v>20000&&v<80000)?Math.round((v-25569)*86400000):NaN;
+  const s=String(v).trim(); let m;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/))){
+    if(/(Z|[+-]\d\d:?\d\d)$/.test(s)){ const t=Date.parse(s); if(!isNaN(t)) return t; }
+    return Date.UTC(+m[1],m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0));
+  }
+  if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s*(?:(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AaPp][Mm])?)?/))){
+    let h=+(m[4]||0); const ap=(m[7]||'').toUpperCase();
+    if(ap==='PM'&&h<12)h+=12; if(ap==='AM'&&h===12)h=0;
+    return Date.UTC(+m[3],m[1]-1,+m[2],h,+(m[5]||0),+(m[6]||0));
+  }
+  const t=Date.parse(s); return isNaN(t)?NaN:t;
+}
+function fmtMs(ms,withTime=true){
+  if(!isFinite(ms)) return '';
+  const d=new Date(ms), z=n=>String(n).padStart(2,'0');
+  const day=`${d.getUTCFullYear()}-${z(d.getUTCMonth()+1)}-${z(d.getUTCDate())}`;
+  return withTime?`${day} ${z(d.getUTCHours())}:${z(d.getUTCMinutes())}:${z(d.getUTCSeconds())}`:day;
 }
 
-/* try each candidate in turn and use the first that answers */
-function fileThatExists(list, done){
-  var i = 0;
-  function tryNext(){
-    if (i >= list.length) { done(list[0]); return; }      // none answered: let the frame show its own error
-    var url = list[i++];
-    fetch(url, { method: "HEAD" })
-      .then(function (r){ if (r && r.ok) done(url); else tryNext(); })
-      .catch(function (){ tryNext(); });
-  }
-  tryNext();
+/* ═══════════════════════════════════════════════════════════════════
+   PROGRESS AND LOG
+   ═══════════════════════════════════════════════════════════════════ */
+const stepEls={}; let stepNo=0, t0=0, timer=null;
+function setPill(t,bg){ const el=document.getElementById('headerPill'); el.textContent=t; el.style.background=bg||'rgba(255,255,255,.15)'; }
+function setProgress(p){ document.getElementById('pbarFill').style.width=p+'%'; document.getElementById('pctLabel').textContent=Math.round(p)+'%'; }
+function addStep(id,txt){
+  stepNo++; const d=document.createElement('div');
+  d.className='step-item pending'; d.innerHTML=`<div class="step-dot"></div><span>Step ${stepNo}: ${esc(txt)}</span>`;
+  document.getElementById('stepList').appendChild(d); stepEls[id]={el:d,label:`Step ${stepNo}: ${txt}`};
+}
+function setStep(id,status,msg){
+  const s=stepEls[id]; if(!s) return;
+  s.el.className='step-item '+status;
+  const pre={running:'» ',done:'✓ ',error:'✗ '}[status]||'';
+  s.el.querySelector('span').textContent=pre+s.label+(msg?'  ·  '+msg:'');
+  if(status==='running') s.el.scrollIntoView({block:'nearest'});
+}
+/* log lines appear under the step that is running */
+function log(id,txt,warn){
+  const s=stepEls[id]; const d=document.createElement('div');
+  d.className='step-item log'+(warn?' warn':''); d.innerHTML=`<div class="step-dot"></div><span>${warn?'! ':'· '}${esc(txt)}</span>`;
+  const list=document.getElementById('stepList');
+  let after=s?s.el:null; while(after&&after.nextElementSibling&&after.nextElementSibling.classList.contains('log')) after=after.nextElementSibling;
+  if(after&&after.nextElementSibling) list.insertBefore(d,after.nextElementSibling); else list.appendChild(d);
+  d.scrollIntoView({block:'nearest'});
+}
+function show(id){ ['configScreen','pipelineScreen','resultsSection'].forEach(s=>document.getElementById(s).style.display=(s===id?'block':'none')); }
+function showConfig(){ show('configScreen'); }
+function showProgress(){ show('pipelineScreen'); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FETCH
+   ═══════════════════════════════════════════════════════════════════ */
+function sheetId(src){
+  const m=src.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/); if(m) return m[1];
+  if(/^[a-zA-Z0-9_-]{30,}$/.test(src)) return src;
+  return null;
+}
+function rowsFromSheet(ws){ return XLSX.utils.sheet_to_json(ws,{defval:'',raw:true}); }
+
+const plainErr=e=>/Failed to fetch|NetworkError|Load failed/i.test(e.message||'')?'no answer':(e.message||String(e));
+
+/* 1st: the MOCM data service (Apps Script), every tab with the personal columns removed */
+async function fromService(){
+  const r=await fetch(DATA_SERVICE.split('?')[0]+'?form=A&action=data',{redirect:'follow'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const txt=await r.text(); let j;
+  try{ j=JSON.parse(txt); }catch(_){ throw new Error('the service returned a page instead of data'); }
+  if(!j.ok) throw new Error(j.error||'the service reported an error');
+  const tabs={};
+  Object.entries(j.tabs||{}).forEach(([name,t])=>{ tabs[name]=(t.rows||[]).map(row=>{ const o={}; t.headers.forEach((h,i)=>o[h]=row[i]); return o; }); });
+  if(!Object.keys(tabs).length) throw new Error('the service returned no tabs');
+  return tabs;
+}
+/* 2nd: the Google Sheet itself as one Excel file (needs link sharing) */
+async function fromSheet(){
+  const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=xlsx`);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const buf=await r.arrayBuffer(); const b=new Uint8Array(buf.slice(0,2));
+  if(!(b[0]===0x50&&b[1]===0x4b)) throw new Error('the sheet is not shared for reading');
+  const wb=XLSX.read(buf,{type:'array'});
+  const tabs={}; wb.SheetNames.forEach(n=>tabs[n]=rowsFromSheet(wb.Sheets[n]));
+  return tabs;
+}
+async function fetchWorkbook(sid){
+  try{
+    log(sid,'Connecting to the MOCM data service');
+    const tabs=await fromService();
+    log(sid,'Data received from the MOCM data service, personal details already removed');
+    return {tabs,via:'the MOCM data service'};
+  }catch(e){ log(sid,`The MOCM data service did not return data (${plainErr(e)}), trying the PHU MOCM sheet directly`,true); }
+  try{
+    log(sid,'Reading the PHU MOCM sheet');
+    const tabs=await fromSheet();
+    log(sid,'Data received from the PHU MOCM sheet');
+    return {tabs,via:'the PHU MOCM sheet'};
+  }catch(e){ log(sid,`The PHU MOCM sheet could not be read (${plainErr(e)})`,true); }
+  throw new Error('MOCM-AI could not reach the data. Check the internet connection and run again. If it keeps failing, the MOCM Apps Script needs to be deployed with access set to Anyone, or the sheet shared as Anyone with the link can view.');
 }
 
-function openSub(key, i){
-  var m = MODULES[i], s = subByKey(key);
-  if (!m || !s) return;
-
-  if (key === "video") {
-    var player = document.getElementById("player");
-    var vid = document.getElementById("playerVideo");
-    player.classList.add("show");
-    vid.src = subUrl(m, s);
-    player.scrollIntoView({behavior:"smooth", block:"center"});
-    vid.play().catch(function(){});
-    return;
-  }
-
-  if (REQUIRE_LOGIN && key === "data") {
-    var creds = FORM_CREDENTIALS[m.letter];
-    if (creds && (creds.username || creds.password) && !unlockedForms[m.letter]) {
-      requestLogin(i);
-      return;
-    }
-  }
-
-  var label = (m.dataOnly && key === "data" && m.dataTitle) ? m.dataTitle : s.title;
-  if (key === "data" && m.dataAlt) {
-    /* the scoring form has been called both summary_form.html and
-       form_summary.html; open whichever is actually on the server */
-    fileThatExists([subUrl(m, s), m.dataAlt], function (url) {
-      openDoc("html", label + " \u00B7 " + m.title, url, 0);
-    });
-    return;
-  }
-  openDoc(key === "ppt" ? "pdf" : "html", label + " \u00B7 " + m.title, subUrl(m, s), 0);
-}
-
-/* ================= DOC VIEWER ================= */
-function openDoc(kind, title, url, depth){
-  var dv = document.getElementById("docViewer");
-  document.getElementById("dvTitle").textContent = title;
-  dv.classList.remove("pdf","html");
-  dv.classList.add(kind, "show");
-
-  if (kind === "pdf") {
-    document.getElementById("dvFrame").src = "about:blank";
-    _pdfUrl = url;
-    renderPdf(document.getElementById("pdfScroll"), url);
-  } else {
-    document.getElementById("pdfScroll").innerHTML = "";
-    var frame = document.getElementById("dvFrame");
-    frame.onload = function(){ themeFrame(frame, 0); };
-    frame.src = url;
-  }
-}
-
-/* Drop the shared e-learning stylesheet into the page inside the viewer.
-   Works when the portal and the form are served from the same origin
-   (a web server or GitHub Pages); silently skipped otherwise. */
-function themeFrame(frame, depth){
-  try {
-    var doc = frame.contentDocument;
-    if (!doc || !doc.head) return;
-    if (doc.getElementById("mocm-theme")) return;
-
-    var fonts = doc.createElement("link");
-    fonts.rel = "stylesheet";
-    fonts.href = "https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap";
-    doc.head.appendChild(fonts);
-
-    var prefix = "";
-    for (var d = 0; d < depth; d++) prefix += "../";
-
-    var css = doc.createElement("link");
-    css.id = "mocm-theme";
-    css.rel = "stylesheet";
-    css.href = prefix + THEME_CSS;
-    doc.head.appendChild(css);
-  } catch(e) { /* cross-origin or file:// — the page keeps its own styling */ }
-}
-
-var _pdfUrl = null, _reflowT = null;
-window.addEventListener("resize", function(){
-  var dv = document.getElementById("docViewer");
-  if (!dv.classList.contains("show") || !dv.classList.contains("pdf") || !_pdfUrl) return;
-  clearTimeout(_reflowT);
-  _reflowT = setTimeout(function(){ renderPdf(document.getElementById("pdfScroll"), _pdfUrl); }, 350);
-});
-
-function closeDoc(){
-  var dv = document.getElementById("docViewer");
-  dv.classList.remove("show","pdf","html");
-  _pdfUrl = null;
-  var frame = document.getElementById("dvFrame");
-  frame.onload = null;
-  frame.src = "about:blank";
-  document.getElementById("pdfScroll").innerHTML = "";
-}
-
-function renderPdf(container, url){
-  container.innerHTML = '<div class="dvmsg">Loading\u2026</div>';
-  if (!window.pdfjsLib) {
-    container.innerHTML = '<div class="dvmsg">The PDF viewer did not load. Reconnect once to fetch it, or open presentation.pdf directly.</div>';
-    return;
-  }
-
-  var dpr = Math.min(window.devicePixelRatio || 1, 3);   // match the screen's real pixel density
-  var KEEP = 4;                                          // pages kept drawn at once, to spare memory
-
-  pdfjsLib.getDocument(url).promise.then(function(pdf){
-    container.innerHTML = "";
-    var slots = [];
-
-    /* fill the width on a phone; on a wide screen cap the page so it stays
-       readable (portrait pages narrower than landscape ones) */
-    function cssWidth(vp){
-      var pad = parseFloat(getComputedStyle(container).paddingLeft) || 10;
-      var cap = (vp && vp.width > vp.height) ? 1200 : 640;
-      return Math.max(80, Math.min(container.clientWidth - pad * 2, cap));
-    }
-
-    function draw(i){
-      var slot = slots[i];
-      if (slot.busy || slot.canvas) return;
-      slot.busy = true;
-      pdf.getPage(i + 1).then(function(page){
-        var vp = page.getViewport({ scale:1 });
-        var scale = Math.max(0.2, cssWidth(vp) / vp.width);
-        var v2 = page.getViewport({ scale: scale * dpr });
-        var canvas = document.createElement("canvas");
-        canvas.width = Math.round(v2.width);
-        canvas.height = Math.round(v2.height);
-        canvas.style.width = Math.round(v2.width / dpr) + "px";
-        canvas.style.height = Math.round(v2.height / dpr) + "px";
-        slot.el.innerHTML = "";
-        slot.el.appendChild(canvas);
-        slot.canvas = canvas;
-        slot.busy = false;
-        page.render({ canvasContext:canvas.getContext("2d"), viewport:v2 });
-        prune(i);
-      }).catch(function(){ slot.busy = false; });
-    }
-
-    function prune(centre){
-      for (var j = 0; j < slots.length; j++){
-        if (Math.abs(j - centre) <= KEEP || !slots[j].canvas) continue;
-        slots[j].el.innerHTML = "";
-        slots[j].canvas = null;
-      }
-    }
-
-    var chain = Promise.resolve();
-    for (var n = 1; n <= pdf.numPages; n++){
-      (function(pn){
-        chain = chain.then(function(){
-          return pdf.getPage(pn).then(function(page){
-            var vp = page.getViewport({ scale:1 });
-            var w = cssWidth(vp), h = Math.round(w * vp.height / vp.width);
-            var holder = document.createElement("div");
-            holder.className = "pdfpage";
-            holder.style.width = w + "px";
-            holder.style.height = h + "px";
-            container.appendChild(holder);
-            slots.push({ el:holder, canvas:null, busy:false });
-          });
-        });
-      })(n);
-    }
-
-    return chain.then(function(){
-      function visible(){
-        var top = container.scrollTop, bottom = top + container.clientHeight;
-        for (var i = 0; i < slots.length; i++){
-          var el = slots[i].el;
-          if (el.offsetTop < bottom + container.clientHeight &&
-              el.offsetTop + el.offsetHeight > top - container.clientHeight) draw(i);
+/* ═══════════════════════════════════════════════════════════════════
+   CLEANING: one record per facility per form, the latest submission
+   ═══════════════════════════════════════════════════════════════════ */
+function cleanForms(tabs,sid){
+  const D={}, summary=[], removed=[], fixes=[], missingTabs=[];
+  for(const form of ALL_FORMS){
+    const raw=tabs[form];
+    if(!raw){ missingTabs.push(form); log(sid,`${form}: tab not found in the sheet`,true); continue; }
+    const headers=raw.length?Object.keys(raw[0]):[];
+    const fac=findCol(headers,'Health Facility (PHU)','3. Name of Health Facility (PHU)',/Health Facility \(PHU\)/);
+    const dist=findCol(headers,'District','1. District','2. District',/District$/);
+    const typ=findCol(headers,'Health Facility Type','4. Health Facility Type',/Health Facility Type/);
+    if(!fac){ log(sid,`${form}: no facility name column, skipped`,true); D[form]={rows:[],headers}; continue; }
+    const recs=[]; let blank=0;
+    raw.forEach(r=>{
+      let name=String(r[fac]==null?'':r[fac]).trim(); if(!name){blank++;return;}
+      name=ALIAS[name]||name;
+      let s=toMs(r['Submitted at']); const l=toMs(r['Last updated']);
+      if(isFinite(s)&&isFinite(l)&&s-l>3600000){
+        const d=new Date(s);
+        if(d.getUTCDate()<=12){
+          const ns=Date.UTC(d.getUTCFullYear(),d.getUTCDate()-1,d.getUTCMonth()+1,d.getUTCHours(),d.getUTCMinutes(),d.getUTCSeconds());
+          fixes.push([form,name,fmtMs(s),fmtMs(ns)]); s=ns;
         }
       }
-      container.onscroll = visible;
-      visible();
+      recs.push(Object.assign({},r,{_fac:name,_k:keyOf(name),_dist:ndist(dist?r[dist]:''),_type:String(typ?r[typ]:'').trim(),
+        _s:s,_l:l,_v:num(r['Version'])}));
     });
-  }).catch(function(){
-    container.innerHTML = '<div class="dvmsg">Could not load the presentation. Check that the PDF sits beside index.html.</div>';
+    const val=x=>isFinite(x)?x:-Infinity;
+    const later=(a,b)=> val(a._s)!==val(b._s)?val(a._s)>val(b._s) : val(a._l)!==val(b._l)?val(a._l)>val(b._l) : val(a._v)>=val(b._v);
+    const best=new Map(), groups=new Map();
+    recs.forEach(r=>{ groups.set(r._k,(groups.get(r._k)||0)+1); const b=best.get(r._k); if(!b||later(r,b)) best.set(r._k,r); });
+    recs.forEach(r=>{ const b=best.get(r._k); if(b!==r) removed.push([form,r._dist,r._fac,String(r['Status']||''),fmtMs(r._s),fmtMs(b._s)]); });
+    const kept=[...best.values()];
+    const rep=[...groups.values()].filter(c=>c>1).length;
+    summary.push([form,recs.length,recs.length-kept.length,kept.length,rep]);
+    D[form]={rows:kept,headers};
+    log(sid,`${form}: ${recs.length} rows, ${recs.length-kept.length} earlier submissions removed, ${kept.length} kept`+(blank?`, ${blank} rows without a facility name ignored`:''));
+  }
+  return {D,summary,removed,fixes,missingTabs};
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ANALYSIS
+   ═══════════════════════════════════════════════════════════════════ */
+function coverage(D){
+  const allf=new Map();
+  PHU.forEach(k=>(D[k]?D[k].rows:[]).forEach(r=>{
+    let e=allf.get(r._k); if(!e){e={name:r._fac,dists:[],types:[],forms:new Set()}; allf.set(r._k,e);}
+    e.dists.push(r._dist); if(r._type) e.types.push(r._type); e.forms.add(k);
+  }));
+  const fac=[...allf.entries()].map(([k,e])=>{
+    const n=e.forms.size;
+    return {k,Facility:e.name,District:mode(e.dists),Type:mode(e.types)||'',forms:e.forms,n,
+      Missing:PHU.filter(f=>!e.forms.has(f)).map(f=>f.slice(-1)).join(', '),
+      Status:n===9?'All 9 forms':(n>=6?'6 to 8 forms':'5 or fewer forms')};
+  });
+  const status={'All 9 forms':0,'6 to 8 forms':0,'5 or fewer forms':0}; fac.forEach(f=>status[f.Status]++);
+  const nforms={}; for(let i=1;i<=9;i++) nforms[i]=0; fac.forEach(f=>nforms[f.n]++);
+  const missing={}; PHU.forEach(k=>missing[k]=fac.filter(f=>!f.forms.has(k)).length);
+  const byD={}; fac.forEach(f=>{ const d=byD[f.District]||(byD[f.District]={District:f.District,Facilities:0,Complete:0,sum:0}); d.Facilities++; d.sum+=f.n; if(f.n===9)d.Complete++; });
+  const distComp=Object.values(byD).map(d=>({...d,MeanForms:d.sum/d.Facilities,Pct:d.Complete/d.Facilities*100})).sort((a,b)=>a.Pct-b.Pct||a.District.localeCompare(b.District));
+  const distForm=Object.keys(byD).sort().map(d=>{ const o={District:d}; PHU.forEach(k=>o[k]=(D[k]?D[k].rows:[]).filter(r=>r._dist===d).length); o.Facilities=byD[d].Facilities; o.Complete=byD[d].Complete; o.Pct=byD[d].Complete/byD[d].Facilities*100; return o; });
+  const types={}; fac.forEach(f=>{ const t=f.Type||'Unknown'; types[t]=(types[t]||0)+1; });
+  const typesSorted=Object.fromEntries(Object.entries(types).sort((a,b)=>b[1]-a[1]));
+  const incomplete=fac.filter(f=>f.n<9).sort((a,b)=>a.District.localeCompare(b.District)||a.n-b.n||a.Facility.localeCompare(b.Facility));
+  return {fac,status,nforms,missing,distComp,distForm,types:typesSorted,incomplete};
+}
+
+function scoreForm(rows,sec,tot){
+  const v=rows.filter(r=>isFinite(num(r['Overall score'])));
+  v.forEach(r=>{ r._pct=num(r['Overall score'])/tot*100; r._band=band(r._pct); });
+  const pct=v.map(r=>r._pct);
+  const bands={'Good':0,'Satisfactory':0,'Needs Improvement':0}; v.forEach(r=>bands[r._band]++);
+  const sections={}; Object.entries(sec).forEach(([s,t])=>{ const vals=v.map(r=>num(r[s])).filter(isFinite); sections[s]=vals.length?vals.reduce((a,b)=>a+b,0)/(t*vals.length)*100:NaN; });
+  const dm={}; v.forEach(r=>{ (dm[r._dist]=dm[r._dist]||[]).push(r._pct); });
+  const district=Object.entries(dm).map(([d,a])=>({District:d,mean:mean(a),n:a.length})).sort((a,b)=>a.mean-b.mean);
+  const lowest=[...v].sort((a,b)=>a._pct-b._pct).slice(0,10).map(r=>[r._fac,D_(r._dist),r._type,num(r['Overall score']),r._pct]);
+  /* each PHU's own section scores: the sheet's "<section> %" column, else score over points */
+  v.forEach(r=>{ r._sec={}; Object.entries(sec).forEach(([s,t])=>{ const pc=num(r[s+' %']), sc=num(r[s]); r._sec[s]=isFinite(pc)?pc:(isFinite(sc)?sc/t*100:NaN); }); });
+  const below={}, belowD={};
+  Object.keys(sec).forEach(s=>{ below[s]=v.filter(r=>r._sec[s]<BAND_SAT).length; });
+  v.forEach(r=>{ const d=belowD[r._dist]||(belowD[r._dist]={n:0}); d.n++; Object.keys(sec).forEach(s=>{ if(r._sec[s]<BAND_SAT) d[s]=(d[s]||0)+1; }); });
+  return {rows:v,n:v.length,mean:mean(pct),median:median(pct),min:Math.min(...pct),max:Math.max(...pct),bands,sections,district,lowest,pct,below,belowD};
+}
+
+/* Forms D to J: items done ÷ items answered, per section and per form */
+function scorePractice(X,spec){
+  const items=[]; const sec={};
+  Object.entries(spec).forEach(([s,list])=>{ sec[s]=0;
+    list.forEach(it=>{ const o=typeof it==='string'?{p:it}:it; const cols=startsCols(X.headers,o.p); if(!cols.length) return;
+      const fill=c=>X.rows.filter(r=>!SKIP_VALUES.has(String(r[c]==null?'':r[c]).trim().toLowerCase())).length;
+      const labelCol=[...cols].sort((a,b)=>fill(b)-fill(a))[0];
+      items.push({...o,sec:s,cols,label:qLabel(labelCol)}); sec[s]++; }); });
+  Object.keys(sec).forEach(s=>{ if(!sec[s]) delete sec[s]; });
+  const val=(r,it)=>{ let v=''; for(const c of it.cols){ const x=String(r[c]==null?'':r[c]).trim(); if(x){v=x;break;} }
+    if(SKIP_VALUES.has(v.toLowerCase())) return null;
+    if(it.fn) return it.fn(v)?1:0; return (it.good||['Yes']).includes(v)?1:0; };
+  const v=[];
+  X.rows.forEach(r=>{ let g=0,a=0; const sg={},sa={};
+    items.forEach(it=>{ const x=val(r,it); if(x===null) return; g+=x; a++; sg[it.sec]=(sg[it.sec]||0)+x; sa[it.sec]=(sa[it.sec]||0)+1; });
+    if(!a) return;
+    r._pct=g/a*100; r._band=band(r._pct); r._done=g; r._ans=a;
+    r._sec={}; Object.keys(sec).forEach(s=>{ r._sec[s]=sa[s]?sg[s]/sa[s]*100:NaN; }); v.push(r); });
+  const pct=v.map(r=>r._pct);
+  const bands={'Good':0,'Satisfactory':0,'Needs Improvement':0}; v.forEach(r=>bands[r._band]++);
+  const sections={}; Object.keys(sec).forEach(s=>sections[s]=mean(v.map(r=>r._sec[s])));
+  const dm={}; v.forEach(r=>{ (dm[r._dist]=dm[r._dist]||[]).push(r._pct); });
+  const district=Object.entries(dm).map(([d,a])=>({District:d,mean:mean(a),n:a.length})).sort((a,b)=>a.mean-b.mean);
+  const lowest=[...v].sort((a,b)=>a._pct-b._pct).slice(0,10).map(r=>[r._fac,D_(r._dist),r._type,`${r._done} of ${r._ans}`,r._pct]);
+  const below={}, belowD={};
+  Object.keys(sec).forEach(s=>{ below[s]=v.filter(r=>r._sec[s]<BAND_SAT).length; });
+  v.forEach(r=>{ const d=belowD[r._dist]||(belowD[r._dist]={n:0}); d.n++; Object.keys(sec).forEach(s=>{ if(r._sec[s]<BAND_SAT) d[s]=(d[s]||0)+1; }); });
+  return {rows:v,n:v.length,items:items.length,itemList:items,sec,mean:mean(pct),median:median(pct),min:Math.min(...pct),max:Math.max(...pct),bands,sections,district,lowest,pct,below,belowD,type:groupMean(v,'_type')};
+}
+function commodityList(rows,headers,re,extra){
+  const lab=c=>cap1(cleanLbl(c.replace(/^[\d.]+\s+/,'').replace(/^(Is|Are) (the )?/,'').replace(' available?','').replace('?','')));
+  return headers.filter(h=>re.test(h)&&(!extra||extra(h))).map(c=>[lab(c),pyes(rows,c)]).filter(x=>isFinite(x[1])).sort((a,b)=>a[1]-b[1]);
+}
+function indicators(rows,headers,prefixes,mode){
+  const out=[], seen=new Set();
+  prefixes.forEach(p=>{
+    const cs=startsCols(headers,p);
+    const use = mode==='first' ? cs.filter(c=>isFinite(pyes(rows,c))).slice(0,1) : cs;
+    use.forEach(c=>{ const v=pyes(rows,c); if(!isFinite(v)) return; const l=qLabel(c); if(seen.has(l)) return; seen.add(l); out.push([l,v]); });
+  });
+  return out;
+}
+
+function analyse(D,sid){
+  const S={};
+  S.records={}; ALL_FORMS.forEach(k=>S.records[k]=D[k]?D[k].rows.length:0);
+  S.cov=coverage(D);
+  log(sid,`${S.cov.fac.length} facilities found, ${S.cov.status['All 9 forms']} with all nine forms`);
+  /* scoring */
+  const B=D['Form B']||{rows:[],headers:[]}, C=D['Form C']||{rows:[],headers:[]};
+  S.B=scoreForm(B.rows,BSEC,B_TOTAL); S.C=scoreForm(C.rows,CSEC,C_TOTAL);
+  S.B.commodities=commodityList(B.rows,B.headers,/^2\.\d+ /);
+  S.B.essential=commodityList(B.rows,B.headers,/^3\.\d+ /,h=>/available/i.test(h));
+  S.B.type=groupMean(S.B.rows,'_type'); S.C.type=groupMean(S.C.rows,'_type');
+  log(sid,`Form B: ${S.B.n} scored, mean ${p1(S.B.mean)}  ·  Form C: ${S.C.n} scored, mean ${p1(S.C.mean)}`);
+  /* scores for Forms D to J */
+  S.P={};
+  SCORED_PRACTICE.forEach(k=>{ const X=D[k]; if(!X||!X.rows.length) return;
+    S.P[k]=scorePractice(X,SCORE_SPEC[k]);
+    log(sid,`${k}: ${S.P[k].n} scored out of ${S.P[k].items} points, mean ${p1(S.P[k].mean)}, ${S.P[k].bands['Needs Improvement']} in Needs Improvement`); });
+
+  /* OVERALL FACILITY SCORE: points earned on every scored form the PHU has, divided by the
+     points possible on those forms, times 100. Form B gives 97 points, Form C 32, and Forms D
+     to J one point for each question that applied at that visit. */
+  const SFORMS=['Form B','Form C',...SCORED_PRACTICE];
+  const SRC={'Form B':S.B,'Form C':S.C,...S.P};
+  const earnPoss=(f,r)=>f==='Form B'?[num(r['Overall score']),B_TOTAL]:f==='Form C'?[num(r['Overall score']),C_TOTAL]:[r._done,r._ans];
+  const covMap=new Map(S.cov.fac.map(f=>[f.k,f]));
+  const per=new Map();
+  SFORMS.forEach(f=>{ const X=SRC[f]; if(!X) return; X.rows.forEach(r=>{ let e=per.get(r._k); if(!e){ e={}; per.set(r._k,e); } e[f]=r; }); });
+  S.FS_FORMS=SFORMS.filter(f=>SRC[f]&&SRC[f].n);
+  const fs=[];
+  per.forEach((forms,k)=>{
+    /* every PHU is scored on the forms it has: a missing form adds nothing to the points
+       earned and nothing to the points possible, so the denominator stays realistic */
+    let E=0,P=0; const scores={}, weakPs=[]; let weakN=0;
+    Object.entries(forms).forEach(([f,r])=>{ const [a,b]=earnPoss(f,r); if(isFinite(a)&&b){ E+=a; P+=b; } scores[f]=r._pct;
+      const w=weakAreas(r,f==='Form B'?BSEC:f==='Form C'?CSEC:SRC[f].sec); weakN+=w.n;
+      if(f!=='Form B'&&f!=='Form C'&&w.n) weakPs.push(`${f.slice(-1)}: ${w.text}`); });
+    if(!P) return;
+    const cf=covMap.get(k)||{}, any=Object.values(forms)[0];
+    const pct=E/P*100;
+    fs.push({District:cf.District||any._dist,Facility:cf.Facility||any._fac,Type:cf.Type||any._type,Earned:E,Possible:P,Pct:pct,Band:band(pct),
+      nForms:Object.keys(forms).length,scores,weakN,
+      weakB:forms['Form B']?weakAreas(forms['Form B'],BSEC):{n:0,text:'',missing:true},
+      weakC:forms['Form C']?weakAreas(forms['Form C'],CSEC):{n:0,text:'',missing:true},
+      weakP:weakPs.join('; ')});
+  });
+  fs.sort((a,b)=>a.Pct-b.Pct);
+  const nAll=S.FS_FORMS.length;
+  S.FS={rows:fs,n:fs.length,mean:mean(fs.map(r=>r.Pct)),median:median(fs.map(r=>r.Pct)),min:Math.min(...fs.map(r=>r.Pct)),max:Math.max(...fs.map(r=>r.Pct)),
+    bands:{'Good':0,'Satisfactory':0,'Needs Improvement':0},nAll,complete:fs.filter(r=>r.nForms===nAll).length,
+    /* PHUs still missing a core checklist: scored, but flagged so the forms get completed */
+    noCore:fs.filter(r=>r.weakB.missing||r.weakC.missing).map(r=>[D_(r.District),r.Facility,r.weakB.missing&&r.weakC.missing?'Form B and Form C':(r.weakB.missing?'Form B':'Form C'),`${r.nForms} of ${nAll}`,r.Possible,p1(r.Pct)])
+      .sort((a,b)=>a[0].localeCompare(b[0])||String(a[1]).localeCompare(String(b[1])))};
+  fs.forEach(r=>S.FS.bands[r.Band]++);
+  const fd={}; fs.forEach(r=>{ const d=fd[r.District]||(fd[r.District]={District:r.District,a:[],good:0,sat:0,ni:0}); d.a.push(r.Pct); d[{'Good':'good','Satisfactory':'sat','Needs Improvement':'ni'}[r.Band]]++; });
+  S.FS.district=Object.values(fd).map(d=>({...d,n:d.a.length,mean:mean(d.a)})).sort((a,b)=>a.mean-b.mean);
+  S.FS.type=groupMean(fs,'Type','Pct');
+  log(sid,`Overall facility score: ${S.FS.n} PHUs scored across ${nAll} forms (${S.FS.complete} with all ${nAll}), mean ${p1(S.FS.mean)}, ${S.FS.bands['Needs Improvement']} in Needs Improvement`);
+  /* one scorecard row per PHU across every scored form */
+  const fsm=new Map(fs.map(r=>[keyOf(r.Facility),r]));
+  S.card=S.cov.fac.map(f=>{ const o=fsm.get(f.k); return {District:f.District,Facility:f.Facility,scores:o?o.scores:{},overall:o}; })
+    .sort((a,b)=>a.District.localeCompare(b.District)||a.Facility.localeCompare(b.Facility));
+  /* unscored question level indicators */
+  S.F={};
+  Object.entries(SPEC).forEach(([k,sp])=>{
+    const X=D[k]; if(!X||!X.rows.length) return;
+    const perf=indicators(X.rows,X.headers,sp.perf,'first').sort((a,b)=>a[1]-b[1]);
+    const ca=indicators(X.rows,X.headers,sp.ca,'all').sort((a,b)=>b[1]-a[1]);
+    S.F[k]={n:X.rows.length,perf,ca,rating:counts(X.rows,'Rating',['Excellent','Satisfactory','Fair','Unsatisfactory'])};
+  });
+  const g=D['Form G'];
+  if(g&&g.rows.length&&S.F['Form G']){
+    const regs=g.headers.filter(h=>/^6\.\d+ /.test(h)).map(c=>{ const n=g.rows.length;
+      const f=v=>g.rows.filter(r=>String(r[c]).trim()===v).length/n*100;
+      return [qLabel(c),f('Available with all fields completed'),f('Available but not fully completed'),f('Not Available')]; }).sort((a,b)=>a[1]-b[1]);
+    const c51=startsCols(g.headers,'5.1')[0], c57=startsCols(g.headers,'5.7')[0];
+    Object.assign(S.F['Form G'],{registers:regs,dhis:c51?counts(g.rows,c51):{},lastlog:c57?counts(g.rows,c57):{}});
+  }
+  if(S.F['Form E']){ const c=startsCols(D['Form E'].headers,'4.14')[0]; if(c) S.F['Form E'].dose=counts(D['Form E'].rows,c); }
+  if(S.F['Form F']){ const c=startsCols(D['Form F'].headers,'4.16')[0]; if(c) S.F['Form F'].dose=counts(D['Form F'].rows,c); }
+  /* Form A */
+  const A=D['Form A'];
+  if(A&&A.rows.length){
+    const h=A.headers, gc=findCol(h,/Gender of health facility In-charge/i), cc=findCol(h,/Cadre of In-Charge/i),
+      hc=findCol(h,/health care workers responsible for malaria/i), sc=findCol(h,/Number of supervisors on this visit/i), st=findCol(h,/Number of staff members you met/i);
+    S.A={n:A.rows.length,gender:gc?counts(A.rows,gc):{},cadre:cc?counts(A.rows,cc):{},
+      hcw:hc?median(A.rows.map(r=>num(r[hc]))):NaN,hcwMax:hc?Math.max(...A.rows.map(r=>num(r[hc])).filter(isFinite)):NaN,
+      sup:sc?mean(A.rows.map(r=>num(r[sc]))):NaN, staff:st?A.rows.map(r=>num(r[st])).filter(isFinite).reduce((a,b)=>a+b,0):0,
+      gps:A.rows.filter(r=>String(r['GPS latitude']==null?'':r['GPS latitude']).trim()!=='').length/A.rows.length*100};
+  }
+  /* Forms I and J */
+  S.T={};
+  [['Form I','Total SP doses'],['Form J','Total MV doses']].forEach(([k,tc])=>{
+    const X=D[k]; if(!X||!X.rows.length) return;
+    const doses=X.headers.filter(h=>/^Dose \d+ /.test(h)).map(c=>[c.replace(/^Dose \d+ /,''),X.rows.map(r=>num(r[c])).filter(isFinite).reduce((a,b)=>a+b,0)]);
+    const rq=X.headers.filter(h=>/^2\.\d+ (?!\d\.)/.test(h));
+    const ready=rq.map(c=>{ const alt=c.replace(/^(2\.(\d+)) /,'$1 $2. ');
+      const vals=X.rows.map(r=>{ const a=String(r[c]==null?'':r[c]).trim(); return a||String(r[alt]==null?'':r[alt]).trim(); });
+      const y=vals.filter(v=>v==='Yes').length, n=vals.filter(v=>v==='No').length; return [qLabel(c),(y+n)?y/(y+n)*100:NaN]; }).filter(x=>isFinite(x[1]));
+    const months={}; X.rows.forEach(r=>{ const ms=toMs(r['Reporting month']); const m=isFinite(ms)?fmtMs(ms,false).slice(0,7):String(r['Reporting month']||'').slice(0,7); if(m) months[m]=(months[m]||0)+1; });
+    const tot=X.rows.map(r=>num(r[tc])), vis=X.rows.map(r=>num(r['Total visits']));
+    S.T[k]={n:X.rows.length,doses,ready,months,visits:vis.filter(isFinite).reduce((a,b)=>a+b,0),total:tot.filter(isFinite).reduce((a,b)=>a+b,0),
+      zero:tot.filter(v=>v===0).length,over:tot.filter((v,i)=>isFinite(v)&&isFinite(vis[i])&&v>vis[i]).length};
+  });
+  S.nDist=new Set(S.cov.fac.map(f=>f.District)).size;
+  /* one GPS point per PHU: the first valid point, taking the forms in order A, B, C and on */
+  const gps=new Map();
+  PHU.forEach(k=>(D[k]?D[k].rows:[]).forEach(r=>{ if(gps.has(r._k)) return;
+    const lat=num(r['GPS latitude']), lng=num(r['GPS longitude']);
+    if(isFinite(lat)&&isFinite(lng)&&lat>=SL_BOX.latMin&&lat<=SL_BOX.latMax&&lng>=SL_BOX.lngMin&&lng<=SL_BOX.lngMax) gps.set(r._k,{lat,lng,form:k}); }));
+  const fsMap=new Map(S.FS.rows.map(r=>[keyOf(r.Facility),r]));
+  S.pts=S.cov.fac.filter(f=>gps.has(f.k)).map(f=>{ const g=gps.get(f.k), o=fsMap.get(f.k);
+    return {...g,Facility:f.Facility,District:f.District,Type:f.Type,forms:f.n,score:o?o.Pct:NaN,band:o?o.Band:'No score',scoredForms:o?o.nForms:0}; });
+  S.noGps=S.cov.fac.filter(f=>!gps.has(f.k)).map(f=>[D_(f.District),f.Facility,f.Type,f.n]).sort((a,b)=>a[0].localeCompare(b[0])||a[1].localeCompare(b[1]));
+  return S;
+}
+/* areas where one PHU scores below the Satisfactory line, weakest first */
+function weakAreas(r,sec){
+  const w=Object.keys(sec).filter(s=>r._sec&&r._sec[s]<BAND_SAT).sort((a,b)=>r._sec[a]-r._sec[b]);
+  return {list:w,n:w.length,text:w.map(s=>`${s} ${Math.round(r._sec[s])}%`).join(', ')};
+}
+const andList=a=>a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+
+/* Key findings, written from the numbers of this run */
+function keyFindings(S){
+  const K=[], cov=S.cov, nf=cov.fac.length, st=cov.status, FS=S.FS, pc=(a,b)=>b?p0(a/b*100):'0%';
+  K.push(`The sheet holds supervision records for ${nf} PHUs across ${S.nDist} districts. Only ${st['All 9 forms']} of them (${pc(st['All 9 forms'],nf)}) have all nine PHU forms, while ${st['6 to 8 forms']} have six to eight and ${st['5 or fewer forms']} have five or fewer, so completing the missing forms comes first if every PHU is to be scored and followed up.`);
+  if(FS.n){
+    const g=FS.bands.Good, s=FS.bands.Satisfactory, n=FS.bands['Needs Improvement'];
+    K.push(`The overall facility score adds up the points each PHU earned on its scored forms and divides by the points possible on those same forms, so a form that was not submitted is left out of the denominator rather than counted as zero. Across all ${FS.n} scored PHUs the mean overall score is ${p1(FS.mean)}. In all, ${n} PHUs (${pc(n,FS.n)}) are in the Needs Improvement band and ${s} are Satisfactory, ${g?`while ${g} reached Good`:'while none has yet reached Good'}. Only ${FS.complete} PHUs have all ${FS.nAll} scored forms, and ${FS.noCore.length} are still missing Form B or Form C, which every PHU should have, so their scores rest on fewer points until those checklists are done.`);
+    const dl=FS.district.slice(0,3), db=FS.district[FS.district.length-1];
+    if(dl.length) K.push(`${andList(dl.map(d=>`${D_(d.District)} (${p1(d.mean)})`))} have the lowest mean overall scores, and between them ${dl.reduce((a,d)=>a+d.ni,0)} of their ${dl.reduce((a,d)=>a+d.n,0)} scored PHUs need improvement, so these districts should be first in line for follow up visits. ${db&&db!==dl[0]?`${D_(db.District)} has the highest mean at ${p1(db.mean)}.`:''}`);
+  }
+  if(S.B.n){
+    const w=Object.keys(BSEC).sort((a,b)=>S.B.sections[a]-S.B.sections[b]).slice(0,3);
+    K.push(`Readiness on Form B averages ${p1(S.B.mean)}. The weakest areas are ${andList(w.map(s=>`${s} (${p0(S.B.sections[s])})`))}, and ${S.B.below[w[0]]} of ${S.B.n} PHUs score below ${BAND_SAT}% on ${w[0]}.`);
+    const c3=S.B.commodities.slice(0,3), e3=S.B.essential.slice(0,3);
+    if(c3.length) K.push(`Stock drives much of the readiness gap. Among antimalarials, ${andList(c3.map((c,i)=>`${c[0]} (in stock at ${p0(c[1])}${i?'':' of PHUs'})`))} are the least available${e3.length?`, and among essential drugs ${andList(e3.map(c=>`${c[0]} (in stock at ${p0(c[1])})`))} are the most often missing`:''}. These gaps need action from the district medical stores rather than from facility staff.`);
+  }
+  if(S.C.n){
+    const w=Object.keys(CSEC).sort((a,b)=>S.C.sections[a]-S.C.sections[b]).slice(0,2);
+    K.push(`Practice on mRDT use (Form C) is stronger, with a mean of ${p1(S.C.mean)} and ${S.C.bands.Good} PHUs in the Good band. Even so, ${andList(w.map(s=>`${s} (${p0(S.C.sections[s])})`))} are the areas that most need coaching, with ${S.C.below[w[0]]} PHUs below ${BAND_SAT}% on ${w[0]}.`);
+  }
+  /* Forms D to G: the form score, its strongest and weakest sections, then the questions done well and those that need improvement */
+  const q=x=>`"${x[0]}" (${p0(x[1])})`;
+  PRACTICE_FORMS.forEach(([k,l])=>{
+    const X=S.F[k], P=S.P[k]; if(!X||!X.perf.length) return;
+    let sTxt='';
+    if(P&&P.n){ const so=Object.keys(P.sec).sort((a,b)=>P.sections[a]-P.sections[b]), lo=so[0], hi=so[so.length-1];
+      sTxt=`${k} (${TITLE[k]}) has a mean score of ${p1(P.mean)} across ${P.n} PHUs, with ${P.bands['Needs Improvement']} in Needs Improvement. Its strongest section is ${hi} (${p0(P.sections[hi])}) and its weakest is ${lo} (${p0(P.sections[lo])}). `; }
+    const good=X.perf.filter(x=>x[1]>=BAND_GOOD).sort((a,b)=>b[1]-a[1]).slice(0,3), weak=X.perf.filter(x=>x[1]<BAND_SAT).slice(0,3);
+    const gTxt=good.length?`PHUs do well on ${andList(good.map(q))}`:`no practice reaches ${BAND_GOOD}% yet`;
+    const wTxt=weak.length?`${weak.length>1?'the areas that need improvement are':'the area that needs improvement is'} ${andList(weak.map(q))}`:`no practice falls below ${BAND_SAT}%, so the focus is on lifting the middle range`;
+    K.push(`${sTxt}At question level, ${gTxt}, while ${wTxt}.`);
+  });
+  const PI=S.P['Form I'], PJ=S.P['Form J'];
+  if(PI||PJ){ const part=(P,l)=>`${l} averages ${p1(P.mean)}, with ${P.bands['Needs Improvement']} of ${P.n} PHUs in Needs Improvement`;
+    K.push(`Readiness for the two tallies is scored on their readiness questions only: ${[PI&&part(PI,'readiness for SP as PMC (Form I)'),PJ&&part(PJ,'readiness for the malaria vaccine (Form J)')].filter(Boolean).join(', while ')}.`); }
+  if(S.F['Form G']&&S.F['Form G'].registers&&S.F['Form G'].registers.length){ const r=S.F['Form G'].registers[0]; K.push(`For records, the ${r[0]} is the least complete register, fully completed in ${p0(r[1])} of PHUs and missing altogether in ${p0(r[3])}.`); }
+  if(FS.n){
+    const ni=FS.rows.filter(r=>r.Band==='Needs Improvement'), many=ni.filter(r=>r.weakN>=4);
+    if(ni.length) K.push(`The table below lists every PHU in Needs Improvement with the areas where it scores below ${BAND_SAT}%, weakest first. Of these ${ni.length} PHUs, ${many.length} fall short in four or more areas${many.length?`, the lowest being ${andList(many.slice(0,3).map(r=>`${r.Facility} in ${D_(r.District)} (${p1(r.Pct)})`))}`:''}, and these should receive targeted coaching on their own weak areas at the next visit.`);
+  }
+  return K;
+}
+function groupMean(rows,col,valCol='_pct'){ const m={}; rows.forEach(r=>{ const k=r[col]||'Unknown'; (m[k]=m[k]||[]).push(r[valCol]); }); return Object.fromEntries(Object.entries(m).map(([k,a])=>[k,mean(a)]).sort()); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHARTS (canvas, no library, so the same picture goes to Word and PowerPoint)
+   ═══════════════════════════════════════════════════════════════════ */
+const FONT='Arial';
+function mk(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,w,h); x.textBaseline='middle'; return [c,x]; }
+function wrapText(ctx,text,maxW){
+  const out=[]; String(text).split('\n').forEach(par=>{ let line=''; par.split(' ').forEach(w=>{ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW&&line){ out.push(line); line=w; } else line=t; }); out.push(line); });
+  return out;
+}
+function niceMax(v){ if(!(v>0)) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const f=v/p; return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p; }
+function axisTicks(max){ const step=niceMax(max/5); const t=[]; for(let v=0;v<=max+1e-9;v+=step) t.push(v); return t; }
+const colorAt=(c,i)=>Array.isArray(c)?c[i%c.length]:(c||NAVY);
+
+function hbar(labels,vals,o={}){
+  const W=1400, fs=21, xmaxIn=o.xmax!=null?o.xmax:100, fmt=o.fmt||(v=>Math.round(v)+'%');
+  const [m,ctx0]=mk(10,10); ctx0.font=`${fs}px ${FONT}`;
+  const labW=Math.min(560,Math.max(120,...labels.map(l=>Math.min(560,ctx0.measureText(l).width))));
+  const lines=labels.map(l=>wrapText(ctx0,l,labW));
+  const rowH=lines.map(ls=>Math.max(44,ls.length*25+16));
+  const top=24, bottom=86, H=top+rowH.reduce((a,b)=>a+b,0)+bottom;
+  const [c,ctx]=mk(W,H); const x0=labW+40, x1=W-120, xmax=xmaxIn||niceMax(Math.max(...vals,1));
+  const sx=v=>x0+(x1-x0)*Math.min(v,xmax)/xmax;
+  ctx.font=`${fs-2}px ${FONT}`; ctx.textAlign='center'; ctx.fillStyle='#444';
+  axisTicks(xmax).forEach(t=>{ const x=sx(t); ctx.strokeStyle='#e6e9ee'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,top); ctx.lineTo(x,H-bottom); ctx.stroke(); ctx.fillText(Number.isInteger(t)?t:t.toFixed(1),x,H-bottom+22); });
+  if(o.xlabel){ ctx.font=`${fs}px ${FONT}`; ctx.fillText(o.xlabel,(x0+x1)/2,H-bottom+56); }
+  let y=top;
+  labels.forEach((l,i)=>{
+    const h=rowH[i], cy=y+h/2, bh=Math.min(h*0.7,34);
+    ctx.fillStyle=colorAt(o.colors,i); ctx.fillRect(x0,cy-bh/2,Math.max(0,sx(vals[i])-x0),bh);
+    ctx.font=`${fs}px ${FONT}`; ctx.fillStyle='#222'; ctx.textAlign='right';
+    lines[i].forEach((ln,j)=>ctx.fillText(ln,x0-14,cy+(j-(lines[i].length-1)/2)*25));
+    ctx.textAlign='left'; ctx.font=`${fs-1}px ${FONT}`; ctx.fillText(fmt(vals[i]),sx(vals[i])+8,cy);
+    y+=h;
+  });
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x0,top); ctx.lineTo(x0,H-bottom); ctx.stroke();
+  c._d={kind:'bar',labels,vals,fmt};
+  return c;
+}
+function vbar(labels,vals,o={}){
+  const W=1400, fs=21, fmt=o.fmt||(v=>n0(v));
+  const [m,ctx0]=mk(10,10); ctx0.font=`${fs}px ${FONT}`;
+  const slot=(W-160)/labels.length;
+  const lines=labels.map(l=>wrapText(ctx0,l,slot-12));
+  const nl=Math.max(...lines.map(l=>l.length));
+  const top=40, bottom=40+nl*25+(o.xlabel?40:0), H=600+nl*25;
+  const [c,ctx]=mk(W,H); const x0=110, x1=W-30, y1=H-bottom, ymax=niceMax(Math.max(...vals,1)*1.1);
+  const sy=v=>y1-(y1-top)*v/ymax;
+  ctx.font=`${fs-2}px ${FONT}`; ctx.textAlign='right'; ctx.fillStyle='#444';
+  axisTicks(ymax).forEach(t=>{ const y=sy(t); ctx.strokeStyle='#e6e9ee'; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.fillText(n0(t),x0-10,y); });
+  if(o.ylabel){ ctx.save(); ctx.translate(26,(top+y1)/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.font=`${fs}px ${FONT}`; ctx.fillText(o.ylabel,0,0); ctx.restore(); }
+  const sl=(x1-x0)/labels.length, bw=Math.min(sl*0.68,120);
+  labels.forEach((l,i)=>{
+    const cx=x0+sl*(i+0.5); ctx.fillStyle=colorAt(o.colors,i); ctx.fillRect(cx-bw/2,sy(vals[i]),bw,y1-sy(vals[i]));
+    ctx.fillStyle='#222'; ctx.textAlign='center'; ctx.font=`${fs-1}px ${FONT}`; ctx.fillText(fmt(vals[i]),cx,sy(vals[i])-14);
+    ctx.font=`${fs}px ${FONT}`; lines[i].forEach((ln,j)=>ctx.fillText(ln,cx,y1+24+j*25));
+  });
+  if(o.xlabel){ ctx.font=`${fs}px ${FONT}`; ctx.fillText(o.xlabel,(x0+x1)/2,H-22); }
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x0,y1); ctx.lineTo(x1,y1); ctx.stroke();
+  c._d={kind:'bar',labels,vals,fmt};
+  return c;
+}
+function pie(labels,vals,colors){
+  const W=1200, H=640, fs=22; const [c,ctx]=mk(W,H); c.className='pie'; c._d={kind:'pie',labels,vals};
+  const tot=vals.reduce((a,b)=>a+b,0), cx=320, cy=H/2, r=270;
+  if(!tot){ ctx.font=`${fs}px ${FONT}`; ctx.fillStyle='#888'; ctx.textAlign='center'; ctx.fillText('No data',W/2,H/2); return c; }
+  let a=-Math.PI/2;
+  vals.forEach((v,i)=>{ if(!v) return; const b=a+v/tot*2*Math.PI; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a,b); ctx.closePath(); ctx.fillStyle=colorAt(colors,i); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.stroke(); a=b; });
+  a=-Math.PI/2; ctx.font=`bold ${fs}px ${FONT}`; ctx.fillStyle='#fff'; ctx.textAlign='center';
+  vals.forEach(v=>{ if(!v) return; const b=a+v/tot*2*Math.PI, m=(a+b)/2, pc=v/tot*100; if(pc>=3) ctx.fillText(Math.round(pc)+'%',cx+Math.cos(m)*r*0.66,cy+Math.sin(m)*r*0.66); a=b; });
+  ctx.font=`${fs}px ${FONT}`; ctx.textAlign='left';
+  const items=labels.map((l,i)=>wrapText(ctx,`${l} (${n0(vals[i])})`,W-700));
+  const lh=30, totalH=items.reduce((s,ls)=>s+ls.length*lh+14,0); let y=cy-totalH/2;
+  items.forEach((ls,i)=>{ ctx.fillStyle=colorAt(colors,i); ctx.fillRect(650,y+2,28,22); ctx.fillStyle='#222'; ls.forEach((ln,j)=>ctx.fillText(ln,692,y+13+j*lh)); y+=ls.length*lh+14; });
+  return c;
+}
+function hist(values){
+  const W=1400,H=560,fs=21; const [c,ctx]=mk(W,H); c._d={kind:'hist',vals:values}; const x0=100,x1=W-40,top=30,y1=H-90;
+  const bins=new Array(20).fill(0); values.forEach(v=>{ if(isFinite(v)) bins[Math.min(19,Math.max(0,Math.floor(v/5)))]++; });
+  const ymax=niceMax(Math.max(...bins,1)*1.1), sx=v=>x0+(x1-x0)*v/100, sy=v=>y1-(y1-top)*v/ymax;
+  ctx.font=`${fs-2}px ${FONT}`; ctx.fillStyle='#444'; ctx.textAlign='right';
+  axisTicks(ymax).forEach(t=>{ const y=sy(t); ctx.strokeStyle='#e6e9ee'; ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.fillText(n0(t),x0-10,y); });
+  bins.forEach((b,i)=>{ ctx.fillStyle=NAVY; ctx.fillRect(sx(i*5)+1,sy(b),sx(5)-sx(0)-2,y1-sy(b)); });
+  ctx.textAlign='center'; for(let t=0;t<=100;t+=20) ctx.fillText(t,sx(t),y1+24);
+  ctx.font=`${fs}px ${FONT}`; ctx.fillText('Overall score (%)',(x0+x1)/2,y1+60);
+  ctx.save(); ctx.translate(30,(top+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText('Facilities',0,0); ctx.restore();
+  [[BAND_SAT,RED],[BAND_GOOD,GREEN]].forEach(([v,col])=>{ ctx.strokeStyle=col; ctx.setLineDash([10,7]); ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(sx(v),top); ctx.lineTo(sx(v),y1); ctx.stroke(); ctx.setLineDash([]); });
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x0,y1); ctx.lineTo(x1,y1); ctx.stroke();
+  return c;
+}
+/* stacked horizontal bars: series = [{name,color,vals}] */
+function stackH(labels,series,o={}){
+  const W=1400, fs=21; const [m,ctx0]=mk(10,10); ctx0.font=`${fs}px ${FONT}`;
+  const labW=Math.min(520,Math.max(120,...labels.map(l=>ctx0.measureText(l).width)));
+  const lines=labels.map(l=>wrapText(ctx0,l,labW)); const rowH=lines.map(ls=>Math.max(46,ls.length*25+16));
+  const top=20, bottom=130, H=top+rowH.reduce((a,b)=>a+b,0)+bottom;
+  const [c,ctx]=mk(W,H); c._d={kind:'stack',labels,series,pct:!!o.pct}; const x0=labW+40, x1=W-60;
+  const totals=labels.map((_,i)=>series.reduce((s,se)=>s+se.vals[i],0));
+  const xmax=o.pct?100:niceMax(Math.max(...totals,1)); const sx=v=>(x1-x0)*v/xmax;
+  ctx.font=`${fs-2}px ${FONT}`; ctx.textAlign='center'; ctx.fillStyle='#444';
+  axisTicks(xmax).forEach(t=>{ const x=x0+sx(t); ctx.strokeStyle='#e6e9ee'; ctx.beginPath(); ctx.moveTo(x,top); ctx.lineTo(x,H-bottom); ctx.stroke(); ctx.fillText(Number.isInteger(t)?t:t.toFixed(1),x,H-bottom+22); });
+  ctx.font=`${fs}px ${FONT}`; ctx.fillText(o.xlabel||'',(x0+x1)/2,H-bottom+54);
+  let y=top;
+  labels.forEach((l,i)=>{ const h=rowH[i], cy=y+h/2, bh=Math.min(h*0.72,36); let x=x0;
+    series.forEach(se=>{ const v=se.vals[i], w=sx(v); if(w<=0) return; ctx.fillStyle=se.color; ctx.fillRect(x,cy-bh/2,w,bh);
+      const lbl=o.pct?Math.round(v)+'%':n0(v); ctx.font=`bold ${fs-3}px ${FONT}`;
+      if(w>ctx.measureText(lbl).width+10&&(o.pct?v>=6:true)){ ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.fillText(lbl,x+w/2,cy); } x+=w; });
+    ctx.font=`${fs}px ${FONT}`; ctx.fillStyle='#222'; ctx.textAlign='right'; lines[i].forEach((ln,j)=>ctx.fillText(ln,x0-14,cy+(j-(lines[i].length-1)/2)*25)); y+=h; });
+  let lx=x0; const ly=H-36; ctx.font=`${fs}px ${FONT}`; ctx.textAlign='left';
+  series.forEach(se=>{ ctx.fillStyle=se.color; ctx.fillRect(lx,ly-11,26,22); ctx.fillStyle='#222'; ctx.fillText(se.name,lx+34,ly); lx+=60+ctx.measureText(se.name).width; });
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x0,top); ctx.lineTo(x0,H-bottom); ctx.stroke();
+  return c;
+}
+const bandColors=vals=>vals.map(v=>BANDC[band(v)]);
+const PT_COLOR=b=>BANDC[b]||GREY;
+
+/* Static map for Word and PowerPoint: district boundaries with one point per PHU */
+function gpsMap(geo,pts){
+  const W=1200, fs=19;
+  const rings=[]; const feats=(geo&&geo.features)||[];
+  feats.forEach(f=>{ const g=f.geometry; if(!g) return; const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[]; polys.forEach(p=>rings.push({ring:p[0],name:f.properties&&f.properties.FIRST_DNAM})); });
+  let lo=[SL_BOX.lngMin,SL_BOX.latMin], hi=[SL_BOX.lngMax,SL_BOX.latMax];
+  if(rings.length){ lo=[Infinity,Infinity]; hi=[-Infinity,-Infinity]; rings.forEach(r=>r.ring.forEach(([x,y])=>{ lo[0]=Math.min(lo[0],x); lo[1]=Math.min(lo[1],y); hi[0]=Math.max(hi[0],x); hi[1]=Math.max(hi[1],y); })); }
+  const kx=Math.cos((lo[1]+hi[1])/2*Math.PI/180), pad=30, legH=90;
+  const dw=W-2*pad, sc=dw/((hi[0]-lo[0])*kx), dh=(hi[1]-lo[1])*sc, H=Math.round(dh+2*pad+legH);
+  const [c,ctx]=mk(W,H); c.className='map';
+  const P=(x,y)=>[pad+(x-lo[0])*kx*sc, pad+(hi[1]-y)*sc];
+  rings.forEach(r=>{ ctx.beginPath(); r.ring.forEach(([x,y],i)=>{ const [px,py]=P(x,y); i?ctx.lineTo(px,py):ctx.moveTo(px,py); }); ctx.closePath(); ctx.fillStyle='#EEF2F6'; ctx.fill(); ctx.strokeStyle='#1F4E78'; ctx.lineWidth=1.6; ctx.stroke(); });
+  /* district names at the centre of each district's largest piece */
+  const big={}; rings.forEach(r=>{ if(!r.name) return; let a=0; const n=r.ring.length; for(let i=0;i<n;i++){ const [x1,y1]=r.ring[i],[x2,y2]=r.ring[(i+1)%n]; a+=x1*y2-x2*y1; } a=Math.abs(a); if(!big[r.name]||a>big[r.name].a) big[r.name]={a,ring:r.ring}; });
+  ctx.font=`${fs-3}px ${FONT}`; ctx.fillStyle='#6c7a89'; ctx.textAlign='center';
+  Object.entries(big).forEach(([n,o])=>{ let sx=0,sy=0; o.ring.forEach(([x,y])=>{sx+=x;sy+=y;}); const [px,py]=P(sx/o.ring.length,sy/o.ring.length);
+    ctx.fillText(n.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' '),px,py); });
+  /* points, worst band drawn last so it sits on top */
+  const order={'No score':0,'Good':1,'Satisfactory':2,'Needs Improvement':3};
+  [...pts].sort((a,b)=>order[a.band]-order[b.band]).forEach(p=>{ const [px,py]=P(p.lng,p.lat); ctx.beginPath(); ctx.arc(px,py,11,0,Math.PI*2); ctx.fillStyle=PT_COLOR(p.band); ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2.5; ctx.stroke(); });
+  if(!rings.length){ ctx.font=`${fs-2}px ${FONT}`; ctx.fillStyle='#888'; ctx.textAlign='left'; ctx.fillText('District boundaries were not available, points only',pad,pad); }
+  /* legend */
+  let lx=pad; const ly=H-legH/2; ctx.font=`bold ${fs+7}px ${FONT}`; ctx.textAlign='left';
+  [['Good',GREEN],['Satisfactory',AMBER],['Needs Improvement',RED],['No score',GREY]].forEach(([k,col])=>{ const n=pts.filter(p=>p.band===k).length; const t=`${k} (${n})`;
+    ctx.beginPath(); ctx.arc(lx+13,ly,13,0,Math.PI*2); ctx.fillStyle=col; ctx.fill(); ctx.fillStyle='#222'; ctx.fillText(t,lx+34,ly); lx+=62+ctx.measureText(t).width; });
+  return c;
+}
+
+/* Live map on screen: OpenStreetMap with the district outlines and one point per PHU */
+function initLeaflet(){
+  const el=document.getElementById('leafMap'); if(!el||!RUN) return;
+  if(!window.L){ el.innerHTML='<div class="alert alert-warn" style="margin:12px">The map library did not load. Check the internet connection and run again.</div>'; return; }
+  if(RUN.leaf&&RUN.leafEl===el){ RUN.leaf.invalidateSize(); return; }
+  const map=L.map(el,{scrollWheelZoom:false}); RUN.leaf=map; RUN.leafEl=el;
+  const order={'No score':0,'Good':1,'Satisfactory':2,'Needs Improvement':3};
+  const pts=[...RUN.S.pts].sort((a,b)=>order[a.band]-order[b.band]);
+  /* the view must exist before any shape is added */
+  if(pts.length) map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lng])),{padding:[24,24]}); else map.setView([8.5,-11.8],7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  if(RUN.S.geo) L.geoJSON(RUN.S.geo,{style:{color:'#1F4E78',weight:1.6,fill:false}}).addTo(map);
+  pts.forEach(p=>L.circleMarker([p.lat,p.lng],{radius:7,color:'#ffffff',weight:1.5,fillColor:PT_COLOR(p.band),fillOpacity:.95})
+    .bindPopup(`<b>${esc(p.Facility)}</b><br>${esc(D_(p.District))} · ${esc(p.Type)}<br>Overall score: <b>${isFinite(p.score)?p1(p.score):'none yet'}</b> (${esc(p.band)})<br>Scored forms: ${p.scoredForms} · Forms held: ${p.forms} of 9<br><span style="color:#6c7a89">GPS from ${esc(p.form)}: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</span>`).addTo(map));
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   OUTPUT SPEC: one list of headings, charts and tables drives the screen,
+   the Word document and the PowerPoint deck
+   ═══════════════════════════════════════════════════════════════════ */
+function buildSpec(S,CL){
+  const out=[]; let fig=0, tab=0;
+  const H1=t=>out.push({t:'h1',text:t}), H2=t=>out.push({t:'h2',text:t});
+  const CH=(caption,canvas,o={})=>out.push({t:'chart',caption,canvas,num:++fig,pie:canvas.className==='pie',...o});
+  const TB=(caption,head,rows,o={})=>out.push({t:'table',caption,head,rows,num:++tab,ppt:o.ppt!==false,...o});
+  const cov=S.cov, FS=S.FS;
+  const BL=t=>out.push({t:'bullets',items:t});
+
+  H1('Key findings');
+  BL(keyFindings(S));
+  const allScored=[['Form B',S.B],['Form C',S.C],...SCORED_PRACTICE.filter(k=>S.P[k]).map(k=>[k,S.P[k]])].filter(([,X])=>X.n);
+  const ptsOf=k=>k==='Form B'?B_TOTAL:k==='Form C'?C_TOTAL:S.P[k].items;
+  TB('Score by form',['Form','Title','Points','PHUs scored','Mean','Good','Satisfactory','Needs Improvement','Band of mean'],
+    allScored.map(([k,X])=>[k,TITLE[k],ptsOf(k),X.n,p1(X.mean),X.bands.Good,X.bands.Satisfactory,X.bands['Needs Improvement'],band(X.mean)]),{band:8});
+  CH('Mean score by form',vbar(allScored.map(([k])=>k),allScored.map(([,X])=>X.mean),{colors:bandColors(allScored.map(([,X])=>X.mean)),fmt:v=>v.toFixed(1)+'%',ylabel:'Mean score (%)'}));
+  const secOf=(k,X)=>Object.keys(k==='Form B'?BSEC:k==='Form C'?CSEC:X.sec).map(s=>[k,s,X.n?(X.below[s]||0)/X.n*100:0]);
+  const areas=allScored.flatMap(([k,X])=>secOf(k,X)).sort((a,b)=>b[2]-a[2]).slice(0,20);
+  CH(`Share of PHUs scoring below ${BAND_SAT}% in each area (the 20 weakest areas across all scored forms)`,hbar(areas.map(a=>`${a[0]}: ${a[1]}`),areas.map(a=>a[2]),{colors:RED,xlabel:`PHUs below ${BAND_SAT}% in the area (%)`}));
+  const niW=FS.rows.filter(r=>r.Band==='Needs Improvement');
+  TB(`PHUs in Needs Improvement and the areas where they score below ${BAND_SAT}% (${niW.length})`,['District','Facility','Overall','Form B areas','Form C areas','Forms D to J sections'],
+    niW.map(r=>[D_(r.District),r.Facility,p1(r.Pct),r.weakB.missing?'No Form B':(r.weakB.text||'None'),r.weakC.missing?'No Form C':(r.weakC.text||'None'),r.weakP||'None']),{search:true,perSlide:6});
+  allScored.forEach(([k,X])=>{ const sec=k==='Form B'?BSEC:k==='Form C'?CSEC:X.sec;
+    if(!X.n||Object.keys(sec).length<2) return;
+    const ds=Object.keys(X.belowD).sort();
+    const rows=ds.map(d=>[D_(d),X.belowD[d].n,...Object.keys(sec).map(s=>X.belowD[d][s]||0)]);
+    rows.push(['All districts',X.n,...Object.keys(sec).map(s=>X.below[s]||0)]);
+    TB(`${k}: number of PHUs scoring below ${BAND_SAT}% in each area, by district`,['District','PHUs scored',...Object.keys(sec)],rows,{small:true});
+  });
+  const gw=[];
+  PRACTICE_FORMS.forEach(([k])=>{ const X=S.F[k]; if(!X) return;
+    [...X.perf].sort((a,b)=>b[1]-a[1]).forEach(x=>{ if(x[1]>=BAND_GOOD) gw.push([k,x[0],p0(x[1]),'Good']); });
+    X.perf.forEach(x=>{ if(x[1]<BAND_SAT) gw.push([k,x[0],p0(x[1]),'Needs Improvement']); }); });
+  if(gw.length) TB(`Forms D to G: areas done well (${BAND_GOOD}% or more Yes) and areas that need improvement (below ${BAND_SAT}%)`,['Form','Area','PHUs observed doing it','Status'],gw,{band:3,perSlide:12});
+
+  H1('PHU map');
+  out.push({t:'leaflet'});
+  CH(`PHU locations coloured by overall score band (${S.pts.length} PHUs with a GPS point)`,gpsMap(S.geo,S.pts),{screen:false});
+  const gd={}; S.cov.fac.forEach(f=>{ const d=gd[f.District]||(gd[f.District]={n:0,g:0}); d.n++; }); S.pts.forEach(p=>{ if(gd[p.District]) gd[p.District].g++; });
+  TB('PHUs with a GPS point, by district',['District','PHUs','With GPS','Without GPS'],Object.keys(gd).sort().map(d=>[D_(d),gd[d].n,gd[d].g,gd[d].n-gd[d].g]));
+  if(S.noGps.length) TB(`PHUs with no GPS point on any form (${S.noGps.length})`,['District','Facility','Type','Forms held'],S.noGps,{ppt:false,search:true});
+
+  H1('1. Data cleaning');
+  TB('Records fetched and kept, one per facility per form',['Form','Rows fetched','Earlier submissions removed','Kept','Facilities with repeats'],CL.summary);
+  if(CL.fixes.length) TB('Submission dates with day and month swapped, corrected',['Form','Facility','As entered','Corrected'],CL.fixes,{ppt:false});
+  if(CL.removed.length) TB(`Earlier submissions removed (${CL.removed.length})`,['Form','District','Facility','Status','Removed submitted at','Kept submitted at'],CL.removed.map(r=>[r[0],D_(r[1]),r[2],r[3],r[4],r[5]]),{ppt:false,search:true});
+
+  H1('2. Coverage and form completeness');
+  H2('2.1 Records per form');
+  TB('Records per form',['Form','Title','Records'],ALL_FORMS.map(k=>[k,TITLE[k],S.records[k]]),{ppt:false});
+  CH('Facilities with a record on each PHU form',vbar(PHU.map(k=>k.slice(-1)),PHU.map(k=>S.records[k]),{ylabel:'Facilities with a record'}));
+  H2('2.2 Facilities with all forms and some forms');
+  const nf=cov.fac.length, st=cov.status;
+  TB('Facilities by completeness status',['Status','Facilities','Percent'],[...Object.keys(st).map(s=>[s,st[s],p1(st[s]/nf*100)]),['Total',nf,'100.0%']]);
+  CH('Facilities by number of PHU forms submitted',pie(Object.keys(st),Object.values(st),[GREEN,AMBER,RED]));
+  const nfk=Object.keys(cov.nforms).filter(k=>cov.nforms[k]>0);
+  CH('Number of forms submitted per facility',vbar(nfk,nfk.map(k=>cov.nforms[k]),{ylabel:'Number of facilities',xlabel:'Forms submitted',colors:nfk.map(k=>k==9?GREEN:(k>=6?AMBER:RED))}));
+  CH('Facilities without a record on each form',hbar(PHU.map(k=>`${k} ${TITLE[k]}`),PHU.map(k=>cov.missing[k]),{xmax:0,fmt:n0,colors:RED,xlabel:'Facilities without this form'}));
+  H2('2.3 Completeness by district');
+  CH('Share of facilities with all nine forms, by district',hbar(cov.distComp.map(d=>d.District),cov.distComp.map(d=>d.Pct),{colors:bandColors(cov.distComp.map(d=>d.Pct)),xlabel:'Facilities with all 9 forms (%)'}));
+  TB('Facilities with a record on each form, by district',['District',...PHU.map(k=>k.slice(-1)),'PHUs','All 9','% All 9'],cov.distForm.map(r=>[D_(r.District),...PHU.map(k=>r[k]),r.Facilities,r.Complete,p1(r.Pct)]),{small:true});
+  CH('Facilities by type',pie(Object.keys(cov.types),Object.values(cov.types),TYPEC));
+
+  H1('3. Scoring');
+  const scored=[['Form B',S.B,B_TOTAL,BSEC,'pts'],['Form C',S.C,C_TOTAL,CSEC,'pts'],...SCORED_PRACTICE.filter(k=>S.P[k]).map(k=>[k,S.P[k],S.P[k].items,S.P[k].sec,'items'])];
+  scored.forEach(([k,X,tot,secs,unit],i)=>{
+    H2(`3.${i+1} ${k}, ${TITLE[k]}`);
+    if(!X.n){ TB(`${k} summary`,['Note'],[['No scored records found']]); return; }
+    TB(`${k} summary (${tot} points)`,['Facilities','Mean','Median','Min','Max','Good','Satisfactory','Needs Improvement'],[[X.n,p1(X.mean),p1(X.median),p1(X.min),p1(X.max),X.bands.Good,X.bands.Satisfactory,X.bands['Needs Improvement']]]);
+    CH(`${k} distribution of scores (dashed lines at ${BAND_SAT}% and ${BAND_GOOD}%)`,hist(X.pct));
+    CH(`${k} facilities by score band`,pie(Object.keys(X.bands),Object.values(X.bands),[GREEN,AMBER,RED]));
+    TB(`${k} mean score by section`,['Section','Points','Mean %','Band'],Object.entries(secs).map(([s,p])=>[s,p,p1(X.sections[s]),band(X.sections[s])]),{band:3});
+    const so=Object.keys(secs).sort((a,b)=>X.sections[a]-X.sections[b]);
+    if(so.length>1) CH(`${k} mean score by section`,hbar(so.map(s=>`${s} (${secs[s]} pts)`),so.map(s=>X.sections[s]),{colors:bandColors(so.map(s=>X.sections[s])),xlabel:'Mean section score (%)'}));
+    if(unit==='items') TB(`${k} questions scored, one point each`,['Section','Question','Earns the point when'],X.itemList.map(it=>[it.sec,it.label,it.fn?'Both register and card updated':(it.good||['Yes']).join(' or ')]),{ppt:false});
+    if(k==='Form B'){
+      CH('Availability of antimalarial commodities (Form B section 2)',hbar(X.commodities.map(c=>c[0]),X.commodities.map(c=>c[1]),{colors:bandColors(X.commodities.map(c=>c[1])),xlabel:'Facilities with the commodity in stock (%)'}));
+      CH('Availability of essential drugs (Form B section 3)',hbar(X.essential.map(c=>c[0]),X.essential.map(c=>c[1]),{colors:bandColors(X.essential.map(c=>c[1])),xlabel:'Facilities with the drug in stock (%)'}));
+    }
+    TB(`${k} mean score by district`,['District','Facilities','Mean %','Band'],X.district.map(d=>[D_(d.District),d.n,p1(d.mean),band(d.mean)]),{band:3});
+    CH(`${k} mean score by district`,hbar(X.district.map(d=>d.District),X.district.map(d=>d.mean),{colors:bandColors(X.district.map(d=>d.mean)),fmt:v=>v.toFixed(1)+'%',xlabel:'Mean overall score (%)'}));
+    TB(`${k} lowest ten facilities`,['Facility','District','Type',unit==='pts'?`Score (of ${tot})`:'Points earned of points that applied','Percent'],X.lowest.map(r=>[r[0],r[1],r[2],r[3],p1(r[4])]));
+  });
+  H2(`3.${scored.length+1} Overall facility score (all scored forms)`);
+  TB('Overall facility score summary',['Scored','Mean','Median','Min','Max','Good','Satisfactory','Needs Improvement',`All ${FS.nAll} forms`,'Missing B or C'],[[FS.n,p1(FS.mean),p1(FS.median),p1(FS.min),p1(FS.max),FS.bands.Good,FS.bands.Satisfactory,FS.bands['Needs Improvement'],FS.complete,FS.noCore.length]],{small:true});
+  CH('Overall facility score bands (all scored forms)',pie(Object.keys(FS.bands),Object.values(FS.bands),[GREEN,AMBER,RED]));
+  TB('Overall facility score by district',['District','Scored','Mean %','Band','Good','Satisfactory','Needs Improvement'],FS.district.map(d=>[D_(d.District),d.n,p1(d.mean),band(d.mean),d.good,d.sat,d.ni]),{band:3});
+  CH('Mean overall facility score by district',hbar(FS.district.map(d=>d.District),FS.district.map(d=>d.mean),{colors:bandColors(FS.district.map(d=>d.mean)),fmt:v=>v.toFixed(1)+'%',xlabel:'Mean facility score (%)'}));
+  const fdr=[...FS.district].reverse();
+  CH('Scored facilities in each band, by district',stackH(fdr.map(d=>d.District),[{name:'Needs Improvement',color:RED,vals:fdr.map(d=>d.ni)},{name:'Satisfactory',color:AMBER,vals:fdr.map(d=>d.sat)},{name:'Good',color:GREEN,vals:fdr.map(d=>d.good)}],{xlabel:'Facilities'}));
+  TB('Overall facility score by facility type',['Type','Mean %','Band'],Object.entries(FS.type).map(([t,v])=>[t,p1(v),band(v)]),{band:2});
+  const ni=FS.rows.filter(r=>r.Band==='Needs Improvement');
+  TB(`Facilities in Needs Improvement (${ni.length}), lowest first`,['District','Facility','Type','Points earned','Points possible','Forms scored','Overall'],ni.map(r=>[D_(r.District),r.Facility,r.Type,n0(r.Earned),r.Possible,`${r.nForms} of ${FS.nAll}`,p1(r.Pct)]),{search:true});
+  if(FS.noCore.length) TB(`PHUs missing Form B or Form C, scored on the forms they have (${FS.noCore.length})`,['District','Facility','Missing','Forms scored','Points possible','Overall'],FS.noCore,{search:true});
+
+  H1('4. Form by form outputs');
+  if(S.A){ const A=S.A; H2('4.1 Form A, General Health Facility Information');
+    TB('Form A summary',['Records','Female in charge','Male in charge','Median HCWs','Mean supervisors','Staff met','GPS captured'],[[A.n,A.gender.Female||0,A.gender.Male||0,isFinite(A.hcw)?A.hcw:'',isFinite(A.sup)?A.sup.toFixed(1):'',n0(A.staff),p1(A.gps)]],{small:true});
+    CH('Sex of the facility in charge',pie(Object.keys(A.gender),Object.values(A.gender),[GOLD,NAVY,GREY]));
+    const cd=Object.entries(A.cadre);
+    CH('Cadre of the facility in charge',hbar(cd.map(c=>c[0]),cd.map(c=>c[1]),{xmax:0,fmt:n0,colors:NAVY,xlabel:'Facilities'}));
+  }
+  [['Form D','4.2'],['Form E','4.3'],['Form F','4.4'],['Form G','4.5']].forEach(([k,no])=>{
+    const X=S.F[k]; if(!X) return; H2(`${no} ${k}, ${TITLE[k]}`);
+    TB(`${k} practice and readiness indicators (% Yes)`,['Indicator','% Yes','Band'],X.perf.map(([a,b])=>[a,p1(b),band(b)]),{band:2,ppt:false});
+    CH(`${k} observed practice and readiness indicators`,hbar(X.perf.map(x=>x[0]),X.perf.map(x=>x[1]),{colors:bandColors(X.perf.map(x=>x[1])),xlabel:'Observed Yes (%)'}));
+    TB(`${k} areas where corrective action was taken`,['Area','% facilities'],X.ca.map(([a,b])=>[a,p1(b)]),{ppt:false});
+    CH(`${k} areas where corrective action was taken`,hbar(X.ca.map(x=>x[0]),X.ca.map(x=>x[1]),{colors:RED,xlabel:'Facilities needing corrective action (%)'}));
+    if(k==='Form G'&&X.registers){
+      TB('Form G register completeness',['Register','Complete','Not fully completed','Not available'],X.registers.map(r=>[r[0],p1(r[1]),p1(r[2]),p1(r[3])]),{ppt:false});
+      CH('Form G completeness of registers and monthly forms',stackH(X.registers.map(r=>r[0]),[{name:'Complete',color:GREEN,vals:X.registers.map(r=>r[1])},{name:'Not fully completed',color:AMBER,vals:X.registers.map(r=>r[2])},{name:'Not available',color:RED,vals:X.registers.map(r=>r[3])}],{pct:true,xlabel:'Facilities (%)'}));
+      CH('Form G how facilities enter data into DHIS2',pie(Object.keys(X.dhis),Object.values(X.dhis),[NAVY,RED,GOLD,GREY]));
+      TB('Form G last DHIS2 access by the facility head',['Response','Facilities'],Object.entries(X.lastlog));
+    }
+    if(X.dose) TB(`${k} SP dose administration`,['Response','Facilities'],Object.entries(X.dose));
+    TB(`${k} supervisor rating`,['Rating','Facilities'],Object.entries(X.rating),{ppt:false});
+    CH(`${k} supervisor's overall rating`,pie(Object.keys(X.rating),Object.values(X.rating),[GREEN,'#7FB77E',AMBER,RED]));
+  });
+  [['Form I','4.6'],['Form J','4.7']].forEach(([k,no])=>{
+    const X=S.T[k]; if(!X) return; H2(`${no} ${k}, ${TITLE[k]}`);
+    TB(`${k} summary`,['Records','Total visits','Total doses','Records with zero doses','Records with more doses than visits'],[[X.n,n0(X.visits),n0(X.total),X.zero,X.over]]);
+    TB(`${k} doses by dose number`,['Dose','Doses'],X.doses.map(d=>[d[0],n0(d[1])]),{ppt:false});
+    CH(`${k} doses reported by dose number`,vbar(X.doses.map(d=>d[0].replace(' (','\n(')),X.doses.map(d=>d[1]),{ylabel:'Doses reported'}));
+    TB(`${k} reporting months`,['Month','Records'],Object.entries(X.months).sort(),{ppt:false});
+    if(X.ready.length) CH(`${k} readiness questions`,hbar(X.ready.map(r=>r[0]),X.ready.map(r=>r[1]),{colors:bandColors(X.ready.map(r=>r[1])),xlabel:'Yes (%)'}));
+  });
+
+  H1('Appendix A. PHU scorecard across forms');
+  const cardForms=['Form B','Form C',...SCORED_PRACTICE.filter(k=>S.P[k])];
+  TB(`Score on each form and the overall facility score, every PHU (${S.card.length})`,['District','Facility',...cardForms.map(k=>k.slice(-1)+' %'),'Overall','Band'],
+    S.card.map(r=>[D_(r.District),r.Facility,...cardForms.map(k=>isFinite(r.scores[k])?Math.round(r.scores[k]):''),r.overall?p1(r.overall.Pct):'',r.overall?r.overall.Band:'']),{band:cardForms.length+3,ppt:false,search:true,small:true});
+  H1('Appendix B. Facilities with missing forms');
+  TB(`Facilities without a record on every PHU form (${cov.incomplete.length})`,['District','Facility','Type','Forms held','Missing forms'],cov.incomplete.map(r=>[D_(r.District),r.Facility,r.Type,r.n,r.Missing]),{search:true});
+  return out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+function toggleCollap(head){ const b=head.nextElementSibling, c=head.querySelector('.collap-chev'); b.classList.toggle('hidden'); c.textContent=b.classList.contains('hidden')?'▶':'▼'; }
+function tableHTML(b){
+  const id='tbl'+b.num;
+  const head='<tr>'+b.head.map(h=>`<th>${esc(h)}</th>`).join('')+'</tr>';
+  const body=b.rows.map(r=>'<tr>'+r.map((v,i)=>`<td${b.band===i?` class="b-${String(v).replace(/\s/g,'')}"`:''}>${esc(v)}</td>`).join('')+'</tr>').join('');
+  return `<div class="tcap">Table ${b.num}. ${esc(b.caption)}</div>`+
+    (b.search?`<input class="form-control tbl-search" placeholder="Search this table" oninput="filterTable('${id}',this.value)">`:'')+
+    `<div class="data-table-wrap"><table class="data-table" id="${id}"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+function filterTable(id,q){ q=q.toLowerCase(); document.querySelectorAll('#'+id+' tbody tr').forEach(tr=>tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none'); }
+function renderScreen(spec){
+  const nav=document.getElementById('tabNav'), panes=document.getElementById('tabPanes'); nav.innerHTML=''; panes.innerHTML='';
+  let pane=null, body=null, ti=0; SAY.items=[]; const reg=(el,text)=>SAY.items.push({el,pane:pane.id,text});
+  const tabName=t=>t.replace(/^\d+\.\s*/,'').replace(/^Appendix [AB]\.\s*/,m=>m);
+  spec.forEach(b=>{
+    if(b.t==='h1'){
+      const id='pane'+(ti++); const btn=document.createElement('button'); btn.className='tab-btn'+(ti===1?' active':''); btn.textContent=tabName(b.text); btn.dataset.tab=id;
+      btn.onclick=()=>{ sayStop(); nav.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active'); panes.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id===id));
+        if(document.getElementById(id).querySelector('#leafMap')) setTimeout(initLeaflet,60); };
+      nav.appendChild(btn); pane=document.createElement('div'); pane.className='tab-pane'+(ti===1?' active':''); pane.id=id; panes.appendChild(pane); body=pane; return;
+    }
+    if(b.t==='h2'){
+      const c=document.createElement('div'); c.className='collap';
+      c.innerHTML=`<div class="collap-head" onclick="toggleCollap(this)"><h3>${esc(b.text)}</h3><span class="collap-chev">▼</span></div><div class="collap-body"></div>`;
+      pane.appendChild(c); body=c.querySelector('.collap-body'); reg(c.querySelector('.collap-head'),`Section: ${b.text}.`); return;
+    }
+    if(b.t==='chart'&&b.screen===false) return;
+    const wrap=document.createElement('div');
+    if(b.t==='leaflet'){
+      const cnt=Object.fromEntries(['Good','Satisfactory','Needs Improvement','No score'].map(k=>[k,RUN.S.pts.filter(p=>p.band===k).length]));
+      wrap.innerHTML=`<div id="leafMap"></div><div class="map-legend">`+
+        [['Good',GREEN],['Satisfactory',AMBER],['Needs Improvement',RED],['No score',GREY]].map(([k,c])=>`<span><span class="dot" style="background:${c}"></span>${k} (${cnt[k]})</span>`).join('')+
+        `<span style="font-weight:400;color:var(--muted);">${RUN.S.pts.length} PHUs with a GPS point. Tap a point for its scores.</span></div>`;
+      body.appendChild(wrap); reg(wrap,explainMap()); return; }
+    if(b.t==='chart'){ wrap.style.margin='6px 0 22px'; wrap.style.textAlign='center';
+      const hint=document.createElement('div'); hint.className='swipe-hint'; hint.textContent='Swipe sideways to see the whole chart'; wrap.appendChild(hint);
+      const fig=document.createElement('div'); fig.className='fig'; fig.style.margin='0'; fig.appendChild(b.canvas); wrap.appendChild(fig);
+      const cp=document.createElement('div'); cp.className='cap'; cp.textContent=`Figure ${b.num}. ${b.caption}`; wrap.appendChild(cp); }
+    else if(b.t==='bullets'){ wrap.innerHTML='<ul class="kf">'+b.items.map(t=>`<li>${esc(t)}</li>`).join('')+'</ul>'; }
+    else wrap.innerHTML=tableHTML(b);
+    body.appendChild(wrap);
+    if(b.t==='bullets') wrap.querySelectorAll('li').forEach((li,i)=>reg(li,b.items[i]));
+    else reg(wrap,b.t==='chart'?explainChart(b):explainTable(b));
   });
 }
-
-function closePlayer(){
-  var player = document.getElementById("player");
-  var vid = document.getElementById("playerVideo");
-  if (vid) { vid.pause(); vid.removeAttribute("src"); vid.load(); }
-  if (player) player.classList.remove("show");
+/* every scored form with its result, B to J in order */
+function scoredForms(S){ return [['Form B',S.B],['Form C',S.C],...SCORED_PRACTICE.filter(k=>S.P[k]).map(k=>[k,S.P[k]])].filter(([,X])=>X&&X.n); }
+function renderStats(S,meta){
+  const nf=S.cov.fac.length, all9=S.cov.status['All 9 forms'];
+  const cls=v=>v>=BAND_GOOD?'ok':(v>=BAND_SAT?'warn':'bad');
+  const pills=[
+    ['',`Fetched ${meta.when}`],['',`${meta.rows.toLocaleString('en-US')} rows read, ${meta.removed} earlier submissions removed`],
+    ['',`${nf} facilities`],[all9/nf>=.85?'ok':'warn',`${all9} with all 9 forms (${p1(all9/nf*100)})`],
+    [cls(S.FS.mean),`Overall mean score ${p1(S.FS.mean)} across ${S.FS.n} PHUs`],
+    ['ok',`${S.FS.bands.Good} Good`],['warn',`${S.FS.bands.Satisfactory} Satisfactory`],['bad',`${S.FS.bands['Needs Improvement']} Needs Improvement`]];
+  const formPills=scoredForms(S).map(([k,X])=>[cls(X.mean),`${k} mean ${p1(X.mean)}`]);
+  const html=a=>a.map(([c,t])=>`<span class="stat-pill ${c}">${esc(t)}</span>`).join('');
+  document.getElementById('statsRow').innerHTML=html(pills)+
+    `<div style="flex-basis:100%;height:0"></div><span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:2px;">Mean score by form</span>`+html(formPills);
 }
 
-/* ================= LOGIN ================= */
-function requestLogin(i){
-  var m = MODULES[i];
-  pendingModuleIndex = i;
-  document.getElementById("loginLabel").textContent =
-    "Enter credentials for Form " + m.letter + " \u2014 " + m.title;
-  document.getElementById("loginErrorMsg").style.display = "none";
-  document.getElementById("loginUsername").value = "";
-  document.getElementById("loginPassword").value = "";
-  document.getElementById("loginOverlay").style.display = "flex";
-  setTimeout(function(){ document.getElementById("loginUsername").focus(); }, 50);
-}
+/* ═══════════════════════════════════════════════════════════════════
+   RUN
+   ═══════════════════════════════════════════════════════════════════ */
+let RUN=null;
+async function runAnalysis(){
+  const err=document.getElementById('cfgError');
+  err.style.display='none';
+  if(!window.XLSX){ err.textContent='The spreadsheet reader did not load. Check the internet connection and reload the page.'; err.style.display='block'; return; }
+  show('pipelineScreen'); document.getElementById('stepList').innerHTML=''; Object.keys(stepEls).forEach(k=>delete stepEls[k]); stepNo=0;
+  setProgress(2); setPill('Running','rgba(255,193,7,.5)');
+  t0=performance.now(); clearInterval(timer); timer=setInterval(()=>document.getElementById('elapsed').textContent=((performance.now()-t0)/1000).toFixed(1)+' s',100);
+  addStep('fetch','Fetch the latest PHU MOCM data');
+  addStep('clean','Clean resubmissions: keep the latest submission per facility per form');
+  addStep('cover','Completeness: which forms each facility has, by district');
+  addStep('score','Scoring: Form B, Form C and the overall facility score with bands');
+  addStep('forms','Form by form indicators for Forms A, D, E, F, G, I and J');
+  addStep('charts','Draw the bar and pie charts and build the tables');
+  addStep('render','Show the results and prepare the Word and PowerPoint downloads');
+  try{
+    setStep('fetch','running'); setProgress(6);
+    const ft=performance.now();
+    const {tabs,via}=await fetchWorkbook('fetch');
+    const rows=Object.values(tabs).reduce((s,t)=>s+t.length,0);
+    setStep('fetch','done',`${Object.keys(tabs).length} tabs, ${rows.toLocaleString('en-US')} rows in ${((performance.now()-ft)/1000).toFixed(1)} s via ${via}`);
+    setProgress(30); await sleep(40);
 
-function submitLogin(){
-  var i = pendingModuleIndex;
-  if (i === null) return;
-  var m = MODULES[i];
-  var creds = FORM_CREDENTIALS[m.letter];
-  var userField = document.getElementById("loginUsername");
-  var passField = document.getElementById("loginPassword");
+    setStep('clean','running');
+    const CL=cleanForms(tabs,'clean');
+    if(CL.fixes.length) CL.fixes.forEach(f=>log('clean',`${f[0]} ${f[1]}: submitted ${f[2]} is after the server received it, corrected to ${f[3]}`,true));
+    const removed=CL.summary.reduce((s,r)=>s+r[2],0);
+    const formRows=CL.summary.reduce((s,r)=>s+r[1],0);
+    if(!formRows) throw new Error('No form records were found in the sheet. Check that the tabs are named Form A to Form J.');
+    setStep('clean','done',`${removed} earlier submissions removed, ${CL.summary.reduce((s,r)=>s+r[3],0)} records kept`);
+    setProgress(45); await sleep(40);
 
-  if (creds && userField.value.trim() === creds.username && passField.value === creds.password) {
-    unlockedForms[m.letter] = true;
-    try { sessionStorage.setItem("mocm_unlocked_final", JSON.stringify(unlockedForms)); } catch(e) {}
-    closeLoginModal();
-    if (currentModule === i) goModule(i);
-    openDoc("html", "Data Collection \u00B7 " + m.title, m.data, 0);
-  } else {
-    document.getElementById("loginErrorMsg").style.display = "block";
-    userField.style.animation = "shake 0.3s ease";
-    passField.style.animation = "shake 0.3s ease";
-    userField.style.borderColor = "#dc3545";
-    passField.style.borderColor = "#dc3545";
-    userField.value = ""; passField.value = "";
-    setTimeout(function(){
-      userField.style.animation = ""; passField.style.animation = "";
-      userField.style.borderColor = "#e0e6ed"; passField.style.borderColor = "#e0e6ed";
-      userField.focus();
-    }, 350);
+    setStep('cover','running'); setStep('score','running');
+    const S=analyse(CL.D,'cover');
+    setStep('cover','done',`${S.cov.fac.length} facilities, ${S.cov.status['All 9 forms']} complete, ${S.cov.status['6 to 8 forms']} with 6 to 8 forms, ${S.cov.status['5 or fewer forms']} with 5 or fewer`);
+    setStep('score','done',`overall ${p1(S.FS.mean)} for ${S.FS.n} PHUs (${S.FS.bands.Good} Good, ${S.FS.bands.Satisfactory} Satisfactory, ${S.FS.bands['Needs Improvement']} Needs Improvement)  ·  `+scoredForms(S).map(([k,X])=>`${k.slice(-1)} ${p1(X.mean)}`).join(', '));
+    setProgress(60); await sleep(40);
+    setStep('forms','running');
+    Object.entries(S.F).forEach(([k,X])=>log('forms',`${k}: ${X.n} facilities, ${X.perf.length} practice indicators, ${X.ca.length} corrective action areas`));
+    Object.entries(S.T).forEach(([k,X])=>log('forms',`${k}: ${X.n} facilities, ${n0(X.total)} doses over ${n0(X.visits)} visits`));
+    setStep('forms','done'); setProgress(70); await sleep(40);
+
+    setStep('charts','running');
+    try{ log('charts','Loading the Sierra Leone district boundaries for the map');
+      const gr=await fetch(DISTRICT_GEOJSON); if(!gr.ok) throw new Error('HTTP '+gr.status); S.geo=await gr.json();
+      log('charts',`District boundaries loaded, ${S.pts.length} PHUs placed on the map`);
+    }catch(e){ S.geo=null; log('charts','District boundaries could not be loaded, the map will show the points only',true); }
+    const spec=buildSpec(S,CL);
+    const nCh=spec.filter(b=>b.t==='chart').length, nTb=spec.filter(b=>b.t==='table').length;
+    setStep('charts','done',`${nCh} charts and ${nTb} tables`); setProgress(90); await sleep(40);
+
+    setStep('render','running');
+    const meta={when:fmtMs(Date.now()-new Date().getTimezoneOffset()*60000).slice(0,16),rows:formRows,removed,via};
+    RUN={S,CL,spec,meta};
+    renderScreen(spec); renderStats(S,meta);
+    document.getElementById('docxStatus').textContent=''; document.getElementById('pptxStatus').textContent='';
+    setStep('render','done',`finished in ${((performance.now()-t0)/1000).toFixed(1)} s`);
+    setProgress(100); clearInterval(timer); setPill('Complete','rgba(40,167,69,.55)');
+    await sleep(500); show('resultsSection'); window.scrollTo(0,0);
+  }catch(e){
+    console.error(e); clearInterval(timer);
+    const running=Object.keys(stepEls).find(k=>stepEls[k].el.classList.contains('running'))||'fetch';
+    setStep(running,'error','stopped');
+    log(running,plainErr(e)==='no answer'?'MOCM-AI could not reach the data. Check the internet connection and run again.':(e.message||String(e)),true);
+    setPill('Error','rgba(220,53,69,.6)');
   }
 }
 
-function closeLoginModal(){
-  document.getElementById("loginOverlay").style.display = "none";
-  pendingModuleIndex = null;
+/* ═══════════════════════════════════════════════════════════════════
+   WORD DOCUMENT
+   ═══════════════════════════════════════════════════════════════════ */
+function dataUrlBytes(u){ const b=atob(u.split(',')[1]); const a=new Uint8Array(b.length); for(let i=0;i<b.length;i++) a[i]=b.charCodeAt(i); return a; }
+/* column shares: wide enough for the longest word, capped so long names wrap */
+function colFrac(head,rows){
+  const longWord=s=>Math.max(...String(s).split(/\s+/).map(w=>w.length),1);
+  const w=head.map((h,i)=>{ const cells=rows.slice(0,300).map(r=>String(r[i]==null?'':r[i]));
+    return 2.5+Math.max(4, String(h).length*0.6, longWord(h)+1, ...cells.map(c=>Math.min(30,c.length)), ...cells.map(c=>longWord(c)+1)); });
+  const s=w.reduce((a,b)=>a+b,0); return w.map(x=>x/s);
+}
+function colWeights(head,rows,total){
+  const ws=colFrac(head,rows).map(f=>Math.round(f*total));
+  ws[ws.indexOf(Math.max(...ws))]+=total-ws.reduce((a,b)=>a+b,0); return ws;
+}
+function saveBlob(blob,name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1500); }
+const stamp=()=>fmtMs(Date.now()-new Date().getTimezoneOffset()*60000,false);
+
+async function downloadDocx(){
+  if(!RUN) return; const btn=document.getElementById('btnDocx'), st=document.getElementById('docxStatus');
+  if(!window.docx){ st.textContent='The Word library did not load. Check the connection and reload.'; return; }
+  btn.disabled=true; st.textContent='Building the Word document…'; await sleep(30);
+  try{
+    const {Document,Packer,Paragraph,TextRun,ImageRun,Table,TableRow,TableCell,WidthType,AlignmentType,HeadingLevel,ShadingType,BorderStyle,Footer,PageNumber,LevelFormat}=docx;
+    const BF={'Good':'D5ECDD','Satisfactory':'FCEFC7','Needs Improvement':'F6D5D1'};
+    const bd={style:BorderStyle.SINGLE,size:4,color:'BFC9D3'}, borders={top:bd,bottom:bd,left:bd,right:bd};
+    const TW=9638, kids=[];
+    kids.push(new Paragraph({heading:HeadingLevel.TITLE,children:[new TextRun({text:'PHU MOCM Analysis Outputs',color:'1F4E78',bold:true})]}));
+    kids.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Malaria Onsite Coaching and Mentorship, National Malaria Control Programme, Sierra Leone',size:20})]}));
+    kids.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:`Source: PHU MOCM Google Sheet, fetched ${RUN.meta.when}. One record per facility per form, the latest submission.`,size:18,color:'555555'})]}));
+    kids.push(new Paragraph({spacing:{after:240},children:[new TextRun({text:`Bands: Good ${BAND_GOOD} to 100, Satisfactory ${BAND_SAT} to ${BAND_GOOD-1}, Needs Improvement below ${BAND_SAT}. Prepared by ICF-SL.`,size:18,color:'555555'})]}));
+    for(const b of RUN.spec){
+      if(b.t==='h1'){ kids.push(new Paragraph({heading:HeadingLevel.HEADING_1,pageBreakBefore:kids.length>4,children:[new TextRun(b.text)]})); continue; }
+      if(b.t==='h2'){ kids.push(new Paragraph({heading:HeadingLevel.HEADING_2,children:[new TextRun(b.text)]})); continue; }
+      if(b.t==='chart'){
+        const w=b.pie?430:620, h=Math.round(w*b.canvas.height/b.canvas.width);
+        kids.push(new Paragraph({alignment:AlignmentType.CENTER,keepNext:true,spacing:{before:120},children:[new ImageRun({data:dataUrlBytes(b.canvas.toDataURL('image/png')),transformation:{width:w,height:h}})]}));
+        kids.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:220},children:[new TextRun({text:`Figure ${b.num}. ${b.caption}`,italics:true,size:18,color:'444444'})]}));
+        continue;
+      }
+      if(b.t==='leaflet') continue;
+      if(b.t==='bullets'){
+        b.items.forEach(t=>kids.push(new Paragraph({numbering:{reference:'kf',level:0},spacing:{after:140,line:300},alignment:AlignmentType.JUSTIFIED,children:[new TextRun({text:t,size:21})]})));
+        continue;
+      }
+      const widths=colWeights(b.head,b.rows,TW), sz=b.small||b.head.length>8?15:17;
+      const cell=(v,i,hdr,ri)=>new TableCell({width:{size:widths[i],type:WidthType.DXA},borders,margins:{top:40,bottom:40,left:80,right:80},
+        shading:hdr?{type:ShadingType.CLEAR,fill:'1F4E78',color:'auto'}:(b.band===i&&BF[v]?{type:ShadingType.CLEAR,fill:BF[v],color:'auto'}:(ri%2?{type:ShadingType.CLEAR,fill:'F5F7F9',color:'auto'}:undefined)),
+        children:[new Paragraph({children:[new TextRun({text:String(v),bold:hdr,color:hdr?'FFFFFF':'000000',size:sz})]})]});
+      kids.push(new Paragraph({keepNext:true,spacing:{before:160,after:80},children:[new TextRun({text:`Table ${b.num}. ${b.caption}`,bold:true,size:19,color:'1F4E78'})]}));
+      kids.push(new Table({width:{size:TW,type:WidthType.DXA},columnWidths:widths,rows:[
+        new TableRow({tableHeader:true,children:b.head.map((h,i)=>cell(h,i,true,-1))}),
+        ...b.rows.map((r,ri)=>new TableRow({cantSplit:true,children:r.map((v,i)=>cell(v,i,false,ri))}))]}));
+      kids.push(new Paragraph({spacing:{after:120},children:[]}));
+    }
+    const doc=new Document({creator:'ICF-SL',title:'PHU MOCM Analysis Outputs',
+      numbering:{config:[{reference:'kf',levels:[{level:0,format:LevelFormat.BULLET,text:'•',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:420,hanging:280}}}}]}]},
+      styles:{default:{document:{run:{font:'Arial',size:20}}},
+        paragraphStyles:[
+          {id:'Heading1',name:'Heading 1',basedOn:'Normal',next:'Normal',quickFormat:true,run:{size:30,bold:true,color:'1F4E78',font:'Arial'},paragraph:{spacing:{before:240,after:160},outlineLevel:0,keepNext:true}},
+          {id:'Heading2',name:'Heading 2',basedOn:'Normal',next:'Normal',quickFormat:true,run:{size:24,bold:true,color:'1F4E78',font:'Arial'},paragraph:{spacing:{before:220,after:120},outlineLevel:1,keepNext:true}}]},
+      sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
+        footers:{default:new Footer({children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({children:['PHU MOCM Analysis  |  Page ',PageNumber.CURRENT],size:16,color:'888888'})]})]})},
+        children:kids}]});
+    const blob=await Packer.toBlob(doc);
+    saveBlob(blob,`PHU_MOCM_Analysis_${stamp()}.docx`);
+    st.textContent=`Saved PHU_MOCM_Analysis_${stamp()}.docx (${(blob.size/1024/1024).toFixed(1)} MB)`;
+  }catch(e){ console.error(e); st.textContent='Could not build the Word file: '+e.message; }
+  btn.disabled=false;
 }
 
-document.getElementById("loginOverlay").addEventListener("click", function(e){
-  if (e.target === this) closeLoginModal();
-});
+/* ═══════════════════════════════════════════════════════════════════
+   POWERPOINT
+   ═══════════════════════════════════════════════════════════════════ */
+async function downloadPptx(){
+  if(!RUN) return; const btn=document.getElementById('btnPptx'), st=document.getElementById('pptxStatus');
+  if(!window.PptxGenJS){ st.textContent='The PowerPoint library did not load. Check the connection and reload.'; return; }
+  btn.disabled=true; st.textContent='Building the PowerPoint deck…'; await sleep(30);
+  try{
+    const pptx=new PptxGenJS(); pptx.layout='LAYOUT_WIDE'; pptx.author='ICF-SL'; pptx.title='PHU MOCM Analysis';
+    const W=13.333, HH=7.5;
+    pptx.defineSlideMaster({title:'MAIN',background:{color:'FFFFFF'},objects:[
+      {rect:{x:0,y:0,w:W,h:0.95,fill:{color:'1F4E78'}}},{rect:{x:0,y:0.95,w:W,h:0.06,fill:{color:'C9A227'}}},
+      {text:{text:'PHU MOCM Analysis  |  NMCP Sierra Leone  |  ICF-SL',options:{x:0.4,y:7.08,w:8,h:0.3,fontSize:9,color:'888888',fontFace:'Arial'}}}],
+      slideNumber:{x:12.45,y:7.08,w:0.6,h:0.3,fontSize:9,color:'888888'}});
+    /* title slide */
+    let s=pptx.addSlide(); s.background={color:'1F4E78'};
+    s.addShape(pptx.ShapeType.rect,{x:0.6,y:3.55,w:2.2,h:0.07,fill:{color:'C9A227'},line:{color:'C9A227'}});
+    s.addText('PHU MOCM Analysis',{x:0.6,y:1.9,w:12,h:1.0,fontSize:40,bold:true,color:'FFFFFF',fontFace:'Arial'});
+    s.addText('Malaria Onsite Coaching and Mentorship, Forms A to J',{x:0.6,y:2.85,w:12,h:0.6,fontSize:20,color:'E8EEF4',fontFace:'Arial'});
+    s.addText(`National Malaria Control Programme, Sierra Leone\nData fetched ${RUN.meta.when}  ·  Prepared by ICF-SL`,{x:0.6,y:3.85,w:12,h:0.9,fontSize:14,color:'C9D6E2',fontFace:'Arial'});
+    /* key numbers slide */
+    const S=RUN.S, nf=S.cov.fac.length;
+    s=pptx.addSlide({masterName:'MAIN'});
+    s.addText('Key numbers',{x:0.4,y:0.14,w:12.5,h:0.68,fontSize:24,bold:true,color:'FFFFFF',fontFace:'Arial'});
+    const hexBand=v=>BANDC[band(v)].slice(1);
+    const tileGrid=(sl,tiles)=>tiles.forEach(([v,l,acc],i)=>{ const x=0.6+(i%4)*3.08, y=1.45+Math.floor(i/4)*2.75;
+      sl.addShape(pptx.ShapeType.rect,{x,y,w:2.85,h:2.45,fill:{color:'F5F7F9'},line:{color:'D0DDE8'}});
+      sl.addShape(pptx.ShapeType.rect,{x,y,w:0.09,h:2.45,fill:{color:acc||'C9A227'},line:{color:acc||'C9A227'}});
+      sl.addText(v,{x:x+0.28,y:y+0.3,w:2.45,h:1.0,fontSize:34,bold:true,color:'1F4E78',fontFace:'Arial'});
+      sl.addText(l,{x:x+0.28,y:y+1.35,w:2.45,h:0.9,fontSize:13,color:'444444',fontFace:'Arial',valign:'top'}); });
+    tileGrid(s,[[n0(nf),'PHUs with records'],[`${S.cov.status['All 9 forms']}`,'PHUs with all 9 forms'],[p1(S.FS.mean),`overall mean score across ${S.FS.n} PHUs`,hexBand(S.FS.mean)],[`${S.FS.noCore.length}`,'PHUs missing Form B or Form C'],
+      [`${S.FS.bands.Good}`,'PHUs Good (85 to 100)',GREEN.slice(1)],[`${S.FS.bands.Satisfactory}`,'PHUs Satisfactory (64 to 84)',AMBER.slice(1)],[`${S.FS.bands['Needs Improvement']}`,'PHUs Needs Improvement (below 64)',RED.slice(1)],[`${S.FS.complete}`,`PHUs with all ${S.FS.nAll} scored forms`]]);
+    s=pptx.addSlide({masterName:'MAIN'});
+    s.addText('Mean score by form',{x:0.4,y:0.14,w:12.5,h:0.68,fontSize:24,bold:true,color:'FFFFFF',fontFace:'Arial'});
+    tileGrid(s,scoredForms(S).map(([k,X])=>[p1(X.mean),`${k}, ${TITLE[k]}`,hexBand(X.mean)]));
+    let section='', sub='';
+    const header=(sl,title)=>{ sl.addText(title,{x:0.4,y:0.12,w:12.5,h:0.72,fontSize:title.length>70?17:21,bold:true,color:'FFFFFF',fontFace:'Arial',valign:'middle'});
+      if(sub) sl.addText(sub,{x:0.4,y:1.05,w:12.5,h:0.32,fontSize:11,color:'C9A227',bold:true,fontFace:'Arial'}); };
+    for(const b of RUN.spec){
+      if(b.t==='h1'){ section=b.text; sub='';
+        s=pptx.addSlide(); s.background={color:'1F4E78'};
+        s.addShape(pptx.ShapeType.rect,{x:0.6,y:4.0,w:1.6,h:0.07,fill:{color:'C9A227'},line:{color:'C9A227'}});
+        s.addText(b.text,{x:0.6,y:2.8,w:12,h:1.1,fontSize:34,bold:true,color:'FFFFFF',fontFace:'Arial'}); continue; }
+      if(b.t==='h2'){ sub=b.text; continue; }
+      if(b.t==='chart'){
+        s=pptx.addSlide({masterName:'MAIN'}); header(s,`Figure ${b.num}. ${b.caption}`);
+        const ar=b.canvas.width/b.canvas.height, maxW=12.3, maxH=5.5; let h=Math.min(maxH,maxW/ar), w=h*ar;
+        s.addImage({data:b.canvas.toDataURL('image/png'),x:(W-w)/2,y:1.42,w,h}); continue;
+      }
+      if(b.t==='bullets'){
+        const per=3, pages=Math.ceil(b.items.length/per);
+        for(let p=0;p<pages;p++){
+          s=pptx.addSlide({masterName:'MAIN'}); header(s,'Key findings'+(pages>1?`  (${p+1} of ${pages})`:''));
+          s.addText(b.items.slice(p*per,p*per+per).map(t=>({text:t,options:{bullet:{code:'25A0'},paraSpaceAfter:14,breakLine:true}})),
+            {x:0.6,y:1.35,w:12.1,h:5.55,fontSize:16,color:'22313F',fontFace:'Arial',valign:'top',lineSpacingMultiple:1.1});
+        }
+        continue;
+      }
+      if(!b.ppt) continue;
+      const per=b.perSlide||(b.head.length>8?14:15), chunks=[]; for(let i=0;i<b.rows.length;i+=per) chunks.push(b.rows.slice(i,i+per)); if(!chunks.length) chunks.push([]);
+      const fsz=b.head.length>9?9:(b.head.length>6?10:11);
+      const tw=b.head.length<=3?8:12.3, colW=colFrac(b.head,b.rows).map(f=>f*tw);
+      const BF={'Good':'D5ECDD','Satisfactory':'FCEFC7','Needs Improvement':'F6D5D1'};
+      chunks.forEach((rows,ci)=>{
+        s=pptx.addSlide({masterName:'MAIN'}); header(s,`Table ${b.num}. ${b.caption}`+(chunks.length>1?`  (${ci+1} of ${chunks.length})`:''));
+        const data=[b.head.map(h=>({text:String(h),options:{bold:true,color:'FFFFFF',fill:{color:'1F4E78'}}})),
+          ...rows.map((r,ri)=>r.map((v,i)=>({text:String(v),options:{fill:{color:(b.band===i&&BF[v])?BF[v]:(ri%2?'F5F7F9':'FFFFFF')}}})))];
+        s.addTable(data,{x:(W-tw)/2,y:1.45,w:tw,colW,fontSize:fsz,fontFace:'Arial',color:'222222',border:{type:'solid',pt:0.5,color:'BFC9D3'},rowH:0.32,valign:'middle'});
+      });
+    }
+    await pptx.writeFile({fileName:`PHU_MOCM_Analysis_${stamp()}.pptx`});
+    st.textContent=`Saved PHU_MOCM_Analysis_${stamp()}.pptx`;
+  }catch(e){ console.error(e); st.textContent='Could not build the PowerPoint file: '+e.message; }
+  btn.disabled=false;
+}
 
-/* ================= ONLINE STATUS ================= */
-function updateOnlineStatus(){
-  var dot = document.getElementById("statusDot");
-  var txt = document.getElementById("statusTxt");
-  var badge = document.getElementById("statusBadge");
-  if (!dot || !txt || !badge) return;
-  if (navigator.onLine) {
-    dot.className = "status-dot online";
-    txt.textContent = "System ready";
-    badge.textContent = "ONLINE";
-    badge.style.background = "#e8f5e9";
-    badge.style.color = "#28a745";
-  } else {
-    dot.className = "status-dot offline";
-    txt.textContent = "Offline mode";
-    badge.textContent = "OFFLINE";
-    badge.style.background = "#fee2e2";
-    badge.style.color = "#dc3545";
+</script>
+
+<script>
+(function(){
+  var msg=["Hello, I am <b>MOCM-AI</b>.","Click <b>Run MOCM-AI</b> and I will go to the database, fetch the latest MOCM submissions, clean them and run all the predefined analyses.","Then I will write the key findings and build your report as a Word document and a PowerPoint deck, ready for easy use.","Let's get started!"];
+  var el=document.getElementById('agentText'), caret=document.getElementById('agentCaret');
+  if(!el) return;
+  var full=msg.join(' ');
+  var plain=full.replace(/<[^>]+>/g,''), say=document.getElementById('agentSay'), spoken=false;
+  var tts=('speechSynthesis' in window)?window.speechSynthesis:null;
+  window.pickVoiceGlobal=function(){return tts?pickVoice():null;};
+  function pickVoice(){var v=tts.getVoices();return v.find(function(x){return /en[-_]GB/i.test(x.lang)&&/female|natural|google/i.test(x.name);})||v.find(function(x){return /^en/i.test(x.lang)&&/natural|google/i.test(x.name);})||v.find(function(x){return /^en/i.test(x.lang);})||null;}
+  function speak(){
+    if(!tts) return;
+    tts.cancel();
+    var u=new SpeechSynthesisUtterance(plain.replace(/MOCM-AI/g,'Mocem A I').replace(/MOCM/g,'Mocem'));
+    var v=pickVoice(); if(v){u.voice=v;u.lang=v.lang;} else u.lang='en-GB';
+    u.rate=0.98; u.pitch=1.05;
+    u.onstart=function(){spoken=true;say.classList.add('on');say.innerHTML='&#9632; Stop';};
+    u.onend=u.onerror=function(){say.classList.remove('on');say.innerHTML='&#128266; Listen';};
+    tts.speak(u);
   }
+  if(!tts){say.style.display='none';}
+  else{
+    say.addEventListener('click',function(e){e.stopPropagation();if(tts.speaking){tts.cancel();}else speak();});
+    if(tts.getVoices().length===0) tts.onvoiceschanged=function(){if(!spoken)speak();};
+    setTimeout(speak,300);
+    // browsers that block speech until the user interacts: speak on the first tap
+    var first=function(ev){document.removeEventListener('pointerdown',first,true);if(!spoken&&!(ev.target.closest&&ev.target.closest('.cfg-run-btn')))speak();};
+    document.addEventListener('pointerdown',first,true);
+    document.querySelectorAll('.cfg-run-btn').forEach(function(b){b.addEventListener('click',function(){tts.cancel();});});
+  }
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerHTML=full;caret.style.display='none';return;}
+  var i=0;
+  (function tick(){
+    if(i>=full.length){el.innerHTML=full;setTimeout(function(){caret.style.display='none';},1600);return;}
+    if(full[i]==='<'){i=full.indexOf('>',i)+1;} else i++;
+    var part=full.slice(0,i), open=(part.match(/<b>/g)||[]).length>(part.match(/<\/b>/g)||[]).length;
+    el.innerHTML=part+(open?'</b>':'');
+    setTimeout(tick, full[i-1]==='.'||full[i-1]==='!'?260:18);
+  })();
+})();
+</script>
+<script>
+/* ═══ MOCM-AI explainer: reads the active tab aloud and highlights each part ═══ */
+var SAY={items:[],queue:[],i:0,on:false,paused:false,timer:null};
+function sayNum(v){ return (typeof v==='number')?(Number.isInteger(v)?String(v):v.toFixed(1)):String(v); }
+function explainChart(b){
+  var t='Figure '+b.num+'. '+b.caption+'.', d=b.canvas&&b.canvas._d; if(!d) return t;
+  if(d.kind==='bar'){ var f=d.fmt||sayNum, pr=d.labels.map(function(l,i){return [l,d.vals[i]];});
+    if(pr.length<=5) return t+' '+pr.map(function(p){return p[0]+', '+f(p[1]);}).join('; ')+'.';
+    var s=pr.slice().sort(function(a,b){return b[1]-a[1];});
+    return t+' The highest is '+s[0][0]+' at '+f(s[0][1])+', then '+s[1][0]+' at '+f(s[1][1])+'. The lowest is '+s[s.length-1][0]+' at '+f(s[s.length-1][1])+'.'; }
+  if(d.kind==='pie'){ var tot=d.vals.reduce(function(a,b){return a+b;},0); if(!tot) return t+' There is no data yet.';
+    return t+' '+d.labels.map(function(l,i){return l+': '+d.vals[i]+', which is '+Math.round(d.vals[i]/tot*100)+' percent';}).join('; ')+'.'; }
+  if(d.kind==='hist'){ var v=d.vals.filter(isFinite).sort(function(a,b){return a-b;}); if(!v.length) return t;
+    var med=v[Math.floor(v.length/2)], lo=v.filter(function(x){return x<BAND_SAT;}).length, hi=v.filter(function(x){return x>=BAND_GOOD;}).length;
+    return t+' It shows '+v.length+' facilities. The middle score is '+med.toFixed(1)+' percent. '+lo+' are below '+BAND_SAT+' percent, the Needs Improvement band, and '+hi+' reach '+BAND_GOOD+' percent or more, the Good band.'; }
+  if(d.kind==='stack'){ var tots=d.labels.map(function(_,i){return d.series.reduce(function(s,se){return s+se.vals[i];},0);});
+    var r=d.labels.length>1?' It compares '+d.labels.length+' rows, each split into '+d.series.map(function(s){return s.name;}).join(', ')+'.':'';
+    return t+r+' For '+d.labels[0]+': '+d.series.map(function(se){return se.name+' '+(d.pct?Math.round(se.vals[0])+' percent':se.vals[0]);}).join(', ')+'.'; }
+  return t;
 }
-window.addEventListener("online", updateOnlineStatus);
-window.addEventListener("offline", updateOnlineStatus);
-
-/* ================= BACK / ESC HANDLING ================= */
-window.addEventListener("popstate", function(){
-  if (document.getElementById("docViewer").classList.contains("show")) closeDoc();
-  else if (currentModule !== null) goHome();
-  history.pushState(null, "", location.href);
-});
-history.pushState(null, "", location.href);
-
-document.addEventListener("keydown", function(e){
-  if (e.key !== "Escape") return;
-  if (document.getElementById("loginOverlay").style.display === "flex") closeLoginModal();
-  else if (document.getElementById("docViewer").classList.contains("show")) closeDoc();
-  else if (currentModule !== null) goHome();
-});
-
-/* ================= INIT ================= */
-document.getElementById("year").textContent = new Date().getFullYear();
-goHome();
+function explainTable(b){
+  var n=b.rows.length, t='Table '+b.num+'. '+b.caption+'. It has '+n+' row'+(n===1?'':'s')+'.';
+  if(!n) return t;
+  var r=b.rows[0], k=Math.min(b.head.length,6);
+  t+=' The first row reads: '+b.head.slice(0,k).map(function(h,i){return h+', '+r[i];}).join('; ')+'.';
+  if(b.band!=null&&n>1){ var c={}; b.rows.forEach(function(x){var v=x[b.band]; if(v) c[v]=(c[v]||0)+1;});
+    var ks=Object.keys(c); if(ks.length) t+=' By band: '+ks.map(function(x){return c[x]+' '+x;}).join(', ')+'.'; }
+  var last=b.rows[n-1]; if(n>2&&/^All /.test(String(last[0]))) t+=' The last row gives the total for '+String(last[0]).toLowerCase()+'.';
+  return t;
+}
+function explainMap(){
+  var P=RUN.S.pts, c=function(k){return P.filter(function(p){return p.band===k;}).length;};
+  return 'The map shows '+P.length+' PHUs, one GPS point each, on OpenStreetMap. '+c('Good')+' are Good in green, '+c('Satisfactory')+' are Satisfactory in amber, and '+c('Needs Improvement')+' need improvement in red. Tap any point to see that PHU\'s scores.';
+}
+function sayClean(t){ return t.replace(/MOCM-AI/g,'Mocem A I').replace(/MOCM/g,'Mocem').replace(/PHUs/g,'P H Us').replace(/PHU/g,'P H U').replace(/(\d)%/g,'$1 percent').replace(/≥/g,' at least ').replace(/·/g,', '); }
+function sayMark(it){
+  document.querySelectorAll('.say-on').forEach(function(e){e.classList.remove('say-on');});
+  if(!it||!it.el) return;
+  var body=it.el.closest('.collap-body'); if(body&&body.classList.contains('hidden')) toggleCollap(body.previousElementSibling);
+  it.el.classList.add('say-on');
+  try{ it.el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ it.el.scrollIntoView(); }
+}
+function sayPlay(){
+  clearTimeout(SAY.timer); var tts=window.speechSynthesis;
+  if(!SAY.on) return;
+  if(SAY.i>=SAY.queue.length){ document.getElementById('sayText').textContent='That is the end of this tab. Pick another tab and press Explain again.'; sayMark(null); setTimeout(function(){ if(SAY.i>=SAY.queue.length) sayStop(); },3500); return; }
+  var it=SAY.queue[SAY.i];
+  sayMark(it);
+  document.getElementById('sayLabel').textContent='MOCM-AI is explaining · part '+(SAY.i+1)+' of '+SAY.queue.length;
+  document.getElementById('sayText').textContent=it.text;
+  var bar=document.getElementById('sayBar'); bar.classList.add('talking');
+  var tok=SAY.tok=(SAY.tok||0)+1;
+  var next=function(){ if(tok!==SAY.tok) return; bar.classList.remove('talking'); if(SAY.on&&!SAY.paused){ SAY.i++; SAY.timer=setTimeout(sayPlay,450); } };
+  if(tts){ tts.cancel(); var u=new SpeechSynthesisUtterance(sayClean(it.text)); var v=(typeof pickVoiceGlobal==='function')?pickVoiceGlobal():null; if(v){u.voice=v;u.lang=v.lang;} else u.lang='en-GB'; u.rate=1; u.onend=next; u.onerror=function(e){ if(e.error!=='interrupted'&&e.error!=='canceled') next(); }; tts.speak(u); }
+  else SAY.timer=setTimeout(next,Math.max(2500,it.text.split(/\s+/).length*380));
+}
+function sayStart(){
+  var pane=document.querySelector('.tab-pane.active'); if(!pane) return;
+  if(SAY.on){ sayStop(); return; }
+  var tab=document.querySelector('.tab-btn.active');
+  SAY.queue=[{el:null,text:'I will explain the '+(tab?tab.textContent:'current')+' tab, part by part. Watch the highlight to see where I am.'}].concat(SAY.items.filter(function(x){return x.pane===pane.id;}));
+  SAY.i=0; SAY.on=true; SAY.paused=false;
+  document.getElementById('sayBar').classList.add('show');
+  var b=document.getElementById('explainBtn'); b.classList.add('on'); b.innerHTML='&#9632; Stop explaining';
+  document.getElementById('sayPauseBtn').innerHTML='&#10074;&#10074;';
+  sayPlay();
+}
+function sayStop(){
+  SAY.on=false; SAY.paused=false; SAY.tok=(SAY.tok||0)+1; clearTimeout(SAY.timer); if(window.speechSynthesis) speechSynthesis.cancel();
+  sayMark(null); var bar=document.getElementById('sayBar'); if(bar){bar.classList.remove('show','talking');}
+  var b=document.getElementById('explainBtn'); if(b){ b.classList.remove('on'); b.innerHTML='&#128266; Explain this tab'; }
+}
+function sayPause(){
+  if(!SAY.on) return; var btn=document.getElementById('sayPauseBtn');
+  if(!SAY.paused){ SAY.paused=true; SAY.tok++; clearTimeout(SAY.timer); if(window.speechSynthesis) speechSynthesis.cancel(); document.getElementById('sayBar').classList.remove('talking'); btn.innerHTML='&#9654;&#xFE0E;'; btn.setAttribute('aria-label','Resume'); }
+  else { SAY.paused=false; btn.innerHTML='&#10074;&#10074;'; btn.setAttribute('aria-label','Pause'); sayPlay(); }
+}
+function sayStep(d){ if(!SAY.on) return; SAY.paused=false; document.getElementById('sayPauseBtn').innerHTML='&#10074;&#10074;'; SAY.i=Math.max(0,Math.min(SAY.queue.length-1,SAY.i+d)); sayPlay(); }
 </script>
 </body>
 </html>
