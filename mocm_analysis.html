@@ -146,6 +146,43 @@ body.ai-pick #leafMap{cursor:help;}
   .say-bar .say-text{max-height:22vh;}
   .say-bar.mini{width:58px;right:0;bottom:90px;}
 }
+
+/* MOCM-AI controller lives in the header, top right, shaped to fit it */
+.page-header{position:sticky;top:0;z-index:1500;}
+.hdr-right{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;}
+#sayBar.say-bar{position:static;transform:none;width:auto;max-width:min(640px,58vw);min-width:0;display:none;flex-direction:row;align-items:center;gap:10px;padding:7px 8px 7px 8px;border-radius:14px;background:rgba(4,28,50,.38);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);transition:none;}
+#sayBar.say-bar.show{display:flex;}
+#sayBar.show + #headerPill{display:none;}
+#sayBar .say-av{width:34px;height:34px;flex:0 0 34px;font-size:12px;align-self:center;}
+#sayBar .say-main{flex:1 1 auto;min-width:0;}
+#sayBar .say-label{font-size:9.5px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#sayBar .say-text{font-size:12.5px;line-height:1.45;max-height:2.9em;overflow-y:auto;}
+#sayBar .say-ctl{flex:0 0 auto;flex-wrap:nowrap;gap:4px;width:auto;}
+#sayBar .say-ctl button{width:28px;height:28px;font-size:11px;}
+#sayBar .say-min{position:static;flex:0 0 auto;width:24px;height:24px;font-size:15px;order:9;}
+#sayBar.mini{width:auto;max-width:none;padding:4px;border-radius:24px;}
+#sayBar.mini .say-main,#sayBar.mini .say-ctl,#sayBar.mini .say-min{display:none;}
+#sayBar.mini .say-av{cursor:pointer;}
+@media (max-width:768px){
+  .hdr-right{flex-basis:100%;margin-left:0;justify-content:stretch;}
+  #sayBar.say-bar{max-width:none;flex:1 1 100%;flex-wrap:wrap;}
+  #sayBar .say-main{flex:1 1 calc(100% - 80px);}
+  #sayBar .say-ctl{flex:1 1 100%;justify-content:center;}
+  #sayBar.mini{flex:0 0 auto;margin-left:auto;}
+  .hdr-right #headerPill{margin-left:auto;}
+}
+
+@media (min-width:769px){ .header-row{flex-wrap:nowrap;} .header-text{min-width:0;flex:1 1 auto;} #sayBar.say-bar{max-width:min(640px,55vw);} }
+@media (max-width:768px){
+  .page-header{padding:10px 12px;}
+  .header-text h1{font-size:16px;}
+  .header-text p{display:none;}
+  #sayBar.say-bar{justify-content:center;padding:6px 8px;}
+  #sayBar .say-ctl{flex:0 0 auto;}
+  #sayBar .say-min{order:10;}
+  .hdr-right:not(:has(#sayBar.show:not(.mini))){flex-basis:auto;margin-left:auto;}
+  .header-row{flex-wrap:wrap;}
+}
 @media (prefers-reduced-motion:reduce){.agent-av,.agent-av .eye,.agent-av .ant,.agent-tag i,.agent-caret{animation:none;}}
 
 
@@ -216,7 +253,7 @@ body.ai-pick #leafMap{cursor:help;}
 .alert-warn{background:#fff3cd;border-color:var(--gold);color:#856404;}
 .page-footer{background:var(--blue-dk);color:rgba(255,255,255,.8);text-align:center;padding:14px;font-size:11px;margin-top:28px;}
 /* phones, tablets and laptops */
-html,body{overflow-x:hidden;}
+html,body{overflow-x:clip;}
 .page-body,.card,.card-body,.tab-pane,.collap-body{min-width:0;}
 .swipe-hint{display:none;font-size:11px;color:var(--muted);margin:2px 0 4px;}
 @media (max-width:1024px){
@@ -264,12 +301,11 @@ html,body{overflow-x:hidden;}
 
 <div class="page-header">
   <div class="header-row">
-    <div class="logo-box"><img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL"></div>
     <div class="header-text">
       <h1>PHU MOCM Analysis Tool</h1>
       <p>Malaria Onsite Coaching and Mentorship · National Malaria Control Programme · Sierra Leone · ICF-SL</p>
     </div>
-    <div style="margin-left:auto;"><span id="headerPill" style="background:rgba(255,255,255,.15);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;">Ready</span></div>
+    <div class="hdr-right" id="hdrRight"><span id="headerPill" style="background:rgba(255,255,255,.15);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;">Ready</span></div>
   </div>
 </div>
 
@@ -438,7 +474,7 @@ html,body{overflow-x:hidden;}
 
 <div class="say-bar" id="sayBar" role="status" aria-live="polite">
   <button type="button" class="say-av" id="sayAv" onclick="sayExpand()" aria-label="Show MOCM-AI" title="Show MOCM-AI">AI</button>
-  <button type="button" class="say-min" onclick="sayMinimise()" aria-label="Hide the panel, keep talking" title="Hide the panel (MOCM-AI keeps talking)">&#8250;</button>
+  <button type="button" class="say-min" onclick="sayMinimise()" aria-label="Hide the text and buttons, keep talking" title="Hide (MOCM-AI keeps talking)">&#8250;</button>
   <div class="say-main"><div class="say-label" id="sayLabel">MOCM-AI is explaining</div><div class="say-text" id="sayText"></div></div>
   <div class="say-ctl">
     <button type="button" onclick="sayToggleText()" id="sayTextBtn" aria-label="Hide the text" title="Hide or show the text">Aa</button>
@@ -1297,7 +1333,7 @@ function renderScreen(spec){
   const nav=document.getElementById('tabNav'), panes=document.getElementById('tabPanes'); nav.innerHTML=''; panes.innerHTML='';
   let pane=null, body=null, ti=0; SAY.items=[]; const reg=(el,text)=>{ el.dataset.ai=SAY.items.length; SAY.items.push({el,pane:pane.id,text}); };
   const tabName=t=>t.replace(/^\d+\.\s*/,'').replace(/^Appendix [AB]\.\s*/,m=>m);
-  spec.forEach(b=>{
+  spec.forEach((b,idx)=>{
     if(b.t==='h1'){
       const id='pane'+(ti++); const btn=document.createElement('button'); btn.className='tab-btn'+(ti===1?' active':''); btn.textContent=tabName(b.text); btn.dataset.tab=id;
       btn.onclick=()=>{ sayStop(); nav.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active'); panes.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id===id));
@@ -1316,6 +1352,7 @@ function renderScreen(spec){
       wrap.innerHTML=`<div id="leafMap"></div><div class="map-legend">`+
         [['Good',GREEN],['Satisfactory',AMBER],['Needs Improvement',RED],['No score',GREY]].map(([k,c])=>`<span><span class="dot" style="background:${c}"></span>${k} (${cnt[k]})</span>`).join('')+
         `<span style="font-weight:400;color:var(--muted);">${RUN.S.pts.length} PHUs with a GPS point. Tap a point for its scores.</span></div>`;
+      { const nx=spec[idx+1]; if(nx&&nx.t==='chart'&&nx.screen===false){ const cp=document.createElement('div'); cp.className='cap'; cp.textContent=`Figure ${nx.num}. ${nx.caption}`; wrap.appendChild(cp); } }
       body.appendChild(wrap); reg(wrap,explainMap()); return; }
     if(b.t==='chart'){ wrap.style.margin='6px 0 22px'; wrap.style.textAlign='center';
       const hint=document.createElement('div'); hint.className='swipe-hint'; hint.textContent='Swipe sideways to see the whole chart'; wrap.appendChild(hint);
@@ -2341,6 +2378,7 @@ document.addEventListener('click',function(e){
   e.preventDefault(); e.stopPropagation();
   sayOne(target,text);
 },true);
+(function(){ var b=document.getElementById('sayBar'), r=document.getElementById('hdrRight'), pill=document.getElementById('headerPill'); if(b&&r&&pill) r.insertBefore(b,pill); })();
 function sayMinimise(){ var b=document.getElementById('sayBar'); b.classList.add('mini'); try{ localStorage.setItem('mocm_say_mini','1'); }catch(e){} }
 function sayExpand(){ var b=document.getElementById('sayBar'); if(!b.classList.contains('mini')) return; b.classList.remove('mini'); try{ localStorage.setItem('mocm_say_mini','0'); }catch(e){} }
 (function(){ try{ if(localStorage.getItem('mocm_say_mini')==='1') document.getElementById('sayBar').classList.add('mini'); }catch(e){} })();
