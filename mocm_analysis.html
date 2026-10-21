@@ -12,14 +12,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-#leafMap{width:100%;max-width:calc(78vh * 1.05);margin:0 auto;aspect-ratio:1/0.95;height:auto;min-height:320px;border-radius:8px;border:1px solid var(--border);z-index:0;background:#eef2f6;}
-.leaflet-tooltip.dlabel{background:transparent;border:none;box-shadow:none;color:#3b5368;font-size:11px;font-weight:700;letter-spacing:.3px;text-shadow:0 0 3px #fff,0 0 3px #fff;padding:0;}
-.leaflet-tooltip.dlabel:before{display:none;}
-@media (max-width:600px){.leaflet-tooltip.dlabel{display:none;}}
+#leafMap{height:600px;border-radius:8px;border:1px solid var(--border);z-index:0;}
 .map-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:10px 0 22px;font-size:12px;font-weight:700;color:#2c4b62;}
 .map-legend span.dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:6px;vertical-align:middle;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
 .leaflet-popup-content{font-size:12.5px;line-height:1.5;}
-
+@media (max-width:768px){#leafMap{height:440px;}}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --blue:#2c6793;--blue-dk:#1f4a6a;--blue-lt:#e8f0f7;
@@ -95,8 +92,6 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 .agent-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
 .agent-top .agent-tag{margin-bottom:0;}
 .agent-say{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-.agent-vstat{font-size:11px;font-weight:700;color:#bfe9e4;letter-spacing:.3px;}
-.agent-vstat.bad{color:#ffd27a;}
 .agent-say:hover,.agent-say.on{background:#4fd1c5;color:#06263f;border-color:#4fd1c5;}
 @keyframes agCaret{50%{opacity:0}}
 @media (max-width:768px){.agent{flex-direction:column;text-align:left;padding:22px 18px;gap:14px;}.agent-av{flex:0 0 auto;width:130px;}.agent-bubble{font-size:14px;}.agent-bubble::before{left:50%;top:-10px;margin-left:-10px;border:10px solid transparent;border-bottom-color:#fff;border-top:0;}.agent-go .cfg-run-btn{width:100%;min-width:0;}}
@@ -114,8 +109,6 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 .say-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#7fe0d6;margin-bottom:2px;}
 .say-text{font-size:13px;line-height:1.5;max-height:4.5em;overflow:auto;}
 .say-ctl{display:flex;gap:6px;flex-shrink:0;}
-.say-bar.notext .say-text{display:none;}
-.say-ctl button.off{background:transparent;opacity:.6;text-decoration:line-through;}
 .say-ctl button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;font-size:12px;}
 .say-ctl button:hover{background:#4fd1c5;color:#06263f;}
 @media (max-width:600px){.say-bar{flex-wrap:wrap;bottom:8px;}.say-ctl{width:100%;justify-content:center;}.say-text{font-size:12.5px;}}
@@ -275,7 +268,7 @@ html,body{overflow-x:hidden;}
   <rect x="82" y="186" width="7" height="8" rx="1.5" fill="#4fd1c5"/><rect x="93" y="180" width="7" height="14" rx="1.5" fill="#ffc107"/><rect x="104" y="176" width="7" height="18" rx="1.5" fill="#fff"/><rect x="115" y="183" width="5" height="11" rx="1.5" fill="#4fd1c5"/>
 </svg></div>
       <div class="agent-main">
-        <div class="agent-top"><div class="agent-tag"><i></i>MOCM-AI agent · ready</div><button type="button" class="agent-say" id="agentSay" aria-label="Read the message aloud">&#128266; Listen</button><span class="agent-vstat" id="voiceStat">Checking the voice…</span></div>
+        <div class="agent-top"><div class="agent-tag"><i></i>MOCM-AI agent · online</div><button type="button" class="agent-say" id="agentSay" aria-label="Read the message aloud">&#128266; Listen</button></div>
         <div class="agent-bubble"><span id="agentText"></span><span class="agent-caret" id="agentCaret"></span></div>
         <div id="cfgError" class="alert alert-err" style="display:none;margin-top:12px;"></div>
         <div class="agent-go">
@@ -412,12 +405,10 @@ html,body{overflow-x:hidden;}
   <div class="say-av" aria-hidden="true">AI</div>
   <div class="say-main"><div class="say-label" id="sayLabel">MOCM-AI is explaining</div><div class="say-text" id="sayText"></div></div>
   <div class="say-ctl">
-    <button type="button" onclick="sayToggleText()" id="sayTextBtn" aria-label="Hide the text" title="Hide or show the text">Aa</button>
-    <button type="button" onclick="sayStep(-1)" aria-label="Previous" title="Previous part">&#9664;</button>
-    <button type="button" onclick="sayStep(0)" aria-label="Replay this part" title="Replay this part">&#8635;</button>
-    <button type="button" id="sayPauseBtn" onclick="sayPause()" aria-label="Pause" title="Pause or resume">&#10074;&#10074;</button>
-    <button type="button" onclick="sayStep(1)" aria-label="Next" title="Next part">&#9654;</button>
-    <button type="button" onclick="sayStop()" aria-label="Stop" title="Stop">&#10005;</button>
+    <button type="button" onclick="sayStep(-1)" aria-label="Previous">&#9664;</button>
+    <button type="button" id="sayPauseBtn" onclick="sayPause()" aria-label="Pause">&#10074;&#10074;</button>
+    <button type="button" onclick="sayStep(1)" aria-label="Next">&#9654;</button>
+    <button type="button" onclick="sayStop()" aria-label="Stop">&#10005;</button>
   </div>
 </div>
 <div class="page-footer">
@@ -580,7 +571,6 @@ function setStep(id,status,msg){
   const pre={running:'» ',done:'✓ ',error:'✗ '}[status]||'';
   s.el.querySelector('span').textContent=pre+s.label+(msg?'  ·  '+msg:'');
   if(status==='running') s.el.scrollIntoView({block:'nearest'});
-  if(typeof narrStep==='function') narrStep(id,status,msg||'',s.el);
 }
 /* log lines appear under the step that is running */
 function log(id,txt,warn){
@@ -1087,29 +1077,16 @@ function gpsMap(geo,pts){
 function initLeaflet(){
   const el=document.getElementById('leafMap'); if(!el||!RUN) return;
   if(!window.L){ el.innerHTML='<div class="alert alert-warn" style="margin:12px">The map library did not load. Check the internet connection and run again.</div>'; return; }
-  if(RUN.leaf&&RUN.leafEl===el){ RUN.leaf.invalidateSize(); RUN.leafFit(); return; }
-  const map=L.map(el,{scrollWheelZoom:false,zoomSnap:0.25,zoomDelta:0.5,attributionControl:true}); RUN.leaf=map; RUN.leafEl=el;
+  if(RUN.leaf&&RUN.leafEl===el){ RUN.leaf.invalidateSize(); return; }
+  const map=L.map(el,{scrollWheelZoom:false}); RUN.leaf=map; RUN.leafEl=el;
   const order={'No score':0,'Good':1,'Satisfactory':2,'Needs Improvement':3};
   const pts=[...RUN.S.pts].sort((a,b)=>order[a.band]-order[b.band]);
-  const geo=RUN.S.geo;
-  /* fit the whole of Sierra Leone into the box, whatever the screen size */
-  const bounds=geo?L.geoJSON(geo).getBounds():(pts.length?L.latLngBounds(pts.map(p=>[p.lat,p.lng])):L.latLngBounds([[6.85,-13.35],[10.05,-10.25]]));
-  RUN.leafFit=()=>{ map.invalidateSize(); map.fitBounds(bounds,{padding:[10,10]}); map.setMinZoom(Math.max(5,map.getZoom()-1)); };
-  map.fitBounds(bounds,{padding:[10,10]});
-  map.setMaxBounds(bounds.pad(0.35)); map.setMinZoom(Math.max(5,map.getZoom()-1));
-  /* a light, clean OpenStreetMap basemap */
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}).addTo(map);
-  if(geo){
-    /* grey out everything outside Sierra Leone */
-    const holes=[]; (geo.features||[]).forEach(f=>{ const g=f.geometry; if(!g) return; const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[]; polys.forEach(pl=>holes.push(pl[0].map(c=>[c[1],c[0]]))); });
-    L.polygon([[[-89,-179],[-89,179],[89,179],[89,-179]],...holes],{stroke:false,fillColor:'#eef2f6',fillOpacity:1,interactive:false}).addTo(map);
-    L.geoJSON(geo,{style:{color:'#1F4E78',weight:1.4,fill:true,fillColor:'#ffffff',fillOpacity:0.15},interactive:false,
-      onEachFeature:(f,layer)=>{ const n=f.properties&&f.properties.FIRST_DNAM; if(n&&!/Western Urban/i.test(n)) layer.bindTooltip(D_(n).replace(/^Western Rural$/,'Western Area'),{permanent:true,direction:'center',className:'dlabel'}); }}).addTo(map);
-  }
-  const rad=el.offsetWidth<500?4:6;
-  pts.forEach(p=>L.circleMarker([p.lat,p.lng],{radius:rad,color:'#ffffff',weight:1.5,fillColor:PT_COLOR(p.band),fillOpacity:.95})
+  /* the view must exist before any shape is added */
+  if(pts.length) map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lng])),{padding:[24,24]}); else map.setView([8.5,-11.8],7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  if(RUN.S.geo) L.geoJSON(RUN.S.geo,{style:{color:'#1F4E78',weight:1.6,fill:false}}).addTo(map);
+  pts.forEach(p=>L.circleMarker([p.lat,p.lng],{radius:7,color:'#ffffff',weight:1.5,fillColor:PT_COLOR(p.band),fillOpacity:.95})
     .bindPopup(`<b>${esc(p.Facility)}</b><br>${esc(D_(p.District))} · ${esc(p.Type)}<br>Overall score: <b>${isFinite(p.score)?p1(p.score):'none yet'}</b> (${esc(p.band)})<br>Scored forms: ${p.scoredForms} · Forms held: ${p.forms} of 9<br><span style="color:#6c7a89">GPS from ${esc(p.form)}: ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}</span>`).addTo(map));
-  let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if(el.offsetWidth) RUN.leafFit(); },200); });
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1323,7 +1300,6 @@ async function runAnalysis(){
   const err=document.getElementById('cfgError');
   err.style.display='none';
   if(!window.XLSX){ err.textContent='The spreadsheet reader did not load. Check the internet connection and reload the page.'; err.style.display='block'; return; }
-  if(typeof narrBegin==='function') narrBegin();
   show('pipelineScreen'); document.getElementById('stepList').innerHTML=''; Object.keys(stepEls).forEach(k=>delete stepEls[k]); stepNo=0;
   setProgress(2); setPill('Running','rgba(255,193,7,.5)');
   t0=performance.now(); clearInterval(timer); timer=setInterval(()=>document.getElementById('elapsed').textContent=((performance.now()-t0)/1000).toFixed(1)+' s',100);
@@ -1340,7 +1316,6 @@ async function runAnalysis(){
     const {tabs,via}=await fetchWorkbook('fetch');
     const rows=Object.values(tabs).reduce((s,t)=>s+t.length,0);
     setStep('fetch','done',`${Object.keys(tabs).length} tabs, ${rows.toLocaleString('en-US')} rows in ${((performance.now()-ft)/1000).toFixed(1)} s via ${via}`);
-    if(typeof narrDone==='function') await narrDone();
     setProgress(30); await sleep(40);
 
     setStep('clean','running');
@@ -1350,20 +1325,17 @@ async function runAnalysis(){
     const formRows=CL.summary.reduce((s,r)=>s+r[1],0);
     if(!formRows) throw new Error('No form records were found in the sheet. Check that the tabs are named Form A to Form J.');
     setStep('clean','done',`${removed} earlier submissions removed, ${CL.summary.reduce((s,r)=>s+r[3],0)} records kept`);
-    if(typeof narrDone==='function') await narrDone();
     setProgress(45); await sleep(40);
 
     setStep('cover','running'); setStep('score','running');
     const S=analyse(CL.D,'cover');
     setStep('cover','done',`${S.cov.fac.length} facilities, ${S.cov.status['All 9 forms']} complete, ${S.cov.status['6 to 8 forms']} with 6 to 8 forms, ${S.cov.status['5 or fewer forms']} with 5 or fewer`);
     setStep('score','done',`overall ${p1(S.FS.mean)} for ${S.FS.n} PHUs (${S.FS.bands.Good} Good, ${S.FS.bands.Satisfactory} Satisfactory, ${S.FS.bands['Needs Improvement']} Needs Improvement)  ·  `+scoredForms(S).map(([k,X])=>`${k.slice(-1)} ${p1(X.mean)}`).join(', '));
-    if(typeof narrDone==='function') await narrDone();
     setProgress(60); await sleep(40);
     setStep('forms','running');
     Object.entries(S.F).forEach(([k,X])=>log('forms',`${k}: ${X.n} facilities, ${X.perf.length} practice indicators, ${X.ca.length} corrective action areas`));
     Object.entries(S.T).forEach(([k,X])=>log('forms',`${k}: ${X.n} facilities, ${n0(X.total)} doses over ${n0(X.visits)} visits`));
     setStep('forms','done'); setProgress(70); await sleep(40);
-    if(typeof narrDone==='function') await narrDone();
 
     setStep('charts','running');
     try{ log('charts','Loading the Sierra Leone district boundaries for the map');
@@ -1373,7 +1345,6 @@ async function runAnalysis(){
     const spec=buildSpec(S,CL);
     const nCh=spec.filter(b=>b.t==='chart').length, nTb=spec.filter(b=>b.t==='table').length;
     setStep('charts','done',`${nCh} charts and ${nTb} tables`); setProgress(90); await sleep(40);
-    if(typeof narrDone==='function') await narrDone();
 
     setStep('render','running');
     const meta={when:fmtMs(Date.now()-new Date().getTimezoneOffset()*60000).slice(0,16),rows:formRows,removed,via};
@@ -1382,7 +1353,7 @@ async function runAnalysis(){
     document.getElementById('docxStatus').textContent=''; document.getElementById('pptxStatus').textContent='';
     setStep('render','done',`finished in ${((performance.now()-t0)/1000).toFixed(1)} s`);
     setProgress(100); clearInterval(timer); setPill('Complete','rgba(40,167,69,.55)');
-    await sleep(500); if(typeof narrDone==='function') await narrDone(); show('resultsSection'); window.scrollTo(0,0);
+    await sleep(500); show('resultsSection'); window.scrollTo(0,0);
   }catch(e){
     console.error(e); clearInterval(timer);
     const running=Object.keys(stepEls).find(k=>stepEls[k].el.classList.contains('running'))||'fetch';
@@ -1541,120 +1512,6 @@ async function downloadPptx(){
 
 </script>
 
-
-<script>
-/* ═══ Natural voice: Piper neural voice (lessac, MIT/Blizzard licence) run in the page with ONNX Runtime.
-   The files live in the mocm_voice folder next to this page. They download once, are kept in the
-   browser, and after that the voice works with no internet. ═══ */
-var NVOICE=(function(){
-  var BASE='mocm_voice/', CACHE='mocm-voice-v1', st={ready:null,sess:null,cfg:null,wasm:null,data:null,state:'idle',pct:0};
-  function stat(t,bad){ var e=document.getElementById('voiceStat'); if(e){ e.textContent=t; e.classList.toggle('bad',!!bad); } }
-  async function getBuf(name,onp){
-    var url=new URL(BASE+name,location.href).href, c=null;
-    try{ c=await caches.open(CACHE); var hit=await c.match(url); if(hit) return await hit.arrayBuffer(); }catch(e){ c=null; }
-    var r=await fetch(url); if(!r.ok) throw new Error(name+' could not be loaded ('+r.status+')');
-    var total=+(r.headers.get('Content-Length')||0), parts=[], got=0;
-    if(r.body&&r.body.getReader){ var rd=r.body.getReader(); for(;;){ var x=await rd.read(); if(x.done) break; parts.push(x.value); got+=x.value.length; if(onp) onp(got,total); } }
-    else parts.push(new Uint8Array(await r.arrayBuffer()));
-    var blob=new Blob(parts); if(c){ try{ await c.put(url,new Response(blob)); }catch(e){} }
-    return await blob.arrayBuffer();
-  }
-  function script(src){ return new Promise(function(res,rej){ var s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=function(){ rej(new Error('could not load '+src)); }; document.head.appendChild(s); }); }
-  function load(){
-    if(st.ready) return st.ready;
-    st.state='loading'; stat('Preparing the natural voice…');
-    st.ready=(async function(){
-      if(location.protocol==='file:') throw new Error('open the page from the website to use the natural voice');
-      await script(BASE+'ort.wasm.min.js'); await script(BASE+'piper_phonemize.js');
-      ort.env.wasm.numThreads=1; ort.env.wasm.wasmPaths=new URL(BASE,location.href).href;
-      st.cfg=JSON.parse(new TextDecoder().decode(await getBuf('voice.onnx.json')));
-      var sizes={model:63104526,data:18077249}, done={model:0,data:0};
-      var prog=function(k){ return function(g){ done[k]=g; var p=Math.round((done.model+done.data)/(sizes.model+sizes.data)*100); if(p!==st.pct){ st.pct=p; stat('Downloading the natural voice, one time only… '+p+'%'); } }; };
-      var parts=await Promise.all([getBuf('voice.onnx',prog('model')),getBuf('piper_phonemize.data',prog('data')),getBuf('piper_phonemize.wasm')]);
-      st.data=parts[1]; st.wasm=parts[2];
-      stat('Starting the natural voice…');
-      st.sess=await ort.InferenceSession.create(parts[0],{executionProviders:['wasm']});
-      st.state='ready'; stat('Natural voice ready, works offline');
-    })();
-    st.ready.catch(function(e){ st.state='failed'; stat('Voice not available: '+e.message,true); });
-    return st.ready;
-  }
-  function phonemize(text){
-    return new Promise(function(res,rej){
-      createPiperPhonemize({ wasmBinary:st.wasm, getPreloadedPackage:function(){ return st.data; },
-        print:function(d){ try{ res(JSON.parse(d).phoneme_ids); }catch(e){ rej(e); } }, printErr:function(){},
-        locateFile:function(u){ return BASE+u; } })
-      .then(function(m){ m.callMain(['-l',st.cfg.espeak.voice,'--input',JSON.stringify([{text:text}]),'--espeak_data','/espeak-ng-data']); })
-      .catch(rej);
-    });
-  }
-  async function synth(text){
-    await load();
-    var ids=await phonemize(text), inf=st.cfg.inference;
-    var feeds={ input:new ort.Tensor('int64',BigInt64Array.from(ids.map(BigInt)),[1,ids.length]),
-      input_lengths:new ort.Tensor('int64',BigInt64Array.from([BigInt(ids.length)]),[1]),
-      scales:new ort.Tensor('float32',Float32Array.from([inf.noise_scale,inf.length_scale,inf.noise_w]),[3]) };
-    if(st.cfg.num_speakers>1) feeds.sid=new ort.Tensor('int64',BigInt64Array.from([0n]),[1]);
-    var out=await st.sess.run(feeds), key=Object.keys(out)[0];
-    return { pcm:out[key].data, rate:(st.cfg.audio&&st.cfg.audio.sample_rate)||22050 };
-  }
-  return { load:load, synth:synth, state:function(){ return st.state; } };
-})();
-</script>
-<script>
-/* ═══ Voice player: plays the natural voice through the Web Audio API. ═══ */
-var VOICE=(function(){
-  var ready=null, ctx=null, src=null, tok=0;
-  function note(t){ var a=document.getElementById('agentText'); var bar=document.getElementById('sayText');
-    var n=document.getElementById('voiceNote'); if(!n){ n=document.createElement('div'); n.id='voiceNote'; n.style.cssText='margin-top:8px;font-size:12px;color:#8a5a00;background:#fff4d6;border-radius:8px;padding:6px 10px;'; var host=document.querySelector('.agent-bubble'); if(host) host.appendChild(n); }
-    n.textContent=t||''; n.style.display=t?'block':'none'; }
-  function unlock(){
-    if(!ctx){ var A=window.AudioContext||window.webkitAudioContext; if(A) ctx=new A(); }
-    if(ctx&&ctx.state==='suspended'){ var pr=ctx.resume(); if(pr&&pr.then) pr.then(function(){ if(ctx.state==='running') note(''); }); }
-    if(ctx&&ctx.state==='running') note('');
-  }
-  function chunks(t){ return (t.match(/[^.!?;]+[.!?;]*\s*/g)||[t]).map(function(x){return x.trim();}).filter(Boolean); }
-  function stop(){ tok++; if(src){ try{ src.onended=null; src.stop(); }catch(e){} src=null; } }
-  function play(buf,my,after){
-    var s=ctx.createBufferSource(); s.buffer=buf;
-    var g=ctx.createGain(), t=ctx.currentTime+0.02, d=buf.duration;
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.95,t+0.02);
-    g.gain.setValueAtTime(0.95,Math.max(t+0.02,t+d-0.03)); g.gain.linearRampToValueAtTime(0,t+d);
-    s.connect(g); g.connect(ctx.destination); s.onended=function(){ if(my===tok) after(); }; src=s; s.start(t);
-  }
-  function naturalSay(text,my,onstart,onend){
-    var parts=[]; chunks(text).forEach(function(c){ if(parts.length&&parts[parts.length-1].length<70) parts[parts.length-1]+=' '+c; else parts.push(c); });
-    var k=0, started=false, nextP=null;
-    var make=function(i){ return i<parts.length?NVOICE.synth(parts[i]).then(function(r){ var b=ctx.createBuffer(1,r.pcm.length,r.rate); b.copyToChannel(r.pcm instanceof Float32Array?r.pcm:Float32Array.from(r.pcm),0); return b; }).catch(function(){ return null; }):Promise.resolve(undefined); };
-    nextP=make(0);
-    var step=async function(){
-      if(my!==tok) return;
-      var b=await nextP; if(my!==tok) return;
-      if(b===undefined){ src=null; onend(); return; }
-      k++; nextP=make(k);                       /* prepare the next sentence while this one plays */
-      if(!b) return step();
-      play(b,my,step);
-      if(!started){ started=true; onstart&&onstart(); }
-    };
-    step();
-  }
-  async function say(text,onstart,onend){
-    stop(); var my=tok; onend=onend||function(){};
-    unlock();
-    if(!ctx){ note('This browser cannot play sound from the page.'); onend(); return; }
-    setTimeout(function(){ if(my===tok&&ctx.state!=='running') note('Sound is waiting for permission: tap or click anywhere on the page to hear MOCM-AI.'); },900);
-    try{ await NVOICE.load(); }catch(e){}
-    if(my!==tok) return;
-    if(NVOICE.state()!=='ready'){ onend(); return; }   /* no other voice: the text still shows in the bar */
-    naturalSay(text,my,onstart,onend);
-  }
-  (function(){ var st=document.getElementById('voiceStat'); if(!st) return;
-    var A=window.AudioContext||window.webkitAudioContext;
-    if(!A){ st.textContent='This browser cannot play sound from the page'; st.classList.add('bad'); return; }
-    if(window.NVOICE) NVOICE.load(); })();
-  return { load:function(){ return NVOICE.load(); }, unlock:unlock, say:say, stop:stop };
-})();
-</script>
 <script>
 (function(){
   var msg=["Hello, I am <b>MOCM-AI</b>.","Click <b>Run MOCM-AI</b> and I will go to the database, fetch the latest MOCM submissions, clean them and run all the predefined analyses.","Then I will write the key findings and build your report as a Word document and a PowerPoint deck, ready for easy use.","Let's get started!"];
@@ -1662,16 +1519,29 @@ var VOICE=(function(){
   if(!el) return;
   var full=msg.join(' ');
   var plain=full.replace(/<[^>]+>/g,''), say=document.getElementById('agentSay'), spoken=false;
-  var spokenText=plain.replace(/MOCM-AI/g,'Mocem A I').replace(/MOCM/g,'Mocem'), talking=false;
-  function setBtn(on){ talking=on; say.classList.toggle('on',on); say.innerHTML=on?'&#9632; Stop':'&#128266; Listen'; }
-  function speak(){ setBtn(true); VOICE.say(spokenText, null, function(){ setBtn(false); }); }
-  say.addEventListener('click',function(e){ e.stopPropagation(); VOICE.unlock(); if(talking){ VOICE.stop(); setBtn(false); } else speak(); });
-  // the voice is built into this page; sound starts as soon as the browser allows it (usually the first tap)
-  setTimeout(speak,300);
-  var first=function(ev){ document.removeEventListener('pointerdown',first,true);
-    VOICE.unlock(); };
-  document.addEventListener('pointerdown',first,true);
-  document.querySelectorAll('.cfg-run-btn').forEach(function(b){ b.addEventListener('click',function(){ VOICE.unlock(); setBtn(false); }); });
+  var tts=('speechSynthesis' in window)?window.speechSynthesis:null;
+  window.pickVoiceGlobal=function(){return tts?pickVoice():null;};
+  function pickVoice(){var v=tts.getVoices();return v.find(function(x){return /en[-_]GB/i.test(x.lang)&&/female|natural|google/i.test(x.name);})||v.find(function(x){return /^en/i.test(x.lang)&&/natural|google/i.test(x.name);})||v.find(function(x){return /^en/i.test(x.lang);})||null;}
+  function speak(){
+    if(!tts) return;
+    tts.cancel();
+    var u=new SpeechSynthesisUtterance(plain.replace(/MOCM-AI/g,'Mocem A I').replace(/MOCM/g,'Mocem'));
+    var v=pickVoice(); if(v){u.voice=v;u.lang=v.lang;} else u.lang='en-GB';
+    u.rate=0.98; u.pitch=1.05;
+    u.onstart=function(){spoken=true;say.classList.add('on');say.innerHTML='&#9632; Stop';};
+    u.onend=u.onerror=function(){say.classList.remove('on');say.innerHTML='&#128266; Listen';};
+    tts.speak(u);
+  }
+  if(!tts){say.style.display='none';}
+  else{
+    say.addEventListener('click',function(e){e.stopPropagation();if(tts.speaking){tts.cancel();}else speak();});
+    if(tts.getVoices().length===0) tts.onvoiceschanged=function(){if(!spoken)speak();};
+    setTimeout(speak,300);
+    // browsers that block speech until the user interacts: speak on the first tap
+    var first=function(ev){document.removeEventListener('pointerdown',first,true);if(!spoken&&!(ev.target.closest&&ev.target.closest('.cfg-run-btn')))speak();};
+    document.addEventListener('pointerdown',first,true);
+    document.querySelectorAll('.cfg-run-btn').forEach(function(b){b.addEventListener('click',function(){tts.cancel();});});
+  }
   if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){el.innerHTML=full;caret.style.display='none';return;}
   var i=0;
   (function tick(){
@@ -1684,50 +1554,6 @@ var VOICE=(function(){
 })();
 </script>
 <script>
-
-/* ═══ Run narration: MOCM-AI explains each step of the run as it happens ═══ */
-var NARR={q:[],busy:false,cur:null,waiters:[],paused:false,guard:null};
-function narrBegin(){ narrStop(); VOICE.stop(); VOICE.unlock(); NARR.paused=false; NARR.muted=false; }
-function narr(text,el){ if(NARR.muted) return; NARR.q.push({text:text,el:el}); if(!NARR.busy) narrNext(); }
-function narrPlayCur(){
-  var it=NARR.cur, bar=document.getElementById('sayBar'); if(!it) return;
-  clearTimeout(NARR.guard); bar.classList.add('talking');
-  var done=false, fin=function(){ if(done) return; done=true; clearTimeout(NARR.guard); bar.classList.remove('talking'); if(!NARR.paused) narrNext(); };
-  VOICE.say(sayClean(it.text), null, fin);
-  NARR.guard=setTimeout(fin, 4000+it.text.split(/\s+/).length*700);  // never let the run wait on a silent device
-}
-function narrNext(){
-  var bar=document.getElementById('sayBar');
-  if(NARR.cur&&NARR.cur.el) NARR.cur.el.classList.remove('say-on');
-  if(!NARR.q.length){ NARR.busy=false; NARR.cur=null; if(!SAY.on) bar.classList.remove('show','talking'); var w=NARR.waiters; NARR.waiters=[]; w.forEach(function(f){f();}); return; }
-  NARR.busy=true; var it=NARR.cur=NARR.q.shift();
-  if(it.el){ it.el.classList.add('say-on'); try{ it.el.scrollIntoView({block:'nearest'}); }catch(e){} }
-  bar.classList.add('show');
-  document.getElementById('sayLabel').textContent='MOCM-AI is explaining the run';
-  document.getElementById('sayText').textContent=it.text;
-  narrPlayCur();
-}
-function narrStop(){ clearTimeout(NARR.guard); NARR.q=[]; NARR.paused=false; if(NARR.busy){ VOICE.stop(); narrNext(); } }
-function narrDone(){ return new Promise(function(r){ if(!NARR.busy) r(); else NARR.waiters.push(r); }); }
-var NARR_RUN={
-  fetch:'Step 1. Fetching the latest MOCM submissions for every form.',
-  clean:'Step 2. Cleaning resubmissions, keeping the latest one for each facility on each form.',
-  cover:'Step 3. Checking which forms each facility has.',
-  score:'Step 4. Scoring the forms and each facility\'s overall score.',
-  forms:'Step 5. Working through the indicators, form by form.',
-  charts:'Step 6. Drawing the charts and building the tables.',
-  render:'Step 7. Preparing the results and the Word and PowerPoint downloads.'
-};
-function narrStep(id,status,msg,el){
-  if(status==='running'&&NARR_RUN[id]) return narr(NARR_RUN[id],el);
-  if(status==='error') return narr('I had to stop at this step. The reason is shown on the screen. Please check it and run me again.',el);
-  if(status!=='done') return;
-  var m;
-  if(id==='fetch'&&(m=msg.match(/(\d+) tabs, ([\d,]+) rows/))) narr('Done. I fetched '+m[2]+' rows from '+m[1]+' form tabs.',el);
-  else if(id==='clean'&&(m=msg.match(/(\d+) earlier submissions removed, ([\d,]+) records kept/))) narr('Done. I removed '+m[1]+' earlier submissions and kept '+m[2]+' records.',el);
-  else if(id==='score'&&(m=msg.match(/overall ([\d.]+)% for (\d+) PHUs \((\d+) Good, (\d+) Satisfactory, (\d+) Needs Improvement\)/))) narr('The overall mean score is '+m[1]+' percent across '+m[2]+' PHUs: '+m[3]+' Good, '+m[4]+' Satisfactory and '+m[5]+' Needs Improvement.',el);
-  else if(id==='render') narr('All done. Press Explain this tab whenever you want me to walk you through the results.',el);
-}
 /* ═══ MOCM-AI explainer: reads the active tab aloud and highlights each part ═══ */
 var SAY={items:[],queue:[],i:0,on:false,paused:false,timer:null};
 function sayNum(v){ return (typeof v==='number')?(Number.isInteger(v)?String(v):v.toFixed(1)):String(v); }
@@ -1770,7 +1596,7 @@ function sayMark(it){
   try{ it.el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ it.el.scrollIntoView(); }
 }
 function sayPlay(){
-  clearTimeout(SAY.timer);
+  clearTimeout(SAY.timer); var tts=window.speechSynthesis;
   if(!SAY.on) return;
   if(SAY.i>=SAY.queue.length){ document.getElementById('sayText').textContent='That is the end of this tab. Pick another tab and press Explain again.'; sayMark(null); setTimeout(function(){ if(SAY.i>=SAY.queue.length) sayStop(); },3500); return; }
   var it=SAY.queue[SAY.i];
@@ -1780,11 +1606,11 @@ function sayPlay(){
   var bar=document.getElementById('sayBar'); bar.classList.add('talking');
   var tok=SAY.tok=(SAY.tok||0)+1;
   var next=function(){ if(tok!==SAY.tok) return; bar.classList.remove('talking'); if(SAY.on&&!SAY.paused){ SAY.i++; SAY.timer=setTimeout(sayPlay,450); } };
-  VOICE.say(sayClean(it.text), null, next);
+  if(tts){ tts.cancel(); var u=new SpeechSynthesisUtterance(sayClean(it.text)); var v=(typeof pickVoiceGlobal==='function')?pickVoiceGlobal():null; if(v){u.voice=v;u.lang=v.lang;} else u.lang='en-GB'; u.rate=1; u.onend=next; u.onerror=function(e){ if(e.error!=='interrupted'&&e.error!=='canceled') next(); }; tts.speak(u); }
+  else SAY.timer=setTimeout(next,Math.max(2500,it.text.split(/\s+/).length*380));
 }
 function sayStart(){
   var pane=document.querySelector('.tab-pane.active'); if(!pane) return;
-  narrStop();
   if(SAY.on){ sayStop(); return; }
   var tab=document.querySelector('.tab-btn.active');
   SAY.queue=[{el:null,text:'I will explain the '+(tab?tab.textContent:'current')+' tab, part by part. Watch the highlight to see where I am.'}].concat(SAY.items.filter(function(x){return x.pane===pane.id;}));
@@ -1795,27 +1621,16 @@ function sayStart(){
   sayPlay();
 }
 function sayStop(){
-  if(NARR.busy) NARR.muted=true; narrStop();
-  SAY.on=false; SAY.paused=false; SAY.tok=(SAY.tok||0)+1; clearTimeout(SAY.timer); VOICE.stop();
+  SAY.on=false; SAY.paused=false; SAY.tok=(SAY.tok||0)+1; clearTimeout(SAY.timer); if(window.speechSynthesis) speechSynthesis.cancel();
   sayMark(null); var bar=document.getElementById('sayBar'); if(bar){bar.classList.remove('show','talking');}
   var b=document.getElementById('explainBtn'); if(b){ b.classList.remove('on'); b.innerHTML='&#128266; Explain this tab'; }
 }
 function sayPause(){
-  if(!SAY.on&&NARR.busy){ var nb=document.getElementById('sayPauseBtn');
-    if(!NARR.paused){ NARR.paused=true; clearTimeout(NARR.guard); VOICE.stop(); document.getElementById('sayBar').classList.remove('talking'); nb.innerHTML='&#9654;&#xFE0E;'; }
-    else { NARR.paused=false; nb.innerHTML='&#10074;&#10074;'; narrPlayCur(); } return; }
   if(!SAY.on) return; var btn=document.getElementById('sayPauseBtn');
-  if(!SAY.paused){ SAY.paused=true; SAY.tok++; clearTimeout(SAY.timer); VOICE.stop(); document.getElementById('sayBar').classList.remove('talking'); btn.innerHTML='&#9654;&#xFE0E;'; btn.setAttribute('aria-label','Resume'); }
+  if(!SAY.paused){ SAY.paused=true; SAY.tok++; clearTimeout(SAY.timer); if(window.speechSynthesis) speechSynthesis.cancel(); document.getElementById('sayBar').classList.remove('talking'); btn.innerHTML='&#9654;&#xFE0E;'; btn.setAttribute('aria-label','Resume'); }
   else { SAY.paused=false; btn.innerHTML='&#10074;&#10074;'; btn.setAttribute('aria-label','Pause'); sayPlay(); }
 }
-function sayStep(d){ if(!SAY.on&&NARR.busy){ NARR.paused=false; document.getElementById('sayPauseBtn').innerHTML='&#10074;&#10074;'; clearTimeout(NARR.guard); VOICE.stop(); if(d===0) narrPlayCur(); else if(d>0) narrNext(); else narrPlayCur(); return; } if(!SAY.on) return; SAY.paused=false; document.getElementById('sayPauseBtn').innerHTML='&#10074;&#10074;'; SAY.i=Math.max(0,Math.min(SAY.queue.length-1,SAY.i+d)); sayPlay(); }
-function sayToggleText(){
-  var bar=document.getElementById('sayBar'), b=document.getElementById('sayTextBtn'), hide=!bar.classList.contains('notext');
-  bar.classList.toggle('notext',hide); b.classList.toggle('off',hide);
-  b.setAttribute('aria-label',hide?'Show the text':'Hide the text');
-  try{ localStorage.setItem('mocm_say_notext',hide?'1':'0'); }catch(e){}
-}
-(function(){ try{ if(localStorage.getItem('mocm_say_notext')==='1'){ document.getElementById('sayBar').classList.add('notext'); document.getElementById('sayTextBtn').classList.add('off'); } }catch(e){} })();
+function sayStep(d){ if(!SAY.on) return; SAY.paused=false; document.getElementById('sayPauseBtn').innerHTML='&#10074;&#10074;'; SAY.i=Math.max(0,Math.min(SAY.queue.length-1,SAY.i+d)); sayPlay(); }
 </script>
 </body>
 </html>
