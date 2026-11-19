@@ -2790,8 +2790,7 @@ function doRemove(id){
                 <svg class="nav-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="nav-group-children open" id="children-welcome">
-                <button class="nav-child nav-l2" data-tab="welcome">Overview</button>
-                <button class="nav-child nav-l2" data-tab="welcome-text">Background</button>
+                <button class="nav-child nav-l2" data-tab="welcome">Background</button>
                 <button class="nav-child nav-l2" data-tab="architecture">NMDR Architecture &amp; Data Flow</button>
                 <button class="nav-child nav-l2" data-tab="use-cases">NMDR Navigation</button>
                 <button class="nav-child nav-l2" data-tab="who-use-cases">NMDR Use Cases</button>
@@ -3155,23 +3154,6 @@ function doRemove(id){
 
     <!-- WELCOME -->
     <div id="welcome" class="tab-content active">
-        <!-- NMDR Introduction video. Paste the YouTube link into WELCOME_VIDEO_URL in the script;
-             the block stays hidden until a link is set. -->
-        <div class="slides-container" id="welcomeVideo" style="display:none;">
-            <div class="slides-ratio-wrap">
-                <iframe id="welcomeVideoFrame" src="" title="NMDR Introduction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
-            </div>
-            <div style="padding:9px 16px;text-align:center;font-size:12.5px;color:var(--muted);">
-                If the video does not play here, <a id="welcomeVideoLink" href="#" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600;text-decoration:none;">watch it on YouTube</a>
-            </div>
-        </div>
-        <div class="slides-container" id="welcomeVideoEmpty" style="padding:40px 20px;text-align:center;color:var(--muted);font-size:13px;">
-            The NMDR Introduction video will appear here.
-        </div>
-    </div>
-
-    <!-- Welcome Background: the banner and the About the Repository cards, split out from the Overview video -->
-    <div id="welcome-text" class="tab-content">
         <div class="hero">
             <div class="hero-tag">Sierra Leone NMCP</div>
             <h1>National Malaria Control Programme</h1>
@@ -4371,10 +4353,10 @@ var roleAccess = {
 
 function enableTabsForRole(role) {
     currentUserRole = role;
-    /* Welcome is split into Overview (the welcome tab) and Background, and carries the use cases
+    /* Welcome opens the Background page, and carries the use cases
        and the e-learning modules: anyone who may open Welcome may open all of them */
     if (roleAccess[role] && roleAccess[role].indexOf('welcome') !== -1)
-        ['welcome-text','who-use-cases','e-learning'].forEach(function(t){
+        ['who-use-cases','e-learning'].forEach(function(t){
             if (roleAccess[role].indexOf(t) === -1) roleAccess[role].push(t);
         });
     var allowed = {};
@@ -4543,17 +4525,6 @@ document.getElementById('psPassword').addEventListener('keydown', function(e){
 });
 document.getElementById('rolePassword').addEventListener('keypress', function(e){ if(e.key==='Enter') verifyPassword(); });
 
-/* WELCOME VIDEO: accepts any YouTube link form (watch?v=, youtu.be/, embed/, shorts/) */
-var WELCOME_VIDEO_URL = '';
-(function(){
-    var m = String(WELCOME_VIDEO_URL).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
-    if (!m) return;
-    document.getElementById('welcomeVideoFrame').src = 'https://www.youtube.com/embed/' + m[1] + '?rel=0';
-    document.getElementById('welcomeVideoLink').href = 'https://www.youtube.com/watch?v=' + m[1];
-    document.getElementById('welcomeVideo').style.display = '';
-    document.getElementById('welcomeVideoEmpty').style.display = 'none';
-})();
-
 /* DASHBOARD ENDPOINT + DQA LOADER */
 const DV_GAS = 'https://script.google.com/macros/s/AKfycbyTprTce5ft5gxSwY7jOku2GNeKMG8V-X1BrY0jB3QDPyuVWXwFPNr_CH80BRfcLcwD/exec';
 
@@ -4702,7 +4673,7 @@ function renderMeDqaPage(host, result){
 
 /* TAB NAVIGATION + LAZY IFRAME LOADING */
 var pageLabelMap = {
-    'welcome':'Welcome · Overview','welcome-text':'Welcome · Background','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','who-use-cases':'NMDR Use Cases','e-learning':'E-learning Modules','me-dqa':'M&E · DQA',
+    'welcome':'Welcome · Background','architecture':'NMDR Architecture & Data Flow','use-cases':'NMDR Navigation','who-use-cases':'NMDR Use Cases','e-learning':'E-learning Modules','me-dqa':'M&E · DQA',
     'me-summary-epi':'Detailed · Malaria Epi (Summary)',
     'me-summary-int':'Detailed · Intervention (Summary)',
     'me-summary-stock':'Detailed · Stock (Summary)',
