@@ -1898,11 +1898,12 @@ var NMDR_TABS = [
   { section: "5.0 Resources", subs: [
     { label: "5.0 Resources", tabs: [["user-guide","5.0.1 User Guide"], ["bulletins","5.0.2 Monthly Bulletin"], ["mpd","5.0.3 Malaria Programme Docs"]] },
     { label: "5.0.4 Survey", tabs: [["survey-data","5.0.4.1 Data"], ["survey-report","5.0.4.2 Report"]] },
-    { label: "5.0.5 Data Collection Apps", tabs: [["dct-sbd","5.0.5.1 SBD"], ["dct-mocm-phu","5.0.5.2 MOCM (PHU)"], ["dct-mocm-hospital","5.0.5.3 MOCM (Hospital)"], ["dct-mocm-lab","5.0.5.4 MOCM (Lab)"], ["dct-warehouse","5.0.5.5 Warehouse Assessment"], ["dct-sbc","5.0.5.6 SBC Coaching (Form K)"], ["dct-tes","5.0.5.7 TES Data Collection Tool"], ["analytics-training","5.0.6 Analytics Learning"], ["gf-plan","5.0.7 GF Implementation Plan"], ["partners-mapping","5.0.8 NMCP Partners Mapping"], ["world-malaria-day","5.0.9 World Malaria Day"], ["population-estimate","5.0.7 Population"], ["performance-framework","5.0.8 Performance Framework"], ["archive","5.0.9 Google Drive Files"]] },
+    { label: "5.0.5 Data Collection Apps", tabs: [["dct-sbd","5.0.5.1 SBD"], ["dct-mocm-phu","5.0.5.2 MOCM (PHU)"], ["dct-mocm-hospital","5.0.5.3 MOCM (Hospital)"], ["dct-mocm-lab","5.0.5.4 MOCM (Lab)"], ["dct-warehouse","5.0.5.5 Warehouse Assessment"], ["dct-sbc","5.0.5.6 SBC Coaching (Form K)"], ["dct-tes","5.0.5.7 TES Data Collection Tool"], ["dct-microplan","5.0.5.8 Microplanning"], ["dct-partners","5.0.5.9 Partner Mapping"], ["analytics-training","5.0.6 Analytics Learning"], ["gf-plan","5.0.7 GF Implementation Plan"], ["partners-mapping","5.0.8 NMCP Partners Mapping"], ["world-malaria-day","5.0.9 World Malaria Day"], ["population-estimate","5.0.7 Population"], ["performance-framework","5.0.8 Performance Framework"], ["archive","5.0.9 Google Drive Files"]] },
   ]},
   { section: "6.0 D-MAT Automation", subs: [
     { label: "6.0 D-MAT Automation", tabs: [["dmat-dqa","6.0.1 Data Quality Assessment"], ["dmat-reporting","6.0.2 Reporting"], ["dmat-suspected","6.0.3 Suspected"], ["dmat-tested","6.0.4 Tested"], ["dmat-confirmed","6.0.5 Confirmed Cases"], ["dmat-treated","6.0.6 Confirmed and Treated"], ["dmat-confirmed-not-treated","6.0.7 Confirmed and Not Treated"], ["dmat-presumptive","6.0.8 Presumptive Treatment"], ["dmat-total-treated","6.0.9 Total Treated"], ["dmat-tpr","6.0.10 Test Positivity Rate"]] },
     { label: "6.0.11 Comparative Analysis", tabs: [["dmat-u5","6.0.11.1 Under 5"], ["dmat-allages","6.0.11.2 All Ages"], ["dmat-eidsr","6.0.12 eIDSR"]] },
+    { label: "6.0.13 Hospital Admissions and Deaths", tabs: [["dmat-admissions","6.0.13 Malaria Admissions"], ["dmat-admissions-pregnancy","6.0.14 Malaria Admissions in Pregnancy"], ["dmat-inpatient-deaths","6.0.15 Malaria Inpatient Deaths"], ["dmat-deaths-pregnancy","6.0.16 Malaria Deaths in Pregnancy"]] },
   ]},
   { section: "7.0 Retrospective Analysis", subs: [
     { label: "7.0.1 SNT 2015 to 2025", tabs: [["snt-datasets","7.0.1.1 Datasets"], ["snt-codes","7.0.1.2 Codes"], ["snt-outputs","7.0.1.3 Outputs"], ["snt-report","7.0.1.4 Report"], ["snt-manual","7.0.1.5 SNT Manual"], ["snt-intervention-targeting","7.0.1.6 Intervention Targeting"]] },
@@ -3011,6 +3012,8 @@ function doRemove(id){
                     <button class="nav-child nav-l3" data-tab="dct-warehouse">5.0.5.5 Warehouse Assessment</button>
                     <button class="nav-child nav-l3" data-tab="dct-sbc">5.0.5.6 SBC Coaching (Form K)</button>
                     <button class="nav-child nav-l3" data-tab="dct-tes">5.0.5.7 TES Data Collection Tool</button>
+                    <button class="nav-child nav-l3" data-tab="dct-microplan">5.0.5.8 Microplanning</button>
+                    <button class="nav-child nav-l3" data-tab="dct-partners">5.0.5.9 Partner Mapping</button>
                 </div>
                 <button class="nav-child nav-l2" data-tab="analytics-training">5.0.6 Analytics Learning</button>
                 <button class="nav-child nav-l2" data-tab="gf-plan">5.0.7 GF Implementation Plan</button>
@@ -3050,6 +3053,10 @@ function doRemove(id){
                     <button class="nav-child nav-l3" data-tab="dmat-allages">6.0.11.2 All Ages</button>
                 </div>
                 <button class="nav-child nav-l2" data-tab="dmat-eidsr">6.0.12 eIDSR</button>
+                <button class="nav-child nav-l2" data-tab="dmat-admissions">6.0.13 Malaria Admissions</button>
+                <button class="nav-child nav-l2" data-tab="dmat-admissions-pregnancy">6.0.14 Malaria Admissions in Pregnancy</button>
+                <button class="nav-child nav-l2" data-tab="dmat-inpatient-deaths">6.0.15 Malaria Inpatient Deaths</button>
+                <button class="nav-child nav-l2" data-tab="dmat-deaths-pregnancy">6.0.16 Malaria Deaths in Pregnancy</button>
             </div>
         </div>
 
@@ -3378,6 +3385,8 @@ function doRemove(id){
     <div id="dct-mocm-lab" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-mocm-lab" src="" data-src="mocm_lab.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-warehouse" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-warehouse" src="" data-src="warehouse.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dct-sbc" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-sbc" src="" data-src="form_k.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-microplan" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-microplan" src="" data-src="https://informatics-consultancy-firm.github.io/Micro_Planning_ITN_Mass_Campaign_2027/" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dct-partners" class="tab-content"><div class="iframe-pane"><iframe id="frame-dct-partners" src="" data-src="https://moh-nmcp-sl.github.io/Partners-Mapping/" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="analytics-training" class="tab-content"><div class="iframe-pane"><iframe id="frame-analytics-training" src="" data-src="analytic_training.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="gf-plan" class="tab-content"><div class="iframe-pane"><iframe id="frame-gf-plan" src="" data-src="gf_plan.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="partners-mapping" class="tab-content"><div class="iframe-pane"><iframe id="frame-partners-mapping" src="" data-src="partners.html" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -3409,6 +3418,10 @@ function doRemove(id){
     <div id="dmat-u5" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-u5" src="" data-src="dmat_u5.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dmat-allages" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-allages" src="" data-src="dmat_allages.html" loading="lazy" allow="fullscreen"></iframe></div></div>
     <div id="dmat-eidsr" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-eidsr" src="" data-src="dmat_eidsr.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dmat-admissions" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-admissions" src="" data-src="dmat_admissions.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dmat-admissions-pregnancy" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-admissions-pregnancy" src="" data-src="dmat_admissions_pregnancy.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dmat-inpatient-deaths" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-inpatient-deaths" src="" data-src="dmat_malaria_inpatient_deaths.html" loading="lazy" allow="fullscreen"></iframe></div></div>
+    <div id="dmat-deaths-pregnancy" class="tab-content"><div class="iframe-pane"><iframe id="frame-dmat-deaths-pregnancy" src="" data-src="dmat_malaria_deaths_pregnancy.html" loading="lazy" allow="fullscreen"></iframe></div></div>
 
     <!-- SNT / MPR / OTHER -->
     <div id="snt-datasets" class="tab-content"><div class="iframe-pane"><iframe id="frame-snt-datasets" src="" data-src="snt.html?tab=datasets" loading="lazy" allow="fullscreen"></iframe></div></div>
@@ -4307,7 +4320,8 @@ var ROLE_LABELS   = { national: 'National Staff', district: 'District Staff', ch
 var DMAT_TABS = ['dmat-dqa','dmat-reporting','dmat-suspected','dmat-tested',
                  'dmat-confirmed','dmat-treated','dmat-confirmed-not-treated',
                  'dmat-presumptive','dmat-total-treated','dmat-tpr',
-                 'dmat-comparative','dmat-u5','dmat-allages','dmat-eidsr'];
+                 'dmat-comparative','dmat-u5','dmat-allages','dmat-eidsr',
+                 'dmat-admissions','dmat-admissions-pregnancy','dmat-inpatient-deaths','dmat-deaths-pregnancy'];
 var ME_SUMMARY_TABS = ['me-summary-epi','me-summary-int','me-summary-stock'];
 var ME_DETAIL_TABS = ['med-suspected','med-tested','med-confirmed','med-treated',
                       'med-presumptive','med-comp-u5','med-comp-allages',
@@ -4319,7 +4333,7 @@ var INT_TABS         = ['int-pmc','int-malaria-vaccine','int-penta','int-measles
 var ENTO_TABS        = ['ento-data','ento-report','ento-dashboard','ir-data','ir-report','ir-dashboard'];
 var FINANCE_TABS     = ['finance-data','finance-report','finance-dashboard','nsp-costing'];
 var SCM_TABS         = ['quant-data','quant-dashboard','supply-track-data','supply-track-dashboard'];
-var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc','dct-tes'];
+var DCT_TABS         = ['dct-sbd','dct-mocm-phu','dct-mocm-hospital','dct-mocm-lab','dct-warehouse','dct-sbc','dct-tes','dct-microplan','dct-partners'];
 var SNT_TABS         = ['snt-datasets','snt-codes','snt-outputs','snt-report','snt-manual','snt-intervention-targeting'];
 var MPR_TABS         = ['mpr-datasets','mpr-codes','mpr-outputs','mpr-report'];
 var currentTab       = 'welcome';
@@ -4712,7 +4726,7 @@ var pageLabelMap = {
     'campaign-survey':'Survey','survey-data':'Survey · Data','survey-report':'Survey · Report',
     'dct-sbd':'Data Collection Apps · SBD','dct-mocm-phu':'Data Collection Apps · MOCM (PHU)',
     'dct-mocm-hospital':'Data Collection Apps · MOCM (Hospital)','dct-mocm-lab':'Data Collection Apps · MOCM (Lab)',
-    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)','dct-tes':'Data Collection Apps · TES Data Collection Tool',
+    'dct-warehouse':'Data Collection Apps · Warehouse Assessment','dct-sbc':'Data Collection Apps · SBC Coaching (Form K)','dct-tes':'Data Collection Apps · TES Data Collection Tool','dct-microplan':'Data Collection Apps · Microplanning','dct-partners':'Data Collection Apps · Partner Mapping',
     'analytics-training':'Analytics Learning','gf-plan':'GF Implementation Plan','partners-mapping':'NMCP Partners Mapping','world-malaria-day':'World Malaria Day',
     'population-estimate':'Population','performance-framework':'Performance Framework','archive':'Google Drive Files',
     'dmat-dqa':'D-MAT · DQA','dmat-reporting':'D-MAT · Reporting',
@@ -4722,6 +4736,7 @@ var pageLabelMap = {
     'dmat-tpr':'D-MAT · Test Positivity Rate',
     'dmat-comparative':'D-MAT · Comparative Analysis','dmat-u5':'D-MAT · Under 5','dmat-allages':'D-MAT · All Ages',
     'dmat-eidsr':'D-MAT · eIDSR',
+    'dmat-admissions':'D-MAT · Malaria Admissions','dmat-admissions-pregnancy':'D-MAT · Malaria Admissions in Pregnancy','dmat-inpatient-deaths':'D-MAT · Malaria Inpatient Deaths','dmat-deaths-pregnancy':'D-MAT · Malaria Deaths in Pregnancy',
     'snt-datasets':'SNT 2015–2025 · Datasets','snt-codes':'SNT 2015–2025 · Codes','snt-outputs':'SNT 2015–2025 · Outputs',
     'snt-report':'SNT 2015–2025 · Report','snt-manual':'SNT 2015–2025 · SNT Manual','snt-intervention-targeting':'SNT 2015–2025 · Intervention Targeting',
     'mpr-datasets':'MPR 2021–2023 · Datasets','mpr-codes':'MPR 2021–2023 · Codes','mpr-outputs':'MPR 2021–2023 · Outputs','mpr-report':'MPR 2021–2023 · Report',
