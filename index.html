@@ -4410,10 +4410,13 @@ function enableTabsForRole(role) {
 
     // First successful login this page load: if the URL was opened with a #tool link
     // (shared or bookmarked), jump straight into that tool now that a role is set.
+    var openedFromLink = false;
     if (!hashOpenedOnLoad) {
         hashOpenedOnLoad = true;
-        openFromHash(location.hash);
+        openedFromLink = openFromHash(location.hash);
     }
+    // Every login lands on the Background page unless a #tool link was opened
+    if (!openedFromLink) { try { activateTab('welcome'); } catch(e){} }
 }
 
 document.querySelectorAll('#roleModal .role-btn').forEach(function(btn){
