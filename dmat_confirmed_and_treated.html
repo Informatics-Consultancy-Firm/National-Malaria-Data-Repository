@@ -279,6 +279,39 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
   select.form-control { font-size: 16px; }
 }
 canvas { max-width: 100%; display: block; }
+/* ── AREA SCREEN (National / District cards) ── */
+.area-head{text-align:center;margin:6px 0 20px;}
+.area-head h2{font-size:18px;font-weight:800;color:var(--blue-dk);margin-bottom:4px;}
+.area-head p{font-size:12px;color:var(--muted);}
+.area-big{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1000px;margin:0 auto;}
+@media(max-width:820px){.area-big{grid-template-columns:1fr;}}
+.area-card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:26px 22px;cursor:pointer;text-align:center;
+  box-shadow:0 4px 18px rgba(44,103,147,.10);transition:transform .15s,border-color .15s,box-shadow .15s;font-family:inherit;}
+.area-card:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 8px 24px rgba(44,103,147,.18);}
+.area-card .ic{width:58px;height:58px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+  background:var(--blue-lt);color:var(--blue);font-size:26px;font-weight:800;}
+.area-card .t{font-size:18px;font-weight:800;color:var(--blue-dk);margin-bottom:5px;}
+.area-card .d{font-size:12px;color:var(--muted);line-height:1.55;}
+.area-card.nat .ic{background:var(--blue);color:#fff;}
+.dist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:900px){.dist-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.dist-grid{grid-template-columns:1fr;}}
+.dist-card{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:16px 14px;cursor:pointer;text-align:left;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:11px;}
+.dist-card:hover{border-color:var(--blue);background:var(--blue-lt);transform:translateY(-2px);}
+.dist-card .n{width:34px;height:34px;border-radius:8px;background:var(--blue);color:#fff;font-weight:800;font-size:13px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dist-card .nm{font-size:14px;font-weight:700;color:var(--blue-dk);}
+.dist-card .go{color:#9fb3c6;flex-shrink:0;transition:transform .15s,color .15s;}
+.dist-card:hover .go{color:var(--blue);transform:translateX(3px);}
+.area-card .ic svg{display:block;}
+.area-card:hover .ic{transform:scale(1.06);}
+.area-card .ic{transition:transform .15s;}
+.dist-card .sb{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.area-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--blue-lt);
+  border:1.5px solid var(--blue);border-radius:10px;padding:10px 16px;margin-bottom:16px;}
+.area-bar .lbl{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;}
+.area-bar .val{font-size:16px;font-weight:800;color:var(--blue-dk);}
 </style>
 </head>
 <body>
@@ -305,8 +338,48 @@ canvas { max-width: 100%; display: block; }
 <div class="page-body">
 
   <!-- CONFIG SCREEN -->
-  <div id="configScreen">
+  <!-- ══ SCREEN 0 — AREA: National or District ══ -->
+  <div id="areaScreen">
+    <div id="areaChoose">
+      <div class="area-head"><h2>Choose the area</h2><p>Fetch for the whole country, one district, or one chiefdom. A smaller area runs much faster.</p></div>
+      <div class="area-big">
+        <button class="area-card nat" onclick="pickArea('', 'National')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg></div><div class="t">National</div>
+          <div class="d">All 16 districts in one run. Every chart, map and table covers Sierra Leone.</div>
+        </button>
+        <button class="area-card" onclick="showDistrictCards('district')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></div><div class="t">District</div>
+          <div class="d">Pick one district from the list. Only that district's facilities and CHW posts are fetched.</div>
+        </button>
+        <button class="area-card" onclick="showDistrictCards('chiefdom')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5l9 4.5 9-4.5"/></svg></div><div class="t">Chiefdom</div>
+          <div class="d">Pick the district first, then one of its chiefdoms. Only that chiefdom is fetched.</div>
+        </button>
+      </div>
+    </div>
+    <div id="areaDistricts" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div class="area-head" style="text-align:left;margin:0;"><h2 id="distTitle">Choose a district</h2><p id="distNote">Loading districts from DHIS2…</p></div>
+        <button class="btn btn-outline btn-sm" onclick="showAreaChoose()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
+      </div>
+      <div class="dist-grid" id="distGrid"></div>
+    </div>
+    <div id="areaChiefdoms" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div class="area-head" style="text-align:left;margin:0;"><h2 id="chiefTitle">Choose a chiefdom</h2><p id="chiefNote">Loading chiefdoms from DHIS2…</p></div>
+        <button class="btn btn-outline btn-sm" onclick="showDistrictCards('chiefdom')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to districts</button>
+      </div>
+      <div class="dist-grid" id="chiefGrid"></div>
+    </div>
+  </div>
+
+  <div id="configScreen" style="display:none;">
+    <div class="area-bar">
+      <div><div class="lbl">Area</div><div class="val" id="areaLabel">National</div></div>
+      <button class="btn btn-outline btn-sm" onclick="showAreaChoose()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Change area</button>
+    </div>
     <div id="cfgAlertBox" style="margin-bottom:12px;"></div>
+    <select id="cfgDistrict" style="display:none;"><option value="">National (all districts)</option></select>
     <div class="cfg-wrap">
 
       <div class="cfg-how">
@@ -804,6 +877,7 @@ function setStep(id, status, msg) {
 }
 
 function showConfigScreen() {
+  document.getElementById('areaScreen').style.display      = 'none';
   document.getElementById('configScreen').style.display    = 'block';
   document.getElementById('pipelineScreen').style.display  = 'none';
   document.getElementById('resultsSection').style.display  = 'none';
@@ -820,6 +894,7 @@ async function sa_startPipeline() {
   if (start > end)    { errEl.textContent='Start Month must be on or before End Month.'; errEl.style.display='block'; return; }
   errEl.style.display = 'none';
 
+  document.getElementById('areaScreen').style.display      = 'none';
   document.getElementById('configScreen').style.display    = 'none';
   document.getElementById('pipelineScreen').style.display  = 'block';
   document.getElementById('resultsSection').style.display  = 'none';
@@ -829,7 +904,10 @@ async function sa_startPipeline() {
   setProgress(2);
   setPill('Running…','rgba(255,193,7,.5)');
 
-  ST.config    = { start, end, periods: genPeriods(start, end) };
+  // districtId is the boundary org unit (a district or a chiefdom); districtName is its label
+  ST.config    = { start, end, periods: genPeriods(start, end),
+                   districtId: AREA.id, districtName: AREA.id ? AREA.name : 'National',
+                   areaLevel: AREA.level, geoDistrict: AREA.district, geoChiefdom: AREA.chiefdom };
   ST.ouHierarchy = {};
   ST.facData   = [];
   ST.commData  = [];
@@ -846,7 +924,7 @@ async function sa_startPipeline() {
     // STEP 1 — Org units
     setStep('s_ou','running');
     setProgress(3);
-    const ouResp = await dhis2('/api/organisationUnits.json?level='+LEVEL_PHU+'&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false&pageSize=50000');
+    const ouResp = await dhis2('/api/organisationUnits.json?level='+LEVEL_PHU+'&fields=id,displayName,level,ancestors[id,displayName,level]&paging=false&pageSize=50000'+(ST.config.districtId?'&filter=path:like:'+ST.config.districtId:''));
     const ASSESSED_TYPES = ['Hospital','Clinic','CHC','CHP','MCHP'];
     const childToL5 = {};
     let skipped = 0;
@@ -918,7 +996,7 @@ async function sa_startPipeline() {
         callsDone++;
         setStep('s_fetch','running','Batch '+callsDone+'/'+totalCalls+' · '+pBatches[pi][0]+'→'+pBatches[pi][pBatches[pi].length-1]);
         setProgress(20+Math.round((callsDone/totalCalls)*65));
-        const resp = await dhis2('/api/analytics.json?dimension=dx:'+dxParam+'&dimension=pe:'+peParam+'&dimension=ou:LEVEL-'+LEVEL_PHU+'&displayProperty=NAME&paging=false&ignoreLimit=true');
+        const resp = await dhis2('/api/analytics.json?dimension=dx:'+dxParam+'&dimension=pe:'+peParam+'&dimension=ou:LEVEL-'+LEVEL_PHU+(ST.config.districtId?';'+ST.config.districtId:'')+'&displayProperty=NAME&paging=false&ignoreLimit=true');
         (resp.rows||[]).forEach(row=>{
           const [dxStr,period,ouId,rawVal]=row;
           const val=parseFloat(rawVal)||0;
@@ -967,16 +1045,15 @@ async function sa_startPipeline() {
 
     // STEP 5 — GeoJSON
     setStep('s_geo','running');
-    if (!ST.geoCache.chiefdomGeo) {
+    // Full country shapes are downloaded once and kept; each run then cuts them to its area
+    if (!ST.geoCache.fullChief) {
       const [cg,dg]=await Promise.all([
         fetch(CHIEFDOM_GEOJSON).then(r=>r.json()),
         fetch(DISTRICT_GEOJSON).then(r=>r.json()).catch(()=>null),
       ]);
-      ST.geoCache.chiefdomGeo=cg; ST.geoCache.districtGeo=dg;
-      let mnX=Infinity,mnY=Infinity,mxX=-Infinity,mxY=-Infinity;
-      (cg.features||[]).forEach(f=>{walkCoords(f.geometry,c=>{if(c[0]<mnX)mnX=c[0];if(c[0]>mxX)mxX=c[0];if(c[1]<mnY)mnY=c[1];if(c[1]>mxY)mxY=c[1];});});
-      ST.geoCache.bbox={mnX,mnY,mxX,mxY};
+      ST.geoCache.fullChief=cg; ST.geoCache.fullDist=dg;
     }
+    applyGeoArea();
     const defaultYear=periods.slice(-1)[0].slice(0,4);
     sa_computeGeoRates(defaultYear);
     populateYearDropdown();
@@ -989,6 +1066,7 @@ async function sa_startPipeline() {
     document.getElementById('resultsSection').style.display='block';
     await sleep(80);
     let errs=[];
+    try{applyAreaUi();}catch(e){console.warn(e);}
     try{sa_drawCharts();}catch(e){errs.push('Charts: '+e.message);}
     try{sa_renderGeoMaps();}catch(e){errs.push('Geo: '+e.message);}
     try{sa_buildTable();}catch(e){errs.push('Table: '+e.message);}
@@ -1050,10 +1128,11 @@ async function sa_startPipeline() {
       `<div class="stat-pill age0">0-59m: ${totA0c.toLocaleString()} (${fp(totA0c,totComm)})</div>`,
       `<div class="stat-pill age1">5-14y: ${totA1c.toLocaleString()} (${fp(totA1c,totComm)})</div>`,
       `<div class="stat-pill age2">15y+: ${totA2c.toLocaleString()} (${fp(totA2c,totComm)})</div>`,
+      `<div class="stat-pill ok">Area: ${ST.config.districtName}</div>`,
       `<div class="stat-pill ok">Combined: ${allTot.toLocaleString()} · Fac share: ${fp(totFac,allTot)}</div>`,
       `<div class="stat-pill">${periods.length} months · ${start} → ${end}</div>`,
     ].join('');
-    setPill('Done ✓','rgba(40,167,69,.55)');
+    setPill('Done ✓ · ' + ST.config.districtName,'rgba(40,167,69,.55)');
 
   } catch(err) {
     console.error(err);
@@ -1140,15 +1219,16 @@ function sa_downloadChart(canvasId,suffix){const canvas=document.getElementById(
 function getChartDims(){return{W:parseInt(document.getElementById('chW').value)||1200,H:parseInt(document.getElementById('chH').value)||520};}
 function wrapText(ctx,text,x,y,maxW,lh){const words=text.split(' ');let line='',cy=y;words.forEach(w=>{const test=line+(line?' ':'')+w;if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line,x,cy);line=w;cy+=lh;}else line=test;});if(line)ctx.fillText(line,x,cy);}
 
-function sa_drawNationalMonthly(canvasId,isComm=false){const canvas=document.getElementById(canvasId);if(!canvas)return;const ctx=canvas.getContext('2d');const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const rows=Object.values(isComm?AGG.com_natMonthly:AGG.natMonthly).sort((a,b)=>a.date.localeCompare(b.date));const src=isComm?'Community (HTR/ETR)':'Facility';const title=`NMCP Confirmed and Treated Malaria — ${src} — Age Distribution by Month · ${ST.config.start} → ${ST.config.end}`;const sub=`${src} · ${rows.length} months · Stacked 100% proportions`;const titleEl=document.getElementById(isComm?'ch3Title':'ch1Title'),subEl=document.getElementById(isComm?'ch3Sub':'ch1Sub');if(titleEl)titleEl.textContent=title;if(subEl)subEl.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}ctx.fillStyle='#004080';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months',color:AGE_COLORS.age0},{label:'5 to 14 years',color:AGE_COLORS.age1},{label:'15 years and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(item=>{ctx.fillStyle=item.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(item.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);const segInfo=[];let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=.6;ctx.strokeRect(x,cumY-segH,barW,segH);segInfo.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});if(!d){ctx.fillStyle='#ccc';ctx.fillRect(x,bTop,barW,bH);}const lfsz=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#004080';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);ctx.save();ctx.translate(14,bTop+bH/2);ctx.rotate(-Math.PI/2);ctx.fillText('% Share of Confirmed and Treated',0,0);ctx.restore();}
+function sa_drawNationalMonthly(canvasId,isComm=false){const canvas=document.getElementById(canvasId);if(!canvas)return;const ctx=canvas.getContext('2d');const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const rows=Object.values(isComm?AGG.com_natMonthly:AGG.natMonthly).sort((a,b)=>a.date.localeCompare(b.date));const src=isComm?'Community (HTR/ETR)':'Facility';const title=`NMCP Confirmed and Treated Malaria — ${src} — Age Distribution by Month · ${_areaTag()}${ST.config.start} → ${ST.config.end}`;const sub=`${src} · ${rows.length} months · Stacked 100% proportions`;const titleEl=document.getElementById(isComm?'ch3Title':'ch1Title'),subEl=document.getElementById(isComm?'ch3Sub':'ch1Sub');if(titleEl)titleEl.textContent=title;if(subEl)subEl.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}ctx.fillStyle='#004080';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months',color:AGE_COLORS.age0},{label:'5 to 14 years',color:AGE_COLORS.age1},{label:'15 years and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(item=>{ctx.fillStyle=item.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(item.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);const segInfo=[];let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=.6;ctx.strokeRect(x,cumY-segH,barW,segH);segInfo.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});if(!d){ctx.fillStyle='#ccc';ctx.fillRect(x,bTop,barW,bH);}const lfsz=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#004080';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);ctx.save();ctx.translate(14,bTop+bH/2);ctx.rotate(-Math.PI/2);ctx.fillText('% Share of Confirmed and Treated',0,0);ctx.restore();}
 
-function sa_drawDistrictSummary(canvasId,isComm=false){const canvas=document.getElementById(canvasId);if(!canvas)return;const ctx=canvas.getContext('2d');const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const srcAgg=isComm?AGG.com_distYearly:AGG.distYearly;const src2=isComm?'Community (HTR/ETR)':'Facility';const distMap={};Object.values(srcAgg).forEach(row=>{if(!distMap[row.district])distMap[row.district]={district:row.district,age0:0,age1:0,age2:0,total:0};distMap[row.district].age0+=row.age0;distMap[row.district].age1+=row.age1;distMap[row.district].age2+=row.age2;distMap[row.district].total+=row.total;});const rows=Object.values(distMap).filter(r=>r.total>0).sort((a,b)=>b.total-a.total);const title=`Confirmed and Treated Malaria — ${src2} — Age by District · ${ST.config.start} → ${ST.config.end}`;const sub=`${src2} · ${rows.length} districts · Stacked 100%`;const titleEl=document.getElementById(isComm?'ch4Title':'ch2Title'),subEl=document.getElementById(isComm?'ch4Sub':'ch2Sub');if(titleEl)titleEl.textContent=title;if(subEl)subEl.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=80,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}ctx.fillStyle='#28a745';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months',color:AGE_COLORS.age0},{label:'5 to 14 years',color:AGE_COLORS.age1},{label:'15 years and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(item=>{ctx.fillStyle=item.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(item.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}const n=rows.length,barW=Math.max(3,bW/n-3),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);cumY-=segH;});const label=row.district.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' ');ctx.fillStyle='#333';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/3);ctx.fillText(label,0,0);ctx.restore();if(barW>24){let cy=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;if(segH>14&&pct>0.04){const fsz=Math.min(14,Math.max(10,barW*.22));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((pct*100).toFixed(0)+'%',x+barW/2,cy-segH/2);}cy-=segH;});}});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#28a745';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('District',LEFT+bW/2,H-2);ctx.save();ctx.translate(14,bTop+bH/2);ctx.rotate(-Math.PI/2);ctx.fillText('% Share of Confirmed and Treated',0,0);ctx.restore();}
+function sa_drawDistrictSummary(canvasId,isComm=false){const canvas=document.getElementById(canvasId);if(!canvas)return;const ctx=canvas.getContext('2d');const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const srcAgg=isComm?AGG.com_distYearly:AGG.distYearly;const src2=isComm?'Community (HTR/ETR)':'Facility';const distMap={};if(isChiefRun()){(isComm?ST.commData:ST.facData).forEach(r=>{const k=_facName(r.ouId);if(!distMap[k])distMap[k]={district:k,age0:0,age1:0,age2:0,total:0};distMap[k].age0+=r.age0||0;distMap[k].age1+=r.age1||0;distMap[k].age2+=r.age2||0;distMap[k].total+=r.total||0;});}
+  else Object.values(srcAgg).forEach(row=>{if(!distMap[row.district])distMap[row.district]={district:row.district,age0:0,age1:0,age2:0,total:0};distMap[row.district].age0+=row.age0;distMap[row.district].age1+=row.age1;distMap[row.district].age2+=row.age2;distMap[row.district].total+=row.total;});const rows=Object.values(distMap).filter(r=>r.total>0).sort((a,b)=>b.total-a.total);const title=`Confirmed and Treated Malaria — ${src2} — ${isChiefRun()?'Age by Health Facility':'Age by District'} · ${_areaTag()}${ST.config.start} → ${ST.config.end}`;const sub=`${src2} · ${rows.length} ${isChiefRun()?'health facilities':'districts'} · Stacked 100%`;const titleEl=document.getElementById(isComm?'ch4Title':'ch2Title'),subEl=document.getElementById(isComm?'ch4Sub':'ch2Sub');if(titleEl)titleEl.textContent=title;if(subEl)subEl.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=80,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}ctx.fillStyle='#28a745';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months',color:AGE_COLORS.age0},{label:'5 to 14 years',color:AGE_COLORS.age1},{label:'15 years and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(item=>{ctx.fillStyle=item.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(item.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}const n=rows.length,barW=Math.max(3,bW/n-3),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);cumY-=segH;});const label=row.district.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' ');ctx.fillStyle='#333';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/3);ctx.fillText(label,0,0);ctx.restore();if(barW>24){let cy=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;if(segH>14&&pct>0.04){const fsz=Math.min(14,Math.max(10,barW*.22));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((pct*100).toFixed(0)+'%',x+barW/2,cy-segH/2);}cy-=segH;});}});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#28a745';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(isChiefRun()?'Health Facility':'District',LEFT+bW/2,H-2);ctx.save();ctx.translate(14,bTop+bH/2);ctx.rotate(-Math.PI/2);ctx.fillText('% Share of Confirmed and Treated',0,0);ctx.restore();}
 
-function sa_drawCombinedAge(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`NMCP Confirmed and Treated Malaria — Combined (Fac+Comm) Age Distribution by Month · ${ST.config.start} → ${ST.config.end}`;const sub=`Combined facility + community · ${rows.length} months · Stacked 100%`;const el1=document.getElementById('ch5Title'),el2=document.getElementById('ch5Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;ctx.fillStyle='#283593';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months (Fac+Comm)',color:AGE_COLORS.age0},{label:'5 to 14y',color:AGE_COLORS.age1},{label:'15y and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(it=>{ctx.fillStyle=it.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data',W/2,H/2);return;}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);const segInfo=[];let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=.6;ctx.strokeRect(x,cumY-segH,barW,segH);segInfo.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});if(!d){ctx.fillStyle='#ccc';ctx.fillRect(x,bTop,barW,bH);}const lfsz=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#283593';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);}
+function sa_drawCombinedAge(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`NMCP Confirmed and Treated Malaria — Combined (Fac+Comm) Age Distribution by Month · ${_areaTag()}${ST.config.start} → ${ST.config.end}`;const sub=`Combined facility + community · ${rows.length} months · Stacked 100%`;const el1=document.getElementById('ch5Title'),el2=document.getElementById('ch5Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;ctx.fillStyle='#283593';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems=[{label:'0 to 59 months (Fac+Comm)',color:AGE_COLORS.age0},{label:'5 to 14y',color:AGE_COLORS.age1},{label:'15y and above',color:AGE_COLORS.age2}];const legY=TITLE_H+6;let lx=W/2-lItems.length*140/2;lItems.forEach(it=>{ctx.fillStyle=it.color;ctx.fillRect(lx,legY+2,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx,legY+2,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx+20,legY+8);lx+=140;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data',W/2,H/2);return;}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const d=row.total>0?row.total:null,p0=d?row.age0/d:0,p1=d?row.age1/d:0,p2=d?row.age2/d:0;const x=LEFT+gap+i*(barW+gap);const segInfo=[];let cumY=bTop+bH;[[p0,AGE_COLORS.age0],[p1,AGE_COLORS.age1],[p2,AGE_COLORS.age2]].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=.6;ctx.strokeRect(x,cumY-segH,barW,segH);segInfo.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});if(!d){ctx.fillStyle='#ccc';ctx.fillRect(x,bTop,barW,bH);}const lfsz=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#283593';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);}
 
-function sa_drawSourceByAge(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`Facility vs Community Share by Age Group (Monthly) · ${ST.config.start} → ${ST.config.end}`;const sub='Each month: 3 grouped bars (age groups). Each bar = Facility % (bottom) + Community % (top), stacked to 100%.';const el1=document.getElementById('ch6Title'),el2=document.getElementById('ch6Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=48,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;const COLS={fac0:'#0f7a24',com0:'#9aeaaa',fac1:'#cccccc',com1:'#f0f0f0',fac2:'#004a8c',com2:'#80b9e3'};ctx.fillStyle='#880e4f';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const legItems=[{label:'Fac 0 to 59 months',col:COLS.fac0},{label:'Fac 5 to 14 years',col:COLS.fac1},{label:'Fac 15 years and above',col:COLS.fac2},{label:'Comm 0 to 59 months',col:COLS.com0},{label:'Comm 5 to 14 years',col:COLS.com1},{label:'Comm 15 years and above',col:COLS.com2}];const legItemW=110;let lx=W/2-legItems.length*legItemW/2;legItems.forEach(it=>{ctx.fillStyle=it.col;ctx.fillRect(lx,TITLE_H+8,16,13);ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=.5;ctx.strokeRect(lx,TITLE_H+8,16,13);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx+20,TITLE_H+15);lx+=legItemW;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e8e8e8';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}const n=rows.length,grpW=bW/n,barGap=Math.max(1,grpW*.04),barW=Math.max(4,(grpW-barGap*4)/3);rows.forEach((row,i)=>{const grpCX=LEFT+i*grpW+grpW/2,totalGrpW=barW*3+barGap*2,grpLeft=grpCX-totalGrpW/2;[0,1,2].forEach(ai=>{const fVal=[row.fac_age0,row.fac_age1,row.fac_age2][ai]||0,cVal=[row.com_age0,row.com_age1,row.com_age2][ai]||0;const tot=fVal+cVal;if(!tot)return;const facP=fVal/tot,comP=cVal/tot;const x=grpLeft+ai*(barW+barGap);const facCol=[COLS.fac0,COLS.fac1,COLS.fac2][ai],comCol=[COLS.com0,COLS.com1,COLS.com2][ai];let cumY=bTop+bH;const facH=bH*facP;ctx.fillStyle=facCol;ctx.fillRect(x,cumY-facH,barW,facH);if(facH>=14&&facP>=.04){const fsz=Math.min(14,Math.max(10,barW*.34));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((facP*100).toFixed(1)+'%',x+barW/2,cumY-facH/2);}cumY-=facH;const comH=bH*comP;ctx.fillStyle=comCol;ctx.fillRect(x,cumY-comH,barW,comH);if(comH>=14&&comP>=.04){const fsz=Math.min(12,Math.max(8,barW*.3));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((comP*100).toFixed(1)+'%',x+barW/2,cumY-comH/2);}ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,cumY);ctx.lineTo(x+barW,cumY);ctx.stroke();});const AGE_NAMES=['0 to 59m','5 to 14y','15y and above'];[0,1,2].forEach(ai=>{const x=grpLeft+ai*(barW+barGap);ctx.fillStyle='#444';ctx.font=`bold ${Math.min(9,Math.max(7,barW*.18))}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(AGE_NAMES[ai],x+barW/2,bBot+2);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(row.date,grpCX,bBot+14);});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#880e4f';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Month',LEFT+bW/2,H-2);}
+function sa_drawSourceByAge(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`Facility vs Community Share by Age Group (Monthly) · ${_areaTag()}${ST.config.start} → ${ST.config.end}`;const sub='Each month: 3 grouped bars (age groups). Each bar = Facility % (bottom) + Community % (top), stacked to 100%.';const el1=document.getElementById('ch6Title'),el2=document.getElementById('ch6Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=48,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;const COLS={fac0:'#0f7a24',com0:'#9aeaaa',fac1:'#cccccc',com1:'#f0f0f0',fac2:'#004a8c',com2:'#80b9e3'};ctx.fillStyle='#880e4f';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const legItems=[{label:'Fac 0 to 59 months',col:COLS.fac0},{label:'Fac 5 to 14 years',col:COLS.fac1},{label:'Fac 15 years and above',col:COLS.fac2},{label:'Comm 0 to 59 months',col:COLS.com0},{label:'Comm 5 to 14 years',col:COLS.com1},{label:'Comm 15 years and above',col:COLS.com2}];const legItemW=110;let lx=W/2-legItems.length*legItemW/2;legItems.forEach(it=>{ctx.fillStyle=it.col;ctx.fillRect(lx,TITLE_H+8,16,13);ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=.5;ctx.strokeRect(lx,TITLE_H+8,16,13);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx+20,TITLE_H+15);lx+=legItemW;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e8e8e8';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data available',W/2,H/2);return;}const n=rows.length,grpW=bW/n,barGap=Math.max(1,grpW*.04),barW=Math.max(4,(grpW-barGap*4)/3);rows.forEach((row,i)=>{const grpCX=LEFT+i*grpW+grpW/2,totalGrpW=barW*3+barGap*2,grpLeft=grpCX-totalGrpW/2;[0,1,2].forEach(ai=>{const fVal=[row.fac_age0,row.fac_age1,row.fac_age2][ai]||0,cVal=[row.com_age0,row.com_age1,row.com_age2][ai]||0;const tot=fVal+cVal;if(!tot)return;const facP=fVal/tot,comP=cVal/tot;const x=grpLeft+ai*(barW+barGap);const facCol=[COLS.fac0,COLS.fac1,COLS.fac2][ai],comCol=[COLS.com0,COLS.com1,COLS.com2][ai];let cumY=bTop+bH;const facH=bH*facP;ctx.fillStyle=facCol;ctx.fillRect(x,cumY-facH,barW,facH);if(facH>=14&&facP>=.04){const fsz=Math.min(14,Math.max(10,barW*.34));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((facP*100).toFixed(1)+'%',x+barW/2,cumY-facH/2);}cumY-=facH;const comH=bH*comP;ctx.fillStyle=comCol;ctx.fillRect(x,cumY-comH,barW,comH);if(comH>=14&&comP>=.04){const fsz=Math.min(12,Math.max(8,barW*.3));ctx.font=`bold ${fsz}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#111';ctx.fillText((comP*100).toFixed(1)+'%',x+barW/2,cumY-comH/2);}ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,cumY);ctx.lineTo(x+barW,cumY);ctx.stroke();});const AGE_NAMES=['0 to 59m','5 to 14y','15y and above'];[0,1,2].forEach(ai=>{const x=grpLeft+ai*(barW+barGap);ctx.fillStyle='#444';ctx.font=`bold ${Math.min(9,Math.max(7,barW*.18))}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(AGE_NAMES[ai],x+barW/2,bBot+2);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(row.date,grpCX,bBot+14);});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#880e4f';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Month',LEFT+bW/2,H-2);}
 
-function sa_drawSourceTotal(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`Facility vs Community Share of Total Confirmed and Treated Cases (Monthly) · ${ST.config.start} → ${ST.config.end}`;const sub='Each bar = one month; facility (dark blue) vs community (light blue)';const el1=document.getElementById('ch7Title'),el2=document.getElementById('ch7Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;ctx.fillStyle='#5d4037';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems2=[{label:'Facility',col:'#1f4a6a'},{label:'Community (HTR/ETR)',col:'#81b9e8'}];let lx3=W/2-lItems2.length*150/2;lItems2.forEach(it=>{ctx.fillStyle=it.col;ctx.fillRect(lx3,TITLE_H+6,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx3,TITLE_H+6,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx3+20,TITLE_H+12);lx3+=150;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data',W/2,H/2);return;}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const tot=row.total;if(!tot)return;const facP=row.fac_total/tot,comP=row.com_total/tot;const x=LEFT+gap+i*(barW+gap);const segInfo2=[];let cumY=bTop+bH;[[facP,'#1f4a6a'],[comP,'#81b9e8']].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);segInfo2.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});const lfsz7=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz7}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo2.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#5d4037';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);}
+function sa_drawSourceTotal(canvasId){const canvas=document.getElementById(canvasId);if(!canvas)return;const{W,H}=getChartDims();canvas.width=W;canvas.height=H;canvas.style.width='100%';canvas.style.height='auto';const ctx=canvas.getContext('2d');const rows=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));const title=`Facility vs Community Share of Total Confirmed and Treated Cases (Monthly) · ${_areaTag()}${ST.config.start} → ${ST.config.end}`;const sub='Each bar = one month; facility (dark blue) vs community (light blue)';const el1=document.getElementById('ch7Title'),el2=document.getElementById('ch7Sub');if(el1)el1.textContent=title;if(el2)el2.textContent=sub;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);const TITLE_H=52,LEG_H=34,XLAB_H=52,BOT=XLAB_H+10,LEFT=64,RIGHT=20;const bTop=TITLE_H+LEG_H,bBot=H-BOT,bH=bBot-bTop,bW=W-LEFT-RIGHT;ctx.fillStyle='#5d4037';ctx.font='bold 14px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';wrapText(ctx,title,W/2,8,W-40,19);const lItems2=[{label:'Facility',col:'#1f4a6a'},{label:'Community (HTR/ETR)',col:'#81b9e8'}];let lx3=W/2-lItems2.length*150/2;lItems2.forEach(it=>{ctx.fillStyle=it.col;ctx.fillRect(lx3,TITLE_H+6,16,12);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.5;ctx.strokeRect(lx3,TITLE_H+6,16,12);ctx.fillStyle='#111';ctx.font='bold 10px Oswald,Arial,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(it.label,lx3+20,TITLE_H+12);lx3+=150;});for(let pct=0;pct<=100;pct+=20){const y=bTop+bH*(1-pct/100);ctx.fillStyle='#555';ctx.font='10px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(pct+'%',LEFT-6,y);ctx.strokeStyle='#e0e0e0';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(LEFT,y);ctx.lineTo(LEFT+bW,y);ctx.stroke();}if(!rows.length){ctx.fillStyle='#888';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('No data',W/2,H/2);return;}const n=rows.length,barW=Math.max(2,bW/n-2),gap=(bW-barW*n)/(n+1);rows.forEach((row,i)=>{const tot=row.total;if(!tot)return;const facP=row.fac_total/tot,comP=row.com_total/tot;const x=LEFT+gap+i*(barW+gap);const segInfo2=[];let cumY=bTop+bH;[[facP,'#1f4a6a'],[comP,'#81b9e8']].forEach(([pct,col])=>{const segH=bH*pct;ctx.fillStyle=col;ctx.fillRect(x,cumY-segH,barW,segH);segInfo2.push({cy:cumY-segH/2,h:segH,pct});cumY-=segH;});const lfsz7=Math.min(14,Math.max(10,barW*.45));ctx.font=`bold ${lfsz7}px Oswald,Arial,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';segInfo2.forEach(({cy,h,pct})=>{if(h<14||pct<.04)return;const txt=(pct*100).toFixed(1)+'%';ctx.fillStyle='#111';ctx.fillText(txt,x+barW/2,cy);});ctx.fillStyle='#333';ctx.font='9px Oswald,Arial,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.save();ctx.translate(x+barW/2,bBot+6);ctx.rotate(-Math.PI/2);ctx.fillText(row.date,0,0);ctx.restore();});ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.strokeRect(LEFT,bTop,bW,bH);ctx.fillStyle='#5d4037';ctx.font='bold 11px Oswald,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Time Period',LEFT+bW/2,H-2);}
 
 // ═══════════════════════════════════════════════════════════════════
 //  GEOGRAPHIC MAPS  ← UPDATED: 3-way no-data legend throughout
@@ -1158,6 +1238,34 @@ function sa_drawSourceTotal(canvasId){const canvas=document.getElementById(canva
  * sa_computeGeoRates — now stores {rate, conf, treat} per unit
  * so the color function can distinguish no-data states.
  */
+// ── Map area: a district run shows ONLY that district's shapes, zoomed to fit ──
+function geoAreaName(){ return ST.config?.districtId ? ST.config.districtName : 'Sierra Leone'; }
+function _distKey(n){ return (n||'').toLowerCase().replace(/\b(district|area)\b/g,'').replace(/[^a-z]/g,''); }
+function applyGeoArea(){
+  const fc = ST.geoCache.fullChief, fd = ST.geoCache.fullDist;
+  if (!fc) return;
+  const want = ST.config?.districtId ? _distKey(ST.config.geoDistrict || ST.config.districtName) : '';
+  const keep = f => !want || _distKey(f.properties && f.properties.FIRST_DNAM) === want;
+  let chief = { ...fc, features:(fc.features||[]).filter(keep) };
+  let dist  = fd ? { ...fd, features:(fd.features||[]).filter(keep) } : null;
+  // Chiefdom run: keep only that chiefdom; it also stands in for the district panel
+  if (ST.config?.geoChiefdom) {
+    const ck = n => (n||'').toLowerCase().replace(/\bchiefdom\b/g,'').replace(/[^a-z]/g,'');
+    const one = chief.features.filter(f => ck(f.properties && f.properties.adm3) === ck(ST.config.geoChiefdom));
+    if (one.length) { chief = { ...fc, features:one }; dist = { ...fc, features:one }; }
+  }
+  if (want && !chief.features.length) { chief = fc; dist = fd; }   // name not matched: fall back to the full map
+  ST.geoCache.chiefdomGeo = chief;
+  ST.geoCache.districtGeo = dist;
+  let mnX=Infinity,mnY=Infinity,mxX=-Infinity,mxY=-Infinity;
+  (chief.features||[]).forEach(f=>{
+    walkCoords(f.geometry, c=>{
+      if(c[0]<mnX)mnX=c[0]; if(c[0]>mxX)mxX=c[0];
+      if(c[1]<mnY)mnY=c[1]; if(c[1]>mxY)mxY=c[1];
+    });
+  });
+  ST.geoCache.bbox = {mnX,mnY,mxX,mxY};
+}
 function sa_computeGeoRates(year) {
   const ageKey = document.getElementById('geoAgeGroup')?.value || 'age0';
   const {distMonthly:_dM, chiefMonthly:_cM} = getSourceAGG();
@@ -1721,7 +1829,7 @@ function sa_geoDownload(canvasId,suffix){
   const titleFsz=Math.round(cW*0.024);
   ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.font=`bold ${titleFsz}px Oswald,Arial,sans-serif`;
-  ctx.fillText(`Confirmed and Treated — ${ageLabel} — ${srcLabel} — ${suffix.charAt(0).toUpperCase()+suffix.slice(1)} · ${year}`,cW/2,TITLE_H/2);
+  ctx.fillText(`Confirmed and Treated — ${ageLabel} — ${srcLabel} — ${(isChiefRun()?(suffix==='national'?ST.config.districtName:'Chiefdom'):suffix.charAt(0).toUpperCase()+suffix.slice(1))} · ${year}`,cW/2,TITLE_H/2);
   if(period){ctx.font=`${Math.round(titleFsz*.75)}px Oswald,Arial,sans-serif`;ctx.fillStyle='rgba(255,255,255,.75)';ctx.fillText(`Period: ${period}`,cW/2,TITLE_H*0.78);}
   ctx.drawImage(srcCanvas,0,TITLE_H);
   const a=document.createElement('a');a.download=`ConfTreatAge_Map_${suffix}_${ageKey}_${year}.png`;a.href=out.toDataURL('image/png');a.click();
@@ -1732,7 +1840,7 @@ function _buildAnnualSubplotCanvas(){
   const ageLabel=getAgeLabel(),srcLabel=getSourceLabel();
   const year=document.getElementById('geoYear')?.value||'';
   const period=getPeriodLabel();
-  const mapTitles=['National — '+ageLabel,'District — '+ageLabel,'Chiefdom — '+ageLabel];
+  const mapTitles=[(ST.config?.districtId?ST.config.districtName:'National')+' — '+ageLabel,'District — '+ageLabel,'Chiefdom — '+ageLabel];
   const srcs=ids.map(id=>document.getElementById(id));
   const cW=srcs[0]?.width||600,cH=srcs[0]?.height||600;
   const PAD=22,TITLE_H=64,LABEL_H=32,GAP=12,LEG_H=72;
@@ -1794,7 +1902,113 @@ function sa_buildComparisonAGG(){
 }
 
 let tblRows=[],tblHeaders=[];
+// ═══ CHIEFDOM RUNS: every view is about the chiefdom and its facilities, never the district ═══
+function isChiefRun(){ return ST.config?.areaLevel === 'chiefdom'; }
+function _areaTag(){ return ST.config?.districtId ? ST.config.districtName + ' · ' : ''; }
+function _facName(id){ const o=ST.ouHierarchy[id]; return o ? o.name : id; }
+function _facType(id){ const o=ST.ouHierarchy[id]; return o ? o.hfType : ''; }
+const _pct=(n,d)=>d>0?+(n/d*100).toFixed(1):null;
+// per facility, summed over the rows that pass keyFn (month or year)
+function _facGroup(rows, keyFn){
+  const m={};
+  (rows||[]).forEach(r=>{ const k=r.ouId+'|'+keyFn(r);
+    const a=m[k]||(m[k]={ouId:r.ouId,key:keyFn(r),age0:0,age1:0,age2:0,total:0});
+    a.age0+=r.age0||0; a.age1+=r.age1||0; a.age2+=r.age2||0; a.total+=r.total||0; });
+  return Object.values(m).sort((a,b)=>_facName(a.ouId).localeCompare(_facName(b.ouId))||String(a.key).localeCompare(String(b.key)));
+}
+const CF_TABLES = {
+  cf_area_monthly:     'Facility (all facilities) × Month',
+  cf_fac_monthly:      'Facility × Health facility × Month',
+  cf_fac_yearly:       'Facility × Health facility × Year',
+  cf_com_area_monthly: 'Community (all CHW posts) × Month',
+  cf_com_fac_monthly:  'Community × Health facility × Month',
+  cf_cmb_area_monthly: 'Combined × Month',
+};
+function cf_buildTable(grp){
+  const AH=['0 to 59m','5 to 14y','15y and above','Total','% 0 to 59m','% 5 to 14y','% 15y and above'];
+  const ag=r=>[r.age0,r.age1,r.age2,r.total,_pct(r.age0,r.total),_pct(r.age1,r.total),_pct(r.age2,r.total)];
+  const nm=ST.config.districtName;
+  if(grp==='cf_area_monthly'||grp==='cf_com_area_monthly'){
+    const src=Object.values(grp==='cf_area_monthly'?AGG.natMonthly:AGG.com_natMonthly).sort((a,b)=>a.date.localeCompare(b.date));
+    tblHeaders=['Chiefdom','Date','Year','Month',...AH];
+    tblRows=src.map(r=>[nm,r.date,r.year,r.month,...ag(r)]);
+  } else if(grp==='cf_fac_monthly'||grp==='cf_com_fac_monthly'){
+    const g=_facGroup(grp==='cf_fac_monthly'?ST.facData:ST.commData, r=>r.date);
+    tblHeaders=['Health facility','Type','Date',...AH];
+    tblRows=g.map(r=>[_facName(r.ouId),_facType(r.ouId),r.key,...ag(r)]);
+  } else if(grp==='cf_fac_yearly'){
+    const g=_facGroup(ST.facData, r=>r.date.slice(0,4));
+    tblHeaders=['Health facility','Type','Year',...AH];
+    tblRows=g.map(r=>[_facName(r.ouId),_facType(r.ouId),r.key,...ag(r)]);
+  } else {
+    const src=Object.values(AGG.cmbNatMonthly||{}).sort((a,b)=>a.date.localeCompare(b.date));
+    tblHeaders=['Chiefdom','Date','Year','Fac 0 to 59m','Fac 5 to 14y','Fac 15y and above','Fac Total','Comm 0 to 59m','Comm 5 to 14y','Comm 15y and above','Comm Total','Comb 0 to 59m %','Comb 5 to 14y %','Comb 15y and above %','Fac share%','Comm share%'];
+    tblRows=src.map(r=>[nm,r.date,r.year,r.fac_age0,r.fac_age1,r.fac_age2,r.fac_total,r.com_age0,r.com_age1,r.com_age2,r.com_total,r.pct0,r.pct1,r.pct2,r.fac_share_total,r.com_share_total]);
+  }
+  document.getElementById('tblHead').innerHTML=`<tr>${tblHeaders.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  sa_filterTable();
+}
+function cf_exportExcel(){
+  const wb=XLSX.utils.book_new(), nm=ST.config.districtName;
+  const sheet=(name,head,rows)=>{ if(rows.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([head,...rows]),name.slice(0,31)); };
+  const AH=['age0_59m','age5_14y','age15plus','total','pct_0_59m','pct_5_14y','pct_15plus'];
+  const ag=r=>[r.age0,r.age1,r.age2,r.total,_pct(r.age0,r.total),_pct(r.age1,r.total),_pct(r.age2,r.total)];
+  sheet('Chiefdom Monthly',['chiefdom','date',...AH],Object.values(AGG.natMonthly).sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[nm,r.date,...ag(r)]));
+  sheet('Facility Monthly',['ou_uid','health_facility','type','date',...AH],_facGroup(ST.facData,r=>r.date).map(r=>[r.ouId,_facName(r.ouId),_facType(r.ouId),r.key,...ag(r)]));
+  sheet('Facility Yearly',['ou_uid','health_facility','type','year',...AH],_facGroup(ST.facData,r=>r.date.slice(0,4)).map(r=>[r.ouId,_facName(r.ouId),_facType(r.ouId),r.key,...ag(r)]));
+  sheet('Community Monthly',['chiefdom','date',...AH],Object.values(AGG.com_natMonthly).sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[nm,r.date,...ag(r)]));
+  sheet('Community by Facility',['ou_uid','health_facility','type','date',...AH],_facGroup(ST.commData,r=>r.date).map(r=>[r.ouId,_facName(r.ouId),_facType(r.ouId),r.key,...ag(r)]));
+  XLSX.writeFile(wb,`DMAT_${nm.replace(/[^A-Za-z0-9]+/g,'_')}_${ST.config.start}_${ST.config.end}.xlsx`);
+}
+function cf_exportCSV(){
+  const head='ou_uid,health_facility,type,chiefdom,date,age0_59m,age5_14y,age15plus,total,pct_0_59m,pct_5_14y,pct_15plus';
+  const nm=ST.config.districtName;
+  const csv=head+'\n'+ST.facData.map(r=>[r.ouId,'"'+_facName(r.ouId)+'"',_facType(r.ouId),'"'+nm+'"',r.date,r.age0,r.age1,r.age2,r.total,r.pct0??'',r.pct1??'',r.pct2??''].join(',')).join('\n');
+  const a=document.createElement('a');a.download=`DMAT_${nm.replace(/[^A-Za-z0-9]+/g,'_')}_FacilityMonth_${ST.config.start}_${ST.config.end}.csv`;
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
+}
+// Switch every label, control and panel between national/district and chiefdom wording
+const _UI_ORIG = {};
+function _keep(el,key){ if(!(key in _UI_ORIG)) _UI_ORIG[key]=el.innerHTML; return _UI_ORIG[key]; }
+function applyAreaUi(){
+  const chief = isChiefRun(), nm = ST.config?.districtName || 'National';
+  // chart headings
+  document.querySelectorAll('.collap-head h3').forEach((h,i)=>{
+    const o=_keep(h,'h3_'+i);
+    h.innerHTML = !chief ? o : o
+      .replace('Chart 1 — National Monthly','Chart 1 — '+nm+' Monthly')
+      .replace('Chart 2 — District-Level Age Proportions (Annual Summary)','Chart 2 — Health Facility-Level Age Proportions (Whole Period)')
+      .replace('Chart 4 — Community District-Level Age Proportions','Chart 4 — Community Age Proportions by Health Facility');
+  });
+  // unused aggregation-level control mentions districts: hide it on chiefdom runs
+  const agg=document.getElementById('chAggLevel'); if(agg&&agg.parentElement) agg.parentElement.style.display = chief?'none':'';
+  // map level choices
+  const gl=document.getElementById('geoLevel');
+  if(gl){ const o=_keep(gl,'geoLevel');
+    gl.innerHTML = chief ? `<option value="national">${nm} (overall)</option><option value="chiefdom" selected>Health facilities</option>` : o;
+    if(!chief) gl.value='chiefdom'; }
+  // district map panel and its buttons
+  const dc=document.getElementById('geoDistrict');
+  const dp=dc?dc.closest('.map-panel'):null; if(dp) dp.style.display = chief?'none':'';
+  document.querySelectorAll('.maps-3col').forEach(g=>g.style.gridTemplateColumns = chief?'repeat(2,1fr)':'');
+  document.querySelectorAll('button').forEach((b,i)=>{
+    const oc=b.getAttribute('onclick')||'';
+    if(oc.includes("sa_geoDownload('geoDistrict'")) b.style.display = chief?'none':'';
+    if(oc.includes("sa_geoDownload('geoNational'")){ const o=_keep(b,'bn'+i); b.innerHTML = chief ? o.replace(/National/,nm) : o; }
+    if(oc.includes("sa_geoDownload('geoChiefdom'")){ const o=_keep(b,'bc'+i); b.innerHTML = chief ? o.replace(/Chiefdom/,'Health Facilities') : o; }
+    if(oc.includes("'chCanvas1'")){ const o=_keep(b,'b1'+i); b.innerHTML = chief ? o.replace(/National/,nm) : o; }
+    if(oc.includes("'chCanvas2'")){ const o=_keep(b,'b2'+i); b.innerHTML = chief ? o.replace(/District Summary/,'Health Facility Summary') : o; }
+  });
+  // search boxes
+  const ts=document.getElementById('trkSearch'); if(ts) ts.placeholder = chief ? 'Search health facility…' : 'Search facility, chiefdom, district…';
+  const tb=document.getElementById('tblSearch'); if(tb) tb.placeholder = chief ? 'Search health facility, period…' : 'Search district, chiefdom, period…';
+  // summary table views
+  const tg=document.getElementById('tblGroup');
+  if(tg){ const o=_keep(tg,'tblGroup');
+    tg.innerHTML = chief ? Object.entries(CF_TABLES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('') : o; }
+}
 function sa_buildTable(){
+  if((document.getElementById('tblGroup').value||'').startsWith('cf_')){ cf_buildTable(document.getElementById('tblGroup').value); return; }
   sa_buildComparisonAGG();
   const grp=document.getElementById('tblGroup').value;
   const isNat=grp==='national_monthly',isDM=grp==='district_monthly';
@@ -1836,8 +2050,8 @@ function sa_buildTable(){
 }
 function sa_filterTable(){const q=(document.getElementById('tblSearch').value||'').toLowerCase();const filtered=q?tblRows.filter(r=>r.some(c=>(c+'').toLowerCase().includes(q))):tblRows;document.getElementById('tblCount').textContent=`${filtered.length.toLocaleString()} of ${tblRows.length.toLocaleString()} records`;document.getElementById('tblBody').innerHTML=filtered.slice(0,2000).map(r=>`<tr>${r.map((c,i)=>{const n=parseFloat(c);const hi=!isNaN(n)&&n>0&&i>=tblRows[0]?.length-14?'background:rgba(106,26,106,.04);':'';return`<td style="${hi}">${c??''}</td>`;}).join('')}</tr>`).join('');}
 function sa_exportTableExcel(){const grp=document.getElementById('tblGroup').value;const ws=XLSX.utils.aoa_to_sheet([tblHeaders,...tblRows]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,grp.replace('_',' ').slice(0,31));XLSX.writeFile(wb,`NMCP_ConfTreatAge_${grp}.xlsx`);}
-function sa_exportExcel(){const wb=XLSX.utils.book_new();const addSheet=(data,name,cols)=>{const rows=data.map(r=>cols.reduce((o,c)=>({...o,[c]:r[c]??''}),{}));if(!rows.length)return;XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),name);};addSheet(Object.values(AGG.natMonthly),'National Monthly',['date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.distMonthly),'District Monthly',['district','date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.distYearly),'District Yearly',['district','year','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.chiefMonthly),'Chiefdom Monthly',['district','chiefdom','date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.chiefYearly),'Chiefdom Yearly',['district','chiefdom','year','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(ST.facData,'Facility Month',['ouId','districtName','chiefdomName','date','age0','age1','age2','total','pct0','pct1','pct2']);XLSX.writeFile(wb,`NMCP_ConfTreatAge_${ST.config.start}_${ST.config.end}.xlsx`);}
-function sa_exportCSV(){const header='ou_uid,district,chiefdom,date,age0_59m,age5_14y,age15plus,total,pct_0_59m,pct_5_14y,pct_15plus';const csv=header+'\n'+ST.facData.map(r=>`${r.ouId},${r.districtName},${r.chiefdomName},${r.date},${r.age0},${r.age1},${r.age2},${r.total},${r.pct0??''},${r.pct1??''},${r.pct2??''}`).join('\n');const a=document.createElement('a');a.download=`NMCP_ConfTreatAge_FacilityMonth_${ST.config.start}_${ST.config.end}.csv`;a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();}
+function sa_exportExcel(){if(isChiefRun()){cf_exportExcel();return;}const wb=XLSX.utils.book_new();const addSheet=(data,name,cols)=>{const rows=data.map(r=>cols.reduce((o,c)=>({...o,[c]:r[c]??''}),{}));if(!rows.length)return;XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),name);};addSheet(Object.values(AGG.natMonthly),'National Monthly',['date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.distMonthly),'District Monthly',['district','date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.distYearly),'District Yearly',['district','year','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.chiefMonthly),'Chiefdom Monthly',['district','chiefdom','date','year','month','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(Object.values(AGG.chiefYearly),'Chiefdom Yearly',['district','chiefdom','year','age0','age1','age2','total','pct0','pct1','pct2']);addSheet(ST.facData,'Facility Month',['ouId','districtName','chiefdomName','date','age0','age1','age2','total','pct0','pct1','pct2']);XLSX.writeFile(wb,`NMCP_ConfTreatAge_${ST.config.start}_${ST.config.end}.xlsx`);}
+function sa_exportCSV(){if(isChiefRun()){cf_exportCSV();return;}const header='ou_uid,district,chiefdom,date,age0_59m,age5_14y,age15plus,total,pct_0_59m,pct_5_14y,pct_15plus';const csv=header+'\n'+ST.facData.map(r=>`${r.ouId},${r.districtName},${r.chiefdomName},${r.date},${r.age0},${r.age1},${r.age2},${r.total},${r.pct0??''},${r.pct1??''},${r.pct2??''}`).join('\n');const a=document.createElement('a');a.download=`NMCP_ConfTreatAge_FacilityMonth_${ST.config.start}_${ST.config.end}.csv`;a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();}
 
 // ═══════════════════════════════════════════════════════════════════
 //  CODE DOWNLOADS
@@ -1852,7 +2066,7 @@ let TRK={year:null,month:null};
 function trk_init(){const years=[...new Set((ST.config?.periods||[]).map(p=>p.slice(0,4)))].sort();const ySel=document.getElementById('trkYear');if(!ySel)return;ySel.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');ySel.value=years[years.length-1];TRK.year=years[years.length-1];TRK.month=null;trk_buildMonthTabs();trk_render();}
 function trk_buildMonthTabs(){const tabsEl=document.getElementById('trkMonthTabs');if(!tabsEl)return;const year=document.getElementById('trkYear')?.value||TRK.year;const activePeriods=new Set((ST.config?.periods||[]).filter(p=>p.slice(0,4)===year));tabsEl.innerHTML='';const allBtn=document.createElement('button');allBtn.className='trk-period-btn'+(TRK.month===null?' active':'');allBtn.textContent='Full Year';allBtn.onclick=()=>{TRK.month=null;trk_setActiveMonthTab(allBtn);trk_render();};tabsEl.appendChild(allBtn);MONTH_NAMES.forEach((name,idx)=>{const mStr=String(idx+1).padStart(2,'0'),period=`${year}${mStr}`;const hasData=activePeriods.has(period);const btn=document.createElement('button');btn.className='trk-period-btn'+(TRK.month===mStr?' active':'');btn.textContent=name.slice(0,3);btn.style.opacity=hasData?'1':'0.4';btn.style.cursor=hasData?'pointer':'default';if(hasData)btn.onclick=()=>{TRK.month=mStr;trk_setActiveMonthTab(btn);trk_render();};tabsEl.appendChild(btn);});}
 function trk_setActiveMonthTab(activeBtn){document.querySelectorAll('.trk-period-btn').forEach(b=>b.classList.remove('active'));activeBtn.classList.add('active');}
-function trk_render(){const year=document.getElementById('trkYear')?.value||TRK.year;TRK.year=year;trk_buildMonthTabs();const month=TRK.month;const q=(document.getElementById('trkSearch')?.value||'').toLowerCase().trim();const onlyData=document.getElementById('trkOnlyData')?.checked;const tree=document.getElementById('trkTree');if(!tree)return;const facMap={};ST.facData.forEach(row=>{if(row.date.slice(0,4)!==year)return;if(month&&row.date.slice(5,7)!==month)return;if(!facMap[row.ouId])facMap[row.ouId]={ouId:row.ouId,districtName:row.districtName,chiefdomName:row.chiefdomName,name:ST.ouHierarchy[row.ouId]?.name||row.ouId,age0:0,age1:0,age2:0,total:0};facMap[row.ouId].age0+=row.age0;facMap[row.ouId].age1+=row.age1;facMap[row.ouId].age2+=row.age2;facMap[row.ouId].total+=row.total;});const tree_data={};Object.values(facMap).forEach(fac=>{if(onlyData&&fac.total===0)return;const d=fac.districtName||'Unknown District',c=fac.chiefdomName||'Unknown Chiefdom';if(q&&![fac.name,d,c].join(' ').toLowerCase().includes(q))return;if(!tree_data[d])tree_data[d]={};if(!tree_data[d][c])tree_data[d][c]=[];tree_data[d][c].push(fac);});Object.values(tree_data).forEach(chiefs=>{Object.values(chiefs).forEach(facs=>{facs.sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name));});});const distNames=Object.keys(tree_data).sort();if(!distNames.length){tree.innerHTML=`<div class="trk-empty">No facilities match your search.</div>`;return;}tree.innerHTML='';distNames.forEach(dist=>{const chiefs=tree_data[dist];const chiefNames=Object.keys(chiefs).sort();let dA0=0,dA1=0,dA2=0,dTot=0;chiefNames.forEach(c=>{chiefs[c].forEach(f=>{dA0+=f.age0;dA1+=f.age1;dA2+=f.age2;dTot+=f.total;});});const dp0=dTot>0?(dA0/dTot*100).toFixed(1):null,dp1=dTot>0?(dA1/dTot*100).toFixed(1):null,dp2=dTot>0?(dA2/dTot*100).toFixed(1):null;const distEl=document.createElement('div');distEl.className='trk-district';const distHead=document.createElement('div');distHead.className='trk-dist-head';distHead.innerHTML=`<span class="trk-dist-name">${dist}</span><div class="trk-dist-pills"><span class="trk-dist-pill">${chiefNames.length} chiefdoms</span><span class="trk-dist-pill">${dTot.toLocaleString()} total</span><span class="trk-dist-pill" style="background:#fde8e0;color:#7a2800;">0 to 59m: ${dp0??'—'}%</span><span class="trk-dist-pill" style="background:#ddeeff;color:#0d3060;">5 to 14y: ${dp1??'—'}%</span><span class="trk-dist-pill" style="background:#d6f0de;color:#1a5e2a;">15y+: ${dp2??'—'}%</span></div><span class="trk-dist-chev">▶</span>`;const distBody=document.createElement('div');distBody.className='trk-dist-body';distHead.onclick=()=>{const open=distBody.classList.toggle('open');distHead.querySelector('.trk-dist-chev').textContent=open?'▼':'▶';};chiefNames.forEach(chief=>{const facs=chiefs[chief];let cA0=0,cA1=0,cA2=0,cTot=0;facs.forEach(f=>{cA0+=f.age0;cA1+=f.age1;cA2+=f.age2;cTot+=f.total;});const cp0=cTot>0?(cA0/cTot*100).toFixed(1):null,cp1=cTot>0?(cA1/cTot*100).toFixed(1):null,cp2=cTot>0?(cA2/cTot*100).toFixed(1):null;const chiefEl=document.createElement('div');chiefEl.className='trk-chiefdom';const chiefHead=document.createElement('div');chiefHead.className='trk-chief-head';chiefHead.innerHTML=`<span class="trk-chief-name">${chief}</span><div class="trk-chief-pills"><span class="trk-chief-pill">${facs.length} facilities</span><span class="trk-chief-pill">${cTot.toLocaleString()} total</span><span class="trk-chief-pill" style="background:#fde8e0;color:#7a2800;border-color:#e8a07a;">0 to 59m: ${cp0??'—'}%</span><span class="trk-chief-pill" style="background:#ddeeff;color:#0d4080;border-color:#7ab4e8;">5 to 14y: ${cp1??'—'}%</span><span class="trk-chief-pill" style="background:#d6f0de;color:#1a5e2a;border-color:#7ac49a;">15y+: ${cp2??'—'}%</span></div><span class="trk-chief-chev">▶</span>`;const chiefBody=document.createElement('div');chiefBody.className='trk-chief-body';chiefHead.onclick=()=>{const open=chiefBody.classList.toggle('open');chiefHead.querySelector('.trk-chief-chev').textContent=open?'▼':'▶';};const grid=document.createElement('div');grid.className='trk-fac-grid';facs.forEach(f=>{const p0=f.total>0?(f.age0/f.total*100).toFixed(1):null,p1=f.total>0?(f.age1/f.total*100).toFixed(1):null,p2=f.total>0?(f.age2/f.total*100).toFixed(1):null;const facEl=document.createElement('div');facEl.className='trk-fac';facEl.innerHTML=`<span class="trk-fac-name" title="${f.name}">${f.name}</span><div class="trk-fac-ages"><span class="trk-age-badge a0">0 to 59m: ${p0??'—'}%</span><span class="trk-age-badge a1">5 to 14y: ${p1??'—'}%</span><span class="trk-age-badge a2">15y+: ${p2??'—'}%</span></div>`;grid.appendChild(facEl);});if(!grid.children.length)grid.innerHTML=`<div class="trk-empty" style="padding:8px;">No facilities match current filters.</div>`;chiefBody.appendChild(grid);chiefEl.appendChild(chiefHead);chiefEl.appendChild(chiefBody);distBody.appendChild(chiefEl);});distEl.appendChild(distHead);distEl.appendChild(distBody);tree.appendChild(distEl);});}
+function trk_render(){const year=document.getElementById('trkYear')?.value||TRK.year;TRK.year=year;trk_buildMonthTabs();const month=TRK.month;const q=(document.getElementById('trkSearch')?.value||'').toLowerCase().trim();const onlyData=document.getElementById('trkOnlyData')?.checked;const tree=document.getElementById('trkTree');if(!tree)return;const facMap={};ST.facData.forEach(row=>{if(row.date.slice(0,4)!==year)return;if(month&&row.date.slice(5,7)!==month)return;if(!facMap[row.ouId])facMap[row.ouId]={ouId:row.ouId,districtName:row.districtName,chiefdomName:row.chiefdomName,name:ST.ouHierarchy[row.ouId]?.name||row.ouId,age0:0,age1:0,age2:0,total:0};facMap[row.ouId].age0+=row.age0;facMap[row.ouId].age1+=row.age1;facMap[row.ouId].age2+=row.age2;facMap[row.ouId].total+=row.total;});const tree_data={};Object.values(facMap).forEach(fac=>{if(onlyData&&fac.total===0)return;const d=fac.districtName||'Unknown District',c=fac.chiefdomName||'Unknown Chiefdom';if(q&&![fac.name,d,c].join(' ').toLowerCase().includes(q))return;if(!tree_data[d])tree_data[d]={};if(!tree_data[d][c])tree_data[d][c]=[];tree_data[d][c].push(fac);});Object.values(tree_data).forEach(chiefs=>{Object.values(chiefs).forEach(facs=>{facs.sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name));});});const distNames=Object.keys(tree_data).sort();if(!distNames.length){tree.innerHTML=`<div class="trk-empty">No facilities match your search.</div>`;return;}tree.innerHTML='';distNames.forEach(dist=>{const chiefs=tree_data[dist];const chiefNames=Object.keys(chiefs).sort();let dA0=0,dA1=0,dA2=0,dTot=0;chiefNames.forEach(c=>{chiefs[c].forEach(f=>{dA0+=f.age0;dA1+=f.age1;dA2+=f.age2;dTot+=f.total;});});const dp0=dTot>0?(dA0/dTot*100).toFixed(1):null,dp1=dTot>0?(dA1/dTot*100).toFixed(1):null,dp2=dTot>0?(dA2/dTot*100).toFixed(1):null;const distEl=document.createElement('div');distEl.className='trk-district';const distHead=document.createElement('div');distHead.className='trk-dist-head';distHead.innerHTML=`<span class="trk-dist-name">${dist}</span><div class="trk-dist-pills"><span class="trk-dist-pill">${chiefNames.length} chiefdoms</span><span class="trk-dist-pill">${dTot.toLocaleString()} total</span><span class="trk-dist-pill" style="background:#fde8e0;color:#7a2800;">0 to 59m: ${dp0??'—'}%</span><span class="trk-dist-pill" style="background:#ddeeff;color:#0d3060;">5 to 14y: ${dp1??'—'}%</span><span class="trk-dist-pill" style="background:#d6f0de;color:#1a5e2a;">15y+: ${dp2??'—'}%</span></div><span class="trk-dist-chev">▶</span>`;const distBody=document.createElement('div');distBody.className='trk-dist-body';distHead.onclick=()=>{const open=distBody.classList.toggle('open');distHead.querySelector('.trk-dist-chev').textContent=open?'▼':'▶';};chiefNames.forEach(chief=>{const facs=chiefs[chief];let cA0=0,cA1=0,cA2=0,cTot=0;facs.forEach(f=>{cA0+=f.age0;cA1+=f.age1;cA2+=f.age2;cTot+=f.total;});const cp0=cTot>0?(cA0/cTot*100).toFixed(1):null,cp1=cTot>0?(cA1/cTot*100).toFixed(1):null,cp2=cTot>0?(cA2/cTot*100).toFixed(1):null;const chiefEl=document.createElement('div');chiefEl.className='trk-chiefdom';const chiefHead=document.createElement('div');chiefHead.className='trk-chief-head';chiefHead.innerHTML=`<span class="trk-chief-name">${chief}</span><div class="trk-chief-pills"><span class="trk-chief-pill">${facs.length} facilities</span><span class="trk-chief-pill">${cTot.toLocaleString()} total</span><span class="trk-chief-pill" style="background:#fde8e0;color:#7a2800;border-color:#e8a07a;">0 to 59m: ${cp0??'—'}%</span><span class="trk-chief-pill" style="background:#ddeeff;color:#0d4080;border-color:#7ab4e8;">5 to 14y: ${cp1??'—'}%</span><span class="trk-chief-pill" style="background:#d6f0de;color:#1a5e2a;border-color:#7ac49a;">15y+: ${cp2??'—'}%</span></div><span class="trk-chief-chev">▶</span>`;const chiefBody=document.createElement('div');chiefBody.className='trk-chief-body';chiefHead.onclick=()=>{const open=chiefBody.classList.toggle('open');chiefHead.querySelector('.trk-chief-chev').textContent=open?'▼':'▶';};const grid=document.createElement('div');grid.className='trk-fac-grid';facs.forEach(f=>{const p0=f.total>0?(f.age0/f.total*100).toFixed(1):null,p1=f.total>0?(f.age1/f.total*100).toFixed(1):null,p2=f.total>0?(f.age2/f.total*100).toFixed(1):null;const facEl=document.createElement('div');facEl.className='trk-fac';facEl.innerHTML=`<span class="trk-fac-name" title="${f.name}">${f.name}</span><div class="trk-fac-ages"><span class="trk-age-badge a0">0 to 59m: ${p0??'—'}%</span><span class="trk-age-badge a1">5 to 14y: ${p1??'—'}%</span><span class="trk-age-badge a2">15y+: ${p2??'—'}%</span></div>`;grid.appendChild(facEl);});if(!grid.children.length)grid.innerHTML=`<div class="trk-empty" style="padding:8px;">No facilities match current filters.</div>`;chiefBody.appendChild(grid);chiefEl.appendChild(chiefHead);chiefEl.appendChild(chiefBody);distBody.appendChild(chiefEl);});distEl.appendChild(distHead);distEl.appendChild(distBody);if(isChiefRun()){distBody.querySelectorAll('.trk-chief-body').forEach(b=>b.classList.add('open'));distBody.querySelectorAll('.trk-chief-chev').forEach(c=>c.textContent='▼');[...distBody.children].forEach(c=>tree.appendChild(c));}else tree.appendChild(distEl);});}
 function trk_expandAll(open){document.querySelectorAll('.trk-dist-body').forEach(b=>{b.classList.toggle('open',open);const chev=b.previousElementSibling?.querySelector('.trk-dist-chev');if(chev)chev.textContent=open?'▼':'▶';});document.querySelectorAll('.trk-chief-body').forEach(b=>{b.classList.toggle('open',open);const chev=b.previousElementSibling?.querySelector('.trk-chief-chev');if(chev)chev.textContent=open?'▼':'▶';});}
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2036,7 +2250,7 @@ async function sa_downloadPPTX(){
   try{
     await pptx.writeFile({ fileName:'NMCP_ConfTreatAge_AllOutputs_'+ST.config.start+'_'+ST.config.end+'.pptx' });
     _pptStatus('✓ Downloaded '+(added+1)+' slides (incl. title & section dividers).');
-    setPill('Done ✓','rgba(40,167,69,.55)');
+    setPill('Done ✓ · ' + ST.config.districtName,'rgba(40,167,69,.55)');
   }catch(e){
     _pptStatus('Export failed: '+(e.message||e));
     setPill('Error','rgba(220,53,69,.5)');
@@ -2068,6 +2282,85 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
 sa_buildMapPaletteGrid();
 sa_updateAnnualLegendBar();
+// Load districts (Level 2) into the Area picker when the app opens
+let DISTRICTS = null;   // null = not loaded yet
+async function loadDistricts(){
+  const grid = document.getElementById('distGrid');
+  const note = document.getElementById('distNote');
+  try {
+    const r = await dhis2('/api/organisationUnits.json?level=' + LEVEL_DIST + '&fields=id,displayName&paging=false');
+    DISTRICTS = (r.organisationUnits || []).sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    const sel = document.getElementById('cfgDistrict');
+    DISTRICTS.forEach(d => { const o=document.createElement('option'); o.value=d.id; o.textContent=d.displayName; sel.appendChild(o); });
+    grid.innerHTML = '';
+    DISTRICTS.forEach((d, i) => {
+      const b = document.createElement('button');
+      b.className = 'dist-card';
+      b.innerHTML = `<div class="n">${i + 1}</div><div style="flex:1;min-width:0;"><div class="nm">${d.displayName}</div><div class="sb">District</div></div><svg class="go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`;
+      b.onclick = () => AREA_MODE === 'chiefdom' ? showChiefdomCards(d) : pickArea(d.id, d.displayName, 'district', d.displayName, '');
+      grid.appendChild(b);
+    });
+    if (note) note.textContent = DISTRICTS.length + ' districts · click one to fetch only that district';
+  } catch (e) {
+    DISTRICTS = [];
+    if (note) note.innerHTML = 'Could not load districts from DHIS2. <a href="#" onclick="loadDistricts();return false;">Try again</a>';
+  }
+}
+function showAreaChoose(){
+  document.getElementById('areaScreen').style.display     = 'block';
+  document.getElementById('areaChoose').style.display     = 'block';
+  document.getElementById('areaDistricts').style.display  = 'none';
+  document.getElementById('areaChiefdoms').style.display  = 'none';
+  document.getElementById('configScreen').style.display   = 'none';
+  document.getElementById('pipelineScreen').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+}
+let AREA = { id:'', name:'National', level:'national', district:'', chiefdom:'' };
+let AREA_MODE = 'district';
+function showDistrictCards(mode){
+  AREA_MODE = mode || 'district';
+  document.getElementById('distTitle').textContent = AREA_MODE === 'chiefdom' ? 'Chiefdom: first choose its district' : 'Choose a district';
+  document.getElementById('areaChoose').style.display    = 'none';
+  document.getElementById('areaChiefdoms').style.display = 'none';
+  document.getElementById('areaDistricts').style.display = 'block';
+  if (DISTRICTS === null || (DISTRICTS && !DISTRICTS.length)) loadDistricts();
+}
+const CHIEFDOMS = {};   // districtId -> list, cached
+async function showChiefdomCards(d){
+  document.getElementById('areaDistricts').style.display = 'none';
+  document.getElementById('areaChiefdoms').style.display = 'block';
+  document.getElementById('chiefTitle').textContent = 'Choose a chiefdom in ' + d.displayName;
+  const grid = document.getElementById('chiefGrid');
+  const note = document.getElementById('chiefNote');
+  grid.innerHTML = '';
+  note.textContent = 'Loading chiefdoms from DHIS2…';
+  try {
+    if (!CHIEFDOMS[d.id]) {
+      const r = await dhis2('/api/organisationUnits.json?level=' + LEVEL_CHIEF + '&filter=path:like:' + d.id + '&fields=id,displayName&paging=false');
+      CHIEFDOMS[d.id] = (r.organisationUnits || []).sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    }
+    const list = CHIEFDOMS[d.id];
+    list.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.className = 'dist-card';
+      b.innerHTML = `<div class="n">${i + 1}</div><div style="flex:1;min-width:0;"><div class="nm">${c.displayName}</div><div class="sb">${d.displayName}</div></div>`
+        + '<svg class="go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+      b.onclick = () => pickArea(c.id, c.displayName, 'chiefdom', d.displayName, c.displayName);
+      grid.appendChild(b);
+    });
+    note.textContent = list.length + ' chiefdoms · click one to fetch only that chiefdom';
+  } catch (e) {
+    note.innerHTML = 'Could not load chiefdoms from DHIS2. <a href="#" id="chiefRetry">Try again</a>';
+    document.getElementById('chiefRetry').onclick = ev => { ev.preventDefault(); showChiefdomCards(d); };
+  }
+}
+function pickArea(id, name, level, district, chiefdom){
+  AREA = { id, name: id ? name : 'National', level: id ? (level || 'district') : 'national',
+           district: district || '', chiefdom: chiefdom || '' };
+  document.getElementById('areaLabel').textContent = id ? name : 'National (all districts)';
+  showConfigScreen();
+}
+loadDistricts();
 </script>
 </body>
 </html>
