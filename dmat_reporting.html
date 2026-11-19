@@ -189,6 +189,119 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 
 /* ── FOOTER ── */
 .page-footer{background:var(--blue-dk);color:rgba(255,255,255,.8);text-align:center;padding:14px;font-size:11px;margin-top:28px;}
+/* ── AREA SCREEN (National / District cards) ── */
+.area-head{text-align:center;margin:6px 0 20px;}
+.area-head h2{font-size:18px;font-weight:800;color:var(--blue-dk);margin-bottom:4px;}
+.area-head p{font-size:12px;color:var(--muted);}
+.area-big{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1000px;margin:0 auto;}
+@media(max-width:820px){.area-big{grid-template-columns:1fr;}}
+.area-card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:26px 22px;cursor:pointer;text-align:center;
+  box-shadow:0 4px 18px rgba(44,103,147,.10);transition:transform .15s,border-color .15s,box-shadow .15s;font-family:inherit;}
+.area-card:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 8px 24px rgba(44,103,147,.18);}
+.area-card .ic{width:58px;height:58px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+  background:var(--blue-lt);color:var(--blue);font-size:26px;font-weight:800;}
+.area-card .t{font-size:18px;font-weight:800;color:var(--blue-dk);margin-bottom:5px;}
+.area-card .d{font-size:12px;color:var(--muted);line-height:1.55;}
+.area-card.nat .ic{background:var(--blue);color:#fff;}
+.dist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:900px){.dist-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.dist-grid{grid-template-columns:1fr;}}
+.dist-card{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:16px 14px;cursor:pointer;text-align:left;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:11px;}
+.dist-card:hover{border-color:var(--blue);background:var(--blue-lt);transform:translateY(-2px);}
+.dist-card .n{width:34px;height:34px;border-radius:8px;background:var(--blue);color:#fff;font-weight:800;font-size:13px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dist-card .nm{font-size:14px;font-weight:700;color:var(--blue-dk);}
+.dist-card .go{color:#9fb3c6;flex-shrink:0;transition:transform .15s,color .15s;}
+.dist-card:hover .go{color:var(--blue);transform:translateX(3px);}
+.area-card .ic svg{display:block;}
+.area-card:hover .ic{transform:scale(1.06);}
+.area-card .ic{transition:transform .15s;}
+.dist-card .sb{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.area-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--blue-lt);
+  border:1.5px solid var(--blue);border-radius:10px;padding:10px 16px;margin-bottom:16px;}
+.area-bar .lbl{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.6px;}
+.area-bar .val{font-size:16px;font-weight:800;color:var(--blue-dk);}
+
+
+/* chiefdom runs: hide district columns in the excluded and wrong-form tables */
+body.chief-run #excludedTable th:nth-child(2), body.chief-run #excludedTable td:nth-child(2){display:none;}
+body.chief-run #vioBox table th:nth-child(1), body.chief-run #vioBox table td:nth-child(1){display:none;}
+/* ── POSTER & PAPER TABS ── */
+.pub-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.pub-tools .hint{font-size:12px;color:var(--muted);}
+.pub-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+[contenteditable]:hover{outline:1px dashed #9db4c8;outline-offset:2px;}
+[contenteditable]:focus{outline:2px solid var(--blue);outline-offset:2px;}
+
+/* poster: landscape board */
+.pos-board{background:#fff;border:1px solid #c9d6e2;box-shadow:0 4px 18px rgba(0,0,0,.08);width:100%;max-width:1400px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#1d1d1d;}
+.pos-head{padding:18px 30px;background:#1f4a6a;color:#fff;border-bottom:6px solid #28a745;}
+.pos-title{font-size:24px;font-weight:700;text-align:center;line-height:1.2;}
+.pos-auth{font-size:15px;text-align:center;margin-top:8px;}
+.pos-aff{font-size:12.5px;text-align:center;margin-top:4px;opacity:.85;font-style:italic;}
+.pos-cols{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:18px;padding:18px 22px 10px;}
+.pos-sec{margin-bottom:16px;}
+.pos-sec h3{background:#2c6793;color:#fff;font-size:15px;font-weight:700;padding:6px 12px;margin-bottom:8px;letter-spacing:.3px;}
+.pos-sec p,.pos-sec li{font-size:13px;line-height:1.5;text-align:justify;}
+.pos-sec ul{padding-left:18px;display:grid;gap:4px;}
+.pos-fig{margin:6px 0 12px;}
+.pos-fig img,.pos-fig svg{width:100%;height:auto;display:block;border:1px solid #e2e8f0;}
+.pos-cap{font-size:11.5px;line-height:1.4;margin-top:4px;color:#333;}
+.pos-cap b{color:#1f4a6a;}
+.pos-kv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0;}
+.pos-kv div{border:1px solid #c9d6e2;border-top:4px solid #2c6793;padding:6px 8px;text-align:center;}
+.pos-kv b{display:block;font-size:20px;color:#1f4a6a;}
+.pos-kv span{font-size:10.5px;color:#555;}
+.pos-foot{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#444;border-top:2px solid #1f4a6a;padding:8px 22px;}
+.pub-tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin:4px 0;}
+.pub-tbl th{border-top:1.5px solid #000;border-bottom:1px solid #000;padding:4px 6px;text-align:left;font-weight:700;}
+.pub-tbl td{padding:3px 6px;}
+.pub-tbl tr:last-child td{border-bottom:1.5px solid #000;}
+.pub-tbl td.n,.pub-tbl th.n{text-align:right;}
+.pub-tbl tr.tot td{font-weight:700;border-top:1px solid #000;}
+
+/* paper: journal manuscript */
+.pap-page{background:#fff;max-width:860px;margin:0 auto;padding:56px 70px;border:1px solid #d6dde4;box-shadow:0 4px 18px rgba(0,0,0,.07);
+  font-family:'Times New Roman',Times,Georgia,serif;color:#111;font-size:15px;line-height:1.65;}
+.pap-page h1{font-size:20px;line-height:1.3;text-align:center;font-weight:700;margin-bottom:12px;}
+.pap-page .au{text-align:center;font-size:15px;}
+.pap-page .af{text-align:center;font-size:13px;font-style:italic;color:#333;margin:4px 0 18px;}
+.pap-page h2{font-size:17px;font-weight:700;margin:22px 0 6px;}
+.pap-page h3{font-size:15px;font-weight:700;font-style:italic;margin:14px 0 4px;}
+.pap-page p{text-align:justify;margin-bottom:8px;}
+.pap-abs{border-top:1px solid #000;border-bottom:1px solid #000;padding:10px 0;margin-bottom:10px;}
+.pap-abs p{font-size:14px;}
+.pap-kw{font-size:14px;margin-bottom:6px;}
+.pap-fig{margin:14px 0;page-break-inside:avoid;}
+.pap-fig img,.pap-fig svg{width:100%;height:auto;display:block;}
+.pap-cap{font-size:13.5px;margin-top:4px;}
+.pap-tcap{font-size:13.5px;margin:12px 0 2px;}
+.pap-page .pub-tbl{font-size:13px;font-family:'Times New Roman',Times,serif;}
+.pap-ref{font-size:13.5px;padding-left:22px;}
+.pap-ref li{margin-bottom:4px;}
+#pubPrintRoot{display:none;}
+.pub-orient{padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;}
+@media print{
+  body.print-pub > *:not(#pubPrintRoot){display:none !important;}
+  html,body.print-pub{background:#fff !important;}
+  body.print-pub #pubPrintRoot{display:block;}
+  #pubPrintRoot *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #pubPrintRoot .pos-board{border:none;box-shadow:none;}
+  #pubPrintRoot.pub-root-poster .pub-pwrap{page-break-inside:avoid;break-inside:avoid;}
+  #pubPrintRoot .pap-page{border:none;box-shadow:none;max-width:none;width:auto;padding:0;margin:0;font-size:11pt;line-height:1.5;}
+  #pubPrintRoot .pap-page h1{font-size:15pt;}
+  #pubPrintRoot .pap-page h2{font-size:12.5pt;break-after:avoid;page-break-after:avoid;}
+  #pubPrintRoot .pap-page h3{font-size:11pt;break-after:avoid;page-break-after:avoid;}
+  #pubPrintRoot .pap-page p{orphans:3;widows:3;}
+  #pubPrintRoot .pap-abs p,#pubPrintRoot .pap-kw,#pubPrintRoot .pap-cap,#pubPrintRoot .pap-tcap,#pubPrintRoot .pap-ref{font-size:10pt;}
+  #pubPrintRoot .pap-tcap{break-after:avoid;page-break-after:avoid;}
+  #pubPrintRoot .pap-fig,#pubPrintRoot .pub-tbl tr{break-inside:avoid;page-break-inside:avoid;}
+  #pubPrintRoot .pap-fig svg{width:100%;height:auto;max-height:120mm;}
+  #pubPrintRoot .pap-fig img{display:block;width:auto;max-width:100%;height:auto;max-height:120mm;margin:0 auto;}
+  #pubPrintRoot .pub-tbl{font-size:9.5pt;}
+}
+
 </style>
 </head>
 <body>
@@ -214,8 +327,43 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
 <!-- ═══ BODY ═══ -->
 <div class="page-body">
 
+  <!-- ══ AREA: National, District or Chiefdom ══ -->
+  <div id="areaScreen">
+    <div id="areaChoose">
+      <div class="area-head"><h2>Choose the area</h2><p>Check reporting for the whole country, one district, or one chiefdom. A smaller area runs much faster.</p></div>
+      <div class="area-big">
+        <button class="area-card nat" onclick="pickArea('', 'National')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg></div><div class="t">National</div>
+          <div class="d">All 16 districts in one run. Every heatmap, map and table covers Sierra Leone.</div>
+        </button>
+        <button class="area-card" onclick="showDistrictCards('district')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></div><div class="t">District</div>
+          <div class="d">Pick one district from the list. Only that district's facilities and CHW posts are fetched.</div>
+        </button>
+        <button class="area-card" onclick="showDistrictCards('chiefdom')">
+          <div class="ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5l9 4.5 9-4.5"/></svg></div><div class="t">Chiefdom</div>
+          <div class="d">Pick the district first, then one of its chiefdoms. Only that chiefdom is fetched.</div>
+        </button>
+      </div>
+    </div>
+    <div id="areaDistricts" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div class="area-head" style="text-align:left;margin:0;"><h2 id="distTitle">Choose a district</h2><p id="distNote">Loading districts from DHIS2…</p></div>
+        <button class="btn btn-outline btn-sm" onclick="showAreaChoose()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
+      </div>
+      <div class="dist-grid" id="distGrid"></div>
+    </div>
+    <div id="areaChiefdoms" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div class="area-head" style="text-align:left;margin:0;"><h2 id="chiefTitle">Choose a chiefdom</h2><p id="chiefNote">Loading chiefdoms from DHIS2…</p></div>
+        <button class="btn btn-outline btn-sm" onclick="showDistrictCards('chiefdom')"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to districts</button>
+      </div>
+      <div class="dist-grid" id="chiefGrid"></div>
+    </div>
+  </div>
+
   <!-- ── CONFIG PANEL ── -->
-  <div class="card" id="configCard">
+  <div class="card" id="configCard" style="display:none;">
     <div class="card-head">
       <h2>⚙ Pipeline Configuration</h2>
       <div style="display:flex;gap:8px;">
@@ -224,6 +372,10 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
       </div>
     </div>
     <div class="card-body">
+      <div class="area-bar">
+        <div><div class="lbl">Area</div><div class="val" id="areaLabel">National</div></div>
+        <button class="btn btn-outline btn-sm" onclick="showAreaChoose()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Change area</button>
+      </div>
       <div id="alertBox"></div>
       <div class="cfg-grid">
         <div class="form-group">
@@ -352,9 +504,19 @@ html,body{width:100%;min-height:100vh;font-family:'Segoe UI','Roboto',Arial,sans
           <button class="tab-btn" data-tab="summary">Summary Table</button>
           <button class="tab-btn" data-tab="downloads">Downloads</button>
           <button class="tab-btn" data-tab="methodology">Methodology</button>
+          <button class="tab-btn" data-tab="poster"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><rect x="2" y="4" width="20" height="14" rx="1"/><path d="M6 9h5M6 12h3M14 9h4v5h-4z"/><path d="M12 18v3M8 21h8"/></svg>Poster</button>
+          <button class="tab-btn" data-tab="paper"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></svg>Paper</button>
         </div>
 
         <!-- ── TAB: HEATMAPS ── -->
+        <div id="tab-poster" class="tab-pane">
+          <div class="pub-tools"><span class="hint">Click any text on the poster to edit it. Choose the page size, then Download as PDF.</span><span style="display:flex;gap:8px;align-items:center"><select id="posSubject" class="pub-orient" onchange="pos_render()"><option value="hf">Health facilities</option><option value="chw">CHW posts</option></select><select id="posOrient" class="pub-orient"><option value="landscape">A4 landscape</option><option value="portrait">A4 portrait</option></select><button id="posPdfBtn" class="btn btn-outline btn-sm" onclick="pub_print('poster')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Download as PDF</button></span></div>
+          <div id="posterBody"></div>
+        </div>
+        <div id="tab-paper" class="tab-pane">
+          <div class="pub-tools"><span class="hint">Draft manuscript built from this run. Click any text to edit it, then Download as PDF.</span><span style="display:flex;gap:8px;align-items:center"><select id="papSubject" class="pub-orient" onchange="pap_render()"><option value="hf">Health facilities</option><option value="chw">CHW posts</option></select><select id="papOrient" class="pub-orient"><option value="portrait">A4 portrait</option><option value="landscape">A4 landscape</option></select><button id="papPdfBtn" class="btn btn-outline btn-sm" onclick="pub_print('paper')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Download as PDF</button></span></div>
+          <div id="paperBody"></div>
+        </div>
         <div id="tab-heatmaps" class="tab-pane active">
 
           <!-- Options -->
@@ -1280,7 +1442,12 @@ async function rs_startPipeline() {
   const end   = document.getElementById('cfgEnd').value;
   if(!start || !end || start > end) { showAlert('Select a valid date range.','warn'); return; }
 
-  ST.config = { start, end, periods: genPeriods(start, end) };
+  // districtId is the boundary org unit (district or chiefdom); districtName is its label
+  ST.config = { start, end, periods: genPeriods(start, end),
+                districtId: AREA.id, districtName: AREA.id ? AREA.name : 'National',
+                areaLevel: AREA.level, geoDistrict: AREA.district, geoChiefdom: AREA.chiefdom };
+  document.body.classList.toggle('chief-run', AREA.level === 'chiefdom');
+  document.getElementById('areaScreen').style.display = 'none';
   ST.orgHierarchy = {}; ST.rawSums = {}; ST.srcSums = {}; ST.excluded = []; ST.reportData = [];
   ST.cutViol = {}; ST.cutIgnored = {oldAfter:0,newBefore:0}; ST.cutIgnoredVal = {oldAfter:0,newBefore:0};
   ST.chwRegistry = {}; ST.chwSums = {}; ST.chwReportData = [];
@@ -1314,8 +1481,8 @@ async function rs_startPipeline() {
 
     // Fetch Level-5 and Level-6 in parallel — one extra call, no extra wait.
     const [ouData5, ouData6] = await Promise.all([
-      dhis2(`/api/organisationUnits.json?level=${LEVEL_PHU}&fields=id,displayName,ancestors[id,displayName,level]&paging=false&pageSize=50000`),
-      dhis2(`/api/organisationUnits.json?level=${LEVEL_COM}&fields=id,displayName,ancestors[id,level]&paging=false&pageSize=50000`),
+      dhis2(`/api/organisationUnits.json?level=${LEVEL_PHU}&fields=id,displayName,ancestors[id,displayName,level]&paging=false&pageSize=50000` + _areaFilter()),
+      dhis2(`/api/organisationUnits.json?level=${LEVEL_COM}&fields=id,displayName,ancestors[id,level]&paging=false&pageSize=50000` + _areaFilter()),
     ]);
 
     const ous   = ouData5.organisationUnits || [];
@@ -1428,7 +1595,7 @@ rs_renderChwVariables();
       const url = '/api/analytics.json'
                 + '?dimension=dx:' + DX_PARAM
                 + '&dimension=pe:' + pes.join(';')
-                + '&dimension=ou:LEVEL-' + LEVEL_PHU + ';LEVEL-' + LEVEL_COM
+                + '&dimension=ou:LEVEL-' + LEVEL_PHU + ';LEVEL-' + LEVEL_COM + (ST.config.districtId ? ';' + ST.config.districtId : '')
                 + '&displayProperty=NAME&paging=false&ignoreLimit=true';
       const resp = await dhis2(url);
       (resp.rows||[]).forEach(row => {
@@ -1543,22 +1710,15 @@ rs_renderChwVariables();
 
     // ── Step 6: GeoJSON ──
     setStep('s6','running');
-    if (!ST.geoCache.chiefdomGeo) {
+    // Full country shapes are downloaded once; each run cuts them to its area
+    if (!GEO_FULL.chief) {
       const [cg, dg] = await Promise.all([
         fetch(CHIEFDOM_GEOJSON).then(r=>r.json()),
         fetch(DISTRICT_GEOJSON).then(r=>r.json()).catch(()=>null),
       ]);
-      ST.geoCache.chiefdomGeo = cg;
-      ST.geoCache.districtGeo = dg;
-      let mnX=Infinity,mnY=Infinity,mxX=-Infinity,mxY=-Infinity;
-      (cg.features||[]).forEach(f=>{
-        walkCoords(f.geometry,c=>{
-          if(c[0]<mnX)mnX=c[0];if(c[0]>mxX)mxX=c[0];
-          if(c[1]<mnY)mnY=c[1];if(c[1]>mxY)mxY=c[1];
-        });
-      });
-      ST.geoCache.bbox = {mnX,mnY,mxX,mxY};
+      GEO_FULL.chief = cg; GEO_FULL.dist = dg;
     }
+    applyGeoArea();
     setStep('s6','done',`${(ST.geoCache.chiefdomGeo.features||[]).length} chiefdom features`); setProgress(83);
 
     // ── Step 7: Geo rates ──
@@ -1576,6 +1736,7 @@ rs_renderChwVariables();
     document.getElementById('resultsSection').style.display  = 'block';
     await sleep(120);  // allow browser to reflow
 
+    try { applyAreaUi(); } catch(e) { console.warn(e); }
     let drawErrors = [];
     try { rs_drawBothHeatmaps(); } catch(e){ drawErrors.push('Heatmaps: '+e.message); }
     try { rs_renderGeoMaps();    } catch(e){ drawErrors.push('Geo maps: '+e.message); }
@@ -1584,6 +1745,7 @@ rs_renderChwVariables();
     try { rs_renderFormRule();   } catch(e){ drawErrors.push('Wrong form: '+e.message); }
     try { trk_init();            } catch(e){ drawErrors.push('Tracking: '+e.message); }
     try { chw_init();            } catch(e){ drawErrors.push('CHW tracking: '+e.message); }
+    PUB_DIRTY = {poster:true, paper:true}; try{ pub_fetchDsNames(); }catch(e){}
 
     if(drawErrors.length) {
       setStep('s8','error','Draw errors: ' + drawErrors.join(' | '));
@@ -1601,6 +1763,7 @@ rs_renderChwVariables();
       return `<div class="stat-pill">${t}: ${cnt}</div>`;
     }).join('');
     document.getElementById('statsRow').innerHTML = [
+      `<div class="stat-pill ok">Area: ${ST.config.districtName}</div>`,
       `<div class="stat-pill">${nFac} facilities (5 assessed types)</div>`,
       typePills,
       `<div class="stat-pill warn">${(ST.excluded||[]).length} excluded (labs · Marie Stopes · unrecognised)</div>`,
@@ -1614,7 +1777,7 @@ rs_renderChwVariables();
       `<div class="stat-pill">${reported.toLocaleString()} reported facility-months</div>`,
     ].join('');
 
-    setPill('Done ✓','rgba(40,167,69,.55)');
+    setPill('Done ✓ · ' + ST.config.districtName,'rgba(40,167,69,.55)');
 
   } catch(err) {
     console.error(err);
@@ -1638,9 +1801,11 @@ function rs_reset() {
     geoCache:{chiefdomGeo:null,districtGeo:null,bbox:null},
     geoDistrictRates:{}, geoChiefdomRates:{}, geoChiefdomHits:[],
   };
+  document.getElementById('areaScreen').style.display      = 'none';
   document.getElementById('configCard').style.display      = 'block';
   document.getElementById('progressSection').style.display = 'none';
   document.getElementById('resultsSection').style.display  = 'none';
+  document.body.classList.remove('chief-run');
   document.getElementById('stepList').innerHTML = '';
   setProgress(0);
   setPill('Ready','rgba(255,255,255,.15)');
@@ -1738,8 +1903,9 @@ function rs_drawBothHeatmaps() {
   const allHFs    = [...new Set(ST.reportData.map(r=>r.hf_uid))];
   const activeHFs = allHFs.filter(hf=>ST.reportData.some(r=>r.hf_uid===hf&&r.status));
   const neverCt   = allHFs.length - activeHFs.length;
-  const t1 = `${title} — All Facilities`;
-  const t2 = `${title} — Active Facilities Only (${neverCt} never-reporting excluded)`;
+  const _ar = ST.config?.districtId ? ` — ${ST.config.districtName}` : '';
+  const t1 = `${title}${_ar} — All Facilities`;
+  const t2 = `${title}${_ar} — Active Facilities Only (${neverCt} never-reporting excluded)`;
   const s1 = `${allHFs.length} facilities · ${ST.config.start} → ${ST.config.end}`;
   const s2 = `${activeHFs.length} facilities with ≥1 reported month`;
   document.getElementById('hmTitle1').textContent = t1;
@@ -1865,7 +2031,7 @@ function rs_downloadBothHeatmapSubplot() {
   ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,out.width,out.height);
   ctx.fillStyle='#1f4a6a'; ctx.font='bold 22px Oswald,Arial,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
-  ctx.fillText(`NMCP Malaria EPI Reporting Status · ${ST.config.start} → ${ST.config.end}`, W/2, 14);
+  ctx.fillText(`NMCP Malaria EPI Reporting Status · ${ST.config?.districtId?ST.config.districtName+' · ':''}${ST.config.start} → ${ST.config.end}`, W/2, 14);
   ctx.drawImage(c1, 0, TITLE_H);
   ctx.drawImage(c2, 0, TITLE_H + H + GAP);
   const a = document.createElement('a');
@@ -2172,11 +2338,11 @@ function drawNational() {
   ctx.fillStyle = '#1a2e3d'; ctx.fillText(cat, W / 2, midY + fsz * 0.82);
   ctx.font = `bold ${Math.round(W * .022)}px Oswald,Arial,sans-serif`;
   ctx.fillStyle = '#1a2e3d'; ctx.textBaseline = 'bottom';
-  ctx.fillText('Sierra Leone — National', W / 2, H - 8);
+  ctx.fillText(geoAreaName() + (ST.config?.districtId ? '' : ' — National'), W / 2, H - 8);
 
   // Hover: show "Sierra Leone — National · rate%" on hover
   canvas._hitsData = [{
-    name: 'Sierra Leone — National',
+    name: geoAreaName() + ' — Overall',
     rate: natRate,
     rings: (() => {
       const rings = [];
@@ -2471,6 +2637,8 @@ function drawChiefdom() {
   }
 
   // Build hits and attach hover
+  { const yr = document.getElementById('geoYear')?.value || '';
+    drawHfPoints(canvas, ctx, tf, r => r.Date.slice(0,4) === yr, false); }
   canvas._hitsData = buildHits(ST.geoCache.chiefdomGeo, 'adm3', ST.geoChiefdomRates, tf, null);
   canvas._hoverAttached = false; // reset so attachMapHover re-runs after redraw
   attachMapHover(canvas);
@@ -2512,6 +2680,14 @@ function attachMapHover(canvas) {
     const mx   = (evt.clientX - rect.left) * sx;
     const my   = (evt.clientY - rect.top)  * sy;
 
+    { // facility points take priority over shapes
+      const pts = canvas._points || []; let ph = null, best = 1e18;
+      for (const q of pts) { const dx=q.x-mx, dy=q.y-my, dd=dx*dx+dy*dy;
+        if (dd <= (q.r*1.8)*(q.r*1.8) && dd < best) { best = dd; ph = q; } }
+      if (ph) { tip.style.display='block'; tip.style.left=(evt.clientX+16)+'px'; tip.style.top=(evt.clientY-12)+'px';
+        tip.innerHTML = hfPointTip(ph); canvas.style.cursor='pointer'; return; }
+      canvas.style.cursor = 'crosshair';
+    }
     let hit = null;
     for (const h of hits) {
       for (const ring of h.rings) {
@@ -2603,7 +2779,8 @@ function rs_renderGeoMaps() {
   if (statusEl) {
     const nc = Math.round(Object.keys(ST.geoChiefdomRates).length / 2);
     const nd = Math.round(Object.keys(ST.geoDistrictRates).length / 2);
-    statusEl.textContent = `✓ ${year} · ${nd} districts · ${nc} chiefdoms`;
+    statusEl.textContent = isChiefRun() ? `✓ ${year} · ${ST.config.districtName} · ${Object.keys(ST.orgHierarchy).length} health facilities`
+                                        : `✓ ${year} · ${nd} districts · ${nc} chiefdoms`;
   }
 }
 
@@ -2705,7 +2882,7 @@ function drawMonthMapNational(canvas, period) {
   if (legEl) {
     legEl.innerHTML = `<div class="mm-leg-item">
       <div class="mm-leg-sw" style="background:${fillColor};border:1px solid rgba(0,0,0,.2);"></div>
-      <span style="color:#1f4a6a;font-weight:700;">National: ${natRateStr} — ${cat}</span>
+      <span style="color:#1f4a6a;font-weight:700;">${areaShort()}: ${natRateStr} — ${cat}</span>
     </div>`;
   }
 
@@ -2716,7 +2893,7 @@ function drawMonthMapNational(canvas, period) {
     if(f.geometry.type==='Polygon')      collect(f.geometry.coordinates);
     if(f.geometry.type==='MultiPolygon') f.geometry.coordinates.forEach(p=>collect(p));
   });
-  canvas._hitsData = [{ name: 'Sierra Leone — National', rate: natRate, rings, period }];
+  canvas._hitsData = [{ name: geoAreaName() + ' — Overall', rate: natRate, rings, period }];
   attachMapHover(canvas);
 }
 
@@ -2817,7 +2994,7 @@ function drawMonthMap(canvasId, period, level) {
   ctx.font = `bold ${Math.round(W*0.065)}px Oswald,Arial,sans-serif`;
   ctx.fillStyle = '#0d1f2d'; ctx.fillText(natRateStr, W-6, H-6);
   ctx.font = `bold ${Math.round(W*0.028)}px Oswald,Arial,sans-serif`;
-  ctx.fillStyle = '#0d1f2d'; ctx.fillText('National', W-6, H - Math.round(W*0.075));
+  ctx.fillStyle = '#0d1f2d'; ctx.fillText(areaShort(), W-6, H - Math.round(W*0.075));
 
   // Update legend — breaks + National row
   const legEl = document.getElementById(`mmLeg_${period}`);
@@ -2835,12 +3012,14 @@ function drawMonthMap(canvasId, period, level) {
     ).join('');
     const natHtml = `<div class="mm-leg-item" style="margin-left:auto;padding-left:6px;border-left:1.5px solid #c8d5e0;">
         <div class="mm-leg-sw" style="background:${natColor};border:1px solid rgba(0,0,0,.2);"></div>
-        <span style="color:#1f4a6a;font-weight:700;">National: ${natRateStr}</span>
+        <span style="color:#1f4a6a;font-weight:700;">${areaShort()}: ${natRateStr}</span>
       </div>`;
     legEl.innerHTML = breakHtml + natHtml;
   }
 
   // Build hit-test data and attach hover
+  if (level === 'chiefdom') drawHfPoints(canvas, ctx, tf, r => r.Date.replace('-','') === period, true);
+  else canvas._points = [];
   canvas._hitsData = buildHits(geo, nameProp, normMap, tf, period);
   canvas._catCounts = catCounts;
   canvas._natRateStr = natRateStr;
@@ -2865,7 +3044,7 @@ function rs_downloadMonthlyGrid() {
   ctx.fillStyle = '#f0f5f9'; ctx.fillRect(0,0,totalW,totalH);
   ctx.fillStyle = '#004080'; ctx.font = 'bold 22px Oswald,Arial,sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillText(`NMCP Malaria EPI Reporting Status — Monthly Maps · ${year}`, totalW/2, 14);
+  ctx.fillText(`NMCP Malaria EPI Reporting Status — Monthly Maps · ${ST.config?.districtId?ST.config.districtName+' · ':''}${year}`, totalW/2, 14);
 
   for (let mo = 1; mo <= 12; mo++) {
     const mStr   = String(mo).padStart(2,'0');
@@ -2938,8 +3117,9 @@ function rs_geoDownload(canvasId, suffix) {
 }
 
 function rs_geoDownloadSubplot() {
-  const ids    = ['geoNational', 'geoDistrict', 'geoChiefdom'];
-  const titles = ['National — Outline', 'District — Reporting Rate', 'Chiefdom — Reporting Rate'];
+  const ids    = isChiefRun() ? ['geoNational', 'geoChiefdom'] : ['geoNational', 'geoDistrict', 'geoChiefdom'];
+  const titles = isChiefRun() ? [areaShort() + ' — Reporting Rate', 'Health Facilities — Reporting Rate']
+               : [areaShort() + ' — Outline', 'District — Reporting Rate', 'Chiefdom — Reporting Rate'];
   const year   = document.getElementById('geoYear')?.value || '';
   const srcs   = ids.map(id => document.getElementById(id));
   const cW = srcs[0]?.width || 600, cH = srcs[0]?.height || 600;
@@ -2953,7 +3133,7 @@ function rs_geoDownloadSubplot() {
   ctx.fillStyle = '#1f4a6a';
   ctx.font = `bold ${Math.round(totalW * .016)}px Oswald,Arial,sans-serif`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillText(`NMCP Malaria Reporting Status — Geographic Maps · ${year} · Active Facilities Only`, totalW / 2, 14);
+  ctx.fillText(`NMCP Malaria Reporting Status — Geographic Maps · ${ST.config?.districtId?ST.config.districtName+' · ':''}${year} · Active Facilities Only`, totalW / 2, 14);
   const headColors = ['#2c6793', '#17a2b8', '#28a745'];
   srcs.forEach((src, i) => {
     const x = PAD + i * (cW + GAP);
@@ -2992,8 +3172,234 @@ function rs_geoDownloadSubplot() {
 // ═══════════════════════════════════════════════════════════════════
 let tblRows=[], tblHeaders=[];
 
+// ═══ AREA (National / District / Chiefdom) ═══
+let AREA = { id:'', name:'National', level:'national', district:'', chiefdom:'' };
+let AREA_MODE = 'district';
+const GEO_FULL = { chief:null, dist:null };   // full country shapes, kept across New Query
+function isChiefRun(){ return ST.config?.areaLevel === 'chiefdom'; }
+function geoAreaName(){ return ST.config?.districtId ? ST.config.districtName : 'Sierra Leone'; }
+function areaShort(){ return ST.config?.districtId ? ST.config.districtName : 'National'; }
+function _areaFilter(){ return ST.config?.districtId ? '&filter=path:like:' + ST.config.districtId : ''; }
+function _distKey(n){ return (n||'').toLowerCase().replace(/\b(district|area)\b/g,'').replace(/[^a-z]/g,''); }
+function _dropDistrict(hdr, rows){
+  if (!isChiefRun()) return [hdr, rows];
+  const i = hdr.indexOf('District'); if (i < 0) return [hdr, rows];
+  return [hdr.filter((_,k)=>k!==i), rows.map(r=>r.filter((_,k)=>k!==i))];
+}
+// Cut the map shapes to the run's area (district: its chiefdoms; chiefdom: just that chiefdom)
+function applyGeoArea(){
+  const fc = GEO_FULL.chief, fd = GEO_FULL.dist; if (!fc) return;
+  const want = ST.config?.districtId ? _distKey(ST.config.geoDistrict || ST.config.districtName) : '';
+  const keep = f => !want || _distKey(f.properties && f.properties.FIRST_DNAM) === want;
+  let chief = { ...fc, features:(fc.features||[]).filter(keep) };
+  let dist  = fd ? { ...fd, features:(fd.features||[]).filter(keep) } : null;
+  if (want && !chief.features.length) { chief = fc; dist = fd; }
+  if (ST.config?.geoChiefdom) {
+    const ck = n => (n||'').toLowerCase().replace(/\bchiefdom\b/g,'').replace(/[^a-z]/g,'');
+    const one = chief.features.filter(f => ck(f.properties && f.properties.adm3) === ck(ST.config.geoChiefdom));
+    if (one.length) { chief = { ...fc, features:one }; dist = { ...fc, features:one }; }
+  }
+  ST.geoCache.chiefdomGeo = chief; ST.geoCache.districtGeo = dist;
+  let mnX=Infinity,mnY=Infinity,mxX=-Infinity,mxY=-Infinity;
+  (chief.features||[]).forEach(f=>walkCoords(f.geometry,c=>{
+    if(c[0]<mnX)mnX=c[0]; if(c[0]>mxX)mxX=c[0]; if(c[1]<mnY)mnY=c[1]; if(c[1]>mxY)mxY=c[1]; }));
+  ST.geoCache.bbox = {mnX,mnY,mxX,mxY};
+}
+// ── Health facility points (chiefdom runs). Positions are spread evenly inside the
+// chiefdom; they are illustrative, not GPS. Colour = facility reporting rate.
+function _hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0)/4294967295;}
+function _ringsOf(geo,tf){const rings=[];(geo.features||[]).forEach(f=>{const add=cs=>cs.forEach(r=>rings.push(r.map(tf)));if(f.geometry.type==='Polygon')add(f.geometry.coordinates);if(f.geometry.type==='MultiPolygon')f.geometry.coordinates.forEach(p=>add(p));});return rings;}
+function drawHfPoints(canvas, ctx, tf, rowFilter, monthly){
+  canvas._points = [];
+  if (!isChiefRun() || !ST.geoCache.chiefdomGeo) return;
+  const facs = Object.values(ST.orgHierarchy||{}).sort((a,b)=>a.id.localeCompare(b.id));
+  if (!facs.length) return;
+  const rings = _ringsOf(ST.geoCache.chiefdomGeo, tf);
+  const inside = (x,y) => rings.some(r=>pointInRing(x,y,r));
+  let mnX=1e9,mnY=1e9,mxX=-1e9,mxY=-1e9;
+  rings.forEach(r=>r.forEach(([x,y])=>{if(x<mnX)mnX=x;if(x>mxX)mxX=x;if(y<mnY)mnY=y;if(y>mxY)mxY=y;}));
+  let cand=[];
+  for(let step=Math.max(mxX-mnX,mxY-mnY)/6; step>2 && cand.length<facs.length*2; step*=0.75){
+    cand=[];
+    for(let y=mnY+step/2;y<mxY;y+=step) for(let x=mnX+step/2;x<mxX;x+=step) if(inside(x,y)) cand.push([x,y,step]);
+  }
+  if (!cand.length) return;
+  const acc = {};
+  ST.reportData.forEach(r=>{ if(!rowFilter(r)) return;
+    const a = acc[r.ouId] || (acc[r.ouId]={rep:0,tot:0}); a.rep += r.status; a.tot++; });
+  const everActive = new Set(ST.reportData.filter(r=>r.status===1).map(r=>r.ouId));
+  const R = Math.max(5, Math.round(canvas.width*0.011));
+  facs.forEach((o,i)=>{
+    const c = cand[Math.floor(i*cand.length/facs.length)];
+    let x=c[0]+(_hash(o.id+'x')-.5)*c[2]*.6, y=c[1]+(_hash(o.id+'y')-.5)*c[2]*.6;
+    if(!inside(x,y)){x=c[0];y=c[1];}
+    const a = acc[o.id], rate = a && a.tot>0 ? a.rep/a.tot*100 : null;
+    ctx.beginPath(); ctx.arc(x,y,R,0,Math.PI*2);
+    ctx.fillStyle = rate===null ? '#cccccc' : geoColor(rate); ctx.fill();
+    ctx.lineWidth = Math.max(1.5,R*.32); ctx.strokeStyle = '#1a2e3d'; ctx.stroke();
+    canvas._points.push({x,y,r:R,name:o.name,type:o.hfType,rate,rep:a?a.rep:0,tot:a?a.tot:0,monthly,active:everActive.has(o.id)});
+  });
+}
+function hfPointTip(q){
+  const status = q.monthly
+    ? (q.tot ? (q.rep ? '<b style="color:#7CFC9A;">Reported</b>' : '<b style="color:#ff8a8a;">Not reported</b>') : 'No data')
+    : (q.tot ? `Reporting rate: <b>${Math.round(q.rate)}%</b><br><span style="opacity:.8;">${q.rep} of ${q.tot} months reported</span>` : 'No data');
+  return `<strong>${q.name}</strong>${q.type}<br>${status}`+
+    (q.active ? '' : '<br><span style="opacity:.8;">Inactive: never reported in the selected period</span>')+
+    `<br><span style="opacity:.6;font-size:10px;">Position is illustrative, not GPS</span>`;
+}
+// ── Chiefdom summary tables and exports ──
+const CF_TABLES = { cf_area_monthly:'Chiefdom × Month', cf_area_yearly:'Chiefdom × Year', cf_fac_monthly:'Health facility × Month' };
+function cf_buildTable(grp){
+  const nm = ST.config.districtName;
+  if (grp==='cf_area_monthly'){ tblHeaders=['Chiefdom','Year','Month','Date','Reported','Total Facilities','Rate (%)','Category'];
+    tblRows=Object.values(AGG.natMonthly).sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[nm,r.year,r.month,r.date,r.reported,r.total,r.rate_pct,r.category]); }
+  else if (grp==='cf_area_yearly'){ tblHeaders=['Chiefdom','Year','Reported','Total Facilities','Rate (%)','Category'];
+    tblRows=Object.values(AGG.natYearly).sort((a,b)=>a.year.localeCompare(b.year)).map(r=>[nm,r.year,r.reported,r.total,r.rate_pct,r.category]); }
+  else { tblHeaders=['HF Code','Health facility','HF Type','Year','Month','Date','Reported'];
+    tblRows=ST.reportData.map(r=>[r.hf_uid,ST.orgHierarchy[r.ouId]?.name||'',r.hfType,r.Date.slice(0,4),r.Date.slice(5,7),r.Date,r.status]); }
+  document.getElementById('tblHead').innerHTML = `<tr>${tblHeaders.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+  rs_filterTable();
+}
+function cf_exportExcel(){
+  const wb = XLSX.utils.book_new(), nm = ST.config.districtName;
+  const sheet=(name,head,rows)=>{ if(rows.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([head,...rows]),name.slice(0,31)); };
+  sheet('Chiefdom Monthly',['chiefdom','year','month','date','reported','total','rate_pct','category'],
+    Object.values(AGG.natMonthly).sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[nm,r.year,r.month,r.date,r.reported,r.total,r.rate_pct,r.category]));
+  sheet('Chiefdom Yearly',['chiefdom','year','reported','total','rate_pct','category'],
+    Object.values(AGG.natYearly).map(r=>[nm,r.year,r.reported,r.total,r.rate_pct,r.category]));
+  sheet('Facility Monthly',['hf_uid','health_facility','hfType','date','status'],
+    ST.reportData.map(r=>[r.hf_uid,ST.orgHierarchy[r.ouId]?.name||'',r.hfType,r.Date,r.status]));
+  XLSX.writeFile(wb, `NMCP_ReportingStatus_${nm.replace(/[^A-Za-z0-9]+/g,'_')}_${ST.config.start}_${ST.config.end}.xlsx`);
+}
+function cf_exportCSV(){
+  const nm = ST.config.districtName;
+  const csv = 'hf_uid,health_facility,hf_type,chiefdom,date,status\n' + ST.reportData.map(r=>
+    `${r.hf_uid},"${ST.orgHierarchy[r.ouId]?.name||''}",${r.hfType||''},"${nm}",${r.Date},${r.status}`).join('\n');
+  const a=document.createElement('a'); a.download=`NMCP_RS_${nm.replace(/[^A-Za-z0-9]+/g,'_')}_FacilityMonth_${ST.config.start}_${ST.config.end}.csv`;
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.click();
+}
+// ── Switch every label, control and panel between national/district and chiefdom wording ──
+const _UI_ORIG = {};
+function _keep(el,key){ if(!(key in _UI_ORIG)) _UI_ORIG[key]=el.innerHTML; return _UI_ORIG[key]; }
+function applyAreaUi(){
+  const chief = isChiefRun(), nm = areaShort();
+  const heads = document.querySelectorAll('.maps-3col .map-panel-head');
+  if (heads[0]) heads[0].textContent = ST.config?.districtId ? `${nm.toUpperCase()} — OVERVIEW` : 'NATIONAL — OVERVIEW';
+  if (heads[2]) heads[2].textContent = chief ? 'HEALTH FACILITIES — HOVER A POINT' : 'CHIEFDOM — HOVER FOR RATE';
+  const dc = document.getElementById('geoDistrict'); const dp = dc ? dc.closest('.map-panel') : null;
+  if (dp) dp.style.display = chief ? 'none' : '';
+  document.querySelectorAll('.maps-3col').forEach(g => g.style.gridTemplateColumns = chief ? 'repeat(2,1fr)' : '');
+  // the inactive-by-district map has no meaning inside one chiefdom (the facility points show inactive ones)
+  const ic = document.getElementById('geoDistrictInactive');
+  if (ic) { const box = ic.closest('div[style*="fff6f5"]'); const bar = box ? box.previousElementSibling : null;
+    if (box) box.style.display = chief ? 'none' : ''; if (bar) bar.style.display = chief ? 'none' : ''; }
+  const gl = document.getElementById('geoLevel');
+  if (gl) { const o=_keep(gl,'geoLevel');
+    gl.innerHTML = chief ? `<option value="national">${nm} (overall)</option><option value="chiefdom" selected>Health facilities</option>` : o;
+    if (!chief) { gl.value='chiefdom'; const on=gl.querySelector('option[value="national"]'); if(on) on.textContent = ST.config?.districtId ? nm + ' (overall)' : 'National'; } }
+  document.querySelectorAll('button').forEach((b,i)=>{
+    const oc = b.getAttribute('onclick') || '';
+    if (oc.includes("rs_geoDownload('geoDistrict'") || oc.includes("rs_geoDownload('geoDistrictInactive'")) b.style.display = chief ? 'none' : '';
+    if (oc.includes("rs_geoDownload('geoNational'")) { const o=_keep(b,'bn'+i); b.innerHTML = ST.config?.districtId ? o.replace(/National/, nm) : o; }
+    if (oc.includes("rs_geoDownload('geoChiefdom'")) { const o=_keep(b,'bc'+i); b.innerHTML = chief ? o.replace(/Chiefdom/, 'Health Facilities') : o; }
+  });
+  const ts=document.getElementById('trkSearch'); if(ts) ts.placeholder = chief ? 'Search health facility…' : 'Search facility, chiefdom, district…';
+  const cs=document.getElementById('chwSearch'); if(cs) cs.placeholder = chief ? 'Search CHW, health facility…' : 'Search CHW, facility, chiefdom, district…';
+  const tb=document.getElementById('tblSearch'); if(tb) tb.placeholder = chief ? 'Search health facility, period…' : 'Search district, chiefdom, period…';
+  const es=document.getElementById('exclSearch'); if(es) es.placeholder = chief ? 'Search facility, reason…' : 'Search facility, district, reason…';
+  // descriptive text that names districts
+  const SWAPS = [
+    ['each row includes district, chiefdom, HF type', 'each row includes chiefdom, HF type'],
+    ['district, chiefdom, facility, CHW, months reported', 'chiefdom, facility, CHW, months reported'],
+    ['national/district/chiefdom maps', 'chiefdom and health facility maps'],
+  ];
+  document.querySelectorAll('#resultsSection span, #resultsSection p').forEach((el,i)=>{
+    if (el.children.length > 3) return;
+    const hit = SWAPS.find(([a]) => (_UI_ORIG['tx'+i] ?? el.innerHTML).includes(a));
+    if (!hit) return;
+    const o = _keep(el, 'tx'+i);
+    el.innerHTML = chief ? SWAPS.reduce((t,[a,b]) => t.replace(a,b), o) : o;
+  });
+  const tg=document.getElementById('tblGroup');
+  if (tg) { const o=_keep(tg,'tblGroup');
+    tg.innerHTML = chief ? Object.entries(CF_TABLES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('') : o; }
+}
+// ── Area screens ──
+let DISTRICTS = null;
+async function loadDistricts(){
+  const grid = document.getElementById('distGrid'), note = document.getElementById('distNote');
+  try {
+    const r = await dhis2('/api/organisationUnits.json?level=' + LEVEL_DIST + '&fields=id,displayName&paging=false');
+    DISTRICTS = (r.organisationUnits || []).sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    grid.innerHTML = '';
+    DISTRICTS.forEach((d,i)=>{
+      const b = document.createElement('button'); b.className = 'dist-card';
+      b.innerHTML = `<div class="n">${i+1}</div><div style="flex:1;min-width:0;"><div class="nm">${d.displayName}</div><div class="sb">District</div></div>` + _CHEV;
+      b.onclick = () => AREA_MODE === 'chiefdom' ? showChiefdomCards(d) : pickArea(d.id, d.displayName, 'district', d.displayName, '');
+      grid.appendChild(b);
+    });
+    if (note) note.textContent = DISTRICTS.length + ' districts · click one to continue';
+  } catch(e) {
+    DISTRICTS = [];
+    if (note) note.innerHTML = 'Could not load districts from DHIS2. <a href="#" onclick="loadDistricts();return false;">Try again</a>';
+  }
+}
+const _CHEV = '<svg class="go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+function showAreaChoose(){
+  document.getElementById('areaScreen').style.display = 'block';
+  document.getElementById('areaChoose').style.display = 'block';
+  document.getElementById('areaDistricts').style.display = 'none';
+  document.getElementById('areaChiefdoms').style.display = 'none';
+  document.getElementById('configCard').style.display = 'none';
+  document.getElementById('progressSection').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+}
+function showDistrictCards(mode){
+  AREA_MODE = mode || 'district';
+  document.getElementById('distTitle').textContent = AREA_MODE === 'chiefdom' ? 'Chiefdom: first choose its district' : 'Choose a district';
+  document.getElementById('areaChoose').style.display = 'none';
+  document.getElementById('areaChiefdoms').style.display = 'none';
+  document.getElementById('areaDistricts').style.display = 'block';
+  if (DISTRICTS === null || (DISTRICTS && !DISTRICTS.length)) loadDistricts();
+}
+const CHIEFDOMS = {};
+async function showChiefdomCards(d){
+  document.getElementById('areaDistricts').style.display = 'none';
+  document.getElementById('areaChiefdoms').style.display = 'block';
+  document.getElementById('chiefTitle').textContent = 'Choose a chiefdom in ' + d.displayName;
+  const grid = document.getElementById('chiefGrid'), note = document.getElementById('chiefNote');
+  grid.innerHTML = ''; note.textContent = 'Loading chiefdoms from DHIS2…';
+  try {
+    if (!CHIEFDOMS[d.id]) {
+      const r = await dhis2('/api/organisationUnits.json?level=' + LEVEL_CHIEF + '&filter=path:like:' + d.id + '&fields=id,displayName&paging=false');
+      CHIEFDOMS[d.id] = (r.organisationUnits || []).sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    }
+    CHIEFDOMS[d.id].forEach((c,i)=>{
+      const b = document.createElement('button'); b.className = 'dist-card';
+      b.innerHTML = `<div class="n">${i+1}</div><div style="flex:1;min-width:0;"><div class="nm">${c.displayName}</div><div class="sb">${d.displayName}</div></div>` + _CHEV;
+      b.onclick = () => pickArea(c.id, c.displayName, 'chiefdom', d.displayName, c.displayName);
+      grid.appendChild(b);
+    });
+    note.textContent = CHIEFDOMS[d.id].length + ' chiefdoms · click one to fetch only that chiefdom';
+  } catch(e) {
+    note.innerHTML = 'Could not load chiefdoms from DHIS2. <a href="#" id="chiefRetry">Try again</a>';
+    document.getElementById('chiefRetry').onclick = ev => { ev.preventDefault(); showChiefdomCards(d); };
+  }
+}
+function pickArea(id, name, level, district, chiefdom){
+  AREA = { id, name: id ? name : 'National', level: id ? (level || 'district') : 'national', district: district || '', chiefdom: chiefdom || '' };
+  document.getElementById('areaLabel').textContent = id ? name : 'National (all districts)';
+  document.getElementById('areaScreen').style.display = 'none';
+  document.getElementById('configCard').style.display = 'block';
+  document.getElementById('progressSection').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+}
+loadDistricts();
+
 function rs_buildTable() {
   const grp=document.getElementById('tblGroup').value;
+  if ((grp||'').startsWith('cf_')) { cf_buildTable(grp); return; }
   let src;
   if(grp==='national_monthly') { src=Object.values(AGG.natMonthly);  tblHeaders=['Year','Month','Date','Reported','Total Facilities','Rate (%)','Category']; }
   else if(grp==='national_yearly')  { src=Object.values(AGG.natYearly);  tblHeaders=['Year','Reported','Total Facilities','Rate (%)','Category']; }
@@ -3036,6 +3442,7 @@ function rs_exportTableExcel() {
 }
 
 function rs_exportExcel() {
+  if (isChiefRun()) { cf_exportExcel(); return; }
   const wb = XLSX.utils.book_new();
   const addSheet=(data,name,cols)=>{
     const rows=data.map(r=>cols.reduce((o,c)=>({...o,[c]:r[c]??''}),{}));
@@ -3053,6 +3460,7 @@ function rs_exportExcel() {
 }
 
 function rs_exportCSV() {
+  if (isChiefRun()) { cf_exportCSV(); return; }
   const rows = ST.reportData;
   const header='hf_uid,hf_type,district,chiefdom,date,status';
   const csv = header + '\n' + rows.map(r=>
@@ -3247,7 +3655,8 @@ function chw_render() {
     });
 
     distEl.appendChild(head); distEl.appendChild(body);
-    tree.appendChild(distEl);
+    if (isChiefRun()) [...body.children].forEach(c=>tree.appendChild(c));   // no district row
+    else tree.appendChild(distEl);
   });
 }
 
@@ -3285,7 +3694,7 @@ function chw_download(which, fmt) {
         return [f.district, f.chiefdom, f.facility, f.hfType, f.l5Id, f.n, f.nRep, f.n-f.nRep,
                 f.repCM, denom, denom ? Math.round(f.repCM/denom*100) : 0];
       });
-    return chw_write(hdr, rows, `CHW_Facilities_with_CHW_${year}`, fmt, 'Facilities with CHW');
+    return chw_write(..._dropDistrict(hdr, rows), `CHW_Facilities_with_CHW_${year}`, fmt, 'Facilities with CHW');
   }
 
   const sel = which === 'reporting' ? list.filter(c=>c.active)
@@ -3300,7 +3709,7 @@ function chw_download(which, fmt) {
       ...months.map(m=>c.months[m]?1:0),
       c.reported, c.total, c.rate, c.active?'Reporting':'Never reported']);
   const label = which === 'reporting' ? 'Reporting' : which === 'silent' ? 'Not Reporting' : 'All';
-  chw_write(hdr, rows, `CHW_${label.replace(/ /g,'_')}_${year}`, fmt, label);
+  chw_write(..._dropDistrict(hdr, rows), `CHW_${label.replace(/ /g,'_')}_${year}`, fmt, label);
 }
 const MON_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function chw_write(hdr, rows, fname, fmt, sheet) {
@@ -3332,9 +3741,12 @@ function rs_getViolations() {
     sumOld: oldAfter.reduce((s,v)=>s+v.total,0),
     sumNew: newBefore.reduce((s,v)=>s+v.total,0) };
 }
+const _vioHdr = () => isChiefRun() ? VIO_HDR.filter(h=>h!=='District') : VIO_HDR;
 const VIO_HDR = ['OU ID','District','Chiefdom','Facility','Type','Year','Month','Period',
                  'Form Used','Rule Broken','Data Elements','Value Ignored'];
 function rs_vioRows() {
+  if (isChiefRun()) return rs_getViolations().list.map(v => [v.ou_id, v.chiefdom, v.facility, v.hfType,
+    v.year, v.month_name, v.period, v.form, v.rule, v.elements.join(' | '), v.total]);
   return rs_getViolations().list.map(v => [v.ou_id, v.district, v.chiefdom, v.facility, v.hfType,
     v.year, v.month_name, v.period, v.form, v.rule, v.elements.join(' | '), v.total]);
 }
@@ -3343,11 +3755,11 @@ function rs_downloadViolations(fmt) {
   const stamp = `${(ST.config&&ST.config.start)||''}_${(ST.config&&ST.config.end)||''}`;
   if (fmt === 'xlsx') {
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([VIO_HDR, ...rows]), 'Wrong Form');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([_vioHdr(), ...rows]), 'Wrong Form');
     XLSX.writeFile(wb, `NMCP_Reporting_Wrong_Form_${stamp}.xlsx`);
     return;
   }
-  const csv = [VIO_HDR, ...rows]
+  const csv = [_vioHdr(), ...rows]
     .map(r => r.map(c => `"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
   triggerDL(csv, `NMCP_Reporting_Wrong_Form_${stamp}.csv`);
 }
@@ -3439,7 +3851,7 @@ function rs_exclRows() {
     [e.ou_id, e.districtName, e.chiefdomName, e.facility, e.hfType, e.reason]);
 }
 function rs_renderExcluded() {
-  const rows = rs_exclRows();
+  const rows = rs_exclRows();   // full rows; the District column is hidden by CSS on chiefdom runs
   const q = (document.getElementById('exclSearch')?.value || '').toLowerCase();
   const shown = q ? rows.filter(r => r.join(' ').toLowerCase().includes(q)) : rows;
 
@@ -3455,14 +3867,14 @@ function rs_renderExcluded() {
     : `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No excluded facilities match.</td></tr>`;
 }
 function rs_downloadExcluded(fmt) {
-  const rows = rs_exclRows();
+  const [EX_H, rows] = _dropDistrict(EXCL_HDR, rs_exclRows());
   if (fmt === 'xlsx') {
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([EXCL_HDR, ...rows]), 'Excluded');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([EX_H, ...rows]), 'Excluded');
     XLSX.writeFile(wb, 'excluded_facilities.xlsx');
     return;
   }
-  const csv = [EXCL_HDR, ...rows]
+  const csv = [EX_H, ...rows]
     .map(r => r.map(c => `"${String(c==null?'':c).replace(/"/g,'""')}"`).join(',')).join('\n');
   triggerDL(csv, 'excluded_facilities.csv');
 }
@@ -4055,7 +4467,11 @@ function trk_render() {
 
     distEl.appendChild(distHead);
     distEl.appendChild(distBody);
-    tree.appendChild(distEl);
+    if (isChiefRun()) {   // chiefdom run: go straight to the chiefdom, open
+      distBody.querySelectorAll('.trk-chief-body').forEach(b=>b.classList.add('open'));
+      distBody.querySelectorAll('.trk-chief-chev').forEach(c=>c.textContent='▼');
+      [...distBody.children].forEach(c=>tree.appendChild(c));
+    } else tree.appendChild(distEl);
   });
 }
 
@@ -4098,7 +4514,7 @@ function trk_facilityList() {
     const active = monthsReported > 0;
     const rate = dataMonths > 0 ? +(monthsReported / dataMonths * 100).toFixed(1) : 0;
     const rec = {
-      'District':          ou.districtName || '',
+      ...(isChiefRun() ? {} : { 'District': ou.districtName || '' }),
       'Chiefdom':          ou.chiefdomName || '',
       'Facility':          ou.name || '',
       'HF Type':           ou.hfType || '',
@@ -4117,7 +4533,7 @@ function trk_facilityList() {
   });
 
   rows.sort((a, b) =>
-    a.rec.District.localeCompare(b.rec.District) ||
+    (a.rec.District||'').localeCompare(b.rec.District||'') ||
     a.rec.Chiefdom.localeCompare(b.rec.Chiefdom) ||
     a.rec.Facility.localeCompare(b.rec.Facility));
 
@@ -4180,8 +4596,576 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     if(tab==='geomaps') setTimeout(()=>{ rs_buildMonthlyGrid(); attachChiefdomListeners(); },200);
     if(tab==='tracking') setTimeout(()=>{ trk_render(); },100);
     if(tab==='chw')      setTimeout(()=>{ chw_render(); },100);
+    if(tab==='poster' && PUB_DIRTY.poster) setTimeout(()=>{ try{ pos_render(); PUB_DIRTY.poster=false; }catch(e){ console.error(e); } },60);
+    if(tab==='paper'  && PUB_DIRTY.paper)  setTimeout(()=>{ try{ pap_render(); PUB_DIRTY.paper=false; }catch(e){ console.error(e); } },60);
   });
 });
+
+let PUB_DIRTY = {poster:true, paper:true};
+// ── small maths toolkit ──
+const PS = {
+  mean: a => a.length ? a.reduce((s,x)=>s+x,0)/a.length : 0,
+  sd: a => { if (a.length<2) return 0; const m=PS.mean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)*(x-m),0)/(a.length-1)); },
+  median: a => { if(!a.length) return 0; const b=[...a].sort((x,y)=>x-y), h=b.length>>1; return b.length%2?b[h]:(b[h-1]+b[h])/2; },
+  q: (a,p) => { if(!a.length) return 0; const b=[...a].sort((x,y)=>x-y), i=(b.length-1)*p, lo=Math.floor(i), hi=Math.ceil(i); return b[lo]+(b[hi]-b[lo])*(i-lo); },
+  ncdf: z => { const t=1/(1+0.2316419*Math.abs(z)), d=0.3989423*Math.exp(-z*z/2);
+    const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274)))); return z>0?1-p:p; },
+  lgamma: x => { const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+    let y=x, t=x+5.5; t-=(x+0.5)*Math.log(t); let s=1.000000000190015; for(const v of c) s+=v/++y; return -t+Math.log(2.5066282746310005*s/x); },
+  gammaP: (a,x) => { // regularized lower incomplete gamma
+    if (x<=0) return 0;
+    if (x < a+1){ let ap=a, sum=1/a, del=sum; for(let n=0;n<200;n++){ ap++; del*=x/ap; sum+=del; if(Math.abs(del)<Math.abs(sum)*1e-10) break; }
+      return sum*Math.exp(-x+a*Math.log(x)-PS.lgamma(a)); }
+    let b=x+1-a, c=1e30, d=1/b, h=d;
+    for(let i=1;i<200;i++){ const an=-i*(i-a); b+=2; d=an*d+b; if(Math.abs(d)<1e-30)d=1e-30; c=b+an/c; if(Math.abs(c)<1e-30)c=1e-30; d=1/d; const del=d*c; h*=del; if(Math.abs(del-1)<1e-10) break; }
+    return 1 - Math.exp(-x+a*Math.log(x)-PS.lgamma(a))*h; },
+  chi2p: (x,k) => 1 - PS.gammaP(k/2, x/2),
+  wilson: (k,n,z=1.96) => { if(!n) return [0,0]; const p=k/n, d=1+z*z/n, c=(p+z*z/(2*n))/d, h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return [Math.max(0,c-h),Math.min(1,c+h)]; },
+  ols: (x,y) => { const n=x.length, mx=PS.mean(x), my=PS.mean(y); let sxx=0,sxy=0; for(let i=0;i<n;i++){sxx+=(x[i]-mx)**2; sxy+=(x[i]-mx)*(y[i]-my);}
+    const b=sxx?sxy/sxx:0, a=my-b*mx; let sse=0; for(let i=0;i<n;i++) sse+=(y[i]-a-b*x[i])**2;
+    const se = n>2&&sxx ? Math.sqrt(sse/(n-2)/sxx) : 0; const t = se? b/se : 0; return {a,b,se,p: se? 2*(1-PS.ncdf(Math.abs(t))) : 1}; },
+  loess: (x,y,span=0.75) => { const n=x.length, k=Math.max(3,Math.ceil(span*n));
+    return x.map(x0=>{ const d=x.map(v=>Math.abs(v-x0)), h=[...d].sort((a,b)=>a-b)[Math.min(k,n)-1]||1;
+      let sw=0,sx=0,sy=0,sxx=0,sxy=0; for(let i=0;i<n;i++){ const u=d[i]/(h*1.0001); if(u>=1) continue; const w=(1-u**3)**3;
+        sw+=w; sx+=w*x[i]; sy+=w*y[i]; sxx+=w*x[i]*x[i]; sxy+=w*x[i]*y[i]; }
+      const den=sw*sxx-sx*sx; if(!sw) return y[x.indexOf(x0)]; if(Math.abs(den)<1e-12) return sy/sw;
+      const b=(sw*sxy-sx*sy)/den, a=(sy-b*sx)/sw; return a+b*x0; }); },
+  mannKendall: y => { const n=y.length; let S=0; const slopes=[];
+    for(let i=0;i<n-1;i++) for(let j=i+1;j<n;j++){ S+=Math.sign(y[j]-y[i]); slopes.push((y[j]-y[i])/(j-i)); }
+    const ties={}; y.forEach(v=>{ const k=v.toFixed(6); ties[k]=(ties[k]||0)+1; });
+    let tadj=0; Object.values(ties).forEach(t=>{ if(t>1) tadj+=t*(t-1)*(2*t+5); });
+    const v=(n*(n-1)*(2*n+5)-tadj)/18; const z = v>0 ? (S>0?(S-1):S<0?(S+1):0)/Math.sqrt(v) : 0;
+    return {S, z, p:2*(1-PS.ncdf(Math.abs(z))), sen:PS.median(slopes)}; },
+  rng: seed => () => { seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; },
+  pct: (v,d=1) => (v*100).toFixed(d)+'%',
+  fmtP: p => p<0.001 ? 'p < 0.001' : 'p = '+p.toFixed(3),
+};
+
+// ── build per facility series from the run ──
+function pst_data(){
+  const periods = ST.config.periods, T = periods.length;
+  const dates = periods.map(p=>`${p.slice(0,4)}-${p.slice(4,6)}`), di = {}; dates.forEach((d,i)=>di[d]=i);
+  const lvl = ST.config.areaLevel || 'national';
+  const unitNoun = lvl==='chiefdom' ? 'health facility' : lvl==='district' ? 'chiefdom' : 'district';
+  const unitNounPl = lvl==='chiefdom' ? 'health facilities' : lvl==='district' ? 'chiefdoms' : 'districts';
+  const area = ST.config.districtId ? ST.config.districtName : 'Sierra Leone';
+  const fac = {};
+  ST.reportData.forEach(r=>{
+    let f = fac[r.ouId];
+    if(!f){ const o=ST.orgHierarchy[r.ouId]||{}; f = fac[r.ouId] = { id:r.ouId, name:o.name||r.hf_uid, type:r.hfType||'Other',
+      district:r.districtName, chiefdom:r.chiefdomName, s:new Array(T).fill(0), fs:new Array(T).fill(0), cs:new Array(T).fill(0) }; }
+    const i = di[r.Date]; if(i===undefined) return;
+    f.s[i]=r.status; f.fs[i]=r.facStatus||0; f.cs[i]=r.comStatus||0;
+  });
+  const list = Object.values(fac);
+  list.forEach(f=>{ f.unit = lvl==='chiefdom' ? f.name : lvl==='district' ? f.chiefdom : f.district;
+    f.n = f.s.reduce((a,b)=>a+b,0); f.active = f.n>0; f.rate = f.n/T; });
+  const active = list.filter(f=>f.active);
+  const monthly = dates.map((d,i)=>{ const k=active.reduce((s,f)=>s+f.s[i],0), n=active.length; return {date:d,k,n,p:n?k/n:0}; });
+  // CHW posts
+  const chw = {}; (ST.chwReportData||[]).forEach(r=>{ const c=chw[r.chwId]||(chw[r.chwId]={s:new Array(T).fill(0)}); const i=di[r.Date]; if(i!==undefined) c.s[i]=r.status; });
+  const chwList = Object.values(chw), chwActive = chwList.filter(c=>c.s.some(v=>v));
+  const chwMonthly = dates.map((d,i)=>chwActive.length ? chwActive.reduce((s,c)=>s+c.s[i],0)/chwActive.length : null);
+  return { T, dates, lvl, unitNoun, unitNounPl, area, list, active, monthly, chwList, chwActive, chwMonthly };
+}
+
+
+// ── k means with k means++ seeding ──
+function pst_kmeans(X, k, rnd, restarts=6){
+  const n=X.length, d=X[0].length, dist=(a,b)=>{let s=0;for(let j=0;j<d;j++)s+=(a[j]-b[j])**2;return s;};
+  let best=null;
+  for(let r=0;r<restarts;r++){
+    const C=[X[Math.floor(rnd()*n)].slice()];
+    while(C.length<k){ const D=X.map(x=>Math.min(...C.map(c=>dist(x,c)))), tot=D.reduce((a,b)=>a+b,0);
+      let u=rnd()*tot, i=0; while(i<n-1 && (u-=D[i])>0) i++; C.push(X[i].slice()); }
+    let lab=new Array(n).fill(0);
+    for(let it=0;it<60;it++){
+      let ch=false; X.forEach((x,i)=>{ let bi=0,bd=Infinity; C.forEach((c,j)=>{const v=dist(x,c); if(v<bd){bd=v;bi=j;}}); if(lab[i]!==bi){lab[i]=bi;ch=true;} });
+      C.forEach((c,j)=>{ const m=X.filter((_,i)=>lab[i]===j); if(m.length) for(let q=0;q<d;q++) c[q]=PS.mean(m.map(v=>v[q])); });
+      if(!ch && it) break;
+    }
+    const inertia=X.reduce((s,x,i)=>s+dist(x,C[lab[i]]),0);
+    if(!best||inertia<best.inertia) best={lab,C,inertia};
+  }
+  return best;
+}
+function pst_silhouette(X, lab, k, rnd){
+  let idx=X.map((_,i)=>i); if(idx.length>600){ idx.sort(()=>rnd()-.5); idx=idx.slice(0,600); }
+  const dist=(a,b)=>Math.sqrt(a.reduce((s,v,j)=>s+(v-b[j])**2,0));
+  let tot=0,cnt=0;
+  idx.forEach(i=>{ const sums=new Array(k).fill(0), ns=new Array(k).fill(0);
+    idx.forEach(j=>{ if(i===j) return; sums[lab[j]]+=dist(X[i],X[j]); ns[lab[j]]++; });
+    const a = ns[lab[i]] ? sums[lab[i]]/ns[lab[i]] : 0; let b=Infinity;
+    for(let c=0;c<k;c++) if(c!==lab[i] && ns[c]) b=Math.min(b,sums[c]/ns[c]);
+    if(b===Infinity) return; tot+= (b-a)/Math.max(a,b)||0; cnt++; });
+  return cnt? tot/cnt : -1;
+}
+
+function pst_esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+
+// ── SVG charts with fixed, readable scales ──
+const PUBC = { blue:'#2c6793', dk:'#1f4a6a', green:'#2e8b57', amber:'#e0a800', red:'#c0392b', grey:'#8a96a3', light:'#dbe6f0' };
+const PUB_TARGET = 95;
+const pub_rateCol = v => v>=PUB_TARGET ? PUBC.green : v>=50 ? PUBC.amber : PUBC.red;
+function pub_nice(lo, hi, n=5){
+  if (hi<=lo) hi=lo+1; const raw=(hi-lo)/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/mag;
+  const step=(f<1.5?1:f<3?2:f<7?5:10)*mag, a=Math.floor(lo/step)*step, b=Math.ceil(hi/step)*step, t=[];
+  for(let v=a; v<=b+step/2; v+=step) t.push(+v.toFixed(10)); return t;
+}
+const pub_fmtMonth = d => { const [y,m]=d.split('-'); return new Date(+y,+m-1,1).toLocaleString('en',{month:'short'})+' '+y; };
+function pub_axes(W,H,m,yt,yTitle,xTitle){
+  const y0=yt[0], y1=yt[yt.length-1], Y=v=>m.t+(H-m.t-m.b)*(1-(v-y0)/(y1-y0));
+  let g=`<rect x="0" y="0" width="${W}" height="${H}" fill="#fff"/>`;
+  yt.forEach(v=>{ g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e6ebf0"/><text x="${m.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="#333">${v}</text>`; });
+  g+=`<line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H-m.b}" stroke="#333"/><line x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="#333"/>`;
+  if(yTitle) g+=`<text transform="translate(16 ${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle" font-size="12" fill="#222">${yTitle}</text>`;
+  if(xTitle) g+=`<text x="${(m.l+W-m.r)/2}" y="${H-8}" text-anchor="middle" font-size="13" fill="#222">${xTitle}</text>`;
+  return {g,Y};
+}
+function pub_legend(items,x,y){ let g='', cx=x;
+  items.forEach(it=>{ g+= it.box ? `<rect x="${cx}" y="${y-9}" width="16" height="10" fill="${it.c}" opacity="${it.o||1}"/>`
+                                 : `<line x1="${cx}" x2="${cx+18}" y1="${y-4}" y2="${y-4}" stroke="${it.c}" stroke-width="2.5" ${it.dash?'stroke-dasharray="6 4"':''}/>`;
+    g+=`<text x="${cx+23}" y="${y}" font-size="12" fill="#222">${it.t}</text>`; cx+=30+it.t.length*6.4; }); return g; }
+const pub_svg = (W,H,inner) => `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,Helvetica,sans-serif">${inner}</svg>`;
+function pub_xMonths(X,m,W,H,T){ const xs=i=>m.l+(W-m.l-m.r)*(T===1?0.5:i/(T-1)); const every=Math.ceil(T/12); let g='';
+  X.forEach((d,i)=>{ if(i%every && !(i===T-1 && (T-1)%every>=Math.ceil(every*0.75))) return; g+=`<line x1="${xs(i)}" x2="${xs(i)}" y1="${H-m.b}" y2="${H-m.b+5}" stroke="#333"/><text x="${xs(i)}" y="${H-m.b+19}" text-anchor="middle" font-size="11.5" fill="#333">${pub_fmtMonth(d)}</text>`; });
+  return {xs,g}; }
+
+function pub_chartTrend(D,W=900,H=380){
+  const m={l:62,r:36,t:34,b:58}, T=D.T, {g,Y}=pub_axes(W,H,m,[0,20,40,60,80,100],PUB_E.rateLbl+' (%)','Month');
+  const {xs,g:gx}=pub_xMonths(D.dates,m,W,H,T);
+  const ci=D.monthly.map(r=>PS.wilson(r.k,r.n).map(v=>v*100)), p=D.monthly.map(r=>r.p*100);
+  let s=g+gx;
+  s+=`<polygon points="${ci.map((c,i)=>xs(i)+','+Y(c[1])).join(' ')} ${ci.map((c,i)=>xs(i)+','+Y(c[0])).reverse().join(' ')}" fill="${PUBC.blue}" opacity=".15"/>`;
+  s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(PUB_TARGET)}" y2="${Y(PUB_TARGET)}" stroke="${PUBC.green}" stroke-dasharray="3 3"/><text x="${W-m.r-4}" y="${Y(PUB_TARGET)-5}" text-anchor="end" font-size="11" fill="${PUBC.green}">95% target</text>`;
+  if(T>=3){ const o=PS.ols(p.map((_,i)=>i),p); s+=`<line x1="${xs(0)}" x2="${xs(T-1)}" y1="${Y(Math.max(0,Math.min(100,o.a)))}" y2="${Y(Math.max(0,Math.min(100,o.a+o.b*(T-1))))}" stroke="${PUBC.red}" stroke-width="2" stroke-dasharray="7 5"/>`; }
+  if(D.chwActive.length){ s+=`<polyline points="${D.chwMonthly.map((v,i)=>xs(i)+','+Y(v*100)).join(' ')}" fill="none" stroke="${PUBC.grey}" stroke-width="2"/>`;
+    D.chwMonthly.forEach((v,i)=>{ s+=`<circle cx="${xs(i)}" cy="${Y(v*100)}" r="3" fill="${PUBC.grey}"><title>${pub_fmtMonth(D.dates[i])}: CHW posts ${(v*100).toFixed(1)}%</title></circle>`; }); }
+  s+=`<polyline points="${p.map((v,i)=>xs(i)+','+Y(v)).join(' ')}" fill="none" stroke="${PUBC.blue}" stroke-width="2.5"/>`;
+  p.forEach((v,i)=>{ s+=`<circle cx="${xs(i)}" cy="${Y(v)}" r="4.5" fill="${PUBC.blue}" stroke="#fff" stroke-width="1.5"><title>${pub_fmtMonth(D.dates[i])}: ${v.toFixed(1)}% (${D.monthly[i].k} of ${D.monthly[i].n} facilities; 95% CI ${ci[i][0].toFixed(1)} to ${ci[i][1].toFixed(1)})</title></circle>`; });
+  const leg=[{t:PUB_E.Many,c:PUBC.blue},{t:'95% CI',c:PUBC.blue,box:1,o:.2},{t:'Linear trend',c:PUBC.red,dash:1}]; if(D.chwActive.length) leg.push({t:'CHW posts',c:PUBC.grey});
+  s+=pub_legend(leg,m.l,20); return pub_svg(W,H,s);
+}
+function pub_chartControl(D,W=900,H=360){
+  const m={l:62,r:36,t:34,b:58}, T=D.T, K=D.monthly.reduce((s,r)=>s+r.k,0), N=D.monthly.reduce((s,r)=>s+r.n,0), pb=N?K/N:0;
+  const ucl=D.monthly.map(r=>r.n?Math.min(1,pb+3*Math.sqrt(pb*(1-pb)/r.n))*100:pb*100), lcl=D.monthly.map(r=>r.n?Math.max(0,pb-3*Math.sqrt(pb*(1-pb)/r.n))*100:pb*100);
+  const p=D.monthly.map(r=>r.p*100), lo=Math.max(0,Math.min(...p,...lcl)-5);
+  const {g,Y}=pub_axes(W,H,m,pub_nice(lo,100,5).filter(v=>v<=100),PUB_E.rateLbl+' (%)','Month'), {xs,g:gx}=pub_xMonths(D.dates,m,W,H,T);
+  let s=g+gx;
+  const step=a=>a.map((v,i)=>`${i?'L':'M'}${xs(i)},${Y(v)}`).join(' ');
+  s+=`<path d="${step(ucl)}" fill="none" stroke="${PUBC.red}" stroke-dasharray="5 4"/><path d="${step(lcl)}" fill="none" stroke="${PUBC.red}" stroke-dasharray="5 4"/>`;
+  s+=`<line x1="${xs(0)}" x2="${xs(T-1)}" y1="${Y(pb*100)}" y2="${Y(pb*100)}" stroke="${PUBC.green}" stroke-width="2"/>`;
+  s+=`<polyline points="${p.map((v,i)=>xs(i)+','+Y(v)).join(' ')}" fill="none" stroke="${PUBC.blue}" stroke-width="2"/>`;
+  const out=p.map((v,i)=>v>ucl[i]||v<lcl[i]);
+  p.forEach((v,i)=>{ s+=`<circle cx="${xs(i)}" cy="${Y(v)}" r="${out[i]?6:4.5}" fill="${out[i]?PUBC.red:PUBC.blue}" stroke="#fff" stroke-width="1.5"><title>${pub_fmtMonth(D.dates[i])}: ${v.toFixed(1)}%${out[i]?' (outside control limits)':''}</title></circle>`; });
+  s+=pub_legend([{t:'Monthly rate',c:PUBC.blue},{t:'Centre line',c:PUBC.green},{t:'3 sigma limits',c:PUBC.red,dash:1}],m.l,20);
+  return {svg:pub_svg(W,H,s), pb, out:D.dates.filter((_,i)=>out[i])};
+}
+function pub_chartBars(U, noun, W=760){
+  const rows=[...U].sort((a,b)=>b.r-a.r), show=rows.length>40?[...rows.slice(0,20),...rows.slice(-20)]:rows;
+  const rh=24, m={l:190,r:56,t:44,b:48}, H=m.t+m.b+rh*show.length, X=v=>m.l+(W-m.l-m.r)*v/100;
+  let s=`<rect width="${W}" height="${H}" fill="#fff"/>`;
+  [0,20,40,60,80,100].forEach(v=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H-m.b}" stroke="#e6ebf0"/><text x="${X(v)}" y="${H-m.b+17}" text-anchor="middle" font-size="12" fill="#333">${v}</text>`; });
+  show.forEach((u,i)=>{ const y=m.t+i*rh; const nm=u.name.length>28?u.name.slice(0,27)+'…':u.name;
+    s+=`<text x="${m.l-8}" y="${y+rh/2+4}" text-anchor="end" font-size="12" fill="#222">${pst_esc(nm)}</text>`;
+    s+=`<rect x="${m.l}" y="${y+4}" width="${Math.max(0,X(u.r)-m.l)}" height="${rh-8}" fill="${pub_rateCol(u.r)}"><title>${pst_esc(u.name)}: ${u.r.toFixed(1)}% (${u.k} of ${u.n} facility months)</title></rect>`;
+    s+=`<text x="${X(u.r)+5}" y="${y+rh/2+4}" font-size="11.5" fill="#222">${u.r.toFixed(1)}</text>`; });
+  s+=`<line x1="${X(PUB_TARGET)}" x2="${X(PUB_TARGET)}" y1="${m.t-6}" y2="${H-m.b}" stroke="#000" stroke-dasharray="4 3"/><text x="${X(PUB_TARGET)}" y="${m.t-10}" text-anchor="middle" font-size="11" fill="#000">95%</text>`;
+  s+=`<line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H-m.b}" stroke="#333"/><line x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="#333"/>`;
+  s+=`<text x="${(m.l+W-m.r)/2}" y="${H-10}" text-anchor="middle" font-size="13" fill="#222">${PUB_E.rateLbl} (%)</text>`;
+  s+=pub_legend([{t:'95% or more',c:PUBC.green,box:1},{t:'50 to 94%',c:PUBC.amber,box:1},{t:'Below 50%',c:PUBC.red,box:1}],m.l,14);
+  return {svg:pub_svg(W,H,s), trimmed:rows.length>40};
+}
+function pub_chartFunnel(U, pb, W=760, H=420){
+  const m={l:62,r:20,t:34,b:56}, nmax=Math.max(...U.map(u=>u.n))*1.05, nmin=Math.max(1,Math.min(...U.map(u=>u.n))*0.8);
+  const lim=(z,n)=>pb+z*Math.sqrt(pb*(1-pb)/n);
+  const lo=Math.max(0,Math.min(...U.map(u=>u.r), lim(-3.09,nmin)*100)-5);
+  const yt=pub_nice(lo,100,5).filter(v=>v<=100), {g,Y}=pub_axes(W,H,m,yt,PUB_E.rateLbl+' (%)','Expected '+PUB_E.months);
+  const xt=pub_nice(nmin,nmax,6), X=v=>m.l+(W-m.l-m.r)*(v-xt[0])/(xt[xt.length-1]-xt[0]);
+  let s=g; xt.forEach(v=>{ s+=`<text x="${X(v)}" y="${H-m.b+18}" text-anchor="middle" font-size="12" fill="#333">${v}</text>`; });
+  const clip=v=>Math.max(yt[0],Math.min(100,v));
+  const path=z=>{ let d=''; for(let i=0;i<=80;i++){ const n=nmin+(xt[xt.length-1]-nmin)*i/80; d+=`${i?'L':'M'}${X(n)},${Y(clip(lim(z,n)*100))}`; } return d; };
+  s+=`<path d="${path(1.96)}" fill="none" stroke="${PUBC.amber}" stroke-dasharray="6 4"/><path d="${path(-1.96)}" fill="none" stroke="${PUBC.amber}" stroke-dasharray="6 4"/>`;
+  s+=`<path d="${path(3.09)}" fill="none" stroke="${PUBC.red}" stroke-dasharray="2 3"/><path d="${path(-3.09)}" fill="none" stroke="${PUBC.red}" stroke-dasharray="2 3"/>`;
+  s+=`<line x1="${X(nmin)}" x2="${X(xt[xt.length-1])}" y1="${Y(pb*100)}" y2="${Y(pb*100)}" stroke="${PUBC.green}" stroke-width="1.5"/>`;
+  U.forEach(u=>{ const se=Math.sqrt(pb*(1-pb)/u.n), c=u.r/100>pb+3.09*se?PUBC.green:u.r/100<pb-3.09*se?PUBC.red:PUBC.blue;
+    s+=`<circle cx="${X(u.n)}" cy="${Y(clip(u.r))}" r="6" fill="${c}" fill-opacity=".85" stroke="#fff"><title>${pst_esc(u.name)}: ${u.r.toFixed(1)}% of ${u.n} facility months</title></circle>`; });
+  s+=pub_legend([{t:'Average',c:PUBC.green},{t:'95% limits',c:PUBC.amber,dash:1},{t:'99.8% limits',c:PUBC.red,dash:1}],m.l,20);
+  return pub_svg(W,H,s);
+}
+function pub_chartBox(by, types, W=760, H=400){
+  const vals=types.flatMap(t=>by[t].map(f=>f.rate*100)), yt=pub_nice(Math.max(0,Math.min(...vals)-5),100,5).filter(v=>v<=100);
+  const m={l:62,r:20,t:24,b:56}, {g,Y}=pub_axes(W,H,m,yt,PUB_E.Rate1+' (%)',PUB_E.typeLbl);
+  const bw=(W-m.l-m.r)/types.length; let s=g;
+  types.forEach((t,i)=>{ const v=by[t].map(f=>f.rate*100), cx=m.l+bw*(i+.5), q1=PS.q(v,.25), q3=PS.q(v,.75), md=PS.median(v), iqr=q3-q1;
+    const lo=Math.min(...v.filter(x=>x>=q1-1.5*iqr)), hi=Math.max(...v.filter(x=>x<=q3+1.5*iqr)), w=Math.min(70,bw*.5);
+    s+=`<line x1="${cx}" x2="${cx}" y1="${Y(hi)}" y2="${Y(q3)}" stroke="#333"/><line x1="${cx}" x2="${cx}" y1="${Y(q1)}" y2="${Y(lo)}" stroke="#333"/>`;
+    s+=`<line x1="${cx-w/4}" x2="${cx+w/4}" y1="${Y(hi)}" y2="${Y(hi)}" stroke="#333"/><line x1="${cx-w/4}" x2="${cx+w/4}" y1="${Y(lo)}" y2="${Y(lo)}" stroke="#333"/>`;
+    s+=`<rect x="${cx-w/2}" y="${Y(q3)}" width="${w}" height="${Math.max(1,Y(q1)-Y(q3))}" fill="${PUBC.light}" stroke="${PUBC.dk}"/>`;
+    s+=`<line x1="${cx-w/2}" x2="${cx+w/2}" y1="${Y(md)}" y2="${Y(md)}" stroke="${PUBC.dk}" stroke-width="2.5"/>`;
+    by[t].forEach((f,j)=>{ const h=((j*2654435761)>>>0)%1000/1000-.5; s+=`<circle cx="${cx+h*w*.8}" cy="${Y(f.rate*100)}" r="3" fill="${PUBC.blue}" fill-opacity=".55"><title>${pst_esc(f.name)}: ${(f.rate*100).toFixed(0)}%</title></circle>`; });
+    s+=`<text x="${cx}" y="${H-m.b+18}" text-anchor="middle" font-size="12" fill="#222">${pst_esc(t)} (n=${v.length})</text>`; });
+  return pub_svg(W,H,s);
+}
+function pub_canvasImg(id){ const c=document.getElementById(id); if(!c||c.width<60||c.height<60) return ''; try { return c.toDataURL('image/png'); } catch(e){ return ''; } }
+
+// ── subjects: health facilities (facility forms) or CHW posts (community form) ──
+// full DHIS2 data set names, read live from DHIS2 after each run (these are the fallbacks)
+const PUB_DSNAMES = { old:'HF01 Outpatient Morbidity', neu:'2025_HF01 Outpatient Morbidity & Mortality Summary', com:'HF04 Community Based Services' };
+const PUB_FORMS = { get old(){ return 'the '+pst_esc(PUB_DSNAMES.old)+' form'; }, get neu(){ return 'the '+pst_esc(PUB_DSNAMES.neu)+' form'; }, get com(){ return 'the '+pst_esc(PUB_DSNAMES.com)+' form'; } };
+async function pub_fetchDsNames(){
+  try{
+    const r=await dhis2(`/api/dataSets.json?filter=id:in:[${OLD_FAC_DS},${NEW_FAC_DS},${COM_DS}]&fields=id,displayName&paging=false`);
+    (r.dataSets||[]).forEach(d=>{ if(d.id===OLD_FAC_DS) PUB_DSNAMES.old=d.displayName; if(d.id===NEW_FAC_DS) PUB_DSNAMES.neu=d.displayName; if(d.id===COM_DS) PUB_DSNAMES.com=d.displayName; });
+    PUB_DIRTY={poster:true,paper:true};
+  }catch(e){ console.warn('data set names', e); }
+}
+const PUB_ENT = {
+  hf:{ key:'hf', one:'health facility', many:'health facilities', Many:'Health facilities', full:'health facilities', Short:'Facilities', short:'facilities',
+       rateLbl:'Reporting rate for active facilities', Rate1:'Facility reporting rate', typeLbl:'Facility type', months:'facility months',
+       activeLbl:'Active facilities' },
+  chw:{ key:'chw', one:'CHW post', many:'CHW posts', Many:'CHW posts', full:'community health worker (CHW) posts', Short:'CHW posts', short:'CHW posts',
+       rateLbl:'Reporting rate for active CHW posts', Rate1:'CHW post reporting rate', typeLbl:'Parent facility type', months:'CHW post months',
+       activeLbl:'Active CHW posts' },
+};
+let PUB_E = PUB_ENT.hf;
+const pub_lc = t => t.toLowerCase().replace(/\bchw\b/g,'CHW');
+function pub_subject(kind){ return ((document.getElementById(kind==='poster'?'posSubject':'papSubject')||{}).value)||'hf'; }
+
+function pub_data(mode){
+  const B=pst_data(), T=B.T, di={}; B.dates.forEach((d,i)=>di[d]=i);
+  let list;
+  if(mode==='chw'){
+    const m={};
+    (ST.chwReportData||[]).forEach(r=>{ let c=m[r.chwId]; if(!c){ c=m[r.chwId]={id:r.chwId,name:r.name+' ('+r.facility+')',type:r.hfType||'Other',
+        unit: B.lvl==='chiefdom'?r.facility : B.lvl==='district'?r.chiefdom : r.district, s:new Array(T).fill(0)}; }
+      const i=di[r.Date]; if(i!==undefined) c.s[i]=r.status; });
+    list=Object.values(m);
+  } else {
+    list=B.list.map(f=>({id:f.id,name:f.name,type:f.type,unit:f.unit,s:f.fs.slice()}));
+  }
+  list.forEach(f=>{ f.n=f.s.reduce((a,b)=>a+b,0); f.active=f.n>0; f.rate=f.n/T; });
+  const active=list.filter(f=>f.active);
+  const monthly=B.dates.map((d,i)=>{ const k=active.reduce((s,f)=>s+f.s[i],0), n=active.length; return {date:d,k,n,p:n?k/n:0}; });
+  return {...B, list, active, monthly, chwActive:[], chwList:[], chwMonthly:[], mode};
+}
+
+// tool heatmap and map redrawn for the chosen subject, then put back exactly as they were
+function pub_toolImgs(D, mode){
+  const out={hm:'',map:''}, isChief=D.lvl==='chiefdom';
+  const mapId=isChief||D.lvl==='district'?'geoChiefdom':'geoDistrict';
+  const orig=ST.reportData, bak=orig.map(r=>r.status);
+  try{
+    if(mode==='chw'){
+      // one row per active CHW post and month; on chiefdom runs each row sits on its parent facility point
+      const act=new Set(D.active.map(f=>f.id));
+      ST.reportData=(ST.chwReportData||[]).filter(r=>act.has(r.chwId)).map(r=>({hf_uid:r.chwId, ouId:isChief?r.l5Id:r.chwId, Date:r.Date, status:r.status,
+        districtName:r.district, chiefdomName:r.chiefdom, hfType:r.hfType, facStatus:0, comStatus:r.status}));
+      rs_buildAggregates(); rs_renderGeoMaps();
+      out.map=pub_canvasImg(mapId);
+    } else {
+      orig.forEach(r=>{ r.status=r.facStatus||0; });
+      rs_buildAggregates(); rs_drawBothHeatmaps(); rs_renderGeoMaps();
+      out.hm=pub_canvasImg('hmCanvas2'); out.map=pub_canvasImg(mapId);
+    }
+  } catch(e){ console.warn('poster figures', e); }
+  finally{
+    ST.reportData=orig; orig.forEach((r,i)=>{ r.status=bak[i]; });
+    try{ rs_buildAggregates(); rs_drawBothHeatmaps(); rs_renderGeoMaps(); }catch(e){ console.warn(e); }
+  }
+  return out;
+}
+// CHW post by month grid, drawn on a canvas so it stays light with many posts
+function pub_heatImg(D){
+  const rows=[...D.active].sort((a,b)=>b.rate-a.rate||a.name.localeCompare(b.name)); if(!rows.length) return '';
+  const T=D.T, named=rows.length<=40, L=named?230:20, W=1000, top=10, bottom=46, ph=Math.min(700,Math.max(120,rows.length*(named?16:1.2))), H=top+ph+bottom;
+  const c=document.createElement('canvas'); c.width=W*2; c.height=H*2; const g=c.getContext('2d'); g.scale(2,2);
+  const pal=(RS_PALETTES[ST.selectedPalette]||RS_PALETTES.blackYellow).colors, cRep=pal[0], cNo=pal[1];
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H);
+  const cw=(W-L-10)/T, rh=ph/rows.length;
+  rows.forEach((f,r)=>{ f.s.forEach((v,i)=>{ g.fillStyle=v?cRep:cNo; g.fillRect(L+i*cw, top+r*rh, Math.max(1,cw-(named?1:0)), Math.max(rh-(named?1:0),0.6)); });
+    if(named){ g.fillStyle='#222'; g.font='11px Arial'; g.textAlign='right'; g.fillText(f.name.length>34?f.name.slice(0,33)+'…':f.name, L-6, top+r*rh+rh/2+4); } });
+  g.fillStyle='#333'; g.font='11px Arial'; g.textAlign='center';
+  const every=Math.ceil(T/12); D.dates.forEach((d,i)=>{ if(i%every && i!==T-1) return; g.fillText(pub_fmtMonth(d), L+i*cw+cw/2, top+ph+16); });
+  g.textAlign='left'; g.fillStyle=cRep; g.fillRect(L,H-16,14,10); g.fillStyle='#222'; g.fillText('Reported',L+20,H-7);
+  g.fillStyle=cNo; g.fillRect(L+100,H-16,14,10); g.fillStyle='#222'; g.fillText('Not reported',L+120,H-7);
+  return c.toDataURL('image/png');
+}
+
+// ── shared analysis ──
+function pub_analyse(D){
+  const {T,active,list,monthly}=D;
+  const overall=active.length?active.reduce((s,f)=>s+f.n,0)/(active.length*T):0;
+  const K=active.reduce((s,f)=>s+f.n,0), N=active.length*T, ciAll=PS.wilson(K,N);
+  const mk=T>=3?PS.mannKendall(monthly.map(r=>r.p)):null;
+  const best=monthly.reduce((b,r)=>r.p>b.p?r:b,monthly[0]), worst=monthly.reduce((b,r)=>r.p<b.p?r:b,monthly[0]);
+  const units={}; active.forEach(f=>{ const u=units[f.unit]||(units[f.unit]={name:f.unit,k:0,n:0,facs:0,yr:{}}); u.facs++; f.s.forEach((v,i)=>{ u.k+=v; u.n++; const y=D.dates[i].slice(0,4); const yy=u.yr[y]||(u.yr[y]={k:0,n:0}); yy.k+=v; yy.n++; }); });
+  const U=Object.values(units).map(u=>({...u,r:u.k/u.n*100}));
+  const pb=N?K/N:0, below=U.filter(u=>u.r/100<pb-3.09*Math.sqrt(pb*(1-pb)/u.n)), above=U.filter(u=>u.r/100>pb+3.09*Math.sqrt(pb*(1-pb)/u.n));
+  const by={}; list.forEach(f=>(by[f.type]=by[f.type]||[]).push(f));
+  const types=Object.keys(by).sort((a,b)=>by[b].length-by[a].length);
+  const abt={}; active.forEach(f=>(abt[f.type]=abt[f.type]||[]).push(f));
+  const atypes=Object.keys(abt).sort((a,b)=>PS.median(abt[b].map(f=>f.rate))-PS.median(abt[a].map(f=>f.rate)));
+  let kw=null; const g=atypes.filter(t=>abt[t].length>=2);
+  if(g.length>=2){ const all=[]; g.forEach(t=>abt[t].forEach(f=>all.push({t,v:f.rate}))); all.sort((a,b)=>a.v-b.v);
+    let i=0; const tie=[]; while(i<all.length){ let j=i; while(j+1<all.length&&all[j+1].v===all[i].v) j++; const r=(i+j)/2+1; for(let q=i;q<=j;q++) all[q].r=r; tie.push(j-i+1); i=j+1; }
+    const n=all.length, Rs={}; all.forEach(a=>Rs[a.t]=(Rs[a.t]||0)+a.r);
+    let H=12/(n*(n+1))*g.reduce((s,t)=>s+Rs[t]**2/abt[t].length,0)-3*(n+1); const C=1-tie.reduce((s,t)=>s+t**3-t,0)/(n**3-n||1); if(C>0) H/=C;
+    kw={H,df:g.length-1,p:PS.chi2p(H,g.length-1)}; }
+  const years=[...new Set(D.dates.map(d=>d.slice(0,4)))];
+  return {D,overall,ciAll,K,N,mk,best,worst,U,pb,below,above,by,types,abt,atypes,kw,years,never:list.length-active.length};
+}
+function pub_tableTypes(A,compact){
+  const {D,by,types}=A, E=PUB_E; let tk=0,tn=0,ta=0,tf=0;
+  const rows=types.map(t=>{ const fs=by[t], act=fs.filter(f=>f.active), k=act.reduce((s,f)=>s+f.n,0), n=act.length*D.T, ci=PS.wilson(k,n); tk+=k; tn+=n; ta+=act.length; tf+=fs.length;
+    if(compact) return `<tr><td>${pst_esc(t)}</td><td class="n">${fs.length}</td><td class="n">${act.length}</td><td class="n">${fs.length-act.length}</td><td class="n">${n?(k/n*100).toFixed(1):'·'}</td></tr>`;
+    return `<tr><td>${pst_esc(t)}</td><td class="n">${fs.length}</td><td class="n">${act.length}</td><td class="n">${fs.length-act.length}</td><td class="n">${k.toLocaleString()} / ${n.toLocaleString()}</td><td class="n">${n?(k/n*100).toFixed(1):'·'}</td><td class="n">${n?(ci[0]*100).toFixed(1)+' to '+(ci[1]*100).toFixed(1):'·'}</td></tr>`; }).join('');
+  const ci=PS.wilson(tk,tn);
+  if(compact) return `<table class="pub-tbl"><thead><tr><th>${E.typeLbl}</th><th class="n">${E.Short}</th><th class="n">Active</th><th class="n">Never reported</th><th class="n">${E.rateLbl} (%)</th></tr></thead><tbody>${rows}
+    <tr class="tot"><td>Total</td><td class="n">${tf}</td><td class="n">${ta}</td><td class="n">${tf-ta}</td><td class="n">${tn?(tk/tn*100).toFixed(1):'·'}</td></tr></tbody></table>`;
+  return `<table class="pub-tbl"><thead><tr><th>${E.typeLbl}</th><th class="n">${E.Short}</th><th class="n">Active</th><th class="n">Never reported</th><th class="n">Reported / expected months</th><th class="n">${E.rateLbl} (%)</th><th class="n">95% CI</th></tr></thead><tbody>${rows}
+    <tr class="tot"><td>Total</td><td class="n">${tf}</td><td class="n">${ta}</td><td class="n">${tf-ta}</td><td class="n">${tk.toLocaleString()} / ${tn.toLocaleString()}</td><td class="n">${tn?(tk/tn*100).toFixed(1):'·'}</td><td class="n">${tn?(ci[0]*100).toFixed(1)+' to '+(ci[1]*100).toFixed(1):'·'}</td></tr></tbody></table>`;
+}
+function pub_tableUnits(A){
+  const {U,years,D}=A, cap=s=>s[0].toUpperCase()+s.slice(1);
+  const rows=[...U].sort((a,b)=>a.name.localeCompare(b.name)).map(u=>`<tr><td>${pst_esc(u.name)}</td><td class="n">${u.facs}</td>${years.map(y=>`<td class="n">${u.yr[y]?(u.yr[y].k/u.yr[y].n*100).toFixed(1):'·'}</td>`).join('')}<td class="n"><b>${u.r.toFixed(1)}</b></td></tr>`).join('');
+  return `<table class="pub-tbl"><thead><tr><th>${cap(D.unitNoun)}</th><th class="n">${PUB_E.activeLbl}</th>${years.map(y=>`<th class="n">${y} (%)</th>`).join('')}<th class="n">Overall (%)</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function pub_profiles(A){
+  const {D}=A, list=D.list, T=D.T; if(list.length<20) return null;
+  const raw=list.map(f=>{ const s=f.s, r3=PS.mean(s.slice(-Math.min(3,T))); let gap=0,g=0; s.forEach(v=>{ g=v?0:g+1; gap=Math.max(gap,g); });
+    let sw=0; for(let i=1;i<T;i++) if(s[i]!==s[i-1]) sw++; return [f.rate, r3, gap/T, T>1?sw/(T-1):0]; });
+  const mu=raw[0].map((_,j)=>PS.mean(raw.map(r=>r[j]))), sd=raw[0].map((_,j)=>PS.sd(raw.map(r=>r[j]))||1), Z=raw.map(r=>r.map((v,j)=>(v-mu[j])/sd[j]));
+  const rnd=PS.rng(20260401); let best=null;
+  for(let k=2;k<=Math.min(5,Math.floor(list.length/8));k++){ const km=pst_kmeans(Z,k,rnd); const s=pst_silhouette(Z,km.lab,k,rnd); if(!best||s>best.s+0.05) best={k,s,km}; }
+  if(!best) return null;
+  const used={}; const groups=Array.from({length:best.k},(_,c)=>{ const ix=raw.map((_,i)=>i).filter(i=>best.km.lab[i]===c); const avg=raw[0].map((_,j)=>PS.mean(ix.map(i=>raw[i][j])));
+    const [r,r3,,sw]=avg; let nm = r<0.1?'Silent': r>=0.85&&sw<0.2?'Consistent': r3-r>=0.15?'Improving': r-r3>=0.15?'Declining': sw>=0.35?'Intermittent': r>=0.6?'Mostly reporting':'Irregular';
+    used[nm]=(used[nm]||0)+1; return {name:used[nm]>1?nm+' '+used[nm]:nm,n:ix.length,avg}; }).sort((a,b)=>b.avg[0]-a.avg[0]);
+  const tbl=`<table class="pub-tbl"><thead><tr><th>Profile</th><th class="n">${PUB_E.Short} (%)</th><th class="n">Mean rate (%)</th><th class="n">Last 3 months (%)</th><th class="n">Longest gap (% of months)</th><th class="n">Switching (%)</th></tr></thead><tbody>
+    ${groups.map(g=>`<tr><td>${g.name}</td><td class="n">${g.n} (${(g.n/list.length*100).toFixed(1)})</td>${g.avg.map(v=>`<td class="n">${(v*100).toFixed(1)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  return {k:best.k,s:best.s,groups,tbl};
+}
+const PUB_AUTHORS=`Mohamed Sillah Kanu<sup>1*</sup>, Musa Sillah Kanu<sup>2</sup>, Abdul Mac Falama<sup>2</sup>, Randwulf A.J. Tucker<sup>1</sup>, John Seppeh<sup>2</sup>, Thomas Ansumana<sup>2</sup>, Stanley K. Ansumana<sup>2</sup>, Philip Brewah<sup>2</sup>`;
+const PUB_AFF=`<sup>1</sup>Informatics Consultancy Firm Sierra Leone (ICF-SL), Freetown, Sierra Leone<br><sup>2</sup>National Malaria Control Programme, Ministry of Health, Freetown, Sierra Leone`;
+const PUB_CORR=`Mohamed Sillah Kanu, mohamed.kanu@informaticsconsultancyfirm.com`;
+function pub_prep(kind){
+  const mode=pub_subject(kind); PUB_E=PUB_ENT[mode];
+  const D=pub_data(mode), A=pub_analyse(D), isChief=D.lvl==='chiefdom';
+  const imgs = mode==='hf' ? pub_toolImgs(D,'hf') : {hm:pub_heatImg(D), map:pub_toolImgs(D,'chw').map};
+  const per=`${pub_fmtMonth(D.dates[0])} to ${pub_fmtMonth(D.dates[D.T-1])}`;
+  const place=`${pst_esc(D.area)}${D.area==='Sierra Leone'?'':', Sierra Leone'}`;
+  const year=document.getElementById('geoYear')?.value||D.dates[D.T-1].slice(0,4);
+  return {mode,E:PUB_E,D,A,isChief,imgs,per,place,year,hf:mode==='hf'};
+}
+
+// ── POSTER ──
+function pos_render(){
+  const host=document.getElementById('posterBody'); if(!host) return;
+  if(!ST.reportData||!ST.reportData.length){ host.innerHTML='<div class="pub-empty">Run a query first to build the poster.</div>'; return; }
+  const P=pub_prep('poster'), {E,D,A,isChief,imgs,per,place,year,hf}=P, {area,unitNoun,unitNounPl}=D;
+  if(!D.list.length){ host.innerHTML=`<div class="pub-empty">No ${E.many} were found for this area and period.</div>`; return; }
+  const bars=pub_chartBars(A.U,unitNoun,520);
+  let f=0; const fig=(content,cap)=>content?`<div class="pos-fig">${content}<div class="pos-cap"><b>Figure ${++f}.</b> ${cap}</div></div>`:'';
+  const trendTxt = A.mk ? (A.mk.p<0.05 ? `Reporting changed by about ${(A.mk.sen*100).toFixed(1)} percentage points per month, a statistically significant ${A.mk.sen>0?'rise':'fall'} (Mann Kendall ${PS.fmtP(A.mk.p)}).` : `There was no significant monthly trend (Mann Kendall ${PS.fmtP(A.mk.p)}).`) : '';
+  const lowU=[...A.U].sort((a,b)=>a.r-b.r).filter(u=>u.r<PUB_TARGET).slice(0,5).map(u=>pst_esc(u.name));
+  const unitWord = hf ? (isChief?'health facilities':unitNounPl) : (isChief?'health facilities':unitNounPl);
+  host.innerHTML=`<div class="pos-board">
+  <div class="pos-head">
+    <div><div class="pos-title" contenteditable="true">Completeness of routine malaria reporting by ${E.full} in ${place}, ${per}</div>
+      <div class="pos-auth" contenteditable="true">${PUB_AUTHORS}</div>
+      <div class="pos-aff" contenteditable="true">${PUB_AFF}</div></div>
+    </div>
+  <div class="pos-cols">
+    <div>
+      <div class="pos-sec"><h3>Background</h3><p contenteditable="true">${hf
+        ? 'Monthly malaria data reported by health facilities through the District Health Information Software 2 (DHIS2) are the main source for tracking cases, testing and treatment in Sierra Leone. These data are only useful when facilities report every month. Missing reports can hide real changes in malaria burden and weaken planning and commodity decisions.'
+        : `Community health workers (CHWs) bring malaria testing and treatment closer to households, and they report what they do each month on ${PUB_FORMS.com} in the District Health Information Software 2 (DHIS2). These reports are only useful when every CHW post reports every month, because missing reports hide the work done in the community and weaken planning and commodity decisions.`}</p></div>
+      <div class="pos-sec"><h3>Objective</h3><p contenteditable="true">To describe how consistently ${E.many} in ${pst_esc(area)} reported malaria data from ${per} and to identify the months, ${unitWord} and ${hf?'facility types':'parent facility types'} where reporting fell short.</p></div>
+      <div class="pos-sec"><h3>Methods</h3><ul contenteditable="true">
+        ${hf
+          ? `<li>Monthly data were extracted from DHIS2 for ${PUB_FORMS.old} up to March 2026 and ${PUB_FORMS.neu} from April 2026.</li>
+             <li>A facility counted as reporting in a month when any malaria value above zero was recorded on these facility forms. Community data were analysed separately. Laboratories and Marie Stopes clinics were excluded.</li>
+             <li>Facility types were Hospital, Clinic, Community Health Centre (CHC), Community Health Post (CHP) and Maternal and Child Health Post (MCHP).</li>`
+          : `<li>Monthly data were extracted from DHIS2 for ${PUB_FORMS.com}, which CHW posts complete at organisation unit level 6.</li>
+             <li>A CHW post counted as reporting in a month when any malaria value above zero was recorded. Each post was linked to its parent health facility${isChief?'':', chiefdom and district'}.</li>`}
+        <li>Rates were calculated among active ${E.many}, meaning those that reported at least once in the period, with Wilson 95% confidence intervals (CI).</li>
+        <li>Trend was tested with the Mann Kendall test and Sen slope, and differences between ${hf?'facility types':'parent facility types'} with the Kruskal Wallis test.</li></ul></div>
+      <div class="pos-sec"><h3>${E.Many} assessed</h3>
+        <div class="pos-kv"><div><b>${D.list.length.toLocaleString()}</b><span>${E.Short}</span></div><div><b>${D.active.length.toLocaleString()}</b><span>Active</span></div><div><b>${(A.overall*100).toFixed(1)}%</b><span>${E.rateLbl}</span></div></div>
+        <div class="pos-cap" style="margin:6px 0 4px"><b>Table 1.</b> Reporting by ${pub_lc(E.typeLbl)}, ${per}.</div>${pub_tableTypes(A,true)}</div>
+    </div>
+    <div>
+      <div class="pos-sec"><h3>Results</h3><p contenteditable="true">Of ${D.list.length.toLocaleString()} ${E.many}, ${D.active.length.toLocaleString()} reported at least once and ${A.never.toLocaleString()} never reported. Active ${E.many} reported in ${(A.overall*100).toFixed(1)}% of expected months (95% CI ${(A.ciAll[0]*100).toFixed(1)} to ${(A.ciAll[1]*100).toFixed(1)}). The highest monthly rate was ${(A.best.p*100).toFixed(1)}% in ${pub_fmtMonth(A.best.date)} and the lowest ${(A.worst.p*100).toFixed(1)}% in ${pub_fmtMonth(A.worst.date)}. ${trendTxt}</p>
+      ${fig(pub_chartTrend(D,620,380),`Monthly ${pub_lc(E.rateLbl)} in ${pst_esc(area)}, with 95% confidence interval and linear trend.`)}
+      ${fig(imgs.hm?`<img src="${imgs.hm}" alt="">`:'',`Reporting status of each active ${E.one} by month${hf?' on the facility forms (heatmap from the tool)':''}.`)}</div>
+    </div>
+    <div>
+      ${fig(imgs.map?`<img src="${imgs.map}" alt="">`:'',isChief?(hf?`Health facilities in ${pst_esc(area)} coloured by ${pub_lc(E.rateLbl)}, ${year}. Positions are illustrative.`:`Health facilities in ${pst_esc(area)} coloured by the reporting rate of their active CHW posts, ${year}. Positions are illustrative.`):`${E.rateLbl} by ${unitNoun}, ${pst_esc(area)}, ${year}.`)}
+      ${fig(bars.svg,`${E.rateLbl} by ${hf?unitNoun:(isChief?'parent health facility':unitNoun)}, ${per}. The dashed line marks the 95% target.${bars.trimmed?' The 20 highest and 20 lowest are shown.':''}`)}
+      <div class="pos-sec"><h3>Conclusions</h3><p contenteditable="true">Reporting by ${E.many} in ${pst_esc(area)} reached ${(A.overall*100).toFixed(1)}% among active ${E.many}${A.overall>=0.95?', above':', below'} the 95% target. ${A.never?`${A.never.toLocaleString()} ${A.never===1?E.one:E.many} did not report at all and need to be checked against the ${hf?'facility':'CHW'} list. `:''}${lowU.length?`The lowest rates were in ${lowU.join(', ')}.`:''}</p></div>
+      <div class="pos-sec"><h3>Recommendations</h3><ul contenteditable="true">
+        ${hf
+          ? `<li>Follow up ${isChief?'health facilities':'facilities and '+unitNounPl} below 95% through monthly data review meetings.</li>
+             <li>Confirm whether never reporting facilities are functional and correctly set up in DHIS2.</li>
+             <li>Share this monthly rate with ${isChief?'facility in charges':'District Health Management Teams'} to track progress.</li>`
+          : `<li>Follow up CHW posts below 95% through their supervising health facility.</li>
+             <li>Confirm whether never reporting CHW posts are active and correctly set up in DHIS2.</li>
+             <li>Share monthly CHW reporting with facility in charges${isChief?'':' and District Health Management Teams'} to track progress.</li>`}</ul></div>
+    </div>
+  </div>
+  <div class="pos-foot"><span contenteditable="true">Acknowledgements: ${hf?'health facility staff':'community health workers and their supervisors'}, monitoring and evaluation officers and the National Malaria Control Programme data team.</span><span contenteditable="true">Corresponding author: ${PUB_CORR}</span></div>
+  </div>`;
+}
+
+// ── PAPER ──
+function pap_render(){
+  const host=document.getElementById('paperBody'); if(!host) return;
+  if(!ST.reportData||!ST.reportData.length){ host.innerHTML='<div class="pub-empty">Run a query first to build the paper.</div>'; return; }
+  const P=pub_prep('paper'), {E,D,A,isChief,imgs,per,place,year,hf}=P, {area,unitNoun,unitNounPl}=D;
+  if(!D.list.length){ host.innerHTML=`<div class="pub-empty">No ${E.many} were found for this area and period.</div>`; return; }
+  const ctl=pub_chartControl(D,720,340), bars=pub_chartBars(A.U,unitNoun,720), prof=pub_profiles(A);
+  const pct=v=>(v*100).toFixed(1), cap=s=>s[0].toUpperCase()+s.slice(1), typ=hf?'facility types':'parent facility types';
+  const grp = hf ? unitNounPl : (isChief?'parent health facilities':unitNounPl), grp1 = hf ? unitNoun : (isChief?'parent health facility':unitNoun);
+  let fn=0, tn=0; const F=(c,t)=>c?`<div class="pap-fig">${c}<div class="pap-cap"><b>Figure ${++fn}.</b> ${t}</div></div>`:'';
+  const Tb=(t,c)=>`<div class="pap-tcap"><b>Table ${++tn}.</b> ${t}</div>${c}`;
+  const mkTxt=A.mk?`The Mann Kendall test ${A.mk.p<0.05?'showed a significant':'did not show a significant'} monotonic trend (S = ${A.mk.S}, Z = ${A.mk.z.toFixed(2)}, ${PS.fmtP(A.mk.p)}), with a Sen slope of ${(A.mk.sen*100).toFixed(2)} percentage points per month.`:'';
+  const kwTxt=A.kw?`Median reporting rates were highest for ${pst_esc(A.atypes[0])} (${pct(PS.median(A.abt[A.atypes[0]].map(f=>f.rate)))}%) and lowest for ${pst_esc(A.atypes[A.atypes.length-1])} (${pct(PS.median(A.abt[A.atypes[A.atypes.length-1]].map(f=>f.rate)))}%). The Kruskal Wallis test ${A.kw.p<0.05?'indicated a significant':'did not indicate a significant'} difference between ${typ} (H = ${A.kw.H.toFixed(2)}, df = ${A.kw.df}, ${PS.fmtP(A.kw.p)}).`:`Too few ${typ} had two or more active ${E.many} for a formal comparison.`;
+  const funnelOk=A.U.length>=2&&Math.max(...A.U.map(u=>u.n))>=1.2*Math.min(...A.U.map(u=>u.n));
+  const fTxt=funnelOk?`On the funnel plot, ${A.below.length} ${A.below.length===1?grp1:grp} fell below the 99.8% control limit${A.below.length?` (${A.below.slice(0,10).map(u=>pst_esc(u.name)).join(', ')}${A.below.length>10?' and others':''})`:''} and ${A.above.length} lay above the upper limit.`:'';
+  const ctlTxt=`The p chart centre line was ${pct(ctl.pb)}%, and ${ctl.out.length?`${ctl.out.length} month${ctl.out.length>1?'s':''} (${ctl.out.map(pub_fmtMonth).join(', ')}) fell outside the three sigma limits`:'no month fell outside the three sigma limits'}`;
+  const ref=['Dehnavieh R, Haghdoost A, Khosravi A, et al. The District Health Information System (DHIS2): a literature review and meta synthesis of its strengths and operational challenges based on the experiences of 11 countries. Health Inf Manag J. 2019;48(2):62–75.',
+    'World Health Organization. Data quality review: a toolkit for facility data quality assessment. Geneva: WHO; 2017.',
+    'Wilson EB. Probable inference, the law of succession, and statistical inference. J Am Stat Assoc. 1927;22(158):209–212.',
+    'Mann HB. Nonparametric tests against trend. Econometrica. 1945;13(3):245–259.',
+    'Sen PK. Estimates of the regression coefficient based on Kendall\'s tau. J Am Stat Assoc. 1968;63(324):1379–1389.',
+    'Kruskal WH, Wallis WA. Use of ranks in one criterion variance analysis. J Am Stat Assoc. 1952;47(260):583–621.',
+    'Spiegelhalter DJ. Funnel plots for comparing institutional performance. Stat Med. 2005;24(8):1185–1202.',
+    'Benneyan JC, Lloyd RC, Plsek PE. Statistical process control as a tool for research and healthcare improvement. Qual Saf Health Care. 2003;12(6):458–464.',
+    'MacQueen J. Some methods for classification and analysis of multivariate observations. Proc Fifth Berkeley Symp Math Stat Probab. 1967;1:281–297.',
+    'Rousseeuw PJ. Silhouettes: a graphical aid to the interpretation and validation of cluster analysis. J Comput Appl Math. 1987;20:53–65.'];
+  const formsAbs = hf ? `${PUB_FORMS.old} and ${PUB_FORMS.neu}` : PUB_FORMS.com;
+  host.innerHTML=`<div class="pap-page">
+  <h1 contenteditable="true">Completeness of routine malaria reporting by ${E.full} in ${place}: an analysis of DHIS2 data, ${per}</h1>
+  <div class="au" contenteditable="true">${PUB_AUTHORS}</div>
+  <div class="af" contenteditable="true">${PUB_AFF}<br><sup>*</sup>Corresponding author: ${PUB_CORR}</div>
+  <div class="pap-abs" contenteditable="true">
+    <p><b>Background:</b> ${hf?'Routine facility data in the District Health Information Software 2 (DHIS2) underpin malaria surveillance in Sierra Leone, but their value depends on complete monthly reporting.':'Community health workers (CHWs) report malaria testing and treatment in the District Health Information Software 2 (DHIS2) every month, and the value of these data depends on complete reporting.'} We assessed reporting completeness of ${E.many} in ${pst_esc(area)}.</p>
+    <p><b>Methods:</b> We analysed monthly malaria data from ${formsAbs} for ${D.list.length.toLocaleString()} ${E.many} from ${per}. A ${E.one} month was counted as reported when any malaria value above zero was recorded. Rates were estimated among active ${E.many} with Wilson confidence intervals. Trend, differences between ${typ} and outlying ${grp} were assessed with the Mann Kendall test, the Kruskal Wallis test, funnel plots and control charts${prof?', and reporting profiles were identified with k means clustering':''}.</p>
+    <p><b>Results:</b> ${D.active.length.toLocaleString()} of ${D.list.length.toLocaleString()} ${E.many} (${pct(D.active.length/D.list.length)}%) reported at least once. Active ${E.many} reported in ${A.K.toLocaleString()} of ${A.N.toLocaleString()} expected ${E.months}, a rate of ${pct(A.overall)}% (95% confidence interval (CI) ${pct(A.ciAll[0])} to ${pct(A.ciAll[1])}). Monthly rates ranged from ${pct(A.worst.p)}% to ${pct(A.best.p)}%. ${A.mk?(A.mk.p<0.05?`Reporting showed a significant ${A.mk.sen>0?'upward':'downward'} trend (${PS.fmtP(A.mk.p)}).`:`No significant trend was found (${PS.fmtP(A.mk.p)}).`):''} ${funnelOk&&A.below.length?`${A.below.length} ${A.below.length===1?grp1+' was':grp+' were'} below the expected range.`:''}</p>
+    <p><b>Conclusion:</b> Reporting completeness of ${E.many} in ${pst_esc(area)} was ${A.overall>=0.95?'above':'below'} the 95% target. Targeted follow up of low reporting ${grp} and of ${E.many} that never report would strengthen the data used for malaria decisions.</p></div>
+  <div class="pap-kw"><b>Keywords:</b> malaria; DHIS2; reporting completeness; data quality; ${hf?'health facilities':'community health workers'}; Sierra Leone</div>
+
+  <h2>1. Introduction</h2>
+  <p contenteditable="true">Malaria remains a leading cause of illness in Sierra Leone, and the National Malaria Control Programme (NMCP) relies on routine data to track cases, testing and treatment and to plan interventions. These data are collected through the District Health Information Software 2 (DHIS2), which is now the main health information platform in many low and middle income countries [1]. Completeness of reporting is one of the core dimensions of data quality recommended by the World Health Organization [2], because missing reports can be mistaken for a fall in cases and can weaken commodity and resource planning.</p>
+  <p contenteditable="true">${hf
+    ? `Health facilities report malaria morbidity on ${PUB_FORMS.old}. In April 2026 facility reporting moved to ${PUB_FORMS.neu}, which has new age bands. This study describes reporting completeness of health facilities in ${pst_esc(area)} from ${per}, across this change, and identifies the months, ${grp} and facility types where reporting fell short.`
+    : `Community health workers (CHWs), working from CHW posts attached to health facilities, extend malaria testing and treatment to households and report on ${PUB_FORMS.com}. This study describes reporting completeness of CHW posts in ${pst_esc(area)} from ${per} and identifies the months, ${grp} and parent facility types where reporting fell short.`}</p>
+
+  <h2>2. Methods</h2>
+  <h3>2.1 Data source</h3>
+  <p contenteditable="true">${hf
+    ? `Aggregate monthly data were extracted from the national DHIS2 through its analytics interface. Facility data came from ${PUB_FORMS.old} up to March 2026 and from ${PUB_FORMS.neu} from April 2026. Data from ${PUB_FORMS.com} were not included here and are analysed in a separate paper on CHW posts. Laboratories and Marie Stopes clinics were excluded because they do not report malaria morbidity in the same way. Facilities were classified as Hospital, Clinic (including nursing homes), Community Health Centre (CHC), Community Health Post (CHP) and Maternal and Child Health Post (MCHP).`
+    : `Aggregate monthly data from ${PUB_FORMS.com} were extracted from the national DHIS2 through its analytics interface at organisation unit level 6, where CHW posts report. Each CHW post was linked to its parent health facility${isChief?'':', chiefdom and district'} through the DHIS2 hierarchy. CHW posts attached to laboratories and Marie Stopes clinics were not included. Parent facilities were classified as Hospital, Clinic, Community Health Centre (CHC), Community Health Post (CHP) and Maternal and Child Health Post (MCHP). Facility form data are analysed in a separate paper.`}</p>
+  <h3>2.2 Definitions</h3>
+  <p contenteditable="true">A ${E.one} was counted as having reported in a month when at least one malaria data element held a value above zero on ${hf?'either facility form':'the Community Based Services form'}. A ${E.one} was considered active when it reported in at least one month of the study period. The reporting rate was the number of reported ${E.months} divided by the number of expected ${E.months} among active ${E.many}. ${cap(E.many)} that never reported were described separately and excluded from the denominator.</p>
+  <h3>2.3 Statistical analysis</h3>
+  <p contenteditable="true">Proportions are presented with Wilson score 95% confidence intervals [3]. Monotonic trend in the monthly rate was tested with the Mann Kendall test and its size estimated with the Sen slope [4,5]. Rates of individual ${E.many} were compared between ${typ} with the Kruskal Wallis test [6]. ${cap(grp)} were compared with funnel plots with 95% and 99.8% binomial control limits around the overall rate [7], and month to month stability was examined with a p chart with three sigma limits [8]. ${prof?`${cap(E.many)} were grouped into reporting profiles using k means clustering [9] on four standardised measures: overall rate, rate in the last three months, longest consecutive gap and the proportion of months in which reporting status switched. The number of groups was chosen by the mean silhouette width [10].`:''} Analyses were carried out in the NMCP Reporting Status Tool developed by Informatics Consultancy Firm Sierra Leone (ICF-SL). A p value below 0.05 was considered significant.</p>
+
+  <h2>3. Results</h2>
+  <h3>3.1 ${E.Many} and overall reporting</h3>
+  <p contenteditable="true">A total of ${D.list.length.toLocaleString()} ${E.many} were assessed, of which ${D.active.length.toLocaleString()} (${pct(D.active.length/D.list.length)}%) reported at least once and ${A.never.toLocaleString()} never reported (Table 1). Active ${E.many} reported in ${A.K.toLocaleString()} of ${A.N.toLocaleString()} expected ${E.months}, giving a reporting rate of ${pct(A.overall)}% (95% CI ${pct(A.ciAll[0])} to ${pct(A.ciAll[1])}).</p>
+  ${Tb(`Characteristics and reporting of ${E.many} by ${pub_lc(E.typeLbl)}, ${pst_esc(area)}, ${per}.`, pub_tableTypes(A))}
+  <h3>3.2 Monthly trend</h3>
+  <p contenteditable="true">Monthly reporting ranged from ${pct(A.worst.p)}% in ${pub_fmtMonth(A.worst.date)} to ${pct(A.best.p)}% in ${pub_fmtMonth(A.best.date)} (Figure 1). ${mkTxt} ${ctlTxt} (Figure 2).</p>
+  ${F(pub_chartTrend(D,720,360),`Monthly ${pub_lc(E.rateLbl)} in ${pst_esc(area)}, ${per}. The shaded band shows the 95% confidence interval and the dashed line the linear trend.`)}
+  ${F(ctl.svg,`Control chart (p chart) of the monthly ${pub_lc(E.rateLbl)} with three sigma limits. Points in red fall outside the limits.`)}
+  ${F(imgs.hm?`<img src="${imgs.hm}" alt="">`:'',`Monthly reporting status of each active ${E.one}.`)}
+  <h3>3.3 Geographic variation</h3>
+  <p contenteditable="true">Reporting rates by ${grp1} are shown in Table 2 and Figure ${fn+(imgs.map?2:1)}. ${fTxt} ${imgs.map?`The spatial pattern for ${year} is shown in Figure ${fn+1}.`:''}</p>
+  ${F(imgs.map?`<img src="${imgs.map}" alt="">`:'',isChief?(hf?`Health facilities in ${pst_esc(area)} coloured by ${pub_lc(E.rateLbl)}, ${year}. Facility positions are illustrative and not GPS locations.`:`Health facilities in ${pst_esc(area)} coloured by the reporting rate of their active CHW posts, ${year}. Facility positions are illustrative and not GPS locations.`):`${E.rateLbl} by ${unitNoun}, ${pst_esc(area)}, ${year}.`)}
+  ${F(bars.svg,`${E.rateLbl} by ${grp1}, ${per}. The dashed line marks the 95% target.${bars.trimmed?' The 20 highest and 20 lowest are shown.':''}`)}
+  ${Tb(`${E.rateLbl} (%) by ${grp1} and year.`, pub_tableUnits(A))}
+  ${funnelOk?F(pub_chartFunnel(A.U,A.pb,720,400),`Funnel plot of ${pub_lc(E.rateLbl)} by ${grp1} against the number of expected ${E.months}, with 95% and 99.8% control limits.`):''}
+  <h3>3.4 ${cap(typ.replace(/s$/,''))}${prof?' and reporting profiles':''}</h3>
+  <p contenteditable="true">${kwTxt} ${prof?`Cluster analysis identified ${prof.k} reporting profiles (mean silhouette width ${prof.s.toFixed(2)}; Table 3). ${prof.groups.map(g=>`The ${g.name.toLowerCase()} profile included ${g.n.toLocaleString()} ${g.n===1?E.one:E.many} with a mean rate of ${pct(g.avg[0])}%`).join('. ')}.`:''}</p>
+  ${A.atypes.length?F(pub_chartBox(A.abt,A.atypes,720,380),`Distribution of reporting rates of active ${E.many} by ${pub_lc(E.typeLbl)}. Boxes show the interquartile range and the line the median.`):''}
+  ${prof?Tb(`Reporting profiles of ${E.many} identified by k means clustering.`, prof.tbl):''}
+
+  <h2>4. Discussion</h2>
+  <p contenteditable="true">Active ${E.many} in ${pst_esc(area)} reported in ${pct(A.overall)}% of expected months, which is ${A.overall>=0.95?'above':'below'} the national target of 95% for reporting completeness. ${A.mk&&A.mk.p<0.05?`Reporting ${A.mk.sen>0?'improved':'declined'} steadily over the period, which ${A.mk.sen>0?'suggests that supervision and data review efforts are having an effect':'calls for prompt follow up'}.`:'The monthly rate did not move in a consistent direction, so efforts should focus on lifting the overall level.'} ${A.never?(hf?`The ${A.never.toLocaleString()} facilities that never reported may be closed, newly created, reporting under another organisation unit or genuinely not reporting, and each of these needs a different response.`:`The ${A.never.toLocaleString()} CHW posts that never reported may be inactive, without a trained CHW, or reporting through their parent facility, and each of these needs a different response.`):''}</p>
+  <p contenteditable="true">Variation between ${grp}${A.kw&&A.kw.p<0.05?' and '+typ:''} shows that low reporting is concentrated rather than spread evenly, which allows support to be targeted.${fTxt?' Funnel plots are useful here because they separate genuinely low performers from small units whose rates vary by chance [7].':''}</p>
+  <p contenteditable="true">This analysis has limitations. A month was counted as reported when any malaria value above zero was recorded, so a ${E.one} that correctly reported zero cases would appear as not reporting, and timeliness and accuracy were not assessed. The ${hf?'facility':'CHW post'} list reflects the current DHIS2 hierarchy, so units that opened or closed during the period may be misclassified.${hf?' The change of form in April 2026 may have affected reporting during the transition.':''}</p>
+  <h2>5. Conclusion</h2>
+  <p contenteditable="true">Routine malaria reporting by ${E.many} in ${pst_esc(area)} reached ${pct(A.overall)}% among active ${E.many} from ${per}. Regular review of completeness, follow up of ${grp} below 95% and verification of ${E.many} that never report will strengthen the data used for malaria planning.</p>
+  <h2>Acknowledgements</h2><p contenteditable="true">We thank the ${hf?'health facility staff':'community health workers and their supervisors'}, ${isChief?'':'District Health Management Team '}monitoring and evaluation officers and the National Malaria Control Programme data team.</p>
+  <h2>References</h2><ol class="pap-ref">${(prof?ref:ref.slice(0,8)).map(r=>`<li>${r}</li>`).join('')}</ol>
+  </div>`;
+}
+
+const PUB_LIBS=['https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js','https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'];
+function pub_loadLibs(){
+  const need=[]; if(!window.html2canvas) need.push(PUB_LIBS[0]); if(!(window.jspdf&&window.jspdf.jsPDF)) need.push(PUB_LIBS[1]);
+  return Promise.all(need.map(src=>new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src=src; sc.onload=res; sc.onerror=()=>rej(new Error('Could not load the PDF library. Check the internet connection.')); document.head.appendChild(sc); })));
+}
+function pub_fileName(kind){
+  const c=ST.config||{}, a=(c.districtId?c.districtName:'Sierra Leone').replace(/[^A-Za-z0-9]+/g,'_');
+  return `${kind==='poster'?'Poster':'Paper'}_${pub_subject(kind)==='chw'?'CHW_Posts':'Health_Facilities'}_Reporting_${a}_${c.start||''}_${c.end||''}.pdf`.replace(/_+/g,'_');
+}
+async function pub_print(kind){
+  const src=document.querySelector(kind==='poster'?'#posterBody .pos-board':'#paperBody .pap-page'); if(!src) return;
+  const btn=document.getElementById(kind==='poster'?'posPdfBtn':'papPdfBtn'), old=btn?btn.innerHTML:'';
+  if(btn){ btn.disabled=true; btn.textContent='Preparing PDF…'; }
+  const orient=(document.getElementById(kind==='poster'?'posOrient':'papOrient')||{}).value||(kind==='poster'?'landscape':'portrait');
+  const PW=orient==='landscape'?297:210, PH=orient==='landscape'?210:297, M=10, CW=PW-2*M, CH=PH-2*M;
+  const host=document.createElement('div'); host.style.cssText='position:absolute;left:-30000px;top:0;background:#fff;';
+  document.body.appendChild(host);
+  try{
+    await pub_loadLibs();
+    const pdf=new window.jspdf.jsPDF({orientation:orient,unit:'mm',format:'a4',compress:true});
+    const clone=src.cloneNode(true); clone.querySelectorAll('[contenteditable]').forEach(e=>e.removeAttribute('contenteditable'));
+    host.appendChild(clone);
+    const snap=el=>window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+    if(kind==='poster'){
+      // try a few layout widths and keep the one whose shape best fills the page, then scale evenly
+      const widths=orient==='landscape'?[1300,1450,1600,1750,1900]:[950,1050,1150,1300];
+      let best=null;
+      widths.forEach(w=>{ clone.style.cssText=`width:${w}px;max-width:none;border:none;box-shadow:none;`; const h=clone.offsetHeight, sc=Math.min(CW/w, CH/h); if(!best||sc>best.sc) best={w,sc}; });
+      clone.style.cssText=`width:${best.w}px;max-width:none;border:none;box-shadow:none;`;
+      const cv=await snap(clone), r=Math.min(CW/cv.width, CH/cv.height), w=cv.width*r, h=cv.height*r;
+      pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',(PW-w)/2,M+(CH-h)/2,w,h);
+    } else {
+      // render block by block so nothing is cut across pages
+      const pxW=orient==='landscape'?1000:720;
+      clone.style.cssText=`width:${pxW}px;max-width:none;padding:0;margin:0;border:none;box-shadow:none;`;
+      const k=CW/pxW; let y=M, first=true;
+      clone.style.background='#fff'; const blocks=[...clone.children]; blocks.forEach(b=>{ if(getComputedStyle(b).backgroundColor==='rgba(0, 0, 0, 0)') b.style.background='#fff'; });
+      // one snapshot of the whole manuscript, then cut it block by block so nothing is split across pages
+      const top0=clone.getBoundingClientRect().top, H0=clone.offsetHeight, SC=Math.min(2, 30000/Math.max(1,H0));
+      const big=await window.html2canvas(clone,{scale:SC,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:pxW+40});
+      const crop=el=>{ const r=el.getBoundingClientRect(), y=Math.max(0,Math.round((r.top-top0)*SC)), h=Math.max(1,Math.round(r.height*SC));
+        const c=document.createElement('canvas'); c.width=big.width; c.height=Math.min(h,big.height-y); c.getContext('2d').drawImage(big,0,y,big.width,c.height,0,0,big.width,c.height); return c; };
+      for(let i=0;i<blocks.length;i++){
+        const el=blocks[i], cs=getComputedStyle(el), mt=parseFloat(cs.marginTop)*k, mb=parseFloat(cs.marginBottom)*k;
+        const cv=crop(el); let w=CW, h=cv.height/cv.width*CW;
+        const maxH=el.classList.contains('pap-fig')?Math.min(CH,125):CH;
+        if(h>maxH){ const f=maxH/h; h=maxH; w=w*f; }
+        const keep=/^H[1-3]$/.test(el.tagName)||el.classList.contains('pap-tcap');
+        let need=h+(first?0:mt);
+        if(keep && blocks[i+1]){ const nh=blocks[i+1].offsetHeight*k; need+= el.classList.contains('pap-tcap') && nh<CH*0.9 ? nh : Math.min(nh,40); }
+        if(!first && y+need>PH-M){ pdf.addPage(); y=M; first=true; }
+        if(!first) y+=mt;
+        pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',M+(CW-w)/2,y,w,h);
+        y+=h+mb; first=false;
+      }
+      const n=pdf.getNumberOfPages();
+      for(let p=1;p<=n;p++){ pdf.setPage(p); pdf.setFontSize(8); pdf.setTextColor(120); pdf.text(`${p} / ${n}`, PW/2, PH-4, {align:'center'}); }
+    }
+    pdf.save(pub_fileName(kind));
+  } catch(e){ console.error(e); if(typeof showAlert==='function') showAlert(e.message||'PDF could not be created.','warn'); else alert(e.message); }
+  finally { host.remove(); if(btn){ btn.disabled=false; btn.innerHTML=old; } }
+}
 
 // Init palette grid on load
 rs_buildPaletteGrid();
@@ -4240,8 +5224,8 @@ function _pptAddSection(pptx, title, subtitle){
 
 // Annual 3-map subplot composite (National / District / Chiefdom)
 function _rs_buildAnnualSubplotCanvas(){
-  const ids=['geoNational','geoDistrict','geoChiefdom'];
-  const titles=['National','District','Chiefdom'];
+  const ids=isChiefRun()?['geoNational','geoChiefdom']:['geoNational','geoDistrict','geoChiefdom'];
+  const titles=isChiefRun()?[areaShort(),'Health Facilities']:[areaShort(),'District','Chiefdom'];
   const year=document.getElementById('geoYear')?.value||'';
   const srcs=ids.map(id=>document.getElementById(id));
   const cW=srcs[0]?.width||600, cH=srcs[0]?.height||600;
@@ -4372,7 +5356,7 @@ async function rs_downloadPPTX(){
   t.addText('Malaria EPI Reporting Status',{x:0.5,y:0.66,w:9,h:0.75,fontFace:'Arial',fontSize:28,bold:true,color:T.white,align:'center',valign:'middle'});
   try{ if(NMCP_LOGO) t.addImage({data:NMCP_LOGO,x:4.35,y:1.85,w:1.3,h:1.3}); }catch(e){}
   t.addText('Full Report — All Years',{x:0.5,y:3.18,w:9,h:0.5,fontFace:'Arial',fontSize:20,bold:true,color:T.dkGreen,align:'center'});
-  t.addText('Charts · National / District / Chiefdom maps · Monthly maps (all levels)',{x:0.5,y:3.66,w:9,h:0.35,fontFace:'Arial',fontSize:13,bold:true,color:T.blue,align:'center'});
+  t.addText(isChiefRun()?('Charts · '+areaShort()+' and health facility maps · Monthly maps'):(ST.config?.districtId?'Charts · '+areaShort()+' maps · Monthly maps (all levels)':'Charts · National / District / Chiefdom maps · Monthly maps (all levels)'),{x:0.5,y:3.66,w:9,h:0.35,fontFace:'Arial',fontSize:13,bold:true,color:T.blue,align:'center'});
   if(period) t.addText('Period: '+period,{x:0.5,y:4.04,w:9,h:0.35,fontFace:'Arial',fontSize:12,color:T.ink,align:'center'});
   t.addText('Presentation by Dr. Abdul Mac Falama',{x:0.5,y:4.42,w:9,h:0.4,fontFace:'Arial',fontSize:15,bold:true,color:T.blue,align:'center'});
   t.addText('Technical Partner: Informatics Consultancy Firm – Sierra Leone (ICF-SL)',{x:0.5,y:5.12,w:9,h:0.45,fontFace:'Arial',fontSize:11,bold:true,color:T.white,align:'center',valign:'middle'});
@@ -4380,13 +5364,13 @@ async function rs_downloadPPTX(){
   let added=0;
 
   // ── Charts ──
-  _pptAddSection(pptx,'Reporting Status Heatmaps','District × Month — '+period);
+  _pptAddSection(pptx,'Reporting Status Heatmaps',(isChiefRun()?'Health facility × Month — ':'Facility × Month — ')+(ST.config?.districtId?areaShort()+' · ':'')+period);
   if(_pptAddImageSlide(pptx, document.getElementById('hmCanvas1'),'All Facilities — Reporting Status', period)) added++;
   if(_pptAddImageSlide(pptx, document.getElementById('hmCanvas2'),'Active Facilities Only — Reporting Status', period)) added++;
 
   // ── Maps: every year × every map level (National / District / Chiefdom) ──
   const years=[...new Set((ST.config?.periods||[]).map(p=>p.slice(0,4)))].sort();
-  const LEVELS=[['national','National'],['district','District'],['chiefdom','Chiefdom']];
+  const LEVELS=isChiefRun()?[['national',areaShort()],['chiefdom','Health facilities']]:[['national',areaShort()],['district','District'],['chiefdom','Chiefdom']];
   let yi=0;
   for(const yr of years){
     yi++;
@@ -4399,10 +5383,10 @@ async function rs_downloadPPTX(){
     await new Promise(r=>setTimeout(r,700));
 
     _pptAddSection(pptx,'Geographic Maps — '+yr,'Active facilities · reporting rate');
-    try{ if(_pptAddImageSlide(pptx, _rs_buildAnnualSubplotCanvas(),'Annual Maps Subplot','National · District · Chiefdom · '+yr)) added++; }catch(e){}
-    if(_pptAddImageSlide(pptx, document.getElementById('geoNational'),'National — Reporting Rate', yr)) added++;
-    if(_pptAddImageSlide(pptx, document.getElementById('geoDistrict'),'District — Reporting Rate', yr)) added++;
-    if(_pptAddImageSlide(pptx, document.getElementById('geoChiefdom'),'Chiefdom — Reporting Rate', yr)) added++;
+    try{ if(_pptAddImageSlide(pptx, _rs_buildAnnualSubplotCanvas(),'Annual Maps Subplot',(isChiefRun()?areaShort()+' · Health facilities · ':areaShort()+' · District · Chiefdom · ')+yr)) added++; }catch(e){}
+    if(_pptAddImageSlide(pptx, document.getElementById('geoNational'),areaShort()+' — Reporting Rate', yr)) added++;
+    if(!isChiefRun() && _pptAddImageSlide(pptx, document.getElementById('geoDistrict'),'District — Reporting Rate', yr)) added++;
+    if(_pptAddImageSlide(pptx, document.getElementById('geoChiefdom'),isChiefRun()?'Health Facilities — Reporting Rate':'Chiefdom — Reporting Rate', yr)) added++;
 
     // Monthly grid at each map level
     for(const [lvlKey,lvlLbl] of LEVELS){
